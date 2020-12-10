@@ -18,32 +18,95 @@
  <!--radix_placeholder_import_source-->
  <!--/radix_placeholder_import_source-->
 
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; } /* Alert */
+code span.an { color: #008000; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #0000ff; } /* ControlFlow */
+code span.ch { color: #008080; } /* Char */
+code span.cn { color: #585cf6; } /* Constant */
+code span.co { color: #4c886b; } /* Comment */
+code span.cv { color: #008000; } /* CommentVar */
+code span.do { color: #008000; } /* Documentation */
+code span.dv { color: #0000cd; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cd; } /* Float */
+code span.im { } /* Import */
+code span.in { color: #008000; } /* Information */
+code span.kw { color: #0000ff; } /* Keyword */
+code span.op { color: #687687; } /* Operator */
+code span.ot { color: #ff4000; } /* Other */
+code span.pp { color: #ff4000; } /* Preprocessor */
+code span.sc { color: #008080; } /* SpecialChar */
+code span.ss { color: #008080; } /* SpecialString */
+code span.st { color: #036a07; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #008080; } /* VerbatimString */
+code span.wa { color: #008000; font-weight: bold; } /* Warning */
+</style>
 
   <!--radix_placeholder_meta_tags-->
-  <title>Plant Epidemiology: Population level models</title>
+  <title>Modeling Plant Epidemics in R: Simulation</title>
 
-  <meta property="description" itemprop="description" content="Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments."/>
+  <meta property="description" itemprop="description" content="Simulating.."/>
 
   <link rel="license" href="https://creativecommons.org/licenses/by/4.0/"/>
 
 
   <!--  https://developers.facebook.com/docs/sharing/webmasters#markup -->
-  <meta property="og:title" content="Plant Epidemiology: Population level models"/>
+  <meta property="og:title" content="Modeling Plant Epidemics in R: Simulation"/>
   <meta property="og:type" content="article"/>
-  <meta property="og:description" content="Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments."/>
+  <meta property="og:description" content="Simulating.."/>
   <meta property="og:locale" content="en_US"/>
-  <meta property="og:site_name" content="Plant Epidemiology"/>
+  <meta property="og:site_name" content="Modeling Plant Epidemics in R"/>
 
   <!--  https://dev.twitter.com/cards/types/summary -->
   <meta property="twitter:card" content="summary"/>
-  <meta property="twitter:title" content="Plant Epidemiology: Population level models"/>
-  <meta property="twitter:description" content="Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments."/>
+  <meta property="twitter:title" content="Modeling Plant Epidemics in R: Simulation"/>
+  <meta property="twitter:description" content="Simulating.."/>
+  <meta property="twitter:site" content="@edelponte"/>
 
   <!--/radix_placeholder_meta_tags-->
   <!--radix_placeholder_rmarkdown_metadata-->
 
   <script type="text/json" id="radix-rmarkdown-metadata">
-  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description"]}},"value":[{"type":"character","attributes":{},"value":["Population level models"]},{"type":"character","attributes":{},"value":["Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments."]}]}
+  {"type":"list","attributes":{"names":{"type":"character","attributes":{},"value":["title","description"]}},"value":[{"type":"character","attributes":{},"value":["Simulation"]},{"type":"character","attributes":{},"value":["Simulating.."]}]}
   </script>
   <!--/radix_placeholder_rmarkdown_metadata-->
   <!--radix_placeholder_navigation_in_header-->
@@ -1970,7 +2033,7 @@
 <!--radix_placeholder_front_matter-->
 
 <script id="distill-front-matter" type="text/json">
-{"title":"Population level models","description":"Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments.","authors":[]}
+{"title":"Simulation","description":"Simulating..","authors":[]}
 </script>
 
 <!--/radix_placeholder_front_matter-->
@@ -1978,10 +2041,7 @@
 <header class="header header--fixed" role="banner">
 <nav class="distill-site-nav distill-site-header">
 <div class="nav-left">
-<a href="index.html" class="title">Plant Epidemiology</a>
-<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
-</div>
-<div class="nav-right">
+<a href="index.html" class="title">Modeling Plant Epidemics in R</a>
 <div class="nav-dropdown">
 <button class="nav-dropbtn">
 Temporal progress
@@ -1989,10 +2049,16 @@ Temporal progress
 <span class="down-arrow">&#x25BE;</span>
 </button>
 <div class="nav-dropdown-content">
-<a href="time-population-level-models.html">The models</a>
-<a href="time-multiple-curves-mean-value.html">Model fitting</a>
+<a href="temporal-population-models.html">The models</a>
+<a href="temporal-fitting-models.html">Model fitting</a>
 </div>
 </div>
+<input id="distill-search" class="nav-search hidden" type="text" placeholder="Search..."/>
+</div>
+<div class="nav-right">
+<a href="https://github.com/emdelponte/epidemiology-R" aria-label="Link to source">
+<i class="fab fa-github" aria-hidden="true"></i>
+</a>
 <a href="javascript:void(0);" class="nav-toggle">&#9776;</a>
 </div>
 </nav>
@@ -2002,10 +2068,10 @@ Temporal progress
 <!--/radix_placeholder_site_before_body-->
 
 <div class="d-title">
-<h1>Population level models</h1>
+<h1>Simulation</h1>
 <!--radix_placeholder_categories-->
 <!--/radix_placeholder_categories-->
-<p><p>Fitting and choosing the best fitted model to disease progress curve data obtained in replicated experiments.</p></p>
+<p><p>Simulating..</p></p>
 </div>
 
 
@@ -2014,236 +2080,89 @@ Temporal progress
 <nav class="l-text toc figcaption" id="TOC">
 <h3>Contents</h3>
 <ul>
-<li><a href="#apresentação">Apresentação</a></li>
-<li><a href="#conjunto-de-dados">Conjunto de dados</a></li>
-<li><a href="#cálculo-da-taxa-absoluta">Cálculo da taxa absoluta</a>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#hlir-function">HLIR function</a></li>
+<li><a href="#setting-up">Setting up</a></li>
+<li><a href="#solving-equation">Solving equation</a>
 <ul>
-<li><a href="#linearizações-de-y">Linearizações de y*</a></li>
-<li><a href="#ajuste-por-regressão-linear">Ajuste por regressão linear</a>
-<ul>
-<li><a href="#avalia-o-r2">Avalia o R*<sup>2</sup></a></li>
-<li><a href="#estima-y">Estima y</a></li>
-</ul></li>
-<li><a href="#regressão-não-linear">Regressão não linear</a>
-<ul>
-<li><a href="#logístico">Logístico</a></li>
-<li><a href="#gompertz">Gompertz</a></li>
-<li><a href="#monomolecular">Monomolecular</a></li>
-</ul></li>
+<li><a href="#visualizing-hlir">Visualizing HLIR</a></li>
 </ul></li>
 </ul>
 </nav>
 </div>
-<h1 id="apresentação">Apresentação</h1>
-<p>Neste tutorial será demonstrada a escolha de um modelo específico para os dados de progresso de doença com base em procedimentos gráficos e estatísticos. Os dados são os mesmos apresentados em Madden et al. (2007, pág. 85) do progresso de um vírus do tabaco. Os procedimentos seguem aqueles também apresentados no livro (Madden et al., 2007).</p>
-<h1 id="conjunto-de-dados">Conjunto de dados</h1>
-<p>Os dados abaixo representam os dados de incidência observados em intervalos de sete dias, para o progresso do vírus do tabaco, avaliados até 49 dias após o início da epidemia.</p>
+<h1 id="introduction">Introduction</h1>
 <div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre><code><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://tidyverse.tidyverse.org'>tidyverse</a></span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://desolve.r-forge.r-project.org/'>deSolve</a></span><span class='op'>)</span>
+</code></pre>
+</div>
+</div>
+<h1 id="hlir-function">HLIR function</h1>
+<div class="layout-chunk" data-layout="l-body">
+<div class="sourceCode">
+<pre><code><span class='va'>HLIR_fun</span> <span class='op'>&lt;-</span> <span class='kw'>function</span><span class='op'>(</span><span class='va'>t</span>, <span class='va'>y</span>, <span class='va'>par</span><span class='op'>)</span> <span class='op'>{</span>
+  <span class='co'># Variables</span>
+  <span class='va'>H</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>
+  <span class='va'>L</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fl'>2</span><span class='op'>]</span>
+  <span class='va'>I</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fl'>3</span><span class='op'>]</span>
+  <span class='va'>R</span> <span class='op'>&lt;-</span> <span class='va'>y</span><span class='op'>[</span><span class='fl'>4</span><span class='op'>]</span>
+  <span class='va'>beta</span> <span class='op'>&lt;-</span> <span class='va'>par</span><span class='op'>$</span><span class='va'>beta</span>
+  <span class='va'>gama</span> <span class='op'>&lt;-</span> <span class='va'>par</span><span class='op'>$</span><span class='va'>gama</span>
+  <span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='va'>par</span><span class='op'>$</span><span class='va'>mu</span>
 
+  <span class='co'># Right hand side of the model</span>
+  <span class='va'>dH</span> <span class='op'>&lt;-</span> <span class='op'>-</span><span class='va'>beta</span> <span class='op'>*</span> <span class='va'>H</span> <span class='op'>*</span> <span class='va'>I</span>
+  <span class='va'>dL</span> <span class='op'>&lt;-</span> <span class='va'>beta</span> <span class='op'>*</span> <span class='va'>H</span> <span class='op'>*</span> <span class='va'>I</span> <span class='op'>-</span> <span class='va'>gama</span> <span class='op'>*</span> <span class='va'>L</span>
+  <span class='va'>dI</span> <span class='op'>&lt;-</span> <span class='va'>gama</span> <span class='op'>*</span> <span class='va'>L</span> <span class='op'>-</span> <span class='va'>mu</span> <span class='op'>*</span> <span class='va'>I</span>
+  <span class='va'>dR</span> <span class='op'>&lt;-</span> <span class='va'>mu</span> <span class='op'>*</span> <span class='va'>I</span>
+  <span class='kw'><a href='https://rdrr.io/r/base/function.html'>return</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='va'>dH</span>, <span class='va'>dL</span>, <span class='va'>dI</span>, <span class='va'>dR</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
+<span class='op'>}</span>
+</code></pre>
 </div>
-<p>Abaixo, o programa para gerar o gráfico da curva de progresso da incidência no tempo</p>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-2-1.png" width="624" /></p>
 </div>
-<h1 id="cálculo-da-taxa-absoluta">Cálculo da taxa absoluta</h1>
-<p>A taxa absoluta é a diferença de y entre dois tempos da epidemia, que é dada por:</p>
-<p><code>dy/dt = (y2 - y1) / (t2 - t1)</code></p>
-<p>No cálculo abaixo, uma vez que os intervalos são fixos em 7 dias, foi criada uma variável <code>dydt</code> apenas com a subtração entre um tempo t e o tempo anterior.</p>
+<h1 id="setting-up">Setting up</h1>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>[1] 0.00000 0.00129 0.01143 0.02286 0.07857 0.02571 0.00143</code></pre>
-</div>
-<p>Para produzir um gráfico da taxa absoluta no tempo, o tempo é na verdade a média entre dois tempois. De maneira simples, pode-se calcular o tempo médio entre dois tempos. Abaixo, o tempo médio é atribuído à variável <code>t2</code>.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>[1]  0.0  3.5 10.5 17.5 24.5 31.5 38.5</code></pre>
-</div>
-<p>Assim como para o tempo, se calcula a média de incidência entre duas avaliações, atribuída a variável <code>y2</code>.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>[1] 0.0000 0.0055 0.0500 0.1700 0.5250 0.8900 0.9850</code></pre>
-</div>
-<p>A seguir, as duas curvas podem ser plotadas</p>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-6-1.png" width="624" /></p>
-</div>
-<h2 id="linearizações-de-y">Linearizações de y*</h2>
-<p>A análise gráfica envolve a visualização de y* (y linearizado) no tempo. Para tal, aplica-se as transformações que linearizam para cada um dos modelos. No exemplo, serão feitas linearizações para cinco modelos.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>   t     y    yexp   ymon  ylog   ygom   yric3
-1  0 0.001 -6.9078 0.0010 -6.91 -1.933 -13.816
-2  7 0.010 -4.6052 0.0101 -4.60 -1.527  -9.210
-3 14 0.090 -2.4079 0.0943 -2.31 -0.879  -4.808
-4 21 0.250 -1.3863 0.2877 -1.10 -0.327  -2.708
-5 28 0.800 -0.2231 1.6094  1.39  1.500   0.575
-6 35 0.980 -0.0202 3.9120  3.89  3.902   3.189
-7 42 0.990 -0.0101 4.6052  4.60  4.600   3.897
-8 49 0.999 -0.0010 6.9078  6.91  6.907   6.213</code></pre>
-</div>
-<p>Análise gráfica das transformações. A curva que for mais “reta” indica o possível modelo que melhor se ajusta aos dados.</p>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-8-1.png" width="624" /></p>
-</div>
-<h2 id="ajuste-por-regressão-linear">Ajuste por regressão linear</h2>
-<p>Aqui o ajuste ao modelo linear será com os dados transformados de y (y*) , para cada um dos modelos que supostamente tem melhor ajuste, no tempo. Abaixo a regressão linear para o logito versus tempo e gompito versus tempo, já que a curva é sigmóide e a análise visual indica que esses dois modelos parecem descrever adequadamente a epidemia.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>(Intercept)           t 
-     -6.590       0.278 </code></pre>
-<pre><code>             2.5 % 97.5 %
-(Intercept) -7.304 -5.875
-t            0.254  0.303</code></pre>
-<pre><code>[1] 0.000672</code></pre>
-<pre><code>(Intercept)           t 
-     -2.998       0.185 </code></pre>
-<pre><code>             2.5 % 97.5 %
-(Intercept) -4.326  -1.67
-t            0.139   0.23</code></pre>
-<pre><code>[1] 0.013</code></pre>
-</div>
-Abaixo, os gráficos da regresão linear para cada modelo
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-10-1.png" width="624" /></p>
-</div>
-<p>Abaixo, os gráficos dos resíduos</p>
-<div class="layout-chunk" data-layout="l-body">
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-11-1.png" width="624" /></p>
-</div>
-<h3 id="avalia-o-r2">Avalia o R*<sup>2</sup></h3>
-<p>Avalia o ajuste dos modelos com base no R2 ajustado da relação linear entre o log(y) versus o predito pelo modelo linear.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>   t     y   yexp  ymon  ylog   ygom   yric3 pred_logito
-1  0 0.001 -6.908 0.001 -6.91 -1.933 -13.816      -6.590
-2  7 0.010 -4.605 0.010 -4.59 -1.527  -9.210      -4.644
-3 14 0.090 -2.408 0.094 -2.31 -0.879  -4.808      -2.698
-4 21 0.250 -1.386 0.288 -1.10 -0.327  -2.708      -0.752
-5 28 0.800 -0.223 1.609  1.39  1.500   0.575       1.194
-6 35 0.980 -0.020 3.912  3.89  3.902   3.189       3.140
-7 42 0.990 -0.010 4.605  4.59  4.600   3.897       5.086
-8 49 0.999 -0.001 6.908  6.91  6.907   6.213       7.032</code></pre>
-<pre><code>[1] 0.992</code></pre>
-<pre><code>            Estimate Std. Error t value Pr(&gt;|t|)
-(Intercept)   0.0117     0.1602  0.0733 9.44e-01
-pred_logito   1.0018     0.0359 27.9240 1.40e-07</code></pre>
-<pre><code>[1] 0.154</code></pre>
-<pre><code>[1] 0.392</code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-12-1.png" width="624" /></p>
-<pre><code>   t     y   yexp  ymon  ylog   ygom   yric3 pred_logito pred_gompito
-1  0 0.001 -6.908 0.001 -6.91 -1.933 -13.816      -6.590       -2.998
-2  7 0.010 -4.605 0.010 -4.59 -1.527  -9.210      -4.644       -1.703
-3 14 0.090 -2.408 0.094 -2.31 -0.879  -4.808      -2.698       -0.408
-4 21 0.250 -1.386 0.288 -1.10 -0.327  -2.708      -0.752        0.887
-5 28 0.800 -0.223 1.609  1.39  1.500   0.575       1.194        2.182
-6 35 0.980 -0.020 3.912  3.89  3.902   3.189       3.140        3.477
-7 42 0.990 -0.010 4.605  4.59  4.600   3.897       5.086        4.772
-8 49 0.999 -0.001 6.908  6.91  6.907   6.213       7.032        6.067</code></pre>
-<pre><code>[1] 0.943</code></pre>
-<pre><code>             Estimate Std. Error  t value Pr(&gt;|t|)
-(Intercept)  -0.00278      0.335 -0.00832 9.94e-01
-pred_gompito  0.99913      0.100  9.97302 5.88e-05</code></pre>
-<pre><code>[1] 0.728</code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-12-2.png" width="624" /></p>
-</div>
-<h3 id="estima-y">Estima y</h3>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>(Intercept)           t 
-     -6.590       0.278 </code></pre>
-<pre><code>(Intercept) 
-    0.00137 </code></pre>
-<pre><code>(Intercept)           t 
-     -2.998       0.185 </code></pre>
-<pre><code>(Intercept) 
-   1.97e-09 </code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-13-1.png" width="624" /></p>
-</div>
-<h2 id="regressão-não-linear">Regressão não linear</h2>
-<p>Existem alguns modelos complexos que não podem ser linearizados ou que mesmo que seja possível, os parâmetros podem ser estimados por métodos não lineares. Nesse caso, o processo de ajuste não linear no R é similar ao ajuste de modelos lineares, exceto pelo fato de que não há uma fórmula explícita para estimação, então procedimentos iterativos são necessários, exigindo que o usuário entre com estimativas iniciais dos parâmetros.</p>
-<h3 id="logístico">Logístico</h3>
-<p>No R, os modelo não lineares são ajustados com a função <code>nls</code>. Abaixo um exemplo de ajuste do modelo logístico. Note que os parâmetros iniciais de <code>k</code>, <code>y0</code> e <code>r</code> precisam ser informados para dar início ao processo de estimação. O <code>k</code> equivale à intensidade máxima de doença e no exemplo abaixo é estimado ao invés de considerar o máximo com o valor 1, no caso de epidemias completas. Em muitos casos as epidemias não chegam ao máximo e portanto <code>k</code> precisa ser informado para que não ocorre erro na estimativa dos outros dois parâmetros.</p>
-<div class="layout-chunk" data-layout="l-body">
-<pre><code>       k       y0        r 
-1.000799 0.000348 0.331519 </code></pre>
-<pre><code>     k     y0      r 
-1.0008 0.0003 0.3315 </code></pre>
-<pre><code>
-Formula: y ~ k/(1 + (k/y0 - 1) * exp(-r * t))
+<div class="sourceCode">
+<pre><code><span class='co'># Set up parameters</span>
 
-Parameters:
-   Estimate Std. Error t value Pr(&gt;|t|)    
-k  1.000799   0.017159   58.33  2.8e-08 ***
-y0 0.000348   0.000245    1.42   0.2152    
-r  0.331519   0.029830   11.11   0.0001 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.027 on 5 degrees of freedom
-
-Number of iterations to convergence: 7 
-Achieved convergence tolerance: 2.3e-06</code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-14-1.png" width="624" /><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-14-2.png" width="624" /></p>
-<pre><code>
-Call:
-lm(formula = y ~ predict(nl_logistico))
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.02873 -0.00909 -0.00324  0.00673  0.04156 
-
-Coefficients:
-                      Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)             0.0141     0.0119    1.19     0.28    
-predict(nl_logistico)   0.9842     0.0177   55.69  2.3e-09 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.0222 on 6 degrees of freedom
-Multiple R-squared:  0.998, Adjusted R-squared:  0.998 
-F-statistic: 3.1e+03 on 1 and 6 DF,  p-value: 2.25e-09</code></pre>
+<span class='va'>beta</span> <span class='op'>&lt;-</span> <span class='fl'>0.002</span> <span class='co'># Per capita rate of infection of susceptible hosts</span>
+<span class='va'>gama</span> <span class='op'>&lt;-</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='fl'>6</span> <span class='co'>#  Rate at which exposed (i.e., latently infected) hosts become infectious</span>
+<span class='va'>delta</span> <span class='op'>&lt;-</span> <span class='fl'>15</span> <span class='co'># infectious period</span>
+<span class='va'>mu</span> <span class='op'>&lt;-</span> <span class='fl'>1</span> <span class='op'>/</span> <span class='va'>delta</span>
+<span class='va'>InitCond</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>1000</span>, <span class='fl'>1</span>, <span class='fl'>0</span>, <span class='fl'>0</span><span class='op'>)</span>
+</code></pre>
 </div>
-<h3 id="gompertz">Gompertz</h3>
-<p>No modelo de Gompertz, iremos utilizar a mesma função. No entanto, algumas vezes a função nls tem problemas para convergir a partir dos dados iniciais atriuídos para inicializar o modelo. No exemplo abaixo será utilizada função <code>nlsLM</code> do pacote <code>minpack.lm</code></p>
+</div>
+<h1 id="solving-equation">Solving equation</h1>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>       k       y0        r 
-1.05e+00 5.25e-20 1.72e-01 </code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-15-1.png" width="624" /><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-15-2.png" width="624" /></p>
-<pre><code>
-Call:
-lm(formula = predict(nl_gompertz) ~ y)
-
-Residuals:
-     Min       1Q   Median       3Q      Max 
--0.06424 -0.04123  0.00621  0.03288  0.07374 
-
-Coefficients:
-            Estimate Std. Error t value Pr(&gt;|t|)    
-(Intercept)  -0.0117     0.0293    -0.4      0.7    
-y             1.0061     0.0434    23.2  4.2e-07 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.0536 on 6 degrees of freedom
-Multiple R-squared:  0.989, Adjusted R-squared:  0.987 
-F-statistic:  537 on 1 and 6 DF,  p-value: 4.22e-07</code></pre>
+<div class="sourceCode">
+<pre><code><span class='va'>steps</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>1</span>, <span class='fl'>60</span>, by <span class='op'>=</span> <span class='fl'>1</span><span class='op'>)</span>
+<span class='va'>parms</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>beta <span class='op'>=</span> <span class='va'>beta</span>, gama <span class='op'>=</span> <span class='va'>gama</span>, mu <span class='op'>=</span> <span class='va'>mu</span><span class='op'>)</span>
+<span class='va'>HLIR</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/deSolve/man/ode.html'>ode</a></span><span class='op'>(</span><span class='va'>InitCond</span>, <span class='va'>steps</span>, <span class='va'>HLIR_fun</span>, <span class='va'>parms</span><span class='op'>)</span>
+<span class='va'>epidemics</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>time <span class='op'>=</span> <span class='va'>HLIR</span><span class='op'>[</span>, <span class='fl'>1</span><span class='op'>]</span>, H <span class='op'>=</span> <span class='va'>HLIR</span><span class='op'>[</span>, <span class='fl'>2</span><span class='op'>]</span>, L <span class='op'>=</span> <span class='va'>HLIR</span><span class='op'>[</span>, <span class='fl'>3</span><span class='op'>]</span>, I <span class='op'>=</span> <span class='va'>HLIR</span><span class='op'>[</span>, <span class='fl'>4</span><span class='op'>]</span>, R <span class='op'>=</span> <span class='va'>HLIR</span><span class='op'>[</span>, <span class='fl'>5</span><span class='op'>]</span><span class='op'>)</span>
+</code></pre>
 </div>
-<h3 id="monomolecular">Monomolecular</h3>
+</div>
+<h2 id="visualizing-hlir">Visualizing HLIR</h2>
 <div class="layout-chunk" data-layout="l-body">
-<pre><code>    y0      r 
-0.0266 0.0408 </code></pre>
-<pre><code>
-Formula: ym2 ~ 1 - (1 - y0) * exp(-r * tm2)
-
-Parameters:
-   Estimate Std. Error t value Pr(&gt;|t|)    
-y0  0.02663    0.01535    1.73     0.11    
-r   0.04083    0.00139   29.46  4.7e-11 ***
----
-Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-
-Residual standard error: 0.0187 on 10 degrees of freedom
-
-Number of iterations to convergence: 7 
-Achieved convergence tolerance: 1.49e-08</code></pre>
-<p><img src="time-population-level-fitting_files/figure-html5/unnamed-chunk-16-1.png" width="624" /></p>
+<div class="sourceCode">
+<pre><code><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://github.com/jrnold/ggthemes'>ggthemes</a></span><span class='op'>)</span>
+<span class='va'>p1</span> <span class='op'>&lt;-</span> <span class='va'>epidemics</span> <span class='op'>%&gt;%</span>
+  <span class='fu'>ggplot</span><span class='op'>(</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>H</span>, color <span class='op'>=</span> <span class='st'>"H"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>L</span>, color <span class='op'>=</span> <span class='st'>"L"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>I</span>, color <span class='op'>=</span> <span class='st'>"I"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>R</span>, color <span class='op'>=</span> <span class='st'>"R"</span><span class='op'>)</span>, size <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'>geom_line</span><span class='op'>(</span><span class='fu'>aes</span><span class='op'>(</span><span class='va'>time</span>, <span class='va'>I</span><span class='op'>+</span><span class='va'>R</span>, color <span class='op'>=</span> <span class='st'>"DIS"</span><span class='op'>)</span>, size <span class='op'>=</span><span class='fl'>2</span>, linetype <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span><span class='op'>+</span>
+  <span class='fu'>labs</span><span class='op'>(</span>y <span class='op'>=</span> <span class='st'>"Population size (count)"</span>, x <span class='op'>=</span> <span class='st'>"Time (days)"</span>, color <span class='op'>=</span> <span class='st'>"Sites"</span><span class='op'>)</span> <span class='op'>+</span>
+  <span class='fu'><a href='https://rdrr.io/pkg/ggthemes/man/theme_few.html'>theme_few</a></span><span class='op'>(</span><span class='op'>)</span>
+ <span class='va'>p1</span>
+</code></pre>
 </div>
-<pre><code>
-
-```{.r .distill-force-highlighting-css}</code></pre>
+<p><img src="temporal-process-models_files/figure-html5/unnamed-chunk-5-1.png" width="624" /></p>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r distill-force-highlighting-css"><code class="sourceCode r"></code></pre></div>
 <!--radix_placeholder_article_footer-->
 <!--/radix_placeholder_article_footer-->
 </div>
@@ -2256,8 +2175,10 @@ Achieved convergence tolerance: 1.49e-08</code></pre>
 <!--/radix_placeholder_site_after_body-->
 <!--radix_placeholder_appendices-->
 <div class="appendix-bottom">
+<h3 id="updates-and-corrections">Corrections</h3>
+<p>If you see mistakes or want to suggest changes, please <a href="https://github.com/emdelponte/epidemiology-R/issues/new">create an issue</a> on the source repository.</p>
 <h3 id="reuse">Reuse</h3>
-<p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
+<p>Text and figures are licensed under Creative Commons Attribution <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Source code is available at <a href="https://github.com/emdelponte/epidemiology-R">https://github.com/emdelponte/epidemiology-R</a>, unless otherwise noted. The figures that have been reused from other sources don't fall under this license and can be recognized by a note in their caption: "Figure from ...".</p>
 </div>
 <!--/radix_placeholder_appendices-->
 <!--radix_placeholder_navigation_after_body-->
