@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 2 The models | Plant Disease Epidemiology in R</title>
+<meta name="author" content="Emerson Del Ponte">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.6.6/header-attrs.js"></script><script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.5.3/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.5.3/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.4.9000/tabs.js"></script><script src="libs/bs3compat-0.2.4.9000/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS -->
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Plant Disease Epidemiology in R</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> About</a></li>
+<li><a class="active" href="the-models.html"><span class="header-section-number">2</span> The models</a></li>
+<li><a class="" href="fitting-models.html"><span class="header-section-number">3</span> Fitting models</a></li>
+<li><a class="" href="seir-models.html"><span class="header-section-number">4</span> SEIR models</a></li>
+<li><a class="" href="hlir-function.html"><span class="header-section-number">5</span> HLIR function</a></li>
+<li><a class="" href="setting-up.html"><span class="header-section-number">6</span> Setting up</a></li>
+<li><a class="" href="solving-equation.html"><span class="header-section-number">7</span> Solving equation</a></li>
+<li><a class="" href="final-words.html"><span class="header-section-number">8</span> Final Words</a></li>
+<li><a class="" href="references.html">References</a></li>
+</ul>
+
+        <div class="book-extra">
+          
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="the-models" class="section level1" number="2">
+<h1>
+<span class="header-section-number">2</span> The models<a class="anchor" aria-label="anchor" href="#the-models"><i class="fas fa-link"></i></a>
+</h1>
+<p>The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time <span class="citation">(<a href="#ref-chapter2017b" role="doc-biblioref"><strong>chapter2017b?</strong></a>)</span>. These are the models that are usually fitted to disease progress curve data to obtain two or more biologically meaningful parameters.</p>
+<p>In this tutorial, these models and their formulations are shown using R scripts to simulate the theoretical curves for each model. The reader should be capable of opening R or RStudio software and reproduce the analysis by copying and pasting the codes. Hence, a very basic knowledge o R is required. Note that I use <a href="https://r4ds.had.co.nz/pipes.html">pipes</a> in my programming to express a sequence of multiple operations in a more intuitive way.</p>
+<p>Let’s start loading essential packages for programming, customizing the outputs and defining a global ggplot theme.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></code></pre></div>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.0.6     ✓ dplyr   1.0.3
+## ✓ tidyr   1.1.2     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.4.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/jrnold/ggthemes">ggthemes</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span>
+<span class="fu">theme_set</span><span class="op">(</span><span class="fu">theme_light</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>echo<span class="op">=</span><span class="cn">TRUE</span>, warning<span class="op">=</span><span class="cn">FALSE</span>, message<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
+<div id="non-flexible-models" class="section level2" number="2.1">
+<h2>
+<span class="header-section-number">2.1</span> Non-flexible models<a class="anchor" aria-label="anchor" href="#non-flexible-models"><i class="fas fa-link"></i></a>
+</h2>
+<p>These population dynamics models require at least only two parameters, hence they are known as non-flexible, as opposed to the flexible ones for which there are at least one additional parameter.</p>
+<p>Following the convention proposed by <span class="citation">(<a href="#ref-chapter2017b" role="doc-biblioref"><strong>chapter2017b?</strong></a>)</span> in their book “The study of plant disease epidemics”:</p>
+<ul>
+<li><p>time is represented by <span class="math inline">\(t\)</span></p></li>
+<li><p>disease intensity by <span class="math inline">\(y\)</span></p></li>
+<li><p>the rate of change in <span class="math inline">\(y\)</span> between two time units is represented by <span class="math inline">\(\frac{dy}{dt}\)</span></p></li>
+</ul>
+<p>Now we can proceed and learn which non-flexible models are there and for which situation they are more appropriate.</p>
+<div id="exponential" class="section level3" number="2.1.1">
+<h3>
+<span class="header-section-number">2.1.1</span> Exponential<a class="anchor" aria-label="anchor" href="#exponential"><i class="fas fa-link"></i></a>
+</h3>
+<p>The differential equation for the exponential model is given by</p>
+<p><span class="math inline">\(\frac{dy}{dt} = r_E.y\)</span>,</p>
+<p>where <span class="math inline">\(r_E\)</span> is the apparent infection rate (subscript E for this model) (sensu Vanderplank) and <span class="math inline">\(y\)</span> is the disease intensity. Biologically, this formulation suggests that diseased plants, or <span class="math inline">\(y\)</span>, and <span class="math inline">\(r_E\)</span> at each time contribute to disease increase. The value of <span class="math inline">\(\frac{dy}{dt}\)</span> is minimal when <span class="math inline">\(y = 0\)</span> and increases exponentially with the increase in <span class="math inline">\(y\)</span>.</p>
+<p>The integral for the exponential model is given by</p>
+<p><span class="math inline">\(y = y_0 e^{r_Et}\)</span>,</p>
+<p>where <span class="math inline">\(y0\)</span> is and <span class="math inline">\(r\)</span> are obtained via estimation. Let’s simulate two curves by varying <span class="math inline">\(r\)</span> while fixing <span class="math inline">\(y0\)</span> and varying the latter while fixing <span class="math inline">\(r_E\)</span>. We produce the two plots in <em>ggplot</em> and add the predicted curve using the `stat_function`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum in half, etc.).</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y0</span> <span class="op">&lt;-</span> <span class="fl">0.001</span> 
+<span class="va">r</span> <span class="op">&lt;-</span> <span class="fl">0.06</span> 
+<span class="va">tmax</span> <span class="op">&lt;-</span> <span class="fl">60</span> <span class="co"># maximum duration t of the epidemics</span>
+<span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>t <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">tmax</span><span class="op">)</span>, y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="co"># define the axes</span></code></pre></div>
+<p>In the plot below, note that the infection rate in one curve was doubled (<span class="math inline">\(r\)</span> = 0.12)</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">y0</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">r</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">y0</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">r</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>
+    title <span class="op">=</span> <span class="st">"Exponential model"</span>,
+    subtitle <span class="op">=</span> <span class="st">"2 times r (dashed) same y0"</span>,
+    x <span class="op">=</span> <span class="st">"Time"</span>
+  <span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-3-1.png" width="672"></div>
+<p>Now the inoculum was increased five times while using the same doubled rate.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">y0</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">r</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">y0</span> <span class="op">*</span> <span class="fl">5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">r</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span>, linetype <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.window.html">ylim</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Exponential model"</span>, x <span class="op">=</span> <span class="st">"Time"</span>,
+       subtitle <span class="op">=</span> <span class="st">"5 times y0 (dashed) same r"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-4-1.png" width="672"></div>
+</div>
+<div id="monomolecular" class="section level3" number="2.1.2">
+<h3>
+<span class="header-section-number">2.1.2</span> Monomolecular<a class="anchor" aria-label="anchor" href="#monomolecular"><i class="fas fa-link"></i></a>
+</h3>
+<p>The differential of the monomolecular model is given by</p>
+<p><span class="math inline">\(\frac{dy}{dt} = r_M (1-y)\)</span></p>
+<p>where now the <span class="math inline">\(r_M\)</span> is the rate parameter of the monomolecular model and <span class="math inline">\((1-y)\)</span> is the proportion of non-infected (healthy) individuals or host tissue. Note that <span class="math inline">\(\frac{dy}{dt}\)</span> is maximum when <span class="math inline">\(y = 0\)</span> and decreases when <span class="math inline">\(y\)</span> approaches 1. Its decline is due to decrease in the proportion of individuals or healthy sites with the increase in <span class="math inline">\(y\)</span>. Any inoculum capable of infecting the host will more likely land on infected individuals or sites.</p>
+<p>The integral of the monomolecular model is given by</p>
+<p><span class="math inline">\(\frac{dy}{dt} = 1 - (1-y)e^{-r_Mt}\)</span></p>
+<p>This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics do not contribute new infections. Therefore, different from the exponential model, disease intensity <span class="math inline">\(y\)</span> does not affect the epidemics and so the absolute rate is proportional to <span class="math inline">\((1-y)\)</span>.</p>
+<p>Let’s simulate two monomolecular curve with different rate parameters where one is one third of the other.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="op">(</span><span class="va">r</span> <span class="op">/</span> <span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Monomolecular model"</span>,
+         subtitle <span class="op">=</span> <span class="st">"Fixed y0 = 0.001"</span>, x <span class="op">=</span> <span class="st">"Time"</span>
+       <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">35</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"r = 0.06"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">50</span>, y <span class="op">=</span> <span class="fl">0.55</span>, label <span class="op">=</span> <span class="st">"r = 0.02"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-5-1.png" width="672"></div>
+<p>Now inoculum was increased 100 times with the reduced rate.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">/</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="va">y0</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">/</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Monomolecular model"</span>, 
+       subtitle <span class="op">=</span> <span class="st">"Fixed r = 0.06"</span>, x <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">35</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"y0 = 0.01"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">45</span>, y <span class="op">=</span> <span class="fl">0.65</span>, label <span class="op">=</span> <span class="st">"y0 = 0.001"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-6-1.png" width="672"></div>
+</div>
+<div id="logistic" class="section level3" number="2.1.3">
+<h3>
+<span class="header-section-number">2.1.3</span> Logistic<a class="anchor" aria-label="anchor" href="#logistic"><i class="fas fa-link"></i></a>
+</h3>
+<p>The logistic model is a more elaborated version of the two previous models as it incorporates the features of them both. Its differential is given by</p>
+<p><span class="math inline">\(\frac{dy}{dt} = r_L. y . (1 - y)\)</span>,</p>
+<p>where <span class="math inline">\(r_L\)</span> is the infection rate of the logistic model, <span class="math inline">\(y\)</span> is the proportion of diseased individuals or host tissue and <span class="math inline">\((1-y)\)</span> is the proportion of non-affected individuals or host area.</p>
+<p>Biologically, <span class="math inline">\(y\)</span> in its differential equation implies that <span class="math inline">\(\frac{dy}{dt}\)</span> increases with the increase in <span class="math inline">\(y\)</span> (as in the exponential) because more disease means more inoculum. However, <span class="math inline">\((1-y)\)</span> leads to a decrease in <span class="math inline">\(\frac{dy}{dt}\)</span> when <span class="math inline">\(y\)</span> approaches the maximum <span class="math inline">\(y=1\)</span>, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, <span class="math inline">\(\frac{dy}{dt}\)</span> is minimal at the onset of the epidemics, reaches a maximum when <span class="math inline">\(y/2\)</span> and declines until <span class="math inline">\(y=1\)</span>.</p>
+<p>The integral is given by</p>
+<p><span class="math inline">\(y = \frac{1}{1 + (1-y_0).e^{-r.t}}\)</span>,</p>
+<p>where <span class="math inline">\(r_L\)</span> is the apparent infection rate of the logistic model and <span class="math inline">\(y0\)</span> is the disease intensity at <span class="math inline">\(t=0\)</span>. This model provides a good fit to polycyclic epidemics.</p>
+<p>Let’s check two curves where in one the infection rate is double while keeping the same initial inoculum.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>
+    linetype <span class="op">=</span> <span class="fl">2</span>,
+    fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">/</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">*</span> <span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">/</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">*</span> <span class="fl">4</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Logistic model"</span>, subtitle <span class="op">=</span> <span class="st">"Fixed y0 = 0.001"</span>, x <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">41</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"r = 0.18"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">50</span>, y <span class="op">=</span> <span class="fl">0.10</span>, label <span class="op">=</span> <span class="st">"r = 0.024"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
+<p>Now the inoculum is reduced 10 times for a same infection rate.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>
+    linetype <span class="op">=</span> <span class="fl">2</span>,
+    fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="va">y0</span> <span class="op">/</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="va">y0</span> <span class="op">/</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y0</span><span class="op">)</span> <span class="op">/</span> <span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span> <span class="op">*</span> <span class="fl">3</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Logistic model"</span>, subtitle <span class="op">=</span> <span class="st">"Fixed r = 0.24"</span>, x <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">35</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"y0 = 0.001"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">50</span>, y <span class="op">=</span> <span class="fl">0.10</span>, label <span class="op">=</span> <span class="st">"y0 = 0.0001"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
+</div>
+<div id="gompertz" class="section level3" number="2.1.4">
+<h3>
+<span class="header-section-number">2.1.4</span> Gompertz<a class="anchor" aria-label="anchor" href="#gompertz"><i class="fas fa-link"></i></a>
+</h3>
+<p>The Gompertz model is similar to the logistic and also provides a very good fit to several polycyclic diseases. The differential equation is given by</p>
+<p><span class="math inline">\(\frac{dy}{dt} = r_G.[ln(1) - ln(y)]\)</span></p>
+<p>Differently from the logistic, the variable representing the non-infected individuals or host area is <span class="math inline">\(-ln(y)\)</span>. The integral equation is given by</p>
+<p><span class="math inline">\(y = e^{(ln(y0)).{e^{-r_G.t)}}}\)</span>,</p>
+<p>where <span class="math inline">\(r_G\)</span> is the apparent infection rate for the Gompertz models and <span class="math inline">\(y_0\)</span> is the disease intensity at <span class="math inline">\(t = 0\)</span>.</p>
+<p>Let’s check curves for two rates.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>
+    linetype <span class="op">=</span> <span class="fl">2</span>,
+    fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span><span class="op">/</span><span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span><span class="op">*</span><span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Gompertz model"</span>, subtitle <span class="op">=</span> <span class="st">"Fixed y0 = 0.001"</span>, x <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">41</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"r = 0.12"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">50</span>, y <span class="op">=</span> <span class="fl">0.10</span>, label <span class="op">=</span> <span class="st">"r = 0.03"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
+<p>And those when inoculum was reduced thousand times.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">dat</span> <span class="op">%&gt;%</span>
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>
+    linetype <span class="op">=</span> <span class="fl">2</span>,
+    fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">y0</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span><span class="op">*</span><span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span>
+  <span class="op">)</span> <span class="op">+</span>
+  <span class="fu">stat_function</span><span class="op">(</span>fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">y0</span><span class="op">/</span><span class="fl">1000</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">r</span><span class="op">*</span><span class="fl">2</span> <span class="op">*</span> <span class="va">t</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Gompertz model"</span>, subtitle <span class="op">=</span> <span class="st">"Fixed r = 0.12"</span>, x <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">15</span>, y <span class="op">=</span> <span class="fl">0.77</span>, label <span class="op">=</span> <span class="st">"y0 = 0.001"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu">annotate</span><span class="op">(</span>geom <span class="op">=</span> <span class="st">"text"</span>, x <span class="op">=</span> <span class="fl">25</span>, y <span class="op">=</span> <span class="fl">0.10</span>, label <span class="op">=</span> <span class="st">"y0 = 0.00001"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="index.html"><span class="header-section-number">1</span> About</a></div>
+<div class="next"><a href="fitting-models.html"><span class="header-section-number">3</span> Fitting models</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#the-models"><span class="header-section-number">2</span> The models</a></li>
+<li>
+<a class="nav-link" href="#non-flexible-models"><span class="header-section-number">2.1</span> Non-flexible models</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#exponential"><span class="header-section-number">2.1.1</span> Exponential</a></li>
+<li><a class="nav-link" href="#monomolecular"><span class="header-section-number">2.1.2</span> Monomolecular</a></li>
+<li><a class="nav-link" href="#logistic"><span class="header-section-number">2.1.3</span> Logistic</a></li>
+<li><a class="nav-link" href="#gompertz"><span class="header-section-number">2.1.4</span> Gompertz</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+          
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Plant Disease Epidemiology in R</strong>" was written by Emerson Del Ponte. It was last built on 2021-02-03.</p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>
