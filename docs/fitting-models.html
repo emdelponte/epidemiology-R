@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 3 Fitting models | R4PDE</title>
 <meta name="author" content="Emerson M. Del Ponte">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.6.6/header-attrs.js"></script><script src="libs/jquery-3.5.1/jquery-3.5.1.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="libs/bootstrap-4.5.3/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.5.3/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.4/tabs.js"></script><script src="libs/bs3compat-0.2.4/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.8/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS -->
 </head>
 <body data-spy="scroll" data-target="#toc">
@@ -57,11 +57,11 @@
 <span class="header-section-number">3.1.1</span> Initial setup<a class="anchor" aria-label="anchor" href="#initial-setup"><i class="fas fa-link"></i></a>
 </h3>
 <p>Load essential packages and set parameters recursively.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://yihui.org/knitr/">knitr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/jrnold/ggthemes">ggthemes</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jrnold/ggthemes">ggthemes</a></span><span class="op">)</span>
 <span class="fu">theme_set</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/ggthemes/man/theme_few.html">theme_few</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">knitr</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/knitr/man/opts_chunk.html">opts_chunk</a></span><span class="op">$</span><span class="fu">set</span><span class="op">(</span>echo<span class="op">=</span><span class="cn">TRUE</span>, warning<span class="op">=</span><span class="cn">FALSE</span>, message<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/options.html">options</a></span><span class="op">(</span>digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
@@ -70,7 +70,7 @@
 <h3>
 <span class="header-section-number">3.1.2</span> Entering data<a class="anchor" aria-label="anchor" href="#entering-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pepper</span> <span class="op">&lt;-</span> 
   <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tribble.html">tribble</a></span><span class="op">(</span>
    <span class="op">~</span><span class="va">t</span>,  <span class="op">~</span><span class="va">`1`</span>,  <span class="op">~</span><span class="va">`2`</span>,  <span class="op">~</span><span class="va">`3`</span>,
@@ -90,7 +90,7 @@
 </h3>
 <p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation">(<a href="fitting-models.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
 <p>Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the tidyverse-suitable format, which is the long format. The <code>pivot_longer</code> function will do the job of reshaping from wide to long format so we can finally use the <code>ggplot</code> function to produce the plot.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pepper</span> <span class="op">%&gt;%</span> 
   <span class="fu">pivot_longer</span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, names_to <span class="op">=</span><span class="st">"treat"</span>, values_to <span class="op">=</span> <span class="st">"inc"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">ggplot</span> <span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">t</span>, <span class="va">inc</span>, 
@@ -106,20 +106,15 @@
        x <span class="op">=</span> <span class="st">"Time (days)"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
+<p>Most of the three curves show a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily eliminate the monomolecular and exponential models and decide on the other two non-flexible models: logistic or Gompertz. To do that, let’s proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the <strong>linear</strong> or <strong>nonlinear</strong> parameter-estimation methods.</p>
 </div>
-</div>
-<div id="section" class="section level2" number="3.2">
-<h2>
-<span class="header-section-number">3.2</span> <a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a>
-</h2>
-<p>Most of the three curves appear to follow a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily discard the monomolecular and exponential models and decided on the other two non-flexible models: logistic or Gompertz. To do that, let’s proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the <strong>linear</strong> or <strong>nonlinear</strong> parameter-estimation methods.</p>
-<div id="fitting-single-epidemics" class="section level3" number="3.2.1">
+<div id="fitting-single-epidemics" class="section level3" number="3.1.4">
 <h3>
-<span class="header-section-number">3.2.1</span> Fitting: single epidemics<a class="anchor" aria-label="anchor" href="#fitting-single-epidemics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1.4</span> Fitting: single epidemics<a class="anchor" aria-label="anchor" href="#fitting-single-epidemics"><i class="fas fa-link"></i></a>
 </h3>
 <p>Among the several options offered by <em>epifitter</em> we start with the simplest one, which is fit a model to a single epidemics using the linear regression approach. For such, the <code><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin()</a></code> requires two arguments: time (<code>time</code>) and disease intensity (<code>y</code>) each one as a vector stored or not in a dataframe.</p>
 <p>Since we have three epidemics, <code><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin()</a></code> will be use three times. The function produces a list object with six elements. Let’s first look at the <code>Stats</code> dataframe of each of the three lists named <code>epi1</code> to <code>epi3</code>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/AlvesKS/epifitter">epifitter</a></span><span class="op">)</span>
 
 <span class="va">epi1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">pepper</span><span class="op">$</span><span class="va">t</span>,  
@@ -130,7 +125,7 @@
 ## Monomolecular 0.984     0.968 0.543
 ## Logistic      0.978     0.957 0.824
 ## Exponential   0.784     0.645 0.670</code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">pepper</span><span class="op">$</span><span class="va">t</span>,  
   y <span class="op">=</span> <span class="va">pepper</span><span class="op">$</span><span class="va">`2`</span> <span class="op">)</span>
 <span class="va">epi2</span><span class="op">$</span><span class="va">Stats</span></code></pre></div>
@@ -139,7 +134,7 @@
 ## Gompertz      0.971     0.943 0.841
 ## Monomolecular 0.925     0.860 1.068
 ## Exponential   0.897     0.813 1.202</code></pre>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin</a></span><span class="op">(</span>time <span class="op">=</span> <span class="va">pepper</span><span class="op">$</span><span class="va">t</span>,  
   y <span class="op">=</span> <span class="va">pepper</span><span class="op">$</span><span class="va">`3`</span> <span class="op">)</span>
 <span class="va">epi3</span><span class="op">$</span><span class="va">Stats</span></code></pre></div>
@@ -150,17 +145,17 @@
 ## Monomolecular 0.859     0.753 0.253</code></pre>
 <p>The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is no much difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves.</p>
 </div>
-<div id="fitting-multiple-epidemics" class="section level3" number="3.2.2">
+<div id="fitting-multiple-epidemics" class="section level3" number="3.1.5">
 <h3>
-<span class="header-section-number">3.2.2</span> Fitting: multiple epidemics<a class="anchor" aria-label="anchor" href="#fitting-multiple-epidemics"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.1.5</span> Fitting: multiple epidemics<a class="anchor" aria-label="anchor" href="#fitting-multiple-epidemics"><i class="fas fa-link"></i></a>
 </h3>
 <p>Before looking at the prediction, let’s use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from <code><a href="https://rdrr.io/pkg/epifitter/man/fit_lin.html">fit_lin()</a></code>, <code><a href="https://rdrr.io/pkg/epifitter/man/fit_multi.html">fit_multi()</a></code> requires the data to be structured in the long format where there is a column specifying each of the epidemics.</p>
 <p>Let’s then create a new data set called <code>pepper2</code> using the data transposing functions of the <em>tidyr</em> package.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pepper2</span> <span class="op">&lt;-</span> <span class="va">pepper</span> <span class="op">%&gt;%</span> 
   <span class="fu">pivot_longer</span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">4</span>, names_to <span class="op">=</span><span class="st">"treat"</span>, values_to <span class="op">=</span> <span class="st">"inc"</span><span class="op">)</span></code></pre></div>
 <p>Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in <code>strata_cols</code> argument.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi_all</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_multi.html">fit_multi</a></span><span class="op">(</span>
   time_col <span class="op">=</span> <span class="st">"t"</span>,
   intensity_col <span class="op">=</span> <span class="st">"inc"</span>,
@@ -169,7 +164,7 @@
   nlin <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 <p>Now let’s select the statistics of model fitting. Again, <em>Epifitter</em> ranks the models based on the CCC (the higher the better) but it is important to check the RSE as well - the lower the better. In fact, the RSE is more important when the goal is prediction.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi_all</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span> 
   <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">model</span>, <span class="va">best_model</span>, <span class="va">RSE</span>, <span class="va">CCC</span><span class="op">)</span></code></pre></div>
 <pre><code>##    treat         model best_model   RSE   CCC
@@ -186,7 +181,7 @@
 ## 11     3   Exponential          3 0.771 0.964
 ## 12     3 Monomolecular          4 0.253 0.859</code></pre>
 <p>To be more certain about our decision, let’s advance to the final step which is to produce the plots with the observed and predicted values for each assessment time by calling the <code>Data</code> dataframe of the `<code>epi_all</code> list.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi_all</span><span class="op">$</span><span class="va">Data</span> <span class="op">%&gt;%</span>
  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Gompertz"</span>, <span class="st">"Logistic"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">time</span>, <span class="va">predicted</span>, shape <span class="op">=</span> <span class="va">treat</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -200,7 +195,7 @@
   <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-20-1.png" width="672"></div>
 <p>Overall, the logistic model seems a better fit for all the curves. Let’s produce a plot with the prediction error versus time.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">epi_all</span><span class="op">$</span><span class="va">Data</span> <span class="op">%&gt;%</span>
  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Gompertz"</span>, <span class="st">"Logistic"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> 
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">time</span>, <span class="va">predicted</span> <span class="op">-</span><span class="va">y</span>, shape <span class="op">=</span> <span class="va">treat</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -215,7 +210,7 @@
   <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-21-1.png" width="672"></div>
 <p>The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R">  <span class="va">epi_all</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Logistic"</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">y0</span>, <span class="va">y0_ci_lwr</span>, <span class="va">y0_ci_upr</span>, <span class="va">r</span>, <span class="va">r_ci_lwr</span>, <span class="va">r_ci_upr</span> 
@@ -225,7 +220,7 @@
 ## 2     2 0.001373  0.000672   0.00280 0.278    0.254    0.303
 ## 3     3 0.000813  0.000313   0.00211 0.175    0.143    0.208</code></pre>
 <p>We can produce a plot for visual inference on the differences in the parameters.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p1</span> <span class="op">&lt;-</span> <span class="va">epi_all</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Logistic"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">treat</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -256,20 +251,20 @@
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-23-1.png" width="672"></div>
 </div>
 </div>
-<div id="designed-experiments" class="section level2" number="3.3">
+<div id="designed-experiments" class="section level2" number="3.2">
 <h2>
-<span class="header-section-number">3.3</span> Designed experiments<a class="anchor" aria-label="anchor" href="#designed-experiments"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2</span> Designed experiments<a class="anchor" aria-label="anchor" href="#designed-experiments"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this next exercise, we will work with disease data collected over time in the same plot unit (also called repeated measures) from a designed experiment for evaluating and comparing treatment effects.</p>
 <p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation">(<a href="fitting-models.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
-<div id="loading-data" class="section level3" number="3.3.1">
+<div id="loading-data" class="section level3" number="3.2.1">
 <h3>
-<span class="header-section-number">3.3.1</span> Loading data<a class="anchor" aria-label="anchor" href="#loading-data"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2.1</span> Loading data<a class="anchor" aria-label="anchor" href="#loading-data"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">budblight</span> <span class="op">&lt;-</span> <span class="fu">read_csv</span><span class="op">(</span><span class="st">"data/bud-blight-soybean.csv"</span><span class="op">)</span></code></pre></div>
 <p>Let’s have a look at the first six rows of the dataset and check the data type for each column. There is an additional column representing the replicates, called block.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">budblight</span><span class="op">)</span></code></pre></div>
 <pre><code>## # A tibble: 6 x 4
 ##   treat  time block     y
@@ -281,12 +276,12 @@
 ## 5 PD1      40     1  0.3 
 ## 6 PD1      40     2  0.38</code></pre>
 </div>
-<div id="visualizing-the-dpcs" class="section level3" number="3.3.2">
+<div id="visualizing-the-dpcs" class="section level3" number="3.2.2">
 <h3>
-<span class="header-section-number">3.3.2</span> Visualizing the DPCs<a class="anchor" aria-label="anchor" href="#visualizing-the-dpcs"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2.2</span> Visualizing the DPCs<a class="anchor" aria-label="anchor" href="#visualizing-the-dpcs"><i class="fas fa-link"></i></a>
 </h3>
 <p>Let’s have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p3</span> <span class="op">&lt;-</span> <span class="va">budblight</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>
     <span class="va">time</span>, <span class="va">y</span>,
@@ -299,7 +294,7 @@
   <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">treat</span>, ncol <span class="op">=</span><span class="fl">1</span><span class="op">)</span><span class="op">+</span>
   <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Disease incidence"</span>,
        x <span class="op">=</span> <span class="st">"Time (days after emergence)"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p4</span> <span class="op">&lt;-</span> <span class="va">budblight</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>
     <span class="va">time</span>, <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fl">1</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span>,
@@ -314,18 +309,18 @@
 <span class="va">p3</span> <span class="op">|</span> <span class="va">p4</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-27-1.png" width="672"></div>
 </div>
-<div id="model-fitting" class="section level3" number="3.3.3">
+<div id="model-fitting" class="section level3" number="3.2.3">
 <h3>
-<span class="header-section-number">3.3.3</span> Model fitting<a class="anchor" aria-label="anchor" href="#model-fitting"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2.3</span> Model fitting<a class="anchor" aria-label="anchor" href="#model-fitting"><i class="fas fa-link"></i></a>
 </h3>
 <p>Remember that the first step in model selection is the visual appraisal of the curve data linearized with the model transformation. In the case the curves represent complete epidemics (close to 100%) appraisal of the absolute rate (difference in y between two times) over time is also helpful.</p>
 <p>For the treatments above, it looks like the curves are typical of a monocyclic disease (the case of soybean bud blight), for which the monomolecular is usually a good fit, but other models are also possible as well. For this exercise, we will use both the linear and the nonlinear estimation method.</p>
-<div id="linear-regression" class="section level4" number="3.3.3.1">
+<div id="linear-regression" class="section level4" number="3.2.3.1">
 <h4>
-<span class="header-section-number">3.3.3.1</span> Linear regression<a class="anchor" aria-label="anchor" href="#linear-regression"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2.3.1</span> Linear regression<a class="anchor" aria-label="anchor" href="#linear-regression"><i class="fas fa-link"></i></a>
 </h4>
 <p>For convenience, we use the <code><a href="https://rdrr.io/pkg/epifitter/man/fit_multi.html">fit_multi()</a></code> to handle multiple epidemics. The function returns a list object where a series of statistics are provided to aid in model selection and parameter estimation. We need to provide the names of columns (arguments): assessment time (<code>time_col</code>), disease incidence (<code>intensity_col</code>), and treatment (<code>strata_cols</code>).</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_multi.html">fit_multi</a></span><span class="op">(</span>
   time_col <span class="op">=</span> <span class="st">"time"</span>,
   intensity_col <span class="op">=</span> <span class="st">"y"</span>,
@@ -334,7 +329,7 @@
   nlin <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
 <p>Let’s look at how well the four models fitted the data. Epifitter suggests the best fitted model (1 to 4, where 1 is best) for each treatment. Let’s have a look at the statistics of model fitting.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R">  <span class="va">lin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span> 
     <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">best_model</span>, <span class="va">model</span>, <span class="va">CCC</span>, <span class="va">RSE</span><span class="op">)</span></code></pre></div>
 <pre><code>##    treat best_model         model   CCC    RSE
@@ -355,7 +350,7 @@
 ## 15   PD4          3      Logistic 0.891 0.5241
 ## 16   PD4          4   Exponential 0.874 0.4977</code></pre>
 <p>And now we extract values for each parameter estimated from the fit of the monomolecular model.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R">  <span class="va">lin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Monomolecular"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">y0</span>, <span class="va">r</span><span class="op">)</span></code></pre></div>
@@ -365,7 +360,7 @@
 ## 3   PD3 -0.449 0.0159
 ## 4   PD4 -0.362 0.0112</code></pre>
 <p>Now we visualize the fit of the monomolecular model (using <code>filter</code> function - see below) to the data together with the observed data and then reproduce the right plots in Fig. 4.17 from the book.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lin1</span><span class="op">$</span><span class="va">Data</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Monomolecular"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">time</span>, <span class="va">predicted</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -379,7 +374,7 @@
   <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-31-1.png" width="672"></div>
 <p>Now we can plot the means and respective 95% confidence interval of the apparent infection rate (<span class="math inline">\(r\)</span>) and initial inoculum (<span class="math inline">\(y_0\)</span>) for visual inference.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p5</span> <span class="op">&lt;-</span> <span class="va">lin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Monomolecular"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">treat</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -409,12 +404,12 @@
 <span class="va">p5</span> <span class="op">|</span> <span class="va">p2</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-32-1.png" width="672"></div>
 </div>
-<div id="non-linear-regression" class="section level4" number="3.3.3.2">
+<div id="non-linear-regression" class="section level4" number="3.2.3.2">
 <h4>
-<span class="header-section-number">3.3.3.2</span> Non-linear regression<a class="anchor" aria-label="anchor" href="#non-linear-regression"><i class="fas fa-link"></i></a>
+<span class="header-section-number">3.2.3.2</span> Non-linear regression<a class="anchor" aria-label="anchor" href="#non-linear-regression"><i class="fas fa-link"></i></a>
 </h4>
 <p>To estimate the parameters using the non-linear approach, we repeat the same arguments in the <code>fit_multi</code> function, but include an additional argument <code>nlin</code> set to <code>TRUE</code>.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">nlin1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/epifitter/man/fit_multi.html">fit_multi</a></span><span class="op">(</span>
   time_col <span class="op">=</span> <span class="st">"time"</span>,
   intensity_col <span class="op">=</span> <span class="st">"y"</span>,
@@ -423,7 +418,7 @@
   nlin <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
 <p>Let’s check statistics of model fit.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">nlin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
   <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">model</span>, <span class="va">CCC</span>, <span class="va">RSE</span>, <span class="va">best_model</span><span class="op">)</span></code></pre></div>
 <pre><code>##    treat         model   CCC    RSE best_model
@@ -444,7 +439,7 @@
 ## 15   PD4      Logistic 0.894 0.0508          3
 ## 16   PD4   Exponential 0.884 0.0527          4</code></pre>
 <p>And now we obtain the two parameters of interest. Note that the values are not the sames as those estimated using linear regression, but they are similar and highly correlated.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R">  <span class="va">nlin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Monomolecular"</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="fu">select</span><span class="op">(</span><span class="va">treat</span>, <span class="va">y0</span>, <span class="va">r</span><span class="op">)</span></code></pre></div>
@@ -453,7 +448,7 @@
 ## 2   PD2 -0.634 0.0206
 ## 3   PD3 -0.505 0.0167
 ## 4   PD4 -0.350 0.0109</code></pre>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">p7</span> <span class="op">&lt;-</span> <span class="va">nlin1</span><span class="op">$</span><span class="va">Parameters</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">model</span> <span class="op">==</span> <span class="st">"Monomolecular"</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">treat</span>, <span class="va">r</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -504,19 +499,15 @@ Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>�
 <li><a class="nav-link" href="#initial-setup"><span class="header-section-number">3.1.1</span> Initial setup</a></li>
 <li><a class="nav-link" href="#entering-data"><span class="header-section-number">3.1.2</span> Entering data</a></li>
 <li><a class="nav-link" href="#visualize-the-dpcs"><span class="header-section-number">3.1.3</span> Visualize the DPCs</a></li>
+<li><a class="nav-link" href="#fitting-single-epidemics"><span class="header-section-number">3.1.4</span> Fitting: single epidemics</a></li>
+<li><a class="nav-link" href="#fitting-multiple-epidemics"><span class="header-section-number">3.1.5</span> Fitting: multiple epidemics</a></li>
 </ul>
 </li>
 <li>
-<a class="nav-link" href="#section"><span class="header-section-number">3.2</span></a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#fitting-single-epidemics"><span class="header-section-number">3.2.1</span> Fitting: single epidemics</a></li>
-<li><a class="nav-link" href="#fitting-multiple-epidemics"><span class="header-section-number">3.2.2</span> Fitting: multiple epidemics</a></li>
-</ul>
-</li>
-<li>
-<a class="nav-link" href="#designed-experiments"><span class="header-section-number">3.3</span> Designed experiments</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#loading-data"><span class="header-section-number">3.3.1</span> Loading data</a></li>
-<li><a class="nav-link" href="#visualizing-the-dpcs"><span class="header-section-number">3.3.2</span> Visualizing the DPCs</a></li>
-<li><a class="nav-link" href="#model-fitting"><span class="header-section-number">3.3.3</span> Model fitting</a></li>
+<a class="nav-link" href="#designed-experiments"><span class="header-section-number">3.2</span> Designed experiments</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#loading-data"><span class="header-section-number">3.2.1</span> Loading data</a></li>
+<li><a class="nav-link" href="#visualizing-the-dpcs"><span class="header-section-number">3.2.2</span> Visualizing the DPCs</a></li>
+<li><a class="nav-link" href="#model-fitting"><span class="header-section-number">3.2.3</span> Model fitting</a></li>
 </ul>
 </li>
 </ul>
@@ -535,7 +526,7 @@ Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>�
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2021-02-09.</p>
+    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2021-06-01.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
