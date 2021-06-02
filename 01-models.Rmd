@@ -1,4 +1,4 @@
-# Temporal analysis - models
+# Temporal analysis 
 
 The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time @chapter2017b. These models are usually fitted to disease progress curve data to obtain two or more biologically meaningful parameters.
 
@@ -222,11 +222,11 @@ In this tutorial you will learn how to fit models to multiple actual disease pro
 
 To illustrate, I will use two datasets available from Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We then provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
 
-## Non-replicated
+### Non-replicated
 
 Here we will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days.The data are available in chapter 4 (page 93). Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
 
-### Initial setup
+#### Initial setup
 
 Load essential packages and set parameters recursively.
 
@@ -240,7 +240,7 @@ knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
 options(digits = 3)
 ```
 
-### Entering data
+#### Entering data
 
 ```{r}
 
@@ -260,7 +260,7 @@ pepper <-
 
 ```
 
-### Visualize the DPCs
+#### Visualize the DPCs
 
 Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 ([@chapter2017b] page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
 
@@ -288,7 +288,7 @@ pepper %>%
 
 Most of the three curves show a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily eliminate the monomolecular and exponential models and decide on the other two non-flexible models: logistic or Gompertz. To do that, let's proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the **linear** or **nonlinear** parameter-estimation methods.
 
-### Fitting: single epidemics
+#### Fitting: single epidemics
 
 Among the several options offered by *epifitter* we start with the simplest one, which is fit a model to a single epidemics using the linear regression approach. For such, the `fit_lin()` requires two arguments: time (`time`) and disease intensity (`y`) each one as a vector stored or not in a dataframe.
 
@@ -319,7 +319,7 @@ epi3$Stats
 
 The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is no much difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves.
 
-### Fitting: multiple epidemics
+#### Fitting: multiple epidemics
 
 Before looking at the prediction, let's use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
 
@@ -432,13 +432,13 @@ p1 | p2
 ```
 
 
-## Designed experiments
+### Designed experiments
 
 In this next exercise, we will work with disease data collected over time in the same plot unit (also called repeated measures) from a designed experiment for evaluating and comparing treatment effects.
 
 Again, we will use a dataset of progress curves shown in page 98 [@chapter2017b]. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using `read_csv()` function and stored as dataframe called `budblight`.
 
-### Loading data
+#### Loading data
 
 ```{r, echo = TRUE}
 budblight <- read_csv("data/bud-blight-soybean.csv")
@@ -450,7 +450,7 @@ Let's have a look at the first six rows of the dataset and check the data type f
 head(budblight)
 ```
 
-### Visualizing the DPCs
+#### Visualizing the DPCs
 
 Let's have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.
 
@@ -485,13 +485,13 @@ p4 <- budblight %>%
 p3 | p4
 ```
 
-### Model fitting
+#### Model fitting
 
 Remember that the first step in model selection is the visual appraisal of the curve data linearized with the model transformation. In the case the curves represent complete epidemics (close to 100%) appraisal of the absolute rate (difference in y between two times) over time is also helpful.
 
 For the treatments above, it looks like the curves are typical of a monocyclic disease (the case of soybean bud blight), for which the monomolecular is usually a good fit, but other models are also possible as well. For this exercise, we will use both the linear and the nonlinear estimation method.
 
-#### Linear regression
+##### Linear regression
 
 For convenience, we use the `fit_multi()` to handle multiple epidemics. The function returns a list object where a series of statistics are provided to aid in model selection and parameter estimation. We need to provide the names of columns (arguments): assessment time (`time_col`), disease incidence (`intensity_col`), and treatment (`strata_cols`).
 
@@ -575,7 +575,7 @@ p6 <- lin1$Parameters %>%
 p5 | p2
 ```
 
-#### Non-linear regression
+##### Non-linear regression
 
 To estimate the parameters using the non-linear approach, we repeat the same arguments in the `fit_multi` function, but include an additional argument `nlin` set to `TRUE`.
 
