@@ -1,0 +1,212 @@
+# Spatial gradients
+
+## Models
+
+When modeling disease gradients, the distance is represented by $x$ , a continuous variable expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the **deterministic** type.
+
+### Exponential model
+
+The differential of the exponential model is given by
+
+$\frac{dy}{dx}$ = $-b_{E}.y$
+
+where $b_{E}$ is the exponetial form of the rate of decline and $y$ is the disease intensity. The model suggests that $y$ is greater close to the source of inoculum, or at the distance zero. By means of calculus, the integral form of the model is given by:
+
+$y = a . e^{-b.x}$
+
+where $a$ is the disease intensity at the distance zero and $b$ is the rate of decline, in this case negative because disease intensity decreases with the increase of the distance from inoculum source. Let's see below a plot for two disease gradients of varying parameters.
+
+```{r}
+a1=20     # y at distance zero for gradient 1
+a2=20     # y at distance zero for gradient 2
+b1=0.1    # decline rate for gradient 1
+b2=0.05   # decline rate for gradient 2
+max1=80   # maximum distance for gradient 1
+max2=80   # maximum diestance for gradient 2
+
+{curve(a1*exp(-b1*x), from=0, to=max1, add=F, ylab="Disease intensity", xlab="Distance", lty=1, lwd=3, main="Exponential model")}
+text (18, 3, "bE=0.1", pos=4)
+
+curve(a2*exp(-b2*x),from=0,to=max2, lty=2, lwd=3, add=T) 
+text (15, 10, "bE=0.05", pos=4) 
+```
+
+### Power law model
+
+Also known as potential, inverted potential model or Gregory's model (Gregory was a pioneer in the use this model to describe plant disease gradients). In the power law model, $Y$ is proportional to the power of the distance, and is given by:
+
+$Y = a_{P}.x - b_{P}$
+
+where $a_{P}$ and $b_{P}$ are the two parameters of the power law model. They differ from the exponential because as closer to $x$ is to zero, $Y$ is indefinitely large (not meaningful biologically). However, the model is useful because it produces realistic values at any distance $x$ away from the source. The values of the $a_{P}$ parameter should be interpreted in accord to the scale of $x$, whether in centimeters or meters. If the distance between the source and the first measure away from the source is 0.5m, it is so more appropriate to record the distance in cm than in m or km.
+
+Once $y$ at the distance zero from the source is undefined when using the power law model, this is usually modified by the addition of a positive constant $C$ in $x$:
+
+$Y = a_{P}.(x + C) - b_{P}$
+
+This model is called the modified power law. Here the constant $C$ is of the same unit of $x$. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the $a$ parameter is a theoretical value of $Y$ at the distance $1-C$ from the center of the inoculum source.
+
+Let's see below two gradients with varying parameters:
+
+```{r}
+C=0.5
+a1=20   # y at zero distance for gradient 1
+a2=20   # y at zero distance for gradient 2
+b1=0.5  # decline rate for gradient 1
+b2=0.7  # decline rate for gradient 2
+max1=80 # maximum distance for gradient 1
+max2=80 # maximum distance for gradient 2
+
+curve(a1*((x+C)^-b1), from=0, to=max1, add=F, ylab="Disease intensity", xlab="Distance", lty=1, lwd=3, main="Modified power law")
+text (-5, 3, "bP=0.5", pos=4) 
+
+curve(a2*((x+C)^-b2),from=0,to=max2, lty=2, lwd=3, add=T) 
+text (15, 7, "bP=0.7", pos=4) 
+
+```
+
+The differential equation of the power law model is given by:
+
+$\frac{dy}{dx}$ = $\frac{-b_{P}.Y}{x - C}$
+
+Similar to the exponential model,
+
+Assim como no modelo exponencial, $\frac{dy}{dx}$ is proportional to Y, meaning that the gradient is steeper (more negative) at the highest disease intensity value, normally closer to the source.
+
+## Linearization of the models
+
+### Transformations of y
+
+The gradient models, again similar to the temporal disease models, are **non linear in their parameters**. The model is intrinsically linear if transformations are applied (according to the model) in both sides of the equations. The linear model in its generic state is given by
+
+$y* = a* + bx$ ,
+
+where the asterisk in $a$ indicated that one of the transformations was applied in $y$ that produced the linear model. Note that $a*$ is the transformed version of the initial disease intensity, which needs to be returned to the original scale according to the respective back-transformation. Follows the linearized form of the two most common gradient models.
+
+$ln(y) = ln(a_{E}) - b_{E}. x$
+
+$ln(y) = ln(a_{P}) - b_{E}. ln(x+C)$
+
+### Plot for the linearized form of models
+
+Let's visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note que the transformation used was $ln(y)$.
+
+```{r}
+a1=20   
+a2=20   
+b1=0.1     
+b2=0.05    
+max1=80    
+max2=80    
+
+curve(log(a1) - b1*x, from=0, to=max1, add=F, ylab="Log of the disease intensity", xlab="Distance", lty=1, lwd=3, main="Linearization of the exponential model")
+
+curve(log(a2) - b2*x,from=0,to=max2, lty=2, lwd=3, add=T) 
+ 
+```
+
+Follows the linearization of the modified power law model.
+
+```{r}
+C=0.5
+a1=20   
+a2=20  
+b1=0.5    
+b2=0.7    
+max1=80   
+max2=80    
+ 
+
+curve(log(a1)-(b1*log(x+C)), from=0, add=F, ylab="Log of the disease intensity", xlab="Distance", lty=1, lwd=3, main="Linearization of the modified Power law ")
+
+
+curve(log(a2)-(b2*log(x+C)),from=0, lty=2, lwd=3, add=T) 
+ 
+```
+
+## Model fitting 
+
+### Dataset
+
+The hypothetical data below shows a gradient for the number of lesions counted at varying distances from the source. Let's create two vectors, one for the distances $x$ and the other for the lesion count $Y$, and then a dataframe by combining the two vectors.
+
+```{r}
+# create the two vectors
+x = c(0.8, 1.6, 2.4, 3.2, 4, 7.2, 12, 15.2, 21.6, 28.8)
+Y = c(184.9, 113.3, 113.3, 64.1, 25, 8, 4.3, 2.5, 1, 0.8)
+grad1 = data.frame(x,Y)   # create the dataframe
+grad1                     # show the gradient
+```
+
+### Visualize the gradient
+
+```{r}
+plot(Y ~ x, data=grad1, main="", type=c("o"), ylab="Lesion count", xlab="Distancia (m)")
+
+
+```
+
+### Linear regression
+
+Exponential model 
+
+```{r}
+reg_exp = lm(log(Y) ~ x, data=grad1)
+summary(reg_exp)
+```
+
+Power law model with $C = 0$.
+
+```{r}
+reg_p = lm(log(Y) ~ log(x), data=grad1)
+summary(reg_p)
+```
+
+Power law model with $C = 0.4$.
+
+```{r}
+reg_pm = lm(log(Y) ~ log(x+0.4), data=grad1)
+summary(reg_pm) 
+```
+
+
+Graphs for the fitted model
+
+
+
+```{r}
+plot (log(Y)~x)
+abline(reg_exp)
+```
+
+
+```{r}
+plot (log(Y)~log(x))
+abline(reg_p)
+```
+
+
+```{r}
+plot (log(Y)~log(x+0.4))
+abline(reg_pm)
+```
+
+Plots for the model residuals
+
+
+```{r}
+plot (reg_pm$residuals ~ log(x+0.4))
+```
+
+
+```{r}
+plot (reg_p$residuals ~ log(x))
+```
+
+
+```{r}
+plot (reg_exp$residuals ~ x)
+
+
+
+
+```

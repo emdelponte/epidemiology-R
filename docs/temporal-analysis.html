@@ -33,6 +33,7 @@
         <ul class="book-toc list-unstyled">
 <li><a class="" href="index.html"><span class="header-section-number">1</span> Welcome</a></li>
 <li><a class="active" href="temporal-analysis.html"><span class="header-section-number">2</span> Temporal analysis</a></li>
+<li><a class="" href="spatial-gradients.html"><span class="header-section-number">3</span> Spatial gradients</a></li>
 </ul>
 
         <div class="book-extra">
@@ -44,7 +45,7 @@
 <h1>
 <span class="header-section-number">2</span> Temporal analysis<a class="anchor" aria-label="anchor" href="#temporal-analysis"><i class="fas fa-link"></i></a>
 </h1>
-<p>The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time <span class="citation"><a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch</a> (<a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span>. These models are usually fitted to disease progress curve data to obtain two or more biologically meaningful parameters.</p>
+<p>The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time <span class="citation"><a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch</a> (<a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span>. These models are usually fitted to disease progress curve data to obtain two or more biologically meaningful parameters.</p>
 <p>In this tutorial, these models and their formulations are shown using R scripts to simulate the theoretical curves for each model. The reader should be capable of opening R or RStudio software and reproduce the analysis by copying and pasting the codes. Hence, a very basic knowledge of R is required.</p>
 <blockquote>
 <p>Note that I use <a href="https://r4ds.had.co.nz/pipes.html">pipes</a> in my programming to express a sequence of multiple operations in a more intuitive way.</p>
@@ -61,7 +62,7 @@
 <span class="header-section-number">2.1</span> Non-flexible models<a class="anchor" aria-label="anchor" href="#non-flexible-models"><i class="fas fa-link"></i></a>
 </h2>
 <p>These population dynamics models require at least two parameters, hence they are known as non-flexible, as opposed to the flexible ones for which there are at least one additional (third) parameter.</p>
-<p>Following the convention proposed by <span class="citation">(<a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span> in their book “The study of plant disease epidemics”:</p>
+<p>Following the convention proposed by <span class="citation">(<a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span> in their book “The study of plant disease epidemics”:</p>
 <ul>
 <li><p>time is represented by <span class="math inline">\(t\)</span></p></li>
 <li><p>disease intensity by <span class="math inline">\(y\)</span></p></li>
@@ -221,7 +222,7 @@
 <span class="header-section-number">2.2</span> Model fitting<a class="anchor" aria-label="anchor" href="#model-fitting"><i class="fas fa-link"></i></a>
 </h2>
 <p>In this tutorial you will learn how to fit models to multiple actual disease progress curves (DPCs) data obtained from the literature. I will demonstrate how to fit and select the models using a new R package called <em>epifitter</em>. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.</p>
-<p>To illustrate, I will use two datasets available from Chapter 3 from the book, <em>Study of Plant Disease Epidemics</em> <span class="citation">(<a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. In the book, SAS codes are presented to perform a few analysis. We then provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.</p>
+<p>To illustrate, I will use two datasets available from Chapter 3 from the book, <em>Study of Plant Disease Epidemics</em> <span class="citation">(<a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. In the book, SAS codes are presented to perform a few analysis. We then provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.</p>
 <div id="non-replicated" class="section level3" number="2.2.1">
 <h3>
 <span class="header-section-number">2.2.1</span> Non-replicated<a class="anchor" aria-label="anchor" href="#non-replicated"><i class="fas fa-link"></i></a>
@@ -263,7 +264,7 @@
 <h4>
 <span class="header-section-number">2.2.1.3</span> Visualize the DPCs<a class="anchor" aria-label="anchor" href="#visualize-the-dpcs"><i class="fas fa-link"></i></a>
 </h4>
-<p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation">(<a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
+<p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation">(<a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
 <p>Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the tidyverse-suitable format, which is the long format. The <code>pivot_longer</code> function will do the job of reshaping from wide to long format so we can finally use the <code>ggplot</code> function to produce the plot.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">pepper</span> <span class="op">%&gt;%</span> 
@@ -431,7 +432,7 @@
 <span class="header-section-number">2.2.2</span> Designed experiments<a class="anchor" aria-label="anchor" href="#designed-experiments"><i class="fas fa-link"></i></a>
 </h3>
 <p>In this next exercise, we will work with disease data collected over time in the same plot unit (also called repeated measures) from a designed experiment for evaluating and comparing treatment effects.</p>
-<p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation">(<a href="temporal-analysis.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
+<p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation">(<a href="spatial-gradients.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
 <div id="loading-data" class="section level4" number="2.2.2.1">
 <h4>
 <span class="header-section-number">2.2.2.1</span> Loading data<a class="anchor" aria-label="anchor" href="#loading-data"><i class="fas fa-link"></i></a>
@@ -653,11 +654,6 @@
 <span class="va">p7</span> <span class="op">|</span> <span class="va">p8</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-36-1.png" width="672"></div>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-chapter2017b" class="csl-entry">
-Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>“CHAPTER 4: Temporal Analysis i: Quantifying and Comparing Epidemics.”</span> In, 63–116. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058.004">https://doi.org/10.1094/9780890545058.004</a>.
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -665,7 +661,7 @@ Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>�
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="index.html"><span class="header-section-number">1</span> Welcome</a></div>
-<div class="empty"></div>
+<div class="next"><a href="spatial-gradients.html"><span class="header-section-number">3</span> Spatial gradients</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -700,7 +696,7 @@ Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>�
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2021-06-01.</p>
+    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2021-06-20.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
