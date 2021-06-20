@@ -16,19 +16,45 @@ $y = a . e^{-b.x}$
 
 where $a$ is the disease intensity at the distance zero and $b$ is the rate of decline, in this case negative because disease intensity decreases with the increase of the distance from inoculum source. Let's see below a plot for two disease gradients of varying parameters.
 
+Let's start loading essential packages for programming, customizing the outputs and defining a global ggplot theme.
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggthemes)
+library(patchwork)
+theme_set(theme_light())
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+```
+
+Set the parameters for the gradient.
+
 ```{r}
-a1=20     # y at distance zero for gradient 1
-a2=20     # y at distance zero for gradient 2
+a1=0.2    # y at distance zero for gradient 1
+a2=0.2    # y at distance zero for gradient 2
 b1=0.1    # decline rate for gradient 1
 b2=0.05   # decline rate for gradient 2
 max1=80   # maximum distance for gradient 1
-max2=80   # maximum diestance for gradient 2
+max2=80   # maximum distance for gradient 2
+dat <- data.frame(x = seq(1:max1), y = seq(0:a1))
+```
 
-{curve(a1*exp(-b1*x), from=0, to=max1, add=F, ylab="Disease intensity", xlab="Distance", lty=1, lwd=3, main="Exponential model")}
-text (18, 3, "bE=0.1", pos=4)
+Visualize the two gradient models with two parameters.
 
-curve(a2*exp(-b2*x),from=0,to=max2, lty=2, lwd=3, add=T) 
-text (15, 10, "bE=0.05", pos=4) 
+```{r}
+
+dat %>%
+  ggplot(aes(x, y)) +
+  stat_function(fun = function(x) a1 * exp(-b1 * x), linetype = 1) +
+  stat_function(fun = function(x) a2 * exp(-b2 * x), linetype = 2) +
+  ylim(0, a1) +
+  annotate("text", x = 20, y = 0.04, label = "b = 0.1")+ 
+  annotate("text", x = 20, y = 0.10, label = "b = 0.05")+ 
+    labs(
+    title = "Exponential model",
+    subtitle = "",
+    x = "Distance (m)",
+    y = "Disease incidence"
+  )
 ```
 
 ### Power law model
@@ -49,20 +75,30 @@ Let's see below two gradients with varying parameters:
 
 ```{r}
 C=0.5
-a1=20   # y at zero distance for gradient 1
-a2=20   # y at zero distance for gradient 2
+a1=0.2   # y at zero distance for gradient 1
+a2=0.2  # y at zero distance for gradient 2
 b1=0.5  # decline rate for gradient 1
 b2=0.7  # decline rate for gradient 2
 max1=80 # maximum distance for gradient 1
 max2=80 # maximum distance for gradient 2
+dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
 
-curve(a1*((x+C)^-b1), from=0, to=max1, add=F, ylab="Disease intensity", xlab="Distance", lty=1, lwd=3, main="Modified power law")
-text (-5, 3, "bP=0.5", pos=4) 
 
-curve(a2*((x+C)^-b2),from=0,to=max2, lty=2, lwd=3, add=T) 
-text (15, 7, "bP=0.7", pos=4) 
-
+dat2 %>%
+  ggplot(aes(x, y)) +
+  stat_function(fun = function(x) a1 * ((x+C)^-b1), linetype = 1) +
+  stat_function(fun = function(x) a2 * ((x+C)^-b2), linetype = 2) +
+  ylim(0, a1-0.02) +
+  annotate("text", x = 20, y = 0.03, label = "b = 0.1")+ 
+  annotate("text", x = 20, y = 0.06, label = "b = 0.05")+ 
+    labs(
+    title = "Exponential model",
+    subtitle = "",
+    x = "Distance (m)",
+    y = "Disease incidence"
+  )
 ```
+
 
 The differential equation of the power law model is given by:
 
@@ -90,20 +126,7 @@ $ln(y) = ln(a_{P}) - b_{E}. ln(x+C)$
 
 Let's visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note que the transformation used was $ln(y)$.
 
-```{r}
-a1=20   
-a2=20   
-b1=0.1     
-b2=0.05    
-max1=80    
-max2=80    
-
-curve(log(a1) - b1*x, from=0, to=max1, add=F, ylab="Log of the disease intensity", xlab="Distance", lty=1, lwd=3, main="Linearization of the exponential model")
-
-curve(log(a2) - b2*x,from=0,to=max2, lty=2, lwd=3, add=T) 
- 
-```
-
+  
 Follows the linearization of the modified power law model.
 
 ```{r}
@@ -123,7 +146,7 @@ curve(log(a2)-(b2*log(x+C)),from=0, lty=2, lwd=3, add=T)
  
 ```
 
-## Model fitting 
+## Model fitting
 
 ### Dataset
 
@@ -140,14 +163,14 @@ grad1                     # show the gradient
 ### Visualize the gradient
 
 ```{r}
-plot(Y ~ x, data=grad1, main="", type=c("o"), ylab="Lesion count", xlab="Distancia (m)")
+plot(Y ~ x, data=grad1, main="", type=c("o"), ylab="Lesion count", xlab="Distance (m)")
 
 
 ```
 
 ### Linear regression
 
-Exponential model 
+Exponential model
 
 ```{r}
 reg_exp = lm(log(Y) ~ x, data=grad1)
@@ -168,22 +191,17 @@ reg_pm = lm(log(Y) ~ log(x+0.4), data=grad1)
 summary(reg_pm) 
 ```
 
-
 Graphs for the fitted model
-
-
 
 ```{r}
 plot (log(Y)~x)
 abline(reg_exp)
 ```
 
-
 ```{r}
 plot (log(Y)~log(x))
 abline(reg_p)
 ```
-
 
 ```{r}
 plot (log(Y)~log(x+0.4))
@@ -192,16 +210,13 @@ abline(reg_pm)
 
 Plots for the model residuals
 
-
 ```{r}
 plot (reg_pm$residuals ~ log(x+0.4))
 ```
 
-
 ```{r}
 plot (reg_p$residuals ~ log(x))
 ```
-
 
 ```{r}
 plot (reg_exp$residuals ~ x)
