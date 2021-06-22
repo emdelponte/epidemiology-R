@@ -31,7 +31,7 @@ library(tidyverse)
 library(ggthemes)
 library(patchwork)
 theme_set(theme_light())
-knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
 ## Non-flexible models
@@ -63,8 +63,8 @@ $y = y_0 e^{r_Et}$,
 where $y0$ is and $r$ are obtained via estimation. Let's simulate two curves by varying $r$ while fixing $y0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the \`stat_function\`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum in half, etc.).
 
 ```{r}
-y0 <- 0.001 
-r <- 0.06 
+y0 <- 0.001
+r <- 0.06
 tmax <- 60 # maximum duration t of the epidemics
 dat <- data.frame(t = seq(1:tmax), y = seq(0:1)) # define the axes
 ```
@@ -83,7 +83,6 @@ dat %>%
     subtitle = "2 times r (dashed) same y0",
     x = "Time"
   )
-
 ```
 
 Now the inoculum was increased five times while using the same doubled rate.
@@ -94,9 +93,10 @@ dat %>%
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 1) +
   stat_function(fun = function(t) y0 * 5 * exp(r * 2 * t), linetype = 2) +
   ylim(0, 1) +
-  labs(title = "Exponential model", x = "Time",
-       subtitle = "5 times y0 (dashed) same r")
-
+  labs(
+    title = "Exponential model", x = "Time",
+    subtitle = "5 times y0 (dashed) same r"
+  )
 ```
 
 ### Monomolecular
@@ -120,9 +120,10 @@ dat %>%
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r * t))) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-(r / 3) * t))) +
-  labs(title = "Monomolecular model",
-         subtitle = "Fixed y0 = 0.001", x = "Time"
-       ) +
+  labs(
+    title = "Monomolecular model",
+    subtitle = "Fixed y0 = 0.001", x = "Time"
+  ) +
   annotate(geom = "text", x = 35, y = 0.77, label = "r = 0.06") +
   annotate(geom = "text", x = 50, y = 0.55, label = "r = 0.02")
 ```
@@ -134,11 +135,12 @@ dat %>%
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r / 2 * t))) +
   stat_function(fun = function(t) 1 - ((1 - (y0 * 100)) * exp(-r / 2 * t))) +
-  labs(title = "Monomolecular model", 
-       subtitle = "Fixed r = 0.06", x = "Time") +
+  labs(
+    title = "Monomolecular model",
+    subtitle = "Fixed r = 0.06", x = "Time"
+  ) +
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.01") +
   annotate(geom = "text", x = 45, y = 0.65, label = "y0 = 0.001")
-
 ```
 
 ### Logistic
@@ -185,8 +187,6 @@ dat %>%
   labs(title = "Logistic model", subtitle = "Fixed r = 0.24", x = "Time") +
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 50, y = 0.10, label = "y0 = 0.0001")
-
-
 ```
 
 ### Gompertz
@@ -208,9 +208,9 @@ dat %>%
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
-    fun = function(t) exp(log(y0) * exp(-r/2 * t))
+    fun = function(t) exp(log(y0) * exp(-r / 2 * t))
   ) +
-  stat_function(fun = function(t) exp(log(y0) * exp(-r*2 * t))) +
+  stat_function(fun = function(t) exp(log(y0) * exp(-r * 2 * t))) +
   labs(title = "Gompertz model", subtitle = "Fixed y0 = 0.001", x = "Time") +
   annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.12") +
   annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.03")
@@ -223,13 +223,10 @@ dat %>%
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
-    fun = function(t) exp(log(y0) * exp(-r*2 * t))
+    fun = function(t) exp(log(y0) * exp(-r * 2 * t))
   ) +
-  stat_function(fun = function(t) exp(log(y0/1000) * exp(-r*2 * t))) +
+  stat_function(fun = function(t) exp(log(y0 / 1000) * exp(-r * 2 * t))) +
   labs(title = "Gompertz model", subtitle = "Fixed r = 0.12", x = "Time") +
   annotate(geom = "text", x = 15, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 25, y = 0.10, label = "y0 = 0.00001")
-
-
-
 ```

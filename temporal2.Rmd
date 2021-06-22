@@ -34,7 +34,7 @@ library(knitr)
 library(patchwork)
 library(ggthemes)
 theme_set(theme_few())
-knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
 options(digits = 3)
 ```
 
@@ -42,20 +42,18 @@ options(digits = 3)
 
 ```{r}
 
-pepper <- 
+pepper <-
   tibble::tribble(
-   ~t,  ~`1`,  ~`2`,  ~`3`,
-   0,  0.08, 0.001, 0.001,
-   7,  0.13,  0.01, 0.001,
-  14,  0.78,  0.09,  0.01,
-  21,  0.92,  0.25,  0.05,
-  28,  0.99,   0.8,  0.18,
-  35, 0.995,  0.98,  0.34,
-  42, 0.999,  0.99,  0.48,
-  49, 0.999, 0.999,  0.74
-  ) 
-
-
+    ~t, ~`1`, ~`2`, ~`3`,
+    0, 0.08, 0.001, 0.001,
+    7, 0.13, 0.01, 0.001,
+    14, 0.78, 0.09, 0.01,
+    21, 0.92, 0.25, 0.05,
+    28, 0.99, 0.8, 0.18,
+    35, 0.995, 0.98, 0.34,
+    42, 0.999, 0.99, 0.48,
+    49, 0.999, 0.999, 0.74
+  )
 ```
 
 ## Visualize the DPCs
@@ -65,22 +63,24 @@ Before proceeding with model selection and fitting, let's visualize the three ep
 Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the tidyverse-suitable format, which is the long format. The `pivot_longer` function will do the job of reshaping from wide to long format so we can finally use the `ggplot` function to produce the plot.
 
 ```{r, echo = TRUE}
-   
-pepper %>% 
-  pivot_longer(2:4, names_to ="treat", values_to = "inc") %>% 
-  ggplot (aes(t, inc, 
-              linetype = treat, 
-              shape = treat, 
-              group = treat))+
-  geom_point(size =2)+
-  geom_line()+
-  annotate(geom = "text", x = 15, y = 0.84, label = "1")+
-  annotate(geom = "text", x = 23, y = 0.6, label = "2")+
-  annotate(geom = "text", x = 32, y = 0.33, label = "3")+
-  labs(y = "Disease incidence (y)",
-       x = "Time (days)")+
-  theme(legend.position = "none")
 
+pepper %>%
+  pivot_longer(2:4, names_to = "treat", values_to = "inc") %>%
+  ggplot(aes(t, inc,
+    linetype = treat,
+    shape = treat,
+    group = treat
+  )) +
+  geom_point(size = 2) +
+  geom_line() +
+  annotate(geom = "text", x = 15, y = 0.84, label = "1") +
+  annotate(geom = "text", x = 23, y = 0.6, label = "2") +
+  annotate(geom = "text", x = 32, y = 0.33, label = "3") +
+  labs(
+    y = "Disease incidence (y)",
+    x = "Time (days)"
+  ) +
+  theme(legend.position = "none")
 ```
 
 Most of the three curves show a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily eliminate the monomolecular and exponential models and decide on the other two non-flexible models: logistic or Gompertz. To do that, let's proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the **linear** or **nonlinear** parameter-estimation methods.
@@ -94,24 +94,27 @@ Since we have three epidemics, `fit_lin()` will be use three times. The function
 ```{r}
 library(epifitter)
 
-epi1 <- fit_lin(time = pepper$t,  
-  y = pepper$`1` )
+epi1 <- fit_lin(
+  time = pepper$t,
+  y = pepper$`1`
+)
 epi1$Stats
-
-
 ```
 
 ```{r}
-epi2 <- fit_lin(time = pepper$t,  
-  y = pepper$`2` )
+epi2 <- fit_lin(
+  time = pepper$t,
+  y = pepper$`2`
+)
 epi2$Stats
 ```
 
 ```{r}
-epi3 <- fit_lin(time = pepper$t,  
-  y = pepper$`3` )
+epi3 <- fit_lin(
+  time = pepper$t,
+  y = pepper$`3`
+)
 epi3$Stats
-
 ```
 
 The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is no much difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves.
@@ -123,10 +126,8 @@ Before looking at the prediction, let's use another handy function that allows u
 Let's then create a new data set called `pepper2` using the data transposing functions of the *tidyr* package.
 
 ```{r}
-pepper2 <- pepper %>% 
-  pivot_longer(2:4, names_to ="treat", values_to = "inc")
-
-
+pepper2 <- pepper %>%
+  pivot_longer(2:4, names_to = "treat", values_to = "inc")
 ```
 
 Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in `strata_cols` argument.
@@ -139,15 +140,12 @@ epi_all <- fit_multi(
   strata_cols = "treat",
   nlin = FALSE
 )
-
-
-
 ```
 
 Now let's select the statistics of model fitting. Again, *Epifitter* ranks the models based on the CCC (the higher the better) but it is important to check the RSE as well - the lower the better. In fact, the RSE is more important when the goal is prediction.
 
 ```{r echo=TRUE}
-epi_all$Parameters %>% 
+epi_all$Parameters %>%
   select(treat, model, best_model, RSE, CCC)
 ```
 
@@ -155,12 +153,12 @@ To be more certain about our decision, let's advance to the final step which is 
 
 ```{r, echo = TRUE}
 epi_all$Data %>%
- filter(model %in% c("Gompertz", "Logistic")) %>% 
+  filter(model %in% c("Gompertz", "Logistic")) %>%
   ggplot(aes(time, predicted, shape = treat)) +
   geom_point(aes(time, y)) +
   geom_line() +
-  facet_wrap(~ model) +
- coord_cartesian(ylim = c(0, 1)) + # set the max to 0.6
+  facet_wrap(~model) +
+  coord_cartesian(ylim = c(0, 1)) + # set the max to 0.6
   labs(
     y = "Disease incidence",
     x = "Time (days after emergence)"
@@ -171,13 +169,13 @@ Overall, the logistic model seems a better fit for all the curves. Let's produce
 
 ```{r echo=TRUE}
 epi_all$Data %>%
- filter(model %in% c("Gompertz", "Logistic")) %>% 
-  ggplot(aes(time, predicted -y, shape = treat)) +
+  filter(model %in% c("Gompertz", "Logistic")) %>%
+  ggplot(aes(time, predicted - y, shape = treat)) +
   geom_point() +
   geom_line() +
-  geom_hline(yintercept = 0, linetype =2)+
-  facet_wrap(~ model) +
- coord_cartesian(ylim = c(-0.4, 0.4)) + # set the max to 0.6
+  geom_hline(yintercept = 0, linetype = 2) +
+  facet_wrap(~model) +
+  coord_cartesian(ylim = c(-0.4, 0.4)) + # set the max to 0.6
   labs(
     y = "Prediction error",
     x = "Time (days after emergence)"
@@ -188,10 +186,9 @@ The plots above confirms the logistic model as good fit overall because the erro
 
 ```{r, echo = TRUE}
 
-  epi_all$Parameters %>%
-    filter(model == "Logistic") %>%
-    select(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr 
-)
+epi_all$Parameters %>%
+  filter(model == "Logistic") %>%
+  select(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr)
 ```
 
 We can produce a plot for visual inference on the differences in the parameters.
@@ -225,5 +222,4 @@ p2 <- epi_all$Parameters %>%
   )
 
 p1 | p2
-
 ```

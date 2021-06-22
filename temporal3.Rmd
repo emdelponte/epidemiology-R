@@ -46,11 +46,12 @@ p3 <- budblight %>%
   )) +
   geom_point(size = 1.5) +
   ylim(0, 0.6) +
-  theme(legend.position = "none")+
-  facet_wrap(~treat, ncol =1)+
-  labs(y = "Disease incidence",
-       x = "Time (days after emergence)")
-  
+  theme(legend.position = "none") +
+  facet_wrap(~treat, ncol = 1) +
+  labs(
+    y = "Disease incidence",
+    x = "Time (days after emergence)"
+  )
 ```
 
 ```{r echo=TRUE}
@@ -62,7 +63,7 @@ p4 <- budblight %>%
   )) +
   geom_point(size = 2) +
   facet_wrap(~treat, ncol = 1) +
-  theme(legend.position = "none")+
+  theme(legend.position = "none") +
   labs(y = "Transformed incidence", x = "Time (days after emergence)")
 
 library(patchwork)
@@ -94,8 +95,8 @@ Let's look at how well the four models fitted the data. Epifitter suggests the b
 
 ```{r, echo = TRUE}
 
-lin1$Parameters %>% 
-select(treat, best_model, model, CCC, RSE)
+lin1$Parameters %>%
+  select(treat, best_model, model, CCC, RSE)
 ```
 
 And now we extract values for each parameter estimated from the fit of the monomolecular model.
@@ -103,9 +104,8 @@ And now we extract values for each parameter estimated from the fit of the monom
 ```{r, echo = TRUE}
 
 lin1$Parameters %>%
-filter(model == "Monomolecular") %>%
-select(treat, y0, r)
-
+  filter(model == "Monomolecular") %>%
+  select(treat, y0, r)
 ```
 
 Now we visualize the fit of the monomolecular model (using `filter` function - see below) to the data together with the observed data and then reproduce the right plots in Fig. 4.17 from the book.
@@ -155,7 +155,7 @@ p6 <- lin1$Parameters %>%
     y = "y0"
   )
 
-p5 
+p5
 ```
 
 ##### Non-linear regression
@@ -183,10 +183,9 @@ And now we obtain the two parameters of interest. Note that the values are not t
 
 ```{r, echo = TRUE}
 
-  nlin1$Parameters %>%
-    filter(model == "Monomolecular") %>%
-    select(treat, y0, r)
-
+nlin1$Parameters %>%
+  filter(model == "Monomolecular") %>%
+  select(treat, y0, r)
 ```
 
 ```{r, echo = TRUE}
