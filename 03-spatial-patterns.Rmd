@@ -1,0 +1,153 @@
+# Spatial patterns
+
+## Introduction
+
+A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
+
+The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.
+
+The patterns can be classified into two main types that occur naturally: random or aggregated. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.
+
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the type of data collected: position of diseased units within a row or series of rows; quadrat or plot count data; or distance among the diseased units.
+
+
+## Position within a row
+
+
+```{r, message=FALSE, warning=FALSE}
+# carrega os pacotes
+library(tidyverse)
+library(readxl)
+library(epiphy)
+theme_set(theme_minimal())
+```
+
+
+```{r}
+data_tomato <- tomato_tswv$field_1928
+```
+
+```{r}
+data_tomato %>% 
+  filter(variety == "Burwood-Prize") %>% 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile()+
+ facet_grid(irrigation ~ t)+
+  scale_fill_grey(start = 0.8, end = 0.2)
+```
+
+```{r}
+data_tomato %>% 
+  group_by(variety, irrigation, t) %>% 
+  summarize(inc = sum(i/n())) %>% 
+  ggplot(aes(t, inc, color = irrigation))+
+  geom_point()+
+  geom_line()+
+  facet_wrap(~variety)+
+  theme(legend.position = "top")
+  
+```
+
+
+## Runs analysis
+
+Prepare the data. Let's work only with one variety, one irrigation type at time 5.
+
+
+```{r}
+dat_runs1 <- data_tomato %>% 
+  filter(variety == "Burwood-Prize" &
+           t == 5 &
+           irrigation == "overhead-sprays")
+head(dat_runs1)
+```
+
+```{r}
+dat_runs1 %>% 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile()+
+  coord_fixed()+
+  scale_fill_grey(start = 0.8, end = 0.2)+
+  labs(fill = "Status", title = "Burwood-Prize var", subtitle = "overhead-sprays, time 2")
+
+```
+
+### Using randtests package
+
+```{r}
+library(randtests)
+
+# Pull the binary data
+
+S1 <- dat_runs1 %>% 
+  filter(x == 1) %>% 
+  pull(i)
+
+# run the runs.test function
+run1 <- runs.test(S1, threshold = 0.5)
+run1
+
+
+```
+
+### Doublets
+
+```{r}
+# matrix for each pair
+matrix <- cbind(S[-length(S)], S[-1])
+
+# count the number of pairs
+pairs <- table(data.frame(matrix))
+
+# number of doublets
+Db <- pairs[2,2]
+Db
+# Total n of plants
+N <- length(S) 
+N
+# N. of diseased plants
+d = sum(S) # N. of diseased plants
+d
+# Expected n. of doublets
+NEDb = d *((d -1)/N) ## Expected valued
+NEDb
+# ESO standard deviation
+DPDb = sqrt ( NEDb * (1 - (2 / N)))
+DPDb
+#  Z statistics
+ZDb = (Db - NEDb)/ DPDb ## Standardized values
+ZDb
+# p-value for Z score 
+pvalue <- 1-(pnorm(abs(ZDb)))
+pvalue
+result <- ifelse(ZDb >= 1.64, 
+c("A"), c("R")) # Aggregated or Random
+result
+
+```
+
+### Joint count
+
+
+```{r,message=FALSE,warning=FALSE}
+
+dat_runs1 <- data_tomato %>% 
+  filter(variety == "Burwood-Prize" &
+           t == 5 &
+           irrigation == "overhead-sprays")
+dat_runs1
+
+S <- dat_runs1$i
+
+library (spdep)
+
+nb <- cell2nb(14, 33, 
+              type="rook", 
+              torus=FALSE)
+
+jc_rook <- joincount.test(factor(S), nb2listw(nb, style="B"))
+
+jc_rook
+
+joincount.mc(factor(S), nb2listw(nb, style="B"), nsim = 1000)
+```

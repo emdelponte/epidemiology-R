@@ -6,9 +6,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Chapter 3 Spatial gradients | R4PDE</title>
 <meta name="author" content="Emerson M. Del Ponte">
-<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.9/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.2"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/header-attrs-2.11/header-attrs.js"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
-<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.2.5.1/tabs.js"></script><script src="libs/bs3compat-0.2.5.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.3.1/transition.js"></script><script src="libs/bs3compat-0.3.1/tabs.js"></script><script src="libs/bs3compat-0.3.1/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
 <script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/mark.js@8.11.1/dist/mark.min.js"></script><!-- CSS -->
 </head>
 <body data-spy="scroll" data-target="#toc">
@@ -34,6 +34,7 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> Welcome</a></li>
 <li><a class="" href="temporal-analysis.html"><span class="header-section-number">2</span> Temporal analysis</a></li>
 <li><a class="active" href="spatial-gradients.html"><span class="header-section-number">3</span> Spatial gradients</a></li>
+<li><a class="" href="spatial-patterns.html"><span class="header-section-number">4</span> Spatial patterns</a></li>
 </ul>
 
         <div class="book-extra">
@@ -49,7 +50,7 @@
 <h2>
 <span class="header-section-number">3.1</span> Models<a class="anchor" aria-label="anchor" href="#models"><i class="fas fa-link"></i></a>
 </h2>
-<p>When modeling disease gradients, the distance is represented by <span class="math inline">\(x\)</span> , a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the <strong>deterministic</strong> type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained it <a href="https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx">this tutorial.</a></p>
+<p>When modeling disease gradients, the distance is represented by <span class="math inline">\(x\)</span>, a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the <strong>deterministic</strong> type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained it <a href="https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx">this tutorial.</a></p>
 <div id="exponential-model" class="section level3" number="3.1.1">
 <h3>
 <span class="header-section-number">3.1.1</span> Exponential model<a class="anchor" aria-label="anchor" href="#exponential-model"><i class="fas fa-link"></i></a>
@@ -101,7 +102,7 @@
 <p>where <span class="math inline">\(a_{P}\)</span> and <span class="math inline">\(b_{P}\)</span> are the two parameters of the power law model. They differ from the exponential because as closer to <span class="math inline">\(x\)</span> is to zero, <span class="math inline">\(Y\)</span> is indefinitely large (not meaningful biologically). However, the model can still be useful because it produces realistic values at any distance <span class="math inline">\(x\)</span> away from the source. The values of the <span class="math inline">\(a_{P}\)</span> parameter should be interpreted in accord to the scale of <span class="math inline">\(x\)</span>, whether in centimeters or meters. If the distance between the source and the first measure away from the source is 0.5m, it is so more appropriate to record the distance in cm than in m or km.</p>
 <p>Once <span class="math inline">\(y\)</span> at the distance zero from the source is undefined when using the power law model, this is usually modified by the addition of a positive constant <span class="math inline">\(C\)</span> in <span class="math inline">\(x\)</span>:</p>
 <p><span class="math inline">\(Y = a_{P}.(x + C) - b_{P}\)</span></p>
-<p>For this reason, the model is named as the modified power law. Here the constant <span class="math inline">\(C\)</span> is of the same unit of <span class="math inline">\(x\)</span>. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the <span class="math inline">\(a\)</span> parameter is a theoretical value of <span class="math inline">\(Y\)</span> at the distance <span class="math inline">\(1-C\)</span> from the center of the inoculum source.</p>
+<p>For this reason, the model is named as the modified power law. Here, the constant <span class="math inline">\(C\)</span> is of the same unit of <span class="math inline">\(x\)</span>. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the <span class="math inline">\(a\)</span> parameter is a theoretical value of <span class="math inline">\(Y\)</span> at the distance <span class="math inline">\(1-C\)</span> from the center of the inoculum source.</p>
 <p>Let’s plot two gradients with two rate parameters for the modified power law model:</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">C</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
@@ -128,11 +129,7 @@
     y <span class="op">=</span> <span class="st">"Disease incidence"</span>
   <span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-40-1.png" width="672"></div>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:spatial-gradient.Rmd
-The differential equation of the modified power law model is given by:
-=======</p>
-<p>The differential equation of the power law model is given by:
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; parent of 255e368 (big change to distill website!):02-spatial-gradients.Rmd</p>
+<p>The differential equation of the power law model is given by:</p>
 <p><span class="math inline">\(\frac{dy}{dx}\)</span> = <span class="math inline">\(\frac{-b_{P}.Y}{x - C}\)</span></p>
 <p>Similar to the exponential model, <span class="math inline">\(\frac{dy}{dx}\)</span> is proportional to <span class="math inline">\(Y\)</span>, meaning that the gradient is steeper (more negative) at the highest disease intensity value, usually closer to the source.</p>
 </div>
@@ -155,12 +152,8 @@ The differential equation of the modified power law model is given by:
 <h3>
 <span class="header-section-number">3.2.2</span> Plot for the linearized form of models<a class="anchor" aria-label="anchor" href="#plot-for-the-linearized-form-of-models"><i class="fas fa-link"></i></a>
 </h3>
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD:spatial-gradient.Rmd
-Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was <span class="math inline">\(ln(y)\)</span>.
-=======
-Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note que the transformation used was <span class="math inline">\(ln(y)\)</span>.</p>
-<p>Follows the linearization of the modified power law model.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; parent of 255e368 (big change to distill website!):02-spatial-gradients.Rmd</p>
+<p>Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was <span class="math inline">\(ln(y)\)</span>.</p>
+<p>Follows the linearization of the modified power law model.</p>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">C</span> <span class="op">&lt;-</span> <span class="fl">0.5</span>
 <span class="va">a1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span>
@@ -348,19 +341,14 @@ Let’s visualize the linearization of the exponential model with two different 
  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">"Log of Lesion count"</span>,
        x <span class="op">=</span> <span class="st">"Log of distance (m)"</span><span class="op">)</span></code></pre></div>
 <div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-50-1.png" width="672"></div>
-<p>Conclusion: The modified power law model provided the better fit.</p>
+<p>Conclusion: The modified power law model provided the best fit.</p>
 
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-chapter2017b" class="csl-entry">
-Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>“CHAPTER 4: Temporal Analysis i: Quantifying and Comparing Epidemics.”</span> In, 63–116. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058.004">https://doi.org/10.1094/9780890545058.004</a>.
-</div>
-</div>
 </div>
 </div>
 </div>
   <div class="chapter-nav">
 <div class="prev"><a href="temporal-analysis.html"><span class="header-section-number">2</span> Temporal analysis</a></div>
-<div class="empty"></div>
+<div class="next"><a href="spatial-patterns.html"><span class="header-section-number">4</span> Spatial patterns</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
@@ -400,7 +388,7 @@ Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>�
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2021-07-13.</p>
+    <p>"<strong>R4PDE</strong>" was written by Emerson M. Del Ponte. It was last built on 2022-04-16.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">
