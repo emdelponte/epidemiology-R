@@ -30,7 +30,12 @@
 </form>
 
       <nav aria-label="Table of contents"><h2>Table of contents</h2>
-        <ul class="book-toc list-unstyled"><li><a class="" href="index.html"><span class="header-section-number">Chapter 4</span> Spatial patterns</a></li></ul>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html"><span class="header-section-number">1</span> Welcome</a></li>
+<li><a class="" href="temporal-analysis.html"><span class="header-section-number">2</span> Temporal analysis</a></li>
+<li><a class="" href="spatial-gradients.html"><span class="header-section-number">3</span> Spatial gradients</a></li>
+<li><a class="active" href="spatial-patterns.html"><span class="header-section-number">4</span> Spatial patterns</a></li>
+</ul>
 
         <div class="book-extra">
           
@@ -46,23 +51,168 @@
 <span class="header-section-number">4.1</span> Introduction<a class="anchor" aria-label="anchor" href="#introduction"><i class="fas fa-link"></i></a>
 </h2>
 <p>A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.</p>
-<p>The study of spatial patterns is conducted at a specifictime or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.</p>
+<p>The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.</p>
 <p>The patterns can be classified into two main types that occur naturally: random or aggregated. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.</p>
 <p>A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the type of data collected: position of diseased units within a row or series of rows; quadrat or plot count data; or distance among the diseased units.</p>
 </div>
-<div id="position-within-a-row" class="section level2" number="4.2">
+<div id="position-and-status-within-a-row" class="section level2" number="4.2">
 <h2>
-<span class="header-section-number">4.2</span> Position within a row<a class="anchor" aria-label="anchor" href="#position-within-a-row"><i class="fas fa-link"></i></a>
+<span class="header-section-number">4.2</span> Position and status within a row<a class="anchor" aria-label="anchor" href="#position-and-status-within-a-row"><i class="fas fa-link"></i></a>
 </h2>
+<p>In this kind of situation, the status of each unit (usually a plant) is noted as binary. The plant is either diseased (D or 1) or healthy (H or 0). These data are usually collected in a crop row, giving rise to a series of binary data (Fig. 1).</p>
+<div class="figure">
+<img src="imgs/sp1.png" width="613" alt=""><p class="caption">Representation of a series of units (plants) where the status is either diseased (D) or healthy (H)</p>
+</div>
+<p>Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and joint count statistics.</p>
+<div id="runs-test" class="section level3" number="4.2.1">
+<h3>
+<span class="header-section-number">4.2.1</span> Runs test<a class="anchor" aria-label="anchor" href="#runs-test"><i class="fas fa-link"></i></a>
+</h3>
+<p>The runs test. Description.</p>
+<p>Let’s created the series of binary data representing a crop row with 20 plants, as shown in the Figure above.</p>
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">0</span>, <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>, <span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="co"># position of each plant</span>
+<span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>
+<span class="va">row1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">x1</span>, <span class="va">y1</span>, <span class="va">z1</span><span class="op">)</span> <span class="co"># create a dataframe</span></code></pre></div>
+<p>We can then visualize the series:</p>
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span>
+<span class="va">row1</span> <span class="op">%&gt;%</span> 
+  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">x1</span>, <span class="va">z1</span>, label <span class="op">=</span> <span class="va">x1</span>, color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">y1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">+</span>
+  <span class="fu">geom_point</span><span class="op">(</span>shape <span class="op">=</span><span class="fl">15</span>, size <span class="op">=</span><span class="fl">5</span><span class="op">)</span><span class="op">+</span>
+  <span class="fu">theme_void</span><span class="op">(</span><span class="op">)</span><span class="op">+</span>
+  <span class="fu">geom_text</span><span class="op">(</span>vjust <span class="op">=</span> <span class="fl">0</span>, nudge_y <span class="op">=</span> <span class="fl">0.05</span><span class="op">)</span><span class="op">+</span>
+  <span class="fu">labs</span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Status"</span><span class="op">)</span></code></pre></div>
+<div class="inline-figure"><img src="livro_files/figure-html/unnamed-chunk-52-1.png" width="672"></div>
+<p>The runs test can be executed using the runs.test function of the randtests package. The null hypothesis is randomness. The test returns a P-value.</p>
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">randtests</span><span class="op">)</span>
+<span class="co"># run the runs.test function</span>
+<span class="va">run1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/randtests/man/runs.test.html">runs.test</a></span><span class="op">(</span><span class="va">row1</span><span class="op">$</span><span class="va">y1</span>, threshold <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span>
+<span class="va">run1</span></code></pre></div>
+<pre><code>## 
+##  Runs Test
+## 
+## data:  row1$y1
+## statistic = -2, runs = 7, n1 = 8, n2 = 12, n = 20, p-value = 0.08
+## alternative hypothesis: nonrandomness</code></pre>
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://andrisignorell.github.io/DescTools/">DescTools</a></span><span class="op">)</span>
+<span class="fu"><a href="https://andrisignorell.github.io/DescTools/reference/RunsTest.html">RunsTest</a></span><span class="op">(</span><span class="va">row1</span><span class="op">$</span><span class="va">y1</span><span class="op">)</span></code></pre></div>
+<pre><code>## 
+##  Runs Test for Randomness
+## 
+## data:  row1$y1
+## runs = 7, m = 12, n = 8, p-value = 0.1
+## alternative hypothesis: true number of runs is not equal the expected number</code></pre>
+</div>
+<div id="doublets" class="section level3" number="4.2.2">
+<h3>
+<span class="header-section-number">4.2.2</span> Doublets<a class="anchor" aria-label="anchor" href="#doublets"><i class="fas fa-link"></i></a>
+</h3>
+<p>The doublets test. Description.</p>
+<p>Let’s mannually produce a code to execute the doublets test.</p>
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># matrix for each pair</span>
+<span class="va">S</span> <span class="op">&lt;-</span> <span class="va">row1</span><span class="op">$</span><span class="va">y1</span>
+<span class="va">matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">S</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span><span class="op">]</span>, <span class="va">S</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>
 
+<span class="co"># count the number of pairs</span>
+<span class="va">pairs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">matrix</span><span class="op">)</span><span class="op">)</span>
+<span class="co"># number of doublets</span>
+<span class="va">Db</span> <span class="op">&lt;-</span> <span class="va">pairs</span><span class="op">[</span><span class="fl">2</span>,<span class="fl">2</span><span class="op">]</span>
+<span class="co"># Total n of plants</span>
+<span class="va">N</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span> 
+<span class="co"># N. of diseased plants</span>
+<span class="va">d</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">S</span><span class="op">)</span> <span class="co"># N. of diseased plants</span>
+<span class="co"># Expected n. of doublets</span>
+<span class="va">NEDb</span> <span class="op">=</span> <span class="va">d</span> <span class="op">*</span><span class="op">(</span><span class="op">(</span><span class="va">d</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">/</span><span class="va">N</span><span class="op">)</span> <span class="co">## Expected valued</span>
+<span class="co"># ESO standard deviation</span>
+<span class="va">DPDb</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span> <span class="op">(</span> <span class="va">NEDb</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="fl">2</span> <span class="op">/</span> <span class="va">N</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#  Z statistics</span>
+<span class="va">ZDb</span> <span class="op">=</span> <span class="op">(</span><span class="va">Db</span> <span class="op">-</span> <span class="va">NEDb</span><span class="op">)</span><span class="op">/</span> <span class="va">DPDb</span> <span class="co">## Standardized values</span>
+<span class="co"># p-value for Z score </span>
+<span class="va">pvalue</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">-</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">ZDb</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">pvalue</span></code></pre></div>
+<pre><code>## [1] 0.225</code></pre>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">ZDb</span> <span class="op">&gt;=</span> <span class="fl">1.64</span>, 
+<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"A"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"R"</span><span class="op">)</span><span class="op">)</span> <span class="co"># Aggregated or Random</span>
+<span class="va">result</span></code></pre></div>
+<pre><code>## [1] "R"</code></pre>
+</div>
+<div id="joint-count" class="section level3" number="4.2.3">
+<h3>
+<span class="header-section-number">4.2.3</span> Joint count<a class="anchor" aria-label="anchor" href="#joint-count"><i class="fas fa-link"></i></a>
+</h3>
+<p>Joint count statistics. Description.</p>
+<div class="inline-figure"><img src="imgs/spatial_jointcount.png" width="594"></div>
+<p>Let’s use the <code>join.count</code> function of the <code>spdep</code> package to perform a joint count test.</p>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Enter the data</span>
+<span class="va">S2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">0</span>,
+       <span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,
+       <span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,
+       <span class="fl">1</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">1</span>,
+       <span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
+  
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span> <span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/spdep/">spdep</a></span><span class="op">)</span>
+<span class="va">nb</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/cell2nb.html">cell2nb</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span>, 
+              type<span class="op">=</span><span class="st">"rook"</span>, 
+              torus<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span>
+<span class="va">jc_rook</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/joincount.test.html">joincount.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">S2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/spdep/man/nb2listw.html">nb2listw</a></span><span class="op">(</span><span class="va">nb</span>, style<span class="op">=</span><span class="st">"B"</span><span class="op">)</span><span class="op">)</span>
+<span class="va">jc_rook</span></code></pre></div>
+<pre><code>## 
+##  Join count test under nonfree sampling
+## 
+## data:  factor(S2) 
+## weights: nb2listw(nb, style = "B") 
+## 
+## Std. deviate for 0 = -0.2, p-value = 0.6
+## alternative hypothesis: greater
+## sample estimates:
+## Same colour statistic           Expectation              Variance 
+##                 10.00                 10.40                  3.17 
+## 
+## 
+##  Join count test under nonfree sampling
+## 
+## data:  factor(S2) 
+## weights: nb2listw(nb, style = "B") 
+## 
+## Std. deviate for 1 = -1, p-value = 0.8
+## alternative hypothesis: greater
+## sample estimates:
+## Same colour statistic           Expectation              Variance 
+##                  7.00                  8.80                  3.03</code></pre>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co">#joincount.mc(factor(S2), nb2listw(nb, style="B"), nsim = 1000)</span></code></pre></div>
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-chapter2017b" class="csl-entry">
+Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>“CHAPTER 4: Temporal Analysis i: Quantifying and Comparing Epidemics.”</span> In, 63–116. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058.004">https://doi.org/10.1094/9780890545058.004</a>.
+</div>
+</div>
+</div>
 </div>
 </div>
   <div class="chapter-nav">
-<div class="empty"></div>
+<div class="prev"><a href="spatial-gradients.html"><span class="header-section-number">3</span> Spatial gradients</a></div>
 <div class="empty"></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
-      <div id="book-on-this-page"></div>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#spatial-patterns"><span class="header-section-number">4</span> Spatial patterns</a></li>
+<li><a class="nav-link" href="#introduction"><span class="header-section-number">4.1</span> Introduction</a></li>
+<li>
+<a class="nav-link" href="#position-and-status-within-a-row"><span class="header-section-number">4.2</span> Position and status within a row</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#runs-test"><span class="header-section-number">4.2.1</span> Runs test</a></li>
+<li><a class="nav-link" href="#doublets"><span class="header-section-number">4.2.2</span> Doublets</a></li>
+<li><a class="nav-link" href="#joint-count"><span class="header-section-number">4.2.3</span> Joint count</a></li>
+</ul>
+</li>
+</ul>
 
       <div class="book-extra">
         <ul class="list-unstyled">
@@ -86,6 +236,18 @@
   </div>
 
 </div></div>
-</footer>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 </body>
 </html>

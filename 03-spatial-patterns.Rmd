@@ -10,113 +10,77 @@ The patterns can be classified into two main types that occur naturally: random 
 
 A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the type of data collected: position of diseased units within a row or series of rows; quadrat or plot count data; or distance among the diseased units.
 
+## Position and status within a row
 
-## Position within a row
+In this kind of situation, the status of each unit (usually a plant) is noted as binary. The plant is either diseased (D or 1) or healthy (H or 0). These data are usually collected in a crop row, giving rise to a series of binary data (Fig. 1).
 
+![Representation of a series of units (plants) where the status is either diseased (D) or healthy (H)](imgs/sp1.png){width="613"}
 
-```{r, message=FALSE, warning=FALSE}
-# carrega os pacotes
+Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and joint count statistics.
+
+### Runs test
+
+The runs test. Description.
+
+Let's created the series of binary data representing a crop row with 20 plants, as shown in the Figure above.
+
+```{r}
+y1 <- c(1, 1, 1, 0, 0,0,0,0, 1,0,0,0,0,1,1,0,0,0,1,1)
+x1 <- c(1:20) # position of each plant
+z1 <- factor(1)
+row1 <- data.frame(x1, y1, z1) # create a dataframe
+```
+
+We can then visualize the series:
+
+```{r message=FALSE, warning=FALSE}
 library(tidyverse)
-library(readxl)
-library(epiphy)
-theme_set(theme_minimal())
+row1 %>% 
+  ggplot(aes(x1, z1, label = x1, color = factor(y1)))+
+  geom_point(shape =15, size =5)+
+  theme_void()+
+  geom_text(vjust = 0, nudge_y = 0.05)+
+  labs(color = "Status")
 ```
 
-
-```{r}
-data_tomato <- tomato_tswv$field_1928
-```
-
-```{r}
-data_tomato %>% 
-  filter(variety == "Burwood-Prize") %>% 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile()+
- facet_grid(irrigation ~ t)+
-  scale_fill_grey(start = 0.8, end = 0.2)
-```
-
-```{r}
-data_tomato %>% 
-  group_by(variety, irrigation, t) %>% 
-  summarize(inc = sum(i/n())) %>% 
-  ggplot(aes(t, inc, color = irrigation))+
-  geom_point()+
-  geom_line()+
-  facet_wrap(~variety)+
-  theme(legend.position = "top")
-  
-```
-
-
-## Runs analysis
-
-Prepare the data. Let's work only with one variety, one irrigation type at time 5.
-
-
-```{r}
-dat_runs1 <- data_tomato %>% 
-  filter(variety == "Burwood-Prize" &
-           t == 5 &
-           irrigation == "overhead-sprays")
-head(dat_runs1)
-```
-
-```{r}
-dat_runs1 %>% 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile()+
-  coord_fixed()+
-  scale_fill_grey(start = 0.8, end = 0.2)+
-  labs(fill = "Status", title = "Burwood-Prize var", subtitle = "overhead-sprays, time 2")
-
-```
-
-### Using randtests package
+The runs test can be executed using the runs.test function of the randtests package. The null hypothesis is randomness. The test returns a P-value.
 
 ```{r}
 library(randtests)
-
-# Pull the binary data
-
-S1 <- dat_runs1 %>% 
-  filter(x == 1) %>% 
-  pull(i)
-
 # run the runs.test function
-run1 <- runs.test(S1, threshold = 0.5)
+run1 <- runs.test(row1$y1, threshold = 0.5)
 run1
 
+library(DescTools)
+RunsTest(row1$y1)
 
 ```
 
 ### Doublets
 
+The doublets test. Description.
+
+Let's mannually produce a code to execute the doublets test.
+
 ```{r}
 # matrix for each pair
+S <- row1$y1
 matrix <- cbind(S[-length(S)], S[-1])
 
 # count the number of pairs
 pairs <- table(data.frame(matrix))
-
 # number of doublets
 Db <- pairs[2,2]
-Db
 # Total n of plants
 N <- length(S) 
-N
 # N. of diseased plants
 d = sum(S) # N. of diseased plants
-d
 # Expected n. of doublets
 NEDb = d *((d -1)/N) ## Expected valued
-NEDb
 # ESO standard deviation
 DPDb = sqrt ( NEDb * (1 - (2 / N)))
-DPDb
 #  Z statistics
 ZDb = (Db - NEDb)/ DPDb ## Standardized values
-ZDb
 # p-value for Z score 
 pvalue <- 1-(pnorm(abs(ZDb)))
 pvalue
@@ -128,26 +92,26 @@ result
 
 ### Joint count
 
+Joint count statistics. Description.
+
+![](imgs/spatial_jointcount.png){width="594"}
+
+Let's use the `join.count` function of the `spdep` package to perform a joint count test.
 
 ```{r,message=FALSE,warning=FALSE}
 
-dat_runs1 <- data_tomato %>% 
-  filter(variety == "Burwood-Prize" &
-           t == 5 &
-           irrigation == "overhead-sprays")
-dat_runs1
-
-S <- dat_runs1$i
-
+# Enter the data
+S2 <- c(1,1,1,1,0,
+       0,1,0,0,1,
+       1,0,1,0,0,
+       1,0,0,1,1,
+       0,0,0,0,1)
+  
 library (spdep)
-
-nb <- cell2nb(14, 33, 
+nb <- cell2nb(5, 5, 
               type="rook", 
               torus=FALSE)
-
-jc_rook <- joincount.test(factor(S), nb2listw(nb, style="B"))
-
+jc_rook <- joincount.test(factor(S2), nb2listw(nb, style="B"))
 jc_rook
-
-joincount.mc(factor(S), nb2listw(nb, style="B"), nsim = 1000)
+#joincount.mc(factor(S2), nb2listw(nb, style="B"), nsim = 1000)
 ```
