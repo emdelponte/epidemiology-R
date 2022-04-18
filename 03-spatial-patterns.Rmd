@@ -2,27 +2,27 @@
 
 ## Introduction
 
-A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
+A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop [@chapter2017]. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
 
 The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.
 
-The patterns can be classified into two main types that occur naturally: random or aggregated. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.
+The patterns can be classified into two main types that occur naturally: **random** or **aggregated**. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.
 
-A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the type of data collected: position of diseased units within a row or series of rows; quadrat or plot count data; or distance among the diseased units.
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the spatial scale and type of data collected: position of diseased units within a row or series of rows (plant to plant); quadrat or plot count data; or distance among the diseased units.
 
-## Position and status within a row
+## Status within a row (plant to plant)
 
-In this kind of situation, the status of each unit (usually a plant) is noted as binary. The plant is either diseased (D or 1) or healthy (H or 0). These data are usually collected in a crop row, giving rise to a series of binary data (Fig. 1).
+Here, the status of each unit (usually a plant) is noted as binary. The plant is either diseased (D or 1) or healthy (H or 0). These data are usually collected in a crop row, giving rise to a series of binary data (Fig. 1).
 
-![Representation of a series of units (plants) where the status is either diseased (D) or healthy (H)](imgs/sp1.png){width="613"}
+![Representation of a series of units (plants) where the status is either diseased (D) or healthy (H)](imgs/sp1.png){width="568"}
 
-Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and joint count statistics.
+Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are **runs**, **doublets** and **joint count** statistics.
 
 ### Runs test
 
 The runs test. Description.
 
-Let's created the series of binary data representing a crop row with 20 plants, as shown in the Figure above.
+Let's create the series of binary data representing a crop row with 20 plants, as shown in the Figure above.
 
 ```{r}
 y1 <- c(1, 1, 1, 0, 0,0,0,0, 1,0,0,0,0,1,1,0,0,0,1,1)
@@ -43,16 +43,12 @@ row1 %>%
   labs(color = "Status")
 ```
 
-The runs test can be executed using the runs.test function of the randtests package. The null hypothesis is randomness. The test returns a P-value.
+The runs test can be executed using the runs.test function of the `randtests` package. The null hypothesis is randomness. The test returns a P-value.
 
 ```{r}
 library(randtests)
-# run the runs.test function
 run1 <- runs.test(row1$y1, threshold = 0.5)
 run1
-
-library(DescTools)
-RunsTest(row1$y1)
 
 ```
 
@@ -60,33 +56,29 @@ RunsTest(row1$y1)
 
 The doublets test. Description.
 
-Let's mannually produce a code to execute the doublets test.
+Let's mannualy produce a code to execute the doublets test. To facilitate, we can create a function and name it `doublet.test`. The only argument needed is the vector of binary data.
 
 ```{r}
-# matrix for each pair
-S <- row1$y1
-matrix <- cbind(S[-length(S)], S[-1])
 
-# count the number of pairs
+doublet.test <- function(x) {
+S <- x
+matrix <- cbind(S[-length(S)], S[-1])
 pairs <- table(data.frame(matrix))
-# number of doublets
 Db <- pairs[2,2]
-# Total n of plants
 N <- length(S) 
-# N. of diseased plants
-d = sum(S) # N. of diseased plants
-# Expected n. of doublets
-NEDb = d *((d -1)/N) ## Expected valued
-# ESO standard deviation
+d = sum(S) 
+NEDb = d *((d -1)/N)
 DPDb = sqrt ( NEDb * (1 - (2 / N)))
-#  Z statistics
-ZDb = (Db - NEDb)/ DPDb ## Standardized values
-# p-value for Z score 
+ZDb = (Db - NEDb)/ DPDb 
 pvalue <- 1-(pnorm(abs(ZDb)))
-pvalue
 result <- ifelse(ZDb >= 1.64, 
-c("A"), c("R")) # Aggregated or Random
-result
+c("The spatial pattern is aggregated"), c("The spatial pattern is random")) 
+res <- c(result, "P-value:", pvalue)
+return(res)
+}
+
+# Run the function calling the vector
+doublet.test(row1$y1)
 
 ```
 
@@ -94,7 +86,7 @@ result
 
 Joint count statistics. Description.
 
-![](imgs/spatial_jointcount.png){width="594"}
+![](imgs/spatial_jointcount.png){width="516"}
 
 Let's use the `join.count` function of the `spdep` package to perform a joint count test.
 
