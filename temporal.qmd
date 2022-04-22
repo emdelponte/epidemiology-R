@@ -2,11 +2,51 @@
 
 ## Introduction
 
-A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*). A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase.
+A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
 
-The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. In a practical manner, the curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing progress curves, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
+A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity.
 
-Mathematical models can be fitted to the disease progress curve data to express epidemic progress in terms of rates and absolute/relative quantities. The latter can be accomplished using population dynamics (or growth-curve) models for which the estimated parameters are usually meaningful biologically and appropriately describe epidemics that do not decrease in disease intensity. By fitting an appropriate model to the progress curve data, another set of parameters is available to the researcher when attempting to represent, understand or compare epidemics. 
+Firstly, let's load the essential R packages and set up the environment.
+
+```{r warning=FALSE, message=FALSE}
+library(tidyverse) # loads the essential packages 
+library(patchwork) # for multipanel figures
+theme_set(theme_light()) # set global theme
+```
+
+There are several ways to create a dataframe in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
+
+```{r}
+dpc <- 
+  tribble(
+   ~t,  ~`y`, 
+   0,  0.08, 
+   7,  0.13, 
+  14,  0.78, 
+  21,  0.92, 
+  28,  0.99, 
+  35, 0.995, 
+  42, 0.999, 
+  )
+```
+
+Now the plot
+
+::: callout-note
+Note that I use [pipes](https://r4ds.had.co.nz/pipes.html) in my programming to express a sequence of multiple operations in a more intuitive way.
+:::
+
+```{r}
+dpc %>%
+  ggplot(aes(t, y)) +
+  geom_point()+
+  geom_line()
+```
+
+
+The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. In a practical manner, the curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing DPCs, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
+
+Mathematical models can be fitted to the DPC data to express epidemic progress in terms of rates and absolute/relative quantities. The latter can be accomplished using population dynamics (or growth-curve) models for which the estimated parameters are usually meaningful biologically and appropriately describe epidemics that do not decrease in disease intensity. By fitting an appropriate model to the progress curve data, another set of parameters is available to the researcher when attempting to represent, understand or compare epidemics.
 
 ### Population dynamics models
 
@@ -14,19 +54,7 @@ The family of models that describe the growth of epidemics, hence population dyn
 
 In this tutorial, these models and their formulations are shown using R scripts to simulate the theoretical curves for each model. The reader should be capable of opening R or RStudio software and reproduce the analysis by copying and pasting the codes. Hence, a very basic knowledge of R is required.
 
-:::{.callout-note}
-Note that I use [pipes](https://r4ds.had.co.nz/pipes.html) in my programming to express a sequence of multiple operations in a more intuitive way.
-:::
-
 Let's start loading essential packages for programming, customizing the outputs and defining a global ggplot theme.
-
-```{r message=FALSE, warning=FALSE}
-library(tidyverse)
-library(ggthemes)
-library(patchwork)
-theme_set(theme_light())
-knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
-```
 
 ## Non-flexible models
 
