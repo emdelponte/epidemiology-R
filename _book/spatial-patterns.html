@@ -209,7 +209,6 @@
 <li><a href="#doublets" class="nav-link" data-scroll-target="#doublets"> <span class="header-section-number">4.2.2</span> Doublets</a></li>
 <li><a href="#joint-count" class="nav-link" data-scroll-target="#joint-count"> <span class="header-section-number">4.2.3</span> Joint count</a></li>
 </ul></li>
-<li><a href="#section" class="nav-link" data-scroll-target="#section"> <span class="header-section-number">4.3</span> </a></li>
 </ul>
 </nav>
     </div>
@@ -352,76 +351,67 @@ alternative hypothesis: nonrandomness</code></pre>
 <section id="joint-count" class="level3" data-number="4.2.3">
 <h3 data-number="4.2.3" class="anchored" data-anchor-id="joint-count"><span class="header-section-number">4.2.3</span> Joint count</h3>
 <p>Joint count statistics. Description.</p>
-<p>Let’s use the <code>join.count</code> function of the <code>spdep</code> package to perform a joint count test.</p>
+<p>Let’s use the <code>join.count</code> function of the <code>spdep</code> package to perform a joint count test. First we need to create the series of binary data from left to right. In the example, there are 5 rows and 5 colums. This will be informed later to run the test.</p>
 <div class="cell">
 <div class="sourceCode" id="cb12"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enter the data</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>)</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a> </span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
-<pre><code>Loading required package: sp</code></pre>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output-stderr">
-<pre><code>Loading required package: spData</code></pre>
+<p>Load the library</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output-stderr">
-<pre><code>To access larger datasets in this package, install the spDataLarge
-package with: `install.packages('spDataLarge',
-repos='https://nowosad.github.io/drat/', type='source')`</code></pre>
+<p>First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the <code>cell2nb</code> function by informing the number of rows and columns. The argument “rook” means shared edge, but it could be the “queen”, for shared edge or vertex. We can use the default.</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>, </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">5</span>, </span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell-output-stderr">
-<pre><code>Loading required package: sf</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code>Linking to GEOS 3.8.1, GDAL 3.2.1, PROJ 7.2.1; sf_use_s2() is TRUE</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code>Registered S3 method overwritten by 'gdata':
-  method         from     
-  reorder.factor DescTools</code></pre>
-</div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">5</span>, <span class="dv">5</span>, </span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>, </span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">torus=</span><span class="cn">FALSE</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>jc_rook <span class="ot">&lt;-</span> <span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">nb2listw</span>(nb, </span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>                                   <span class="at">style=</span><span class="st">"B"</span>))</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>jc_rook</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The <code>joincount.test</code> function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
 data:  factor(S2) 
-weights: nb2listw(nb, style = "B") 
+weights: nb2listw(nb) 
 
-Std. deviate for 0 = -0.22483, p-value = 0.5889
+Std. deviate for 0 = -0.58266, p-value = 0.7199
 alternative hypothesis: greater
 sample estimates:
 Same colour statistic           Expectation              Variance 
-            10.000000             10.400000              3.165217 
+            2.9583333             3.2500000             0.2505797 
 
 
     Join count test under nonfree sampling
 
 data:  factor(S2) 
-weights: nb2listw(nb, style = "B") 
+weights: nb2listw(nb) 
 
-Std. deviate for 1 = -1.0341, p-value = 0.8495
+Std. deviate for 1 = -0.66841, p-value = 0.7481
 alternative hypothesis: greater
 sample estimates:
 Same colour statistic           Expectation              Variance 
-             7.000000              8.800000              3.029565 </code></pre>
+            2.4166667             2.7500000             0.2486957 </code></pre>
 </div>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#joincount.mc(factor(S2), nb2listw(nb, style="B"), nsim = 1000)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-</section>
-<section id="section" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="section"><span class="header-section-number">4.3</span> </h2>
+<p>The function returns a list with a class for each of the status (in this case 0 and 1) with several components. We should look at the <strong>P-value</strong>. The alternative hypothesis (greater) is that the same status joins occur more frequently than expected if they were labelled in a spatial random way. In this case, we do not reject the null hypothesis of randomness.</p>
+<p>We can run the ordinary runs and doublets tests, which only considers the adjacent neighbor, for the same series and compare the results.</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] "There are 13 runs. The number of expected runs is 13.5 P-value: 0.844252 . Alternative hypothesis: non-randomness"</code></pre>
+</div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">doublets.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] "There are 5 doublets. The number of expected doublets is 5.28 . P-value: 0.8989 . Alternative hypothesis: non-randomness"</code></pre>
+</div>
+</div>
 
 
 
@@ -430,6 +420,7 @@ Same colour statistic           Expectation              Variance
 Madden, L. V., Hughes, G., and van den Bosch, F., eds. 2017. CHAPTER 9: Spatial aspects of epidemics<span></span>III: Patterns of plant disease. In The American Phytopathological Society, p. 235–278. Available at: <a href="http://dx.doi.org/10.1094/9780890545058.009">http://dx.doi.org/10.1094/9780890545058.009</a>.
 </div>
 </div>
+</section>
 </section>
 </main> <!-- /main -->
 <script type="application/javascript">

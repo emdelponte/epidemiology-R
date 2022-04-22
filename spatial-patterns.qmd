@@ -135,7 +135,7 @@ doublets.test(row1$y1)
 
 Joint count statistics. Description.
 
-Let's use the `join.count` function of the `spdep` package to perform a joint count test.
+Let's use the `join.count` function of the `spdep` package to perform a joint count test. First we need to create the series of binary data from left to right. In the example, there are 5 rows and 5 colums. This will be informed later to run the test.
 
 ```{r}
 
@@ -145,16 +145,37 @@ S2 <- c(1,1,1,1,0,
        1,0,1,0,0,
        1,0,0,1,1,
        0,0,0,0,1)
- 
-library (spdep)
-nb <- cell2nb(5, 5, 
-              type="rook", 
-              torus=FALSE)
-jc_rook <- joincount.test(factor(S2), 
-                          nb2listw(nb, 
-                                   style="B"))
-jc_rook
-#joincount.mc(factor(S2), nb2listw(nb, style="B"), nsim = 1000)
 ```
 
-## 
+Load the library
+
+```{r message=FALSE, warning=FALSE}
+library (spdep)
+```
+
+First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the `cell2nb` function by informing the number of rows and columns. The argument "rook" means shared edge, but it could be the "queen", for shared edge or vertex. We can use the default.  
+
+```{r}
+nb <- cell2nb(nrow = 5, 
+              ncol = 5, 
+              type="rook")
+```
+
+The `joincount.test` function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously. 
+
+```{r}
+joincount.test(factor(S2), 
+                nb2listw(nb))
+```
+
+The function returns a list with a class for each of the status (in this case 0 and 1) with several components. We should look at the **P-value**. The alternative hypothesis (greater) is that the same status joins occur more frequently than expected if they were labelled in a spatial random way. In this case, we do not reject the null hypothesis of randomness.
+
+We can run the ordinary runs and doublets tests, which only considers the adjacent neighbor, for the same series and compare the results. 
+
+```{r}
+oruns.test(S2)
+doublets.test(S2)
+```
+
+
+
