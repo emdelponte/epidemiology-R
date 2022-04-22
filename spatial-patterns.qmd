@@ -138,7 +138,6 @@ Join count statistics. Description.
 Let's use the `join.count` function of the `spdep` package to perform a joint count test. First we need to create the series of binary data from left to right. In the example, there are 5 rows and 5 colums. This will be informed later to run the test.
 
 ```{r}
-
 # Enter the data
 S2 <- c(1,1,1,1,0,
        0,1,0,0,1,
@@ -147,10 +146,29 @@ S2 <- c(1,1,1,1,0,
        0,0,0,0,1)
 ```
 
+Visualize the grid
+
+```{r}
+# Convert to raster 
+mapS2 <- raster::raster(matrix(S2, 5 ,5))
+
+# Convert to data frame
+mapS3 <- raster::as.data.frame(mapS2,xy=TRUE)
+
+# Map using ggplot
+mapS3 %>% 
+  ggplot(aes(x, y, label = layer, fill = factor(layer)))+
+  geom_tile(color = "black")+
+  theme_void()+
+  geom_text()+
+  scale_fill_manual(values = c("green", "red"))
+```
+
+
 Load the library
 
 ```{r message=FALSE, warning=FALSE}
-library (spdep)
+library(spdep)
 ```
 
 First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the `cell2nb` function by informing the number of rows and columns. The argument "rook" means shared edge, but it could be the "queen", for shared edge or vertex. We can use the default.  
