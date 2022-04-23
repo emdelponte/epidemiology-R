@@ -4,14 +4,14 @@
 
 A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
 
-A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity.
+A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in proportion (0 to 1).
 
 Firstly, let's load the essential R packages and set up the environment.
 
 ```{r warning=FALSE, message=FALSE}
-library(tidyverse) # loads the essential packages 
-library(patchwork) # for multipanel figures
-theme_set(theme_light()) # set global theme
+library(tidyverse) # essential packages 
+library(cowplot) # for themes 
+theme_set(theme_minimal_grid()) # set global theme
 ```
 
 There are several ways to create a dataframe in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
@@ -33,30 +33,80 @@ dpc <-
 Now the plot
 
 ::: callout-note
-Note that I use [pipes](https://r4ds.had.co.nz/pipes.html) in my programming to express a sequence of multiple operations in a more intuitive way.
+Note that I use the [pipe](https://r4ds.had.co.nz/pipes.html) operator `%>%` in my programming to express a sequence of multiple operations in a more intuitive way.
 :::
 
 ```{r}
 dpc %>%
   ggplot(aes(t, y)) +
-  geom_point()+
-  geom_line()
+  geom_point(size = 2)+
+  geom_line(size = 1)+
+  labs(x = "Assessment time (days)",
+       y = "Disease intensity")
 ```
 
+## Curve descriptors: AUDPC
 
-The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. In a practical manner, the curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing DPCs, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
+The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. The curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing DPCs, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
+
+The precision and complexity of the analysis of progress curve data depends on the objective of the study. In general, the goal is to synthesize similarities and different among epidemics based on common descriptors of the disease progress curves. For example, the simple appraisal of the disease intensity at any time during the course of the epidemic should be sufficient for certain situations. Furthermore, a few descriptors can be extracted including the epidemic duration, the initial and maximum disease, and the area under the disease progress curve (AUDPC).
+
+The AUDPC summarizes the "total measure of disease stress" and is largely used to compare epidemics [@jeger2001]. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let's extend the plot code to show those rectangles using the `annotate` function.
+
+```{r}
+dpc %>%
+  ggplot(aes(t, y)) +
+  geom_point(size = 2)+
+  geom_line(size = 1)+
+  labs(x = "Assessment time (days)",
+       y = "Disease intensity",
+       title ="Area under the disease progress curve",
+       subtitle = "Calculated using the trapezoidal method")+
+  annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
+           ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
+           color = "black", alpha = 0.5)+
+   annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
+            ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
+            color = "black", alpha = 0.5)+
+   annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
+            ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
+            color = "black", alpha = 0.5)+
+   annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
+            ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
+            color = "black", alpha = 0.5)+
+   annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
+            ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
+            color = "black", alpha = 0.5)+
+   annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
+            ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
+            color = "black", alpha = 0.5)
+  
+```
+
+In R, we can obtain the AUDPC for the DPC we created earlier using the `AUDPC` function offered by the *epifitter* package. Because we are using the percent data, we need to set the argument `y_proportion = FALSE`. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument `type` should be set to `"relative"`. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) [@simko2012].
+
+```{r}
+library(epifitter)
+AUDPC(dpc$t, dpc$y, 
+      y_proportion = FALSE)
+
+# The relative AUDPC 
+AUDPC(dpc$t, dpc$y, 
+      y_proportion = FALSE, 
+      type = "relative")
+
+# To calculate AUDPS, the alternative to AUDPC
+AUDPS(dpc$t, dpc$y, 
+      y_proportion = FALSE)
+```
 
 Mathematical models can be fitted to the DPC data to express epidemic progress in terms of rates and absolute/relative quantities. The latter can be accomplished using population dynamics (or growth-curve) models for which the estimated parameters are usually meaningful biologically and appropriately describe epidemics that do not decrease in disease intensity. By fitting an appropriate model to the progress curve data, another set of parameters is available to the researcher when attempting to represent, understand or compare epidemics.
 
-### Population dynamics models
+## Population dynamics models
 
-The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time [@chapter2017b]. These models are usually fitted to DPC data to obtain two or more biologically meaningful parameters.
+The family of models that describe the growth of epidemics, hence population dynamics model, are known as deterministic models of continuous time [@chapter2017b]. These models are usually fitted to DPC data to obtain two or more biologically meaningful parameters. Here, these models and their formulations are shown using R scripts to simulate the theoretical curves for each model.
 
-In this tutorial, these models and their formulations are shown using R scripts to simulate the theoretical curves for each model. The reader should be capable of opening R or RStudio software and reproduce the analysis by copying and pasting the codes. Hence, a very basic knowledge of R is required.
-
-Let's start loading essential packages for programming, customizing the outputs and defining a global ggplot theme.
-
-## Non-flexible models
+### Non-flexible models
 
 These population dynamics models require at least two parameters, hence they are known as non-flexible, as opposed to the flexible ones for which there are at least one additional (third) parameter.
 
@@ -70,7 +120,7 @@ Following the convention proposed by [@chapter2017b] in their book "The study of
 
 Now we can proceed and learn which non-flexible models exist and for which situation they are more appropriate.
 
-### Exponential
+#### Exponential
 
 The differential equation for the exponential model is given by
 
@@ -121,7 +171,7 @@ dat %>%
 
 ```
 
-### Monomolecular
+#### Monomolecular
 
 The differential of the monomolecular model is given by
 
@@ -163,7 +213,7 @@ dat %>%
 
 ```
 
-### Logistic
+#### Logistic
 
 The logistic model is a more elaborated version of the two previous models as it incorporates the features of them both. Its differential is given by
 
@@ -211,7 +261,7 @@ dat %>%
 
 ```
 
-### Gompertz
+#### Gompertz
 
 The Gompertz model is similar to the logistic and also provides a very good fit to several polycyclic diseases. The differential equation is given by
 
@@ -256,36 +306,21 @@ dat %>%
 
 ```
 
-## Model fitting
+## Fitting models to data
 
-In this tutorial you will learn how to fit models to multiple actual disease progress curves (DPCs) data obtained from the literature. I will demonstrate how to fit and select the models using a new R package called *epifitter*. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
+Next, you will learn how to fit models to multiple actual disease progress curves (DPCs) data obtained from the literature. I will demonstrate how to fit and select the models using the *epifitter* package. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
 
 To illustrate, I will use two datasets available from Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We then provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
 
-### Non-replicated
+### Non-replicated epidemics
 
-Here we will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days.The data are available in chapter 4 (page 93). Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
+We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval, up to 49 days.The data are available in chapter 4 (page 93). Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
 
-#### Initial setup
-
-Load essential packages and set parameters recursively.
+### Entering data
 
 ```{r}
-library(tidyverse)
-library(knitr)
-library(patchwork)
-library(ggthemes)
-theme_set(theme_few())
-knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE)
-options(digits = 3)
-```
-
-#### Entering data
-
-```{r}
-
 pepper <- 
-  tibble::tribble(
+  tribble(
    ~t,  ~`1`,  ~`2`,  ~`3`,
    0,  0.08, 0.001, 0.001,
    7,  0.13,  0.01, 0.001,
@@ -296,18 +331,15 @@ pepper <-
   42, 0.999,  0.99,  0.48,
   49, 0.999, 0.999,  0.74
   ) 
-
-
 ```
 
-#### Visualize the DPCs
+### Visualize the DPCs
 
 Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 ([@chapter2017b] page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
 
-Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the tidyverse-suitable format, which is the long format. The `pivot_longer` function will do the job of reshaping from wide to long format so we can finally use the `ggplot` function to produce the plot.
+Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the long format. The `pivot_longer` function will do the job of reshaping from wide to long format so we can finally use the `ggplot` function to produce the plot.
 
 ```{r, echo = TRUE}
-   
 pepper %>% 
   pivot_longer(2:4, names_to ="treat", values_to = "inc") %>% 
   ggplot (aes(t, inc, 
@@ -315,7 +347,7 @@ pepper %>%
               shape = treat, 
               group = treat))+
   geom_point(size =2)+
-  geom_line()+
+  geom_line(size = 1)+
   annotate(geom = "text", x = 15, y = 0.84, label = "1")+
   annotate(geom = "text", x = 23, y = 0.6, label = "2")+
   annotate(geom = "text", x = 32, y = 0.33, label = "3")+
@@ -327,7 +359,7 @@ pepper %>%
 
 Most of the three curves show a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily eliminate the monomolecular and exponential models and decide on the other two non-flexible models: logistic or Gompertz. To do that, let's proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the **linear** or **nonlinear** parameter-estimation methods.
 
-#### Fitting: single epidemics
+### Fitting: single epidemics
 
 Among the several options offered by *epifitter* we start with the simplest one, which is fit a model to a single epidemics using the linear regression approach. For such, the `fit_lin()` requires two arguments: time (`time`) and disease intensity (`y`) each one as a vector stored or not in a dataframe.
 
@@ -357,7 +389,7 @@ epi3$Stats
 
 The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is no much difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves.
 
-#### Fitting: multiple epidemics
+### Fitting: multiple epidemics
 
 Before looking at the prediction, let's use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
 
@@ -428,7 +460,6 @@ epi_all$Data %>%
 The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.
 
 ```{r, echo = TRUE}
-
   epi_all$Parameters %>%
     filter(model == "Logistic") %>%
     select(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr 
@@ -465,6 +496,7 @@ p2 <- epi_all$Parameters %>%
     y = "y0"
   )
 
+library(patchwork)
 p1 | p2
 
 ```
@@ -487,7 +519,7 @@ Let's have a look at the first six rows of the dataset and check the data type f
 head(budblight)
 ```
 
-#### Visualizing the DPCs
+####Visualizing the DPCs
 
 Let's have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.
 
