@@ -135,7 +135,7 @@ doublets.test(row1$y1)
 
 #### Join count
 
-In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern.
+In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
 
 In R, we can use the `join.count` function of the `spdep` package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2017]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
 
@@ -211,10 +211,12 @@ joincount.test(factor(S3),
 oruns.test(S3)
 
 ```
-We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset `tomato_tswv` to a new dataframe called `tswv_1929`.  
+
+We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset `tomato_tswv` to a new dataframe called `tswv_1929`.
 
 ```{r message=FALSE, warning=FALSE}
-library(epiphy)
+library(epiphy) 
+library(cowplot) # theming the ggplot
 tswv_1929 <- tomato_tswv$field_1929
 head(tswv_1929) 
 ```
@@ -226,22 +228,25 @@ tswv_1929 %>%
   ggplot(aes(x, y, fill = factor(i)))+
   geom_tile()+
   coord_fixed()+
+  theme_minimal_grid()+
   scale_fill_grey(start = 0.8, end = 0.2)+
   facet_wrap(~ t)+
   labs(fill = "Status")
 ```
-Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics. 
+
+Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.
 
 ```{r}
 tswv_1929 %>% 
   select(x, y) %>% 
   summary()
 ```
+
 There are 60 rows and 24 columns.
 
 ```{r}
 # Neighbor grid
-nb <- cell2nb(nrow = 60, 
+nb1 <- cell2nb(nrow = 60, 
               ncol = 24, 
               type="rook")
 
@@ -251,10 +256,10 @@ S1 <- tswv_1929 %>%
   pull(i)
 
 joincount.test(factor(S1), 
-                nb2listw(nb))
+                nb2listw(nb1))
 ```
 
-We can repeat the procedure for time 2 and time 3.
+We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.
 
 ```{r}
 # Pull the binary sequence of time 1
@@ -263,7 +268,7 @@ S2 <- tswv_1929 %>%
   pull(i)
 
 joincount.test(factor(S2), 
-                nb2listw(nb))
+                nb2listw(nb1))
 
 # Pull the binary sequence of time 1
 S3 <- tswv_1929 %>% 
@@ -271,13 +276,112 @@ S3 <- tswv_1929 %>%
   pull(i)
 
 joincount.test(factor(S3), 
-                nb2listw(nb))
+                nb2listw(nb1))
 
 ```
 
+### Grouped data
+
+If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are autocorrelation (known as Moran's I), semivariance and SADIE (an alternative approach to autocorrelation.)
+
+#### Autocorrelation
+
+Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity [@chapter2017].
+
+We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis [@chapter2017], which was extracted from table 11.3 of Campbell and Madden (1990). The data represent a single transect with the number of *Macrophomia phaseolina* propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.
+
+```{r}
+mp <- data.frame(
+  i = c(1:16),
+  y = c(41, 60, 81, 22, 8, 20, 28, 2, 0, 2, 2, 8, 0, 43, 61, 50)
+)
+mp
+```
+
+We can produce a plot to visualize the number of propagules across the transect.
+
+```{r}
+mp %>% 
+  ggplot(aes(i, y))+
+  geom_col(fill = "darkorange")+
+  theme_minimal_grid()+
+  labs(x = "Relative position within a transect", 
+       y = "Number of propagules",
+       title = "Macrophomina phaseolina in the soil",
+       caption = "Source: Campbell and Madden (1990)")
+```
+
+To calculate the autocorrelation coefficient in R, we can use the `ac` function of the *tseries* package.
+
+```{r message=FALSE, warning=FALSE}
+library(tseries)
+ac_mp <- acf(mp$y, lag = 5, pl = FALSE)
+ac_mp
+```
+
+Let's store the results in a dataframe to facilitate visualization using ggplot.
+
+```{r}
+ac_mp_dat <- data.frame(index = ac_mp$lag, ac_mp$acf)
+ac_mp_dat
+```
+
+And now the plot known as autocorrelogram.
+
+```{r}
+ac_mp_dat %>% 
+  ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf,3)))+
+  geom_col()+
+  geom_text(vjust = 0, nudge_y = 0.05)+
+  scale_x_continuous(n.breaks = 6)+
+  theme_minimal_grid()+
+  geom_hline(yintercept = 0)+
+  labs(x = "Distance lag", y = "Autocorrelation coefficient")
+  
+```
+
+The values we obtained here are not the same but quite close to the values reported in Madden et al. (2007). For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.
+
+The method above is usually referred to Moran's I (Moran, 1950). Let's use another example dataset from the book to calculate Moran's I in R. The data is shown in page 269 of the book. The data are number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats, based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.
+
+```{r}
+epi <- read_csv("data/xu-madden-simulated.csv")
+# transform from wide to long format and pull the n variable
+epi1 <- epi %>% 
+  pivot_longer(2:13,
+               names_to = "quadrat",
+               values_to = "n") %>% 
+  pull(n)
+
+```
+
+Using `moran` function of the *spdep* R package. 
+
+```{r}
+set.seed(100)
+library(spdep)
+nb <- cell2nb(12, 12, type="queen", torus = FALSE) #
+col.W <- nb2listw(nb, style="W")
+count<- epi1
+
+# Cálculo do Moran's I
+moran(count, col.W, 12, Szero(col.W))
+
+# Aplicando o teste de Moran's
+moran.test(count, nb2listw(nb, style="W"))
+
+# Correlogram
+correl_I <- sp.correlogram(nb, count, order=10,
+                           method="I",  zero.policy=TRUE)
+plot(correl_I, main="Correlogram")
 
 
+```
 
+#### Semivariance
+
+
+#### SADIE (distance indices)
 
 
 
