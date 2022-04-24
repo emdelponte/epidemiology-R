@@ -109,12 +109,10 @@
   <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
   <script src="site_libs/quarto-html/anchor.min.js"></script>
   <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-  <link class="quarto-color-scheme" id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
-  <link class="quarto-color-scheme quarto-color-alternate" rel="prefetch" id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css">
+  <link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
   <script src="site_libs/bootstrap/bootstrap.min.js"></script>
   <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-  <link class="quarto-color-scheme" href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
-  <link class="quarto-color-scheme quarto-color-alternate" rel="prefetch" href="site_libs/bootstrap/bootstrap-dark.min.css">
+  <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
   <script id="quarto-search-options" type="application/json">{
     "location": "sidebar",
     "copy-button": false,
@@ -157,9 +155,6 @@
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R4PDE</a> 
-        <div class="sidebar-tools-main">
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-</div>
     </div>
       </div>
       <div class="mt-2 flex-shrink-0 align-items-center">
@@ -205,8 +200,18 @@
 <li><a href="#introduction" class="nav-link active" data-scroll-target="#introduction"> <span class="header-section-number">3.1</span> Introduction</a></li>
 <li><a href="#intensively-mapped" class="nav-link" data-scroll-target="#intensively-mapped"> <span class="header-section-number">3.2</span> Intensively mapped</a>
 <ul class="collapse">
-<li><a href="#binary-data" class="nav-link" data-scroll-target="#binary-data"> <span class="header-section-number">3.2.1</span> Binary data</a></li>
-<li><a href="#grouped-data" class="nav-link" data-scroll-target="#grouped-data"> <span class="header-section-number">3.2.2</span> Grouped data</a></li>
+<li><a href="#binary-data" class="nav-link" data-scroll-target="#binary-data"> <span class="header-section-number">3.2.1</span> Binary data</a>
+<ul class="collapse">
+<li><a href="#runs-test" class="nav-link" data-scroll-target="#runs-test"> <span class="header-section-number">3.2.1.1</span> Runs test</a></li>
+<li><a href="#doublets" class="nav-link" data-scroll-target="#doublets"> <span class="header-section-number">3.2.1.2</span> Doublets</a></li>
+<li><a href="#join-count" class="nav-link" data-scroll-target="#join-count"> <span class="header-section-number">3.2.1.3</span> Join count</a></li>
+</ul></li>
+<li><a href="#grouped-data" class="nav-link" data-scroll-target="#grouped-data"> <span class="header-section-number">3.2.2</span> Grouped data</a>
+<ul class="collapse">
+<li><a href="#autocorrelation" class="nav-link" data-scroll-target="#autocorrelation"> <span class="header-section-number">3.2.2.1</span> Autocorrelation</a></li>
+<li><a href="#semivariance" class="nav-link" data-scroll-target="#semivariance"> <span class="header-section-number">3.2.2.2</span> Semivariance</a></li>
+<li><a href="#sadie" class="nav-link" data-scroll-target="#sadie"> <span class="header-section-number">3.2.2.3</span> SADIE</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -222,7 +227,7 @@
 <p>A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span> . Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.</p>
 <p>The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.</p>
 <p>The patterns can be classified into two main types that occur naturally: <strong>random</strong> or <strong>aggregated</strong>. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.</p>
-<p>A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. Three general categories of statistical tests can be determined based on the spatial scale and type of data collected: intensively mapped (plant to plant); quadrat or plot count/incidence data; or distance among the diseased units.</p>
+<p>A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following Madden et al.&nbsp;(2007), two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data.</p>
 </section>
 <section id="intensively-mapped" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="intensively-mapped"><span class="header-section-number">3.2</span> Intensively mapped</h2>
@@ -952,103 +957,6 @@ Xu, X.-M., and Madden, L. V. 2004. Use of SADIE statistics to study spatial dyna
 </main> <!-- /main -->
 <script type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const disableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'prefetch';
-    }
-  }
-  const enableStylesheet = (stylesheets) => {
-    for (let i=0; i < stylesheets.length; i++) {
-      const stylesheet = stylesheets[i];
-      stylesheet.rel = 'stylesheet';
-    }
-  }
-  const manageTransitions = (selector, allowTransitions) => {
-    const els = window.document.querySelectorAll(selector);
-    for (let i=0; i < els.length; i++) {
-      const el = els[i];
-      if (allowTransitions) {
-        el.classList.remove('notransition');
-      } else {
-        el.classList.add('notransition');
-      }
-    }
-  }
-  const toggleColorMode = (alternate) => {
-    // Switch the stylesheets
-    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
-    manageTransitions('#quarto-margin-sidebar .nav-link', false);
-    if (alternate) {
-      enableStylesheet(alternateStylesheets);
-    } else {
-      disableStylesheet(alternateStylesheets);
-    }
-    manageTransitions('#quarto-margin-sidebar .nav-link', true);
-    // Switch the toggles
-    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
-    for (let i=0; i < toggles.length; i++) {
-      const toggle = toggles[i];
-      if (toggle) {
-        if (alternate) {
-          toggle.classList.add("alternate");     
-        } else {
-          toggle.classList.remove("alternate");
-        }
-      }
-    }
-  }
-  const isFileUrl = () => { 
-    return window.location.protocol === 'file:';
-  }
-  const hasAlternateSentinel = () => {  
-    let styleSentinel = getColorSchemeSentinel();
-    if (styleSentinel !== null) {
-      return styleSentinel === "alternate";
-    } else {
-      return false;
-    }
-  }
-  const setStyleSentinel = (alternate) => {
-    const value = alternate ? "alternate" : "default";
-    if (!isFileUrl()) {
-      window.localStorage.setItem("quarto-color-scheme", value);
-    } else {
-      localAlternateSentinel = value;
-    }
-  }
-  const getColorSchemeSentinel = () => {
-    if (!isFileUrl()) {
-      const storageValue = window.localStorage.getItem("quarto-color-scheme");
-      return storageValue != null ? storageValue : localAlternateSentinel;
-    } else {
-      return localAlternateSentinel;
-    }
-  }
-  let localAlternateSentinel = 'default';
-  // Dark / light mode switch
-  window.quartoToggleColorScheme = () => {
-    // Read the current dark / light value 
-    let toAlternate = !hasAlternateSentinel();
-    toggleColorMode(toAlternate);
-    setStyleSentinel(toAlternate);
-  };
-  // Ensure there is a toggle, if there isn't float one in the top right
-  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
-    const a = window.document.createElement('a');
-    a.classList.add('top-right');
-    a.classList.add('quarto-color-scheme-toggle');
-    a.href = "";
-    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
-    const i = window.document.createElement("i");
-    i.classList.add('bi');
-    a.appendChild(i);
-    window.document.body.appendChild(a);
-  }
-  // Switch to dark mode if need be
-  if (hasAlternateSentinel()) {
-    toggleColorMode(true);
-  } 
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
