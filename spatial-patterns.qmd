@@ -342,47 +342,128 @@ ac_mp_dat %>%
 
 The values we obtained here are not the same but quite close to the values reported in Madden et al. (2007). For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.
 
-The method above is usually referred to Moran's I (Moran, 1950). Let's use another example dataset from the book to calculate Moran's I in R. The data is shown in page 269 of the book. The data are number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats, based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.
+The method above is usually referred to Moran's I (Moran, 1950). Let's use another example dataset from the book to calculate the Moran's I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 epi <- read_csv("data/xu-madden-simulated.csv")
-# transform from wide to long format and pull the n variable
+# Transform from wide to long format 
+# Pull the n variable to store as a vector
 epi1 <- epi %>% 
   pivot_longer(2:13,
-               names_to = "quadrat",
+               names_to = "y",
                values_to = "n") %>% 
   pull(n)
 
 ```
 
-Using `moran` function of the *spdep* R package. 
+Using `moran` function of the *spdep* R package.
 
 ```{r}
 set.seed(100)
 library(spdep)
-nb <- cell2nb(12, 12, type="queen", torus = FALSE) #
-col.W <- nb2listw(nb, style="W")
-count<- epi1
-
-# Cálculo do Moran's I
-moran(count, col.W, 12, Szero(col.W))
-
-# Aplicando o teste de Moran's
-moran.test(count, nb2listw(nb, style="W"))
-
-# Correlogram
-correl_I <- sp.correlogram(nb, count, order=10,
-                           method="I",  zero.policy=TRUE)
-plot(correl_I, main="Correlogram")
-
-
 ```
+
+The `cell2nb` function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged. 
+
+```{r}
+nb <- cell2nb(12, 12, type="queen", torus = FALSE)
+```
+
+The `nb2listw` function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the `col.W` neighbor list.
+
+```{r}
+col.W <- nb2listw(nb, style="W")
+```
+
+The Moran's I statistic is given by the `moran` function 
+
+```{r}
+moran(x = epi1, # numeric vector
+      listw = col.W, # the nb list
+      n = 12, # number of zones
+      S0 = Szero(col.W)) # global sum of weights
+```
+
+The Moran's test for spatial autocorrelation uses spatial weights matrix in weights list form. 
+
+```{r}
+moran.test(x = epi1, 
+           listw = col.W)
+```
+
+
+```{r}
+correl_I <- sp.correlogram(nb, epi1, 
+                           order = 10,
+                           method = "I",  
+                           zero.policy = TRUE)
+```
+
+We can generate a correlogram using the output of the `sp.correlogram` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2017]. Let's store the results in a dataframe.
+
+```{r}
+df_correl <- data.frame(correl_I$res) %>% 
+  mutate(lag = c(1:10))
+
+# Show the spatial autocorrelation for 10 distance lags
+round(df_correl$X1,3)
+```
+Then, we can generate the plot using ggplot.
+
+```{r}
+df_correl %>% 
+  ggplot(aes(lag, X1))+
+  geom_col(fill = "darkorange")+
+  theme_minimal_grid()+
+  scale_x_continuous(n.breaks = 10)+
+  labs(x = "Distance lag", y = "Spatial autocorrelation")
+```
+
 
 #### Semivariance
 
+Semi-variance is a key quantity in geostatistics. This differs from spatial autocorrelation because distances are usually measured in discrete spatial lags. The semi-variance can be defined as half the variance of the differences between all possible points spaced a constant distance apart. 
+
+The semi-variance at a distance d = 0 will be zero, because there are no differences between points that are compared to themselves. However, as points are compared to increasingly distant points, the semi-variance increases. At some distance, called the *Range*, the semi-variance will become approximately equal to the variance of the whole surface itself. This is the greatest distance over which the value at a point on the surface is related to the value at another point. In fact, when the distance between two sampling units is small, the sampling units are close together and, usually, variability is low. As the distance increases, so (usually) does the variability.
+
+Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.  
+ 
+For the semi-variance, we will use the `variog` function of the *geoR* package. We need the data in the long format (x, y and z). Let's reshape the data to the long format and store it in `epi2` dataframe.
+
+```{r}
+epi2 <-epi %>% 
+  pivot_longer(2:13,
+               names_to = "y",
+               values_to = "n") %>% 
+  mutate(y = as.numeric(y))
+
+head(epi2)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+library(geoR)
+# the coordinates are x and y and the data is the n
+v1 <- variog(coords = epi2[,1:2], data = epi2[,3])
+```
+
+
+```{r}
+# Model fitting
+v2 <- variofit(v1, ini.cov.pars = c(1200, 12), 
+               cov.model = "exponential", 
+               fix.nugget = F)
+
+# Plotting 
+plot(v1, xlim = c(0,15))
+lines(v2, lty = 1, lwd = 2)
+
+```
+
+
+
+
+
+
 
 #### SADIE (distance indices)
-
-
-
-
