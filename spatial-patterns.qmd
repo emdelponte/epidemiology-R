@@ -457,9 +457,9 @@ lines(v2, lty = 1, lwd = 2)
 
 ```
 
-#### SADIE (distance indices)
+#### SADIE
 
-SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology [@chapter2017ogy; @xu2004; @li2011]. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.
+SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology [@chapter2017; @xu2004; @li2011]. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.
 
 SADIE quantifies spatial pattern by calculating the minimum total distance to regaularity. That is, the distance that individuals must be moved from the starting point defined by the observed counts to the end point at which there is the same number of individuals in each sampling unit. Therefore, if the data are highly aggregated, the distance to regularity will be large, but if the data are close to regular to start with, the distance to regularity will be smaller.
 
@@ -467,7 +467,18 @@ The null hypothesis to test is that the observed pattern is random. SADIE calcul
 
 An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.
 
-In R, we can use the `sadie` function of the *epiphy* package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let's continue working with the simulated epidemic dataset named `epi2`.
+In R, we can use the `sadie` function of the *epiphy* package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let's continue working with the simulated epidemic dataset named `epi2`. We can map the original data as follows:
+
+```{r}
+epi2 %>% 
+  ggplot(aes(x, y, label = n, fill = n))+
+  geom_tile()+
+  geom_text(size = 5)+
+  theme_void()+
+  coord_fixed()+
+  scale_fill_viridis_c()
+```
+
 
 ```{r}
 library(epiphy)
@@ -481,13 +492,13 @@ The simple output shows the *Ia* value and associated P-value. As suggested by t
 summary(sadie_epi2)
 ```
 
-The plot function allows to map the clustering indices and so to identify regions of patches (outflow) and gaps (inflow).
+The plot function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).
 
 ```{r}
 plot(sadie_epi2)
 ```
 
-A isocline plot is also possible to obtain
+A isocline plot is also possible to obtain by setting the `isocline` argument as `TRUE`.
 
 ```{r}
 plot(sadie_epi2, isoclines = TRUE)
