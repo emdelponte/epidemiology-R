@@ -363,7 +363,7 @@ set.seed(100)
 library(spdep)
 ```
 
-The `cell2nb` function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged. 
+The `cell2nb` function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.
 
 ```{r}
 nb <- cell2nb(12, 12, type="queen", torus = FALSE)
@@ -375,7 +375,7 @@ The `nb2listw` function supplements a neighbors list with spatial weights for th
 col.W <- nb2listw(nb, style="W")
 ```
 
-The Moran's I statistic is given by the `moran` function 
+The Moran's I statistic is given by the `moran` function
 
 ```{r}
 moran(x = epi1, # numeric vector
@@ -384,13 +384,12 @@ moran(x = epi1, # numeric vector
       S0 = Szero(col.W)) # global sum of weights
 ```
 
-The Moran's test for spatial autocorrelation uses spatial weights matrix in weights list form. 
+The Moran's test for spatial autocorrelation uses spatial weights matrix in weights list form.
 
 ```{r}
 moran.test(x = epi1, 
            listw = col.W)
 ```
-
 
 ```{r}
 correl_I <- sp.correlogram(nb, epi1, 
@@ -408,6 +407,7 @@ df_correl <- data.frame(correl_I$res) %>%
 # Show the spatial autocorrelation for 10 distance lags
 round(df_correl$X1,3)
 ```
+
 Then, we can generate the plot using ggplot.
 
 ```{r}
@@ -419,15 +419,14 @@ df_correl %>%
   labs(x = "Distance lag", y = "Spatial autocorrelation")
 ```
 
-
 #### Semivariance
 
-Semi-variance is a key quantity in geostatistics. This differs from spatial autocorrelation because distances are usually measured in discrete spatial lags. The semi-variance can be defined as half the variance of the differences between all possible points spaced a constant distance apart. 
+Semi-variance is a key quantity in geostatistics. This differs from spatial autocorrelation because distances are usually measured in discrete spatial lags. The semi-variance can be defined as half the variance of the differences between all possible points spaced a constant distance apart.
 
 The semi-variance at a distance d = 0 will be zero, because there are no differences between points that are compared to themselves. However, as points are compared to increasingly distant points, the semi-variance increases. At some distance, called the *Range*, the semi-variance will become approximately equal to the variance of the whole surface itself. This is the greatest distance over which the value at a point on the surface is related to the value at another point. In fact, when the distance between two sampling units is small, the sampling units are close together and, usually, variability is low. As the distance increases, so (usually) does the variability.
 
-Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.  
- 
+Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.
+
 For the semi-variance, we will use the `variog` function of the *geoR* package. We need the data in the long format (x, y and z). Let's reshape the data to the long format and store it in `epi2` dataframe.
 
 ```{r}
@@ -440,13 +439,11 @@ epi2 <-epi %>%
 head(epi2)
 ```
 
-
 ```{r message=FALSE, warning=FALSE}
 library(geoR)
 # the coordinates are x and y and the data is the n
 v1 <- variog(coords = epi2[,1:2], data = epi2[,3])
 ```
-
 
 ```{r}
 # Model fitting
@@ -460,10 +457,40 @@ lines(v2, lty = 1, lwd = 2)
 
 ```
 
-
-
-
-
-
-
 #### SADIE (distance indices)
+
+SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology [@chapter2017ogy; @xu2004; @li2011]. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.
+
+SADIE quantifies spatial pattern by calculating the minimum total distance to regaularity. That is, the distance that individuals must be moved from the starting point defined by the observed counts to the end point at which there is the same number of individuals in each sampling unit. Therefore, if the data are highly aggregated, the distance to regularity will be large, but if the data are close to regular to start with, the distance to regularity will be smaller.
+
+The null hypothesis to test is that the observed pattern is random. SADIE calculates an index of aggregation (*Ia*). When this is equal to 1, the pattern is random. If this is greater than 1, the pattern is aggregated. Hypothesis testing is based on the randomization procedure. The null hypothesis of randomness, with an alternative hypothesis of aggregation.
+
+An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.
+
+In R, we can use the `sadie` function of the *epiphy* package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let's continue working with the simulated epidemic dataset named `epi2`.
+
+```{r}
+library(epiphy)
+sadie_epi2 <- sadie(epi2)
+sadie_epi2
+```
+
+The simple output shows the *Ia* value and associated P-value. As suggested by the low P-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided.
+
+```{r}
+summary(sadie_epi2)
+```
+
+The plot function allows to map the clustering indices and so to identify regions of patches (outflow) and gaps (inflow).
+
+```{r}
+plot(sadie_epi2)
+```
+
+A isocline plot is also possible to obtain
+
+```{r}
+plot(sadie_epi2, isoclines = TRUE)
+```
+
+

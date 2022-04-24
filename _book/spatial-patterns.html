@@ -856,12 +856,82 @@ variofit: minimisation function used: optim </code></pre>
 </section>
 <section id="sadie-distance-indices" class="level4" data-number="3.2.2.3">
 <h4 data-number="3.2.2.3" class="anchored" data-anchor-id="sadie-distance-indices"><span class="header-section-number">3.2.2.3</span> SADIE (distance indices)</h4>
+<p>SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology <span class="citation" data-cites="chapter2017ogy xu2004 li2011">(<a href="references.html#ref-chapter2017ogy" role="doc-biblioref"><strong>chapter2017ogy?</strong></a>; <a href="references.html#ref-xu2004" role="doc-biblioref">Xu and Madden 2004</a>; <a href="references.html#ref-li2011" role="doc-biblioref">Li et al. 2011</a>)</span>. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.</p>
+<p>SADIE quantifies spatial pattern by calculating the minimum total distance to regaularity. That is, the distance that individuals must be moved from the starting point defined by the observed counts to the end point at which there is the same number of individuals in each sampling unit. Therefore, if the data are highly aggregated, the distance to regularity will be large, but if the data are close to regular to start with, the distance to regularity will be smaller.</p>
+<p>The null hypothesis to test is that the observed pattern is random. SADIE calculates an index of aggregation (<em>Ia</em>). When this is equal to 1, the pattern is random. If this is greater than 1, the pattern is aggregated. Hypothesis testing is based on the randomization procedure. The null hypothesis of randomness, with an alternative hypothesis of aggregation.</p>
+<p>An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.</p>
+<p>In R, we can use the <code>sadie</code> function of the <em>epiphy</em> package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb64"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>sadie_epi2 <span class="ot">&lt;-</span> <span class="fu">sadie</span>(epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>Computation of Perry's indices:</code></pre>
+</div>
+<div class="sourceCode" id="cb66"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>sadie_epi2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>Spatial Analysis by Distance IndicEs (sadie)
+
+Call:
+sadie.data.frame(data = epi2)
+
+Ia: 2.4622 (Pa = &lt; 2.22e-16)</code></pre>
+</div>
+</div>
+<p>The simple output shows the <em>Ia</em> value and associated P-value. As suggested by the low P-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided.</p>
+<div class="cell">
+<div class="sourceCode" id="cb68"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:
+sadie.data.frame(data = epi2)
+
+First 6 rows of clustering indices:
+  x y  i cost_flows      idx_P idx_LMX prob
+1 1 1  2 -11.382725 -7.2242617      NA   NA
+2 1 2  2  -9.461212 -6.2258877      NA   NA
+3 1 3  3  -7.299482 -5.3390880      NA   NA
+4 1 4 33   1.000000  0.8708407      NA   NA
+5 1 5  4  -5.830952 -3.6534511      NA   NA
+6 1 6  0  -5.301329 -2.9627172      NA   NA
+
+Summary indices:
+                      overall    inflow  outflow
+Perry's index        2.495346 -2.811023 2.393399
+Li-Madden-Xu's index       NA        NA       NA
+
+Main outputs:
+Ia: 2.4622 (Pa = &lt; 2.22e-16)
+
+'Total cost': 201.6062
+Number of permutations: 100</code></pre>
+</div>
+</div>
+<p>The plot function allows to map the clustering indices and so to identify regions of patches (outflow) and gaps (inflow).</p>
+<div class="cell">
+<div class="sourceCode" id="cb70"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="spatial-patterns_files/figure-html/unnamed-chunk-78-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>A isocline plot is also possible to obtain</p>
+<div class="cell">
+<div class="sourceCode" id="cb71"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2, <span class="at">isoclines =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="spatial-patterns_files/figure-html/unnamed-chunk-80-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
+<div id="ref-li2011" class="csl-entry" role="doc-biblioentry">
+Li, B., Madden, L. V., and Xu, X. 2011. Spatial analysis by distance indices: an alternative local clustering index for studying spatial patterns. Methods in Ecology and Evolution. 3:368–377 Available at: <a href="http://dx.doi.org/10.1111/j.2041-210x.2011.00165.x">http://dx.doi.org/10.1111/j.2041-210x.2011.00165.x</a>.
+</div>
 <div id="ref-chapter2017" class="csl-entry" role="doc-biblioentry">
 Madden, L. V., Hughes, G., and van den Bosch, F., eds. 2017. CHAPTER 9: Spatial aspects of epidemics<span></span>III: Patterns of plant disease. In The American Phytopathological Society, p. 235–278. Available at: <a href="http://dx.doi.org/10.1094/9780890545058.009">http://dx.doi.org/10.1094/9780890545058.009</a>.
+</div>
+<div id="ref-xu2004" class="csl-entry" role="doc-biblioentry">
+Xu, X.-M., and Madden, L. V. 2004. Use of SADIE statistics to study spatial dynamics of plant disease epidemics. Plant Pathology. 53:38–49 Available at: <a href="http://dx.doi.org/10.1111/j.1365-3059.2004.00949.x">http://dx.doi.org/10.1111/j.1365-3059.2004.00949.x</a>.
 </div>
 </div>
 </section>
