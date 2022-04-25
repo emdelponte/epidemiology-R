@@ -179,21 +179,22 @@
         <nav id="TOC" role="doc-toc">
 <h2 id="toc-title">Table of contents</h2>
 <ul>
-<li><a href="#models" class="nav-link active" data-scroll-target="#models"> <span class="header-section-number">2.1</span> Models</a>
+<li><a href="#introduction" class="nav-link active" data-scroll-target="#introduction"> <span class="header-section-number">2.1</span> Introduction</a></li>
+<li><a href="#models" class="nav-link" data-scroll-target="#models"> <span class="header-section-number">2.2</span> Models</a>
 <ul class="collapse">
-<li><a href="#exponential-model" class="nav-link" data-scroll-target="#exponential-model"> <span class="header-section-number">2.1.1</span> Exponential model</a></li>
-<li><a href="#power-law-model" class="nav-link" data-scroll-target="#power-law-model"> <span class="header-section-number">2.1.2</span> Power law model</a></li>
+<li><a href="#exponential-model" class="nav-link" data-scroll-target="#exponential-model"> <span class="header-section-number">2.2.1</span> Exponential model</a></li>
+<li><a href="#power-law-model" class="nav-link" data-scroll-target="#power-law-model"> <span class="header-section-number">2.2.2</span> Power law model</a></li>
 </ul></li>
-<li><a href="#linearization-of-the-models" class="nav-link" data-scroll-target="#linearization-of-the-models"> <span class="header-section-number">2.2</span> Linearization of the models</a>
+<li><a href="#linearization-of-the-models" class="nav-link" data-scroll-target="#linearization-of-the-models"> <span class="header-section-number">2.3</span> Linearization of the models</a>
 <ul class="collapse">
-<li><a href="#transformations-of-y" class="nav-link" data-scroll-target="#transformations-of-y"> <span class="header-section-number">2.2.1</span> Transformations of y</a></li>
-<li><a href="#plot-for-the-linearized-form-of-models" class="nav-link" data-scroll-target="#plot-for-the-linearized-form-of-models"> <span class="header-section-number">2.2.2</span> Plot for the linearized form of models</a></li>
+<li><a href="#transformations-of-y" class="nav-link" data-scroll-target="#transformations-of-y"> <span class="header-section-number">2.3.1</span> Transformations of y</a></li>
+<li><a href="#plot-for-the-linearized-form-of-models" class="nav-link" data-scroll-target="#plot-for-the-linearized-form-of-models"> <span class="header-section-number">2.3.2</span> Plot for the linearized form of models</a></li>
 </ul></li>
-<li><a href="#model-fitting" class="nav-link" data-scroll-target="#model-fitting"> <span class="header-section-number">2.3</span> Model fitting</a>
+<li><a href="#model-fitting" class="nav-link" data-scroll-target="#model-fitting"> <span class="header-section-number">2.4</span> Model fitting</a>
 <ul class="collapse">
-<li><a href="#dataset" class="nav-link" data-scroll-target="#dataset"> <span class="header-section-number">2.3.1</span> Dataset</a></li>
-<li><a href="#visualize-the-gradient" class="nav-link" data-scroll-target="#visualize-the-gradient"> <span class="header-section-number">2.3.2</span> Visualize the gradient</a></li>
-<li><a href="#linear-regression" class="nav-link" data-scroll-target="#linear-regression"> <span class="header-section-number">2.3.3</span> Linear regression</a></li>
+<li><a href="#dataset" class="nav-link" data-scroll-target="#dataset"> <span class="header-section-number">2.4.1</span> Dataset</a></li>
+<li><a href="#visualize-the-gradient" class="nav-link" data-scroll-target="#visualize-the-gradient"> <span class="header-section-number">2.4.2</span> Visualize the gradient</a></li>
+<li><a href="#linear-regression" class="nav-link" data-scroll-target="#linear-regression"> <span class="header-section-number">2.4.3</span> Linear regression</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -204,11 +205,18 @@
 
 <div class="quarto-title"><h1 class="title d-none d-lg-block display-7"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Spatial gradients</span></h1></div></header>
 
-<section id="models" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="models"><span class="header-section-number">2.1</span> Models</h2>
+<section id="introduction" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2.1</span> Introduction</h2>
+<p>The assessment of disease in space, in terms of changes in the intensity as it spreads over distance, is called <strong>disease gradient</strong>. In reality, it is the dispersal (migration) of the pathogen by various means (e.g.&nbsp;wind, vectors, rain, movement of infected material or human mediation) that promotes the spread of plant diseases within a field or across continents and generates the disease gradients. There are two kinds of gradients, the inoculum gradient where host availability is not necessarily required and the disease gradient where the three elements of the disease triangle are required.</p>
+<p>In disease gradients, assuming that there is only a single source of inoculum, the intensity of the disease decreases more steeply within short distances of the source, and less steeply at greater distances until they reach zero or a low background level of occasional diseased plants. The shapes of the gradients are defined by mechanisms associated with the dispersal of the inoculum which depends on the biology of the pathogen but strongly to environmental factors that affect pathogen dispersal.</p>
+<p>When studying disease gradients, researchers need to make sure that there is a well defined single source of inoculum. In gradients, this is called a <strong>focus</strong>, from where the inoculum originates. The resulting gradients can be classified in two types: primary or secondary. The primary gradient originates only from the initial focus, while the secondary gradient originates from the movement of inoculum produced at previously infected (due to primary gradients) plants to other plants at increasing distances from the source. It is expected that a mix of both kinds of gradients exists as the disease increases over time.</p>
+<p>Similar to disease progress curves, models can be fitted empirically to observed disease gradient curves and provide insights into the mechanisms of inoculum dispersal and deposition, the source of inoculum, and the physical processes underlying dispersal.</p>
+</section>
+<section id="models" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="models"><span class="header-section-number">2.2</span> Models</h2>
 <p>When modeling disease gradients, the distance is represented by <span class="math inline">\(x\)</span>, a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the <strong>deterministic</strong> type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained it <a href="https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx">this tutorial.</a></p>
-<section id="exponential-model" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="exponential-model"><span class="header-section-number">2.1.1</span> Exponential model</h3>
+<section id="exponential-model" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="exponential-model"><span class="header-section-number">2.2.1</span> Exponential model</h3>
 <p>The exponential model is also known as Kiyosawa &amp; Shiyomi model. The differential of the exponential model is given by</p>
 <p><span class="math inline">\(\frac{dy}{dx}\)</span> = <span class="math inline">\(-b_{E}.y\)</span> ,</p>
 <p>where <span class="math inline">\(b_{E}\)</span> is the exponential form of the rate of decline and <span class="math inline">\(y\)</span> is the disease intensity. This model suggests that <span class="math inline">\(y\)</span> (any disease intensity) is greater close to the source of inoculum, or at the distance zero. The integral form of the model is given by</p>
@@ -252,8 +260,8 @@
 </div>
 </div>
 </section>
-<section id="power-law-model" class="level3" data-number="2.1.2">
-<h3 data-number="2.1.2" class="anchored" data-anchor-id="power-law-model"><span class="header-section-number">2.1.2</span> Power law model</h3>
+<section id="power-law-model" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="power-law-model"><span class="header-section-number">2.2.2</span> Power law model</h3>
 <p>Also known as the modified Gregory’s model (Gregory was a pioneer in the use this model to describe plant disease gradients). In the power law model, <span class="math inline">\(Y\)</span> is proportional to the power of the distance, and is given by:</p>
 <p><span class="math inline">\(Y = a_{P}.x - b_{P}\)</span></p>
 <p>where <span class="math inline">\(a_{P}\)</span> and <span class="math inline">\(b_{P}\)</span> are the two parameters of the power law model. They differ from the exponential because as closer to <span class="math inline">\(x\)</span> is to zero, <span class="math inline">\(Y\)</span> is indefinitely large (not meaningful biologically). However, the model can still be useful because it produces realistic values at any distance <span class="math inline">\(x\)</span> away from the source. The values of the <span class="math inline">\(a_{P}\)</span> parameter should be interpreted in accord to the scale of <span class="math inline">\(x\)</span>, whether in centimeters or meters. If the distance between the source and the first measure away from the source is 0.5m, it is so more appropriate to record the distance in cm than in m or km.</p>
@@ -294,18 +302,18 @@
 <p>Similar to the exponential model, <span class="math inline">\(\frac{dy}{dx}\)</span> is proportional to <span class="math inline">\(Y\)</span>, meaning that the gradient is steeper (more negative) at the highest disease intensity value, usually closer to the source.</p>
 </section>
 </section>
-<section id="linearization-of-the-models" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="linearization-of-the-models"><span class="header-section-number">2.2</span> Linearization of the models</h2>
-<section id="transformations-of-y" class="level3" data-number="2.2.1">
-<h3 data-number="2.2.1" class="anchored" data-anchor-id="transformations-of-y"><span class="header-section-number">2.2.1</span> Transformations of y</h3>
+<section id="linearization-of-the-models" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="linearization-of-the-models"><span class="header-section-number">2.3</span> Linearization of the models</h2>
+<section id="transformations-of-y" class="level3" data-number="2.3.1">
+<h3 data-number="2.3.1" class="anchored" data-anchor-id="transformations-of-y"><span class="header-section-number">2.3.1</span> Transformations of y</h3>
 <p>The gradient models, again similar to the temporal disease models, are <strong>non linear in their parameters</strong>. The model is intrinsically linear if transformations are applied (according to the model) in both sides of the equations. The linear model in its generic state is given by</p>
 <p><span class="math inline">\(y* = a* + bx\)</span> ,</p>
 <p>where the asterisk in <span class="math inline">\(a\)</span> indicated that one of the transformations was applied in <span class="math inline">\(y\)</span> that produced the linear model. Note that <span class="math inline">\(a*\)</span> is the transformed version of the initial disease intensity, which needs to be returned to the original scale according to the respective back-transformation. Follows the linearized form of the two most common gradient models.</p>
 <p><span class="math inline">\(ln(y) = ln(a_{E}) - b_{E}. x\)</span></p>
 <p><span class="math inline">\(ln(y) = ln(a_{P}) - b_{E}. ln(x+C)\)</span></p>
 </section>
-<section id="plot-for-the-linearized-form-of-models" class="level3" data-number="2.2.2">
-<h3 data-number="2.2.2" class="anchored" data-anchor-id="plot-for-the-linearized-form-of-models"><span class="header-section-number">2.2.2</span> Plot for the linearized form of models</h3>
+<section id="plot-for-the-linearized-form-of-models" class="level3" data-number="2.3.2">
+<h3 data-number="2.3.2" class="anchored" data-anchor-id="plot-for-the-linearized-form-of-models"><span class="header-section-number">2.3.2</span> Plot for the linearized form of models</h3>
 <p>Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was <span class="math inline">\(ln(y)\)</span>.</p>
 <p>Follows the linearization of the modified power law model.</p>
 <div class="cell">
@@ -359,10 +367,10 @@
 </div>
 </section>
 </section>
-<section id="model-fitting" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">2.3</span> Model fitting</h2>
-<section id="dataset" class="level3" data-number="2.3.1">
-<h3 data-number="2.3.1" class="anchored" data-anchor-id="dataset"><span class="header-section-number">2.3.1</span> Dataset</h3>
+<section id="model-fitting" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">2.4</span> Model fitting</h2>
+<section id="dataset" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="dataset"><span class="header-section-number">2.4.1</span> Dataset</h3>
 <p>The hypothetical data below shows a gradient for the number of lesions counted at varying distances in meters from the source. Let’s create two vectors, one for the distances <span class="math inline">\(x\)</span> and the other for the lesion count <span class="math inline">\(Y\)</span>, and then a dataframe by combining the two vectors.</p>
 <div class="cell">
 <div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the two vectors</span></span>
@@ -385,8 +393,8 @@
 </div>
 </div>
 </section>
-<section id="visualize-the-gradient" class="level3" data-number="2.3.2">
-<h3 data-number="2.3.2" class="anchored" data-anchor-id="visualize-the-gradient"><span class="header-section-number">2.3.2</span> Visualize the gradient</h3>
+<section id="visualize-the-gradient" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="visualize-the-gradient"><span class="header-section-number">2.4.2</span> Visualize the gradient</h3>
 <div class="cell">
 <div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>grad1 <span class="sc">%&gt;%</span> </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, Y))<span class="sc">+</span></span>
@@ -399,8 +407,8 @@
 </div>
 </div>
 </section>
-<section id="linear-regression" class="level3" data-number="2.3.3">
-<h3 data-number="2.3.3" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">2.3.3</span> Linear regression</h3>
+<section id="linear-regression" class="level3" data-number="2.4.3">
+<h3 data-number="2.4.3" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">2.4.3</span> Linear regression</h3>
 <p>A linear regression model is fitted to the transformed variables according to the model. The higher the coefficient of determination, the better is the fit of the model to the data.</p>
 <p>Exponential model</p>
 <div class="cell">
