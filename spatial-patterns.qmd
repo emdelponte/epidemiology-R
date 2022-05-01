@@ -6,13 +6,79 @@ A spatial disease pattern can be defined as the arrangement of diseased entities
 
 The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.
 
-The patterns can be classified into two main types that occur naturally: **random** or **aggregated**. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units, for example, a healthy unit close to a diseased unit is at higher risk than more distant units.
+The patterns can be classified into two main types that occur naturally: **random** or **aggregated**. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units. For example, a healthy unit close to a diseased unit is at higher risk than more distant units.
 
-A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following Madden et al. (2007), two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data. 
+Let's simulate in R two vectors (x,y) for the positions of diseased unitss that follow a random or an aggregated pattern. For the random pattern, we use `runif`, a function which generates random deviates from the uniform distribution. 
 
-## Intensively mapped
 
-### Binary data
+```{r}
+set.seed(123)          # for reproducibility
+x <- runif(50, 0, 30)  # x vector
+y <- runif(50, 0, 30)  # y vector
+dat <- data.frame(x,y) # dataframe for plotting
+```
+
+Now, the plot to visualize the random pattern.
+
+```{r}
+library(ggplot2) # for plotting
+
+dat |> # R base pipe operator
+  ggplot(aes(x, y))+
+  geom_point(size =3, 
+             color = "darkorange")+
+  ylim(0,30)+
+  xlim(0,30)+
+  coord_fixed()+
+  theme_minimal()
+```
+
+Now, we can generate new x and y vectors using `rnbinom` function which allows generating values for the negative binomial distribution (which should give rise to aggregated patterns) with parameters `size` and `prob`. Let's simulate 50 values with mean 12 and size 20 as dispersal parameter.
+
+```{r}
+x2 <- rnbinom(n = 50, mu = 12, size = 20)
+y2 <- rnbinom(n = 50, mu = 5, size = 20)
+dat2 <- data.frame(x2, y2)
+```
+
+
+This should give us an aggregated pattern.
+
+```{r}
+dat2 |>
+  ggplot(aes(x2, y2))+
+  geom_point(size = 3, color = "darkorange")+
+  ylim(0,30)+
+  xlim(0,30)+
+  coord_fixed()+
+  theme_minimal()
+```
+
+A rare pattern found in nature is the regular pattern, but it could be generate artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
+
+
+```{r}
+x3 <- rep(c(0,5,10,15,20),5) 
+y3 <- rep(c(0, 5, 10, 15, 20), each = 5)
+dat3 <- data.frame(x3, y3)
+
+dat3 |>
+  ggplot(aes(x3, y3))+
+  geom_point(size = 3, color = "darkorange")+
+  ylim(0,20)+
+  xlim(0,20)+
+  coord_fixed()+
+  theme_minimal()
+```
+
+
+## Tests for spatial patterns
+
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following Madden et al. (2007), two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data.
+
+### Intensively mapped
+
+#### Binary data
 
 In this situation the individual plants are mapped, meaning that their relative positions to one another are known. It is the case when a census is used to map presence/absence data. The status of each unit (usually a plant) is noted is a binay variable. The plant is either diseased (D or 1) or non-diseased or healthy (H or 0). Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and join count.
 
@@ -479,7 +545,6 @@ epi2 %>%
   scale_fill_viridis_c()
 ```
 
-
 ```{r}
 library(epiphy)
 sadie_epi2 <- sadie(epi2)
@@ -503,5 +568,3 @@ A isocline plot is also possible to obtain by setting the `isocline` argument as
 ```{r}
 plot(sadie_epi2, isoclines = TRUE)
 ```
-
-
