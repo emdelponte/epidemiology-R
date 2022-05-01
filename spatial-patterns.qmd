@@ -99,7 +99,7 @@ We can then visualize the series using ggplot and count the number of runs as 7,
 
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
-row1 %>% 
+row1 |> 
   ggplot(aes(x1, z1, label = x1, color = factor(y1)))+
   geom_point(shape =15, size =6)+
   theme_void()+
@@ -224,7 +224,7 @@ mapS2 <- raster::raster(matrix(S2, 5 ,5))
 mapS3 <- raster::as.data.frame(mapS2,xy=TRUE)
 
 # Map using ggplot
-mapS3 %>% 
+mapS3 |> 
   ggplot(aes(x, y, label = layer, fill = factor(layer)))+
   geom_tile(color = "black", size =1)+
   theme_void()+
@@ -290,7 +290,7 @@ head(tswv_1929)
 The inspection of the first rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
 
 ```{r}
-tswv_1929 %>% 
+tswv_1929 |> 
   ggplot(aes(x, y, fill = factor(i)))+
   geom_tile()+
   coord_fixed()+
@@ -303,8 +303,8 @@ tswv_1929 %>%
 Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.
 
 ```{r}
-tswv_1929 %>% 
-  select(x, y) %>% 
+tswv_1929 |> 
+  select(x, y) |> 
   summary()
 ```
 
@@ -317,8 +317,8 @@ nb1 <- cell2nb(nrow = 60,
               type="rook")
 
 # Pull the binary sequence of time 1
-S1 <- tswv_1929 %>% 
-  filter(t == "1") %>% 
+S1 <- tswv_1929 |> 
+  filter(t == "1") |> 
   pull(i)
 
 joincount.test(factor(S1), 
@@ -329,16 +329,16 @@ We can apply the join count test for time 2 and time 3. Results show that the pa
 
 ```{r}
 # Pull the binary sequence of time 1
-S2 <- tswv_1929 %>% 
-  filter(t == "2") %>% 
+S2 <- tswv_1929 |> 
+  filter(t == "2") |> 
   pull(i)
 
 joincount.test(factor(S2), 
                 nb2listw(nb1))
 
 # Pull the binary sequence of time 1
-S3 <- tswv_1929 %>% 
-  filter(t == "3") %>% 
+S3 <- tswv_1929 |> 
+  filter(t == "3") |> 
   pull(i)
 
 joincount.test(factor(S3), 
@@ -367,7 +367,7 @@ mp
 We can produce a plot to visualize the number of propagules across the transect.
 
 ```{r}
-mp %>% 
+mp |> 
   ggplot(aes(i, y))+
   geom_col(fill = "darkorange")+
   theme_minimal_grid()+
@@ -395,7 +395,7 @@ ac_mp_dat
 And now the plot known as autocorrelogram.
 
 ```{r}
-ac_mp_dat %>% 
+ac_mp_dat |> 
   ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf,3)))+
   geom_col()+
   geom_text(vjust = 0, nudge_y = 0.05)+
@@ -414,10 +414,10 @@ The method above is usually referred to Moran's I (Moran, 1950). Let's use anoth
 epi <- read_csv("data/xu-madden-simulated.csv")
 # Transform from wide to long format 
 # Pull the n variable to store as a vector
-epi1 <- epi %>% 
+epi1 <- epi |> 
   pivot_longer(2:13,
                names_to = "y",
-               values_to = "n") %>% 
+               values_to = "n") |> 
   pull(n)
 
 ```
@@ -467,7 +467,7 @@ correl_I <- sp.correlogram(nb, epi1,
 We can generate a correlogram using the output of the `sp.correlogram` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2017]. Let's store the results in a dataframe.
 
 ```{r}
-df_correl <- data.frame(correl_I$res) %>% 
+df_correl <- data.frame(correl_I$res) |> 
   mutate(lag = c(1:10))
 
 # Show the spatial autocorrelation for 10 distance lags
@@ -477,7 +477,7 @@ round(df_correl$X1,3)
 Then, we can generate the plot using ggplot.
 
 ```{r}
-df_correl %>% 
+df_correl |> 
   ggplot(aes(lag, X1))+
   geom_col(fill = "darkorange")+
   theme_minimal_grid()+
@@ -496,10 +496,10 @@ Results of semi-variance analysis are normally presented as a graphical plot of 
 For the semi-variance, we will use the `variog` function of the *geoR* package. We need the data in the long format (x, y and z). Let's reshape the data to the long format and store it in `epi2` dataframe.
 
 ```{r}
-epi2 <-epi %>% 
+epi2 <-epi |> 
   pivot_longer(2:13,
                names_to = "y",
-               values_to = "n") %>% 
+               values_to = "n") |> 
   mutate(y = as.numeric(y))
 
 head(epi2)
@@ -536,7 +536,7 @@ An extension was made to quantify the contribution of each sampling unit count t
 In R, we can use the `sadie` function of the *epiphy* package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let's continue working with the simulated epidemic dataset named `epi2`. We can map the original data as follows:
 
 ```{r}
-epi2 %>% 
+epi2 |> 
   ggplot(aes(x, y, label = n, fill = n))+
   geom_tile()+
   geom_text(size = 5)+

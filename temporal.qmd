@@ -33,11 +33,11 @@ dpc <-
 Now the plot
 
 ::: callout-note
-Note that I use the [pipe](https://r4ds.had.co.nz/pipes.html) operator `%>%` in my programming to express a sequence of multiple operations in a more intuitive way.
+Note that I use the [pipe](https://r4ds.had.co.nz/pipes.html) operator `|>` in my programming to express a sequence of multiple operations in a more intuitive way.
 :::
 
 ```{r}
-dpc %>%
+dpc |>
   ggplot(aes(t, y)) +
   geom_point(size = 2)+
   geom_line(size = 1)+
@@ -54,7 +54,7 @@ The precision and complexity of the analysis of progress curve data depends on t
 The AUDPC summarizes the "total measure of disease stress" and is largely used to compare epidemics [@jeger2001]. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let's extend the plot code to show those rectangles using the `annotate` function.
 
 ```{r}
-dpc %>%
+dpc |>
   ggplot(aes(t, y)) +
   geom_point(size = 2)+
   geom_line(size = 1)+
@@ -145,7 +145,7 @@ In the plot below, note that the infection rate in one curve was doubled ($r$ = 
 
 ```{r}
 
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) y0 * exp(r * t), linetype = 1) +
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 2) +
@@ -161,7 +161,7 @@ dat %>%
 Now the inoculum was increased five times while using the same doubled rate.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 1) +
   stat_function(fun = function(t) y0 * 5 * exp(r * 2 * t), linetype = 2) +
@@ -188,7 +188,7 @@ This model commonly describes the temporal patterns of the monocyclic epidemics.
 Let's simulate two monomolecular curve with different rate parameters where one is one third of the other.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r * t))) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-(r / 3) * t))) +
@@ -202,7 +202,7 @@ dat %>%
 Now inoculum was increased 100 times with the reduced rate.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r / 2 * t))) +
   stat_function(fun = function(t) 1 - ((1 - (y0 * 100)) * exp(-r / 2 * t))) +
@@ -232,7 +232,7 @@ where $r_L$ is the apparent infection rate of the logistic model and $y0$ is the
 Let's check two curves where in one the infection rate is double while keeping the same initial inoculum.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
@@ -247,7 +247,7 @@ dat %>%
 Now the inoculum is reduced 10 times for a same infection rate.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
@@ -276,7 +276,7 @@ where $r_G$ is the apparent infection rate for the Gompertz models and $y_0$ is 
 Let's check curves for two rates.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
@@ -291,7 +291,7 @@ dat %>%
 And those when inoculum was reduced thousand times.
 
 ```{r}
-dat %>%
+dat |>
   ggplot(aes(t, y)) +
   stat_function(
     linetype = 2,
@@ -340,8 +340,8 @@ Before proceeding with model selection and fitting, let's visualize the three ep
 Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the long format. The `pivot_longer` function will do the job of reshaping from wide to long format so we can finally use the `ggplot` function to produce the plot.
 
 ```{r, echo = TRUE}
-pepper %>% 
-  pivot_longer(2:4, names_to ="treat", values_to = "inc") %>% 
+pepper |> 
+  pivot_longer(2:4, names_to ="treat", values_to = "inc") |> 
   ggplot (aes(t, inc, 
               linetype = treat, 
               shape = treat, 
@@ -396,7 +396,7 @@ Before looking at the prediction, let's use another handy function that allows u
 Let's then create a new data set called `pepper2` using the data transposing functions of the *tidyr* package.
 
 ```{r}
-pepper2 <- pepper %>% 
+pepper2 <- pepper |> 
   pivot_longer(2:4, names_to ="treat", values_to = "inc")
 
 
@@ -420,15 +420,15 @@ epi_all <- fit_multi(
 Now let's select the statistics of model fitting. Again, *Epifitter* ranks the models based on the CCC (the higher the better) but it is important to check the RSE as well - the lower the better. In fact, the RSE is more important when the goal is prediction.
 
 ```{r echo=TRUE}
-epi_all$Parameters %>% 
+epi_all$Parameters |> 
   select(treat, model, best_model, RSE, CCC)
 ```
 
 To be more certain about our decision, let's advance to the final step which is to produce the plots with the observed and predicted values for each assessment time by calling the `Data` dataframe of the \``epi_all` list.
 
 ```{r, echo = TRUE}
-epi_all$Data %>%
- filter(model %in% c("Gompertz", "Logistic")) %>% 
+epi_all$Data |>
+ filter(model %in% c("Gompertz", "Logistic")) |> 
   ggplot(aes(time, predicted, shape = treat)) +
   geom_point(aes(time, y)) +
   geom_line() +
@@ -443,8 +443,8 @@ epi_all$Data %>%
 Overall, the logistic model seems a better fit for all the curves. Let's produce a plot with the prediction error versus time.
 
 ```{r echo=TRUE}
-epi_all$Data %>%
- filter(model %in% c("Gompertz", "Logistic")) %>% 
+epi_all$Data |>
+ filter(model %in% c("Gompertz", "Logistic")) |> 
   ggplot(aes(time, predicted -y, shape = treat)) +
   geom_point() +
   geom_line() +
@@ -460,8 +460,8 @@ epi_all$Data %>%
 The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.
 
 ```{r, echo = TRUE}
-  epi_all$Parameters %>%
-    filter(model == "Logistic") %>%
+  epi_all$Parameters |>
+    filter(model == "Logistic") |>
     select(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr 
 )
 ```
@@ -470,8 +470,8 @@ We can produce a plot for visual inference on the differences in the parameters.
 
 ```{r, echo = TRUE}
 
-p1 <- epi_all$Parameters %>%
-  filter(model == "Logistic") %>%
+p1 <- epi_all$Parameters |>
+  filter(model == "Logistic") |>
   ggplot(aes(treat, r)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
@@ -483,8 +483,8 @@ p1 <- epi_all$Parameters %>%
     y = "r"
   )
 
-p2 <- epi_all$Parameters %>%
-  filter(model == "Logistic") %>%
+p2 <- epi_all$Parameters |>
+  filter(model == "Logistic") |>
   ggplot(aes(treat, 1 - exp(-y0))) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
@@ -524,7 +524,7 @@ head(budblight)
 Let's have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.
 
 ```{r echo=TRUE}
-p3 <- budblight %>%
+p3 <- budblight |>
   ggplot(aes(
     time, y,
     group = block,
@@ -540,7 +540,7 @@ p3 <- budblight %>%
 ```
 
 ```{r echo=TRUE}
-p4 <- budblight %>%
+p4 <- budblight |>
   ggplot(aes(
     time, log(1 / (1 - y)),
     group = block,
@@ -578,7 +578,7 @@ Let's look at how well the four models fitted the data. Epifitter suggests the b
 
 ```{r, echo = TRUE}
 
-  lin1$Parameters %>% 
+  lin1$Parameters |> 
     select(treat, best_model, model, CCC, RSE)
 ```
 
@@ -587,8 +587,8 @@ And now we extract values for each parameter estimated from the fit of the monom
 ```{r, echo = TRUE}
 
 
-  lin1$Parameters %>%
-  filter(model == "Monomolecular") %>%
+  lin1$Parameters |>
+  filter(model == "Monomolecular") |>
   select(treat, y0, r)
 
 ```
@@ -597,8 +597,8 @@ Now we visualize the fit of the monomolecular model (using `filter` function - s
 
 ```{r, echo = TRUE}
 
-lin1$Data %>%
-  filter(model == "Monomolecular") %>%
+lin1$Data |>
+  filter(model == "Monomolecular") |>
   ggplot(aes(time, predicted)) +
   geom_point(aes(time, y)) +
   geom_line(size = 0.5) +
@@ -614,8 +614,8 @@ Now we can plot the means and respective 95% confidence interval of the apparent
 
 ```{r, echo = TRUE}
 
-p5 <- lin1$Parameters %>%
-  filter(model == "Monomolecular") %>%
+p5 <- lin1$Parameters |>
+  filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
@@ -627,8 +627,8 @@ p5 <- lin1$Parameters %>%
     y = "r"
   )
 
-p6 <- lin1$Parameters %>%
-  filter(model == "Monomolecular") %>%
+p6 <- lin1$Parameters |>
+  filter(model == "Monomolecular") |>
   ggplot(aes(treat, 1 - exp(-y0))) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
@@ -660,7 +660,7 @@ nlin1 <- fit_multi(
 Let's check statistics of model fit.
 
 ```{r, echo = TRUE}
-nlin1$Parameters %>%
+nlin1$Parameters |>
   select(treat, model, CCC, RSE, best_model)
 ```
 
@@ -668,16 +668,16 @@ And now we obtain the two parameters of interest. Note that the values are not t
 
 ```{r, echo = TRUE}
 
-  nlin1$Parameters %>%
-    filter(model == "Monomolecular") %>%
+  nlin1$Parameters |>
+    filter(model == "Monomolecular") |>
     select(treat, y0, r)
 
 ```
 
 ```{r, echo = TRUE}
 
-p7 <- nlin1$Parameters %>%
-  filter(model == "Monomolecular") %>%
+p7 <- nlin1$Parameters |>
+  filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
@@ -689,8 +689,8 @@ p7 <- nlin1$Parameters %>%
     y = "r"
   )
 
-p8 <- nlin1$Parameters %>%
-  filter(model == "Monomolecular") %>%
+p8 <- nlin1$Parameters |>
+  filter(model == "Monomolecular") |>
   ggplot(aes(treat, y0)) +
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
