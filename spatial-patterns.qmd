@@ -2,14 +2,13 @@
 
 ## Introduction
 
-A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop [@chapter2017] . Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
+A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop [@chapter2017]. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
 
 The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.
 
 The patterns can be classified into two main types that occur naturally: **random** or **aggregated**. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units. For example, a healthy unit close to a diseased unit is at higher risk than more distant units.
 
-Let's simulate in R two vectors (x,y) for the positions of diseased unitss that follow a random or an aggregated pattern. For the random pattern, we use `runif`, a function which generates random deviates from the uniform distribution. 
-
+Let's simulate in R two vectors (x,y) for the positions of diseased unitss that follow a random or an aggregated pattern. For the random pattern, we use `runif`, a function which generates random deviates from the uniform distribution.
 
 ```{r}
 set.seed(123)          # for reproducibility
@@ -26,7 +25,7 @@ library(ggplot2) # for plotting
 dat |> # R base pipe operator
   ggplot(aes(x, y))+
   geom_point(size =3, 
-             color = "darkorange")+
+             color = "lightgreen")+
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
@@ -41,13 +40,12 @@ y2 <- rnbinom(n = 50, mu = 5, size = 20)
 dat2 <- data.frame(x2, y2)
 ```
 
-
 This should give us an aggregated pattern.
 
 ```{r}
 dat2 |>
   ggplot(aes(x2, y2))+
-  geom_point(size = 3, color = "darkorange")+
+  geom_point(size = 3, color = "lightgreen")+
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
@@ -56,7 +54,6 @@ dat2 |>
 
 A rare pattern found in nature is the regular pattern, but it could be generate artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
 
-
 ```{r}
 x3 <- rep(c(0,5,10,15,20),5) 
 y3 <- rep(c(0, 5, 10, 15, 20), each = 5)
@@ -64,13 +61,12 @@ dat3 <- data.frame(x3, y3)
 
 dat3 |>
   ggplot(aes(x3, y3))+
-  geom_point(size = 3, color = "darkorange")+
+  geom_point(size = 3, color = "lightgreen")+
   ylim(0,20)+
   xlim(0,20)+
   coord_fixed()+
   theme_minimal()
 ```
-
 
 ## Tests for spatial patterns
 
