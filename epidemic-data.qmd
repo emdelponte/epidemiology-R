@@ -2,14 +2,84 @@
 
 ## Introduction
 
-In order to study epidemics in both time and space, we first need a measurement of disease quantity. The study of plant disease quantification is known as Phytopathometry, a well-established branch of phytopathology tasked with the science of disease measurement [@bock2021].
+One cannot study epidemic progress in time or spread in space without data collected in the field. The study of plant disease quantification is known as Phytopathometry, a well-established branch of plant pathology tasked with the science of disease measurement, but which has strong roots in epidemiology [@bock2021]. Historically, disease quantification has been performed visually, but advances in both imaging and remote sensing technologies have directly impacted the field during the last several decades. Therefore, the quantity of disease can be obtained via estimation (visually by human eye) or measurement (sensor or digital technologies).
 
-Historically, disease quantification has been performed visually, but advances in both imaging and remote sensing technologies have directly impacted phytopathometry during the last several decades. Therefore, the quantity of disease can be obtained via estimation (visually by human eye) or measurement (sensor or digital technologies). While measuring disease is an objective task, visual assessment is largely subjective and as such known to vary among individuals. This is simply because humans possess different inherent ability, vary in the degree or training to assess disease severity or are more or less affected by the method in use (e.g. scales).
+While measuring disease is an objective task, visual assessment is largely subjective and as such known to vary among individuals. This occurs because humans have different inherent abilities, vary in training to assess disease, or are more or less affected by the chosen method (e.g. scales). Disease is estimated or measured on a specimen in a population, or on a sample of specimens drawn from a population. The specimen can be a plant organ, an individual plant, a group of plants, a field or a farm, and these also dictate how terms are defined to refer to disease quantity.
 
 ## Terminology
 
-Disease is estimated or measured on a specimen in a population, or on a sample of specimens drawn from a population. The specimen can be a plant organ, an individual plant, a group of plants, a field or a farm. A general term used to refer to the quantity of disease expressed by any means is **disease intensity**. A primary task when assessing disease is to classify each specimen in a sample as diseased or not diseased. Such binary (yes/no) assessment may be sufficient to determine disease intensity when the goal is to assess, for example, the number or proportion of diseased specimens in a sample or a population of specimens.
+A general term used to refer to the quantity of disease expressed by any means is **disease intensity**. This actually has little practical value as it only suggest that the disease is more or less "intense", but there is no scale for intensity. We usually need a specific term to refer to disease intensity.
 
-Disease measured based on counts of specimens is defined as disease **incidence** or disease **prevalence**. Incidence is commonly used to refer to within field scale considering whole plants or their organs as the observational units, while prevalence is commonly used when referring to the proportion or number of fields or farms with diseased plants in a large production area or region.
+When assessing disease, a primitive task is to classify each specimen in a sample as diseased or not diseased. This binary (yes/no) assessment may be sufficient to express disease intensity in certain cases. For example, if the goal is to assess the number or proportion of diseased specimens in a sample or a population of specimens. The scenario leads to two important terms: disease **incidence** and **prevalence**. While incidence is commonly used to refer to the proportion or number of plants or their organs as the observational units, prevalence is used when referring to the proportion or number of fields or farms with diseased plants in a large production area or region [@nutter2006]. Hence, prevalence is equivalent to incidence, only differing in the spatial scale of the sampling unit.
 
-In many cases we need to ascertain the *degree to which a specimen is diseased*, which is the definition of disease **severity**. In some textbooks and glossaries severity is defined restrictively as the proportion of the unit that is symptomatic, but a revised and broader concept of disease severity encompasses other metrics including lesion counts, ordinal scales with classes defined based on either the percentage scale or descriptions of symptoms (mild to severe, particularly applicable to systemic diseases) [@bock2021].
+In many cases we need to ascertain the *degree to which a specimen is diseased*, which is a definition of disease **severity**. Elsewhere, severity is defined restrictively as the proportion of the unit that is symptomatic [@nutter2006], but a revised concept of disease severity encompasses other metrics including lesion counts and scores based on ordinal scales. These latter scales can be further divided into classes defined based on either the percentage scale or descriptions of symptoms (mild to severe, particularly applicable to systemic diseases) [@bock2021].
+
+## Data types and distributions
+
+The data used to express disease as incidence or severity vary in their nature (discrete or continuous) and statistical distribution. This is especially true and even more variable for severity because of the different scales used.
+
+### Binomial distribution
+
+For incidence (and prevalence), the data is binary at the individual level, as there are only two possible outcomes in a "trial": the plant or plant part is disease or not diseased. The statistical distribution that best describe the incidence data at the individual level is the *binomial distribution*.
+
+Let's simulate the binomial outcomes for a range of probabilities in a sample of 100 units, using the `rbinom` function in R. For a single trial (e.g. status of plants in a single plant row), the `size` argument is set to 1.
+
+```{r warning=FALSE, message=FALSE}
+
+library(tidyverse)
+set.seed(123) # for reproducibility
+P.1 <- rbinom(100, size = 1, prob = 0.1)
+P.3 <- rbinom(100, size = 1, prob = 0.3)
+P.7 <- rbinom(100, size = 1, prob = 0.7)
+P.9 <- rbinom(100, size = 1, prob = 0.9)
+binomial_data <- data.frame(P.1, P.3, P.7, P.9)
+```
+
+We can then visualize the plots.
+
+```{r}
+binomial_data |>
+  pivot_longer(1:4, names_to = "P", 
+               values_to = "value") |> 
+  ggplot(aes(value))+
+  geom_histogram(fill = "darkorange", 
+                 bins =10)+
+  facet_wrap(~P)+
+  theme_minimal()+
+  labs(title = "Binomial distribution to describe binary data")
+```
+
+### Beta distribution
+
+Disease incidence (or prevalence) at the sample or population level can be expressed as proportion of diseased individuals. The same applies to disease severity when expressed as proportion of the organ area affected (a ratio variable). For such cases, the beta distribution, which is bounded between 0 and 1, provides a good description. Let's simulate some data using the `rbeta` function.
+
+```{r}
+beta1.5 <- rbeta(n = 1000, shape1 = 1, shape2 = 5)
+beta5.5 <- rbeta(n = 1000, shape1 = 5, shape2 = 5)
+beta_data <- data.frame(beta1.5, beta5.5)
+
+```
+
+Notice there are two shape parameters in the beta distribution: `shape1` and `shape2` to be defined. This makes the distribution very flexible and with several potential shapes as we can see below.
+
+```{r warning=FALSE}
+beta_data |>
+  pivot_longer(1:2, names_to = "P", 
+               values_to = "value") |> 
+  ggplot(aes(value))+
+  geom_histogram(fill = "darkorange", 
+                 color = "white", 
+                 bins = 15)+
+  scale_x_continuous(limits = c(0,1))+
+  facet_wrap(~P)+
+  theme_minimal()+
+  labs(title = "Beta distribution to describe proportion data")
+```
+
+### Poisson distribution
+
+Count data
+
+### Normal distribution
+
+Lesion size data
