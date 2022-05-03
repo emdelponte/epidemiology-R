@@ -8,19 +8,19 @@ While measuring disease is an objective task, visual assessment is largely subje
 
 ## Terminology
 
-A general term used to refer to the quantity of disease expressed by any means is **disease intensity**. This actually has little practical value as it only suggest that the disease is more or less "intense", but there is no scale for intensity. We usually need a specific term to refer to disease intensity.
+A general term used to refer to the quantity of disease expressed by any means is **disease intensity**. This actually has little practical value as it only suggest that the disease is more or less "intense", but there is no scale for intensity. We need more specific terms to refer to disease intensity.
 
-When assessing disease, a primitive task is to classify each specimen in a sample as diseased or not diseased. This binary (yes/no) assessment may be sufficient to express disease intensity in certain cases. For example, if the goal is to assess the number or proportion of diseased specimens in a sample or a population of specimens. The scenario leads to two important terms: disease **incidence** and **prevalence**. While incidence is commonly used to refer to the proportion or number of plants or their organs as the observational units, prevalence is used when referring to the proportion or number of fields or farms with diseased plants in a large production area or region [@nutter2006]. Hence, prevalence is equivalent to incidence, only differing in the spatial scale of the sampling unit.
+When assessing disease, a primary task is to classify each specimen in a sample as diseased or not diseased. This binary (yes/no) assessment may be sufficient to express disease intensity in certain cases. For example, if the goal is to assess the number or proportion of diseased specimens in a sample or a population of specimens. The scenario leads to two important terms: disease **incidence** and **prevalence**. While incidence is commonly used to refer to the proportion or number of plants or their organs as the observational units, prevalence is used when referring to the proportion or number of fields or farms with diseased plants in a large production area or region [@nutter2006]. Hence, prevalence is equivalent to incidence, only differing in the spatial scale of the sampling unit.
 
-In many cases we need to ascertain the *degree to which a specimen is diseased*, which is a definition of disease **severity**. Elsewhere, severity is defined restrictively as the proportion of the unit that is symptomatic [@nutter2006], but a revised concept of disease severity encompasses other metrics including lesion counts and scores based on ordinal scales. These latter scales can be further divided into classes defined based on either the percentage scale or descriptions of symptoms (mild to severe, particularly applicable to systemic diseases) [@bock2021].
+In many cases we need to ascertain the *degree to which a specimen is diseased*, which is a definition of disease **severity**. Elsewhere, severity is defined restrictively as the proportion of the unit that is symptomatic [@nutter2006], but a revised concept of disease severity encompasses other metrics including lesion counts and scores based on ordinal scales. These latter scales can be further divided into classes defined based on either the percentage scale or descriptions of symptoms [@bock2021]. In some studies we may want to express the quantity of disease in terms of (average) lesion size or area. This can be considered a measure of severity, and it is typically used to classify host genotypes according to resistance or pathogen isolates according to their aggressiveness, influenced or not by environmental factors.
 
 ## Data types and distributions
 
-The data used to express disease as incidence or severity vary in their nature (discrete or continuous) and statistical distribution. This is especially true and even more variable for severity because of the different scales used.
+The disease data used to express disease as incidence or any kind of severity measures vary in their nature as they can be discrete (countable) or continuous. They can also be described by a statistical distribution, which gives the probability that a particular value (or a range of values) will be drawn from a distribution. Knowledge about statistical or mathematical distributions constitute an important step to improve our understanding of data-collection methods, designs of experiments and data analysis such as data summarization or hypothesis testing.
 
 ### Binomial distribution
 
-For incidence (and prevalence), the data is binary at the individual level, as there are only two possible outcomes in a "trial": the plant or plant part is disease or not diseased. The statistical distribution that best describe the incidence data at the individual level is the *binomial distribution*.
+For incidence (and prevalence), the data is binary at the individual level, as there are only two possible outcomes in a *trial*: the plant or plant part is disease or not diseased. The statistical distribution that best describe the incidence data at the individual level is the *binomial distribution*.
 
 Let's simulate the binomial outcomes for a range of probabilities in a sample of 100 units, using the `rbinom` function in R. For a single trial (e.g. status of plants in a single plant row), the `size` argument is set to 1.
 
@@ -42,7 +42,7 @@ binomial_data |>
   pivot_longer(1:4, names_to = "P", 
                values_to = "value") |> 
   ggplot(aes(value))+
-  geom_histogram(fill = "lightgreen", 
+  geom_histogram(fill = "MediumSeaGreen", 
                  bins =10)+
   facet_wrap(~P)+
   theme_minimal()+
@@ -67,7 +67,7 @@ beta_data |>
   pivot_longer(1:2, names_to = "P", 
                values_to = "value") |> 
   ggplot(aes(value))+
-  geom_histogram(fill = "lightgreen", 
+  geom_histogram(fill = "MediumSeaGreen", 
                  color = "white", 
                  bins = 15)+
   scale_x_continuous(limits = c(0,1))+
@@ -80,6 +80,6 @@ beta_data |>
 
 Count data
 
-### Normal distribution
+### Gamma distribution
 
 Lesion size data
