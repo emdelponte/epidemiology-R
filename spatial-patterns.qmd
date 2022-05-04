@@ -20,12 +20,12 @@ dat <- data.frame(x,y) # dataframe for plotting
 Now, the plot to visualize the random pattern.
 
 ```{r}
-library(ggplot2) # for plotting
+library(tidyverse) 
 
 dat |> # R base pipe operator
   ggplot(aes(x, y))+
   geom_point(size =3, 
-             color = "MediumSeaGreen")+
+             color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
@@ -45,7 +45,7 @@ This should give us an aggregated pattern.
 ```{r}
 dat2 |>
   ggplot(aes(x2, y2))+
-  geom_point(size = 3, color = "MediumSeaGreen")+
+  geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
@@ -61,7 +61,7 @@ dat3 <- data.frame(x3, y3)
 
 dat3 |>
   ggplot(aes(x3, y3))+
-  geom_point(size = 3, color = "MediumSeaGreen")+
+  geom_point(size = 3, color = "darkred")+
   ylim(0,20)+
   xlim(0,20)+
   coord_fixed()+
@@ -94,7 +94,7 @@ row1 <- data.frame(x1, y1, z1) # create a dataframe
 We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.
 
 ```{r message=FALSE, warning=FALSE}
-library(tidyverse)
+
 row1 |> 
   ggplot(aes(x1, z1, label = x1, color = factor(y1)))+
   geom_point(shape =15, size =6)+
@@ -134,7 +134,7 @@ result <- ifelse(Z < 1.64,
 c("clustering"), 
 c("randomness"))
 # Print the results
-print(paste("There are",U,"runs. The number of expected runs is", round(EU,1), "P-value:",round(pvalue,6), ". Alternative hypothesis: non-randomness"))
+print(paste("There are", U,"runs. The number of expected runs is", round(EU,1), "P-value:",round(pvalue,6), ". Alternative hypothesis: non-randomness"))
 }
 ```
 
@@ -224,9 +224,9 @@ mapS3 |>
   ggplot(aes(x, y, label = layer, fill = factor(layer)))+
   geom_tile(color = "black", size =1)+
   theme_void()+
-  geom_text(size = 10)+
+  geom_text(size = 10, color = "white")+
   labs(fill = "Status")+
-  scale_fill_manual(values = c("white", "grey80"))
+  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))
 ```
 
 Load the library
@@ -291,7 +291,7 @@ tswv_1929 |>
   geom_tile()+
   coord_fixed()+
   theme_minimal_grid()+
-  scale_fill_grey(start = 0.8, end = 0.2)+
+  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
   facet_wrap(~ t)+
   labs(fill = "Status")
 ```
@@ -300,7 +300,7 @@ Check the number of rows (y) and columns (x) for further preparing the neighbor 
 
 ```{r}
 tswv_1929 |> 
-  select(x, y) |> 
+  dplyr::select(x, y) |> 
   summary()
 ```
 
@@ -538,7 +538,7 @@ epi2 |>
   geom_text(size = 5)+
   theme_void()+
   coord_fixed()+
-  scale_fill_viridis_c()
+  scale_fill_gradient(low = "MediumSeaGreen", high = "darkred")
 ```
 
 ```{r}
