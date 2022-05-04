@@ -19,7 +19,7 @@ dat <- data.frame(x,y) # dataframe for plotting
 
 Now, the plot to visualize the random pattern.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 library(tidyverse) 
 
 dat |> # R base pipe operator
@@ -147,11 +147,12 @@ oruns.test(row1$y1)
 There are built-in functions in R packages that allow for running the ordinary runs test. Let's load the packages and runt the test. Note that the results of the `runs.test` is the same as the one produced by our custom function.
 
 ```{r}
-library(randtests)
-runs.test(row1$y1, threshold = 0.5)
+#library(randtests)
+#runs.test(row1$y1, threshold = 0.5)
 
 library(DescTools)
 r <- RunsTest(row1$y1)
+r
 
 ```
 
@@ -393,7 +394,7 @@ And now the plot known as autocorrelogram.
 ```{r}
 ac_mp_dat |> 
   ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf,3)))+
-  geom_col()+
+  geom_col(fill = "MediumSeaGreen")+
   geom_text(vjust = 0, nudge_y = 0.05)+
   scale_x_continuous(n.breaks = 6)+
   theme_minimal_grid()+
