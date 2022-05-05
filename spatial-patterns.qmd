@@ -25,6 +25,7 @@ Now, the plot to visualize the random pattern.
 
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse) 
+theme_set(theme_bw(base_size = 16))
 
 dat |> # R base pipe operator
   ggplot(aes(x, y))+
@@ -32,8 +33,7 @@ dat |> # R base pipe operator
              color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
-  coord_fixed()+
-  theme_minimal()
+  coord_fixed()
 ```
 
 Now, we can generate new x and y vectors using `rnbinom` function which allows generating values for the negative binomial distribution (which should give rise to aggregated patterns) with parameters `size` and `prob`. Let's simulate 50 values with mean 12 and size 20 as dispersal parameter.
@@ -52,8 +52,7 @@ dat2 |>
   geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
-  coord_fixed()+
-  theme_minimal()
+  coord_fixed()
 ```
 
 A rare pattern found in nature is the regular pattern, but it could be generate artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
@@ -68,8 +67,7 @@ dat3 |>
   geom_point(size = 3, color = "darkred")+
   ylim(0,20)+
   xlim(0,20)+
-  coord_fixed()+
-  theme_minimal()
+  coord_fixed()
 ```
 
 ## Tests for spatial patterns
@@ -227,9 +225,9 @@ mapS3 <- raster::as.data.frame(mapS2,xy=TRUE)
 # Map using ggplot
 mapS3 |> 
   ggplot(aes(x, y, label = layer, fill = factor(layer)))+
-  geom_tile(color = "black", size =1)+
+  geom_tile(color = "black", size =0.5)+
   theme_void()+
-  geom_text(size = 10, color = "white")+
+  geom_text(size = 5, color = "white")+
   labs(fill = "Status")+
   scale_fill_manual(values = c("MediumSeaGreen", "darkred"))
 ```
@@ -295,7 +293,6 @@ tswv_1929 |>
   ggplot(aes(x, y, fill = factor(i)))+
   geom_tile()+
   coord_fixed()+
-  theme_minimal_grid()+
   scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
   facet_wrap(~ t)+
   labs(fill = "Status")
@@ -371,7 +368,6 @@ We can produce a plot to visualize the number of propagules across the transect.
 mp |> 
   ggplot(aes(i, y))+
   geom_col(fill = "MediumSeaGreen")+
-  theme_minimal_grid()+
   labs(x = "Relative position within a transect", 
        y = "Number of propagules",
        title = "Macrophomina phaseolina in the soil",
@@ -401,7 +397,6 @@ ac_mp_dat |>
   geom_col(fill = "MediumSeaGreen")+
   geom_text(vjust = 0, nudge_y = 0.05)+
   scale_x_continuous(n.breaks = 6)+
-  theme_minimal_grid()+
   geom_hline(yintercept = 0)+
   labs(x = "Distance lag", y = "Autocorrelation coefficient")
   
@@ -481,7 +476,6 @@ Then, we can generate the plot using ggplot.
 df_correl |> 
   ggplot(aes(lag, X1))+
   geom_col(fill = "MediumSeaGreen")+
-  theme_minimal_grid()+
   scale_x_continuous(n.breaks = 10)+
   labs(x = "Distance lag", y = "Spatial autocorrelation")
 ```
