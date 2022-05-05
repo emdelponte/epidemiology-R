@@ -15,7 +15,7 @@ Firstly, let's load the essential R packages and set up the environment.
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse) # essential packages 
 library(cowplot) # for themes 
-theme_set(theme_minimal_grid()) # set global theme
+theme_set(theme_bw()) # set global theme
 ```
 
 There are several ways to create a dataframe in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
@@ -23,7 +23,7 @@ There are several ways to create a dataframe in R. I like to use the `tribble` f
 ```{r}
 dpc <- 
   tribble(
-   ~t,  ~`y`, 
+   ~t,  ~y, 
    0,  0.08, 
    7,  0.13, 
   14,  0.78, 
@@ -43,8 +43,8 @@ Note that I use the [pipe](https://r4ds.had.co.nz/pipes.html) operator `|>` in m
 ```{r}
 dpc |>
   ggplot(aes(t, y)) +
-  geom_point(size = 2)+
   geom_line(size = 1)+
+  geom_point(size = 4, shape = 16)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity")
 ```
@@ -60,30 +60,30 @@ The AUDPC summarizes the "total measure of disease stress" and is largely used t
 ```{r}
 dpc |>
   ggplot(aes(t, y)) +
-  geom_point(size = 2)+
-  geom_line(size = 1)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity",
-       title ="Area under the disease progress curve",
-       subtitle = "Calculated using the trapezoidal method")+
+       title ="Representation of AUDPC calculation",
+       subtitle = "Using the trapezoidal method")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
            ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
-           color = "black", alpha = 0.5)+
+           color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
             ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
-            color = "black", alpha = 0.5)+
+            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
             ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
-            color = "black", alpha = 0.5)+
+            color = "darkgreen",, fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
             ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
-            color = "black", alpha = 0.5)+
+            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
             ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
-            color = "black", alpha = 0.5)+
+            color = "darkgreen",fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
             ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
-            color = "black", alpha = 0.5)
+            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
+  geom_line(size = 1)+
+  geom_point(size = 3, shape = 16)
   
 ```
 
@@ -350,8 +350,8 @@ pepper |>
               linetype = treat, 
               shape = treat, 
               group = treat))+
-  geom_point(size =2)+
   geom_line(size = 1)+
+  geom_point(size =3, shape = 16)+
   annotate(geom = "text", x = 15, y = 0.84, label = "1")+
   annotate(geom = "text", x = 23, y = 0.6, label = "2")+
   annotate(geom = "text", x = 32, y = 0.33, label = "3")+
@@ -514,7 +514,7 @@ Again, we will use a dataset of progress curves shown in page 98 [@chapter2017b]
 #### Loading data
 
 ```{r, echo = TRUE}
-budblight <- read_csv("data/bud-blight-soybean.csv")
+budblight <- read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/bud-blight-soybean.csv")
 ```
 
 Let's have a look at the first six rows of the dataset and check the data type for each column. There is an additional column representing the replicates, called block.
@@ -523,7 +523,7 @@ Let's have a look at the first six rows of the dataset and check the data type f
 head(budblight)
 ```
 
-####Visualizing the DPCs
+#### Visualizing the DPCs
 
 Let's have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.
 

@@ -228,10 +228,11 @@
 <li><a href="#designed-experiments" class="nav-link" data-scroll-target="#designed-experiments"> <span class="header-section-number">2.4.6</span> Designed experiments</a>
 <ul class="collapse">
 <li><a href="#loading-data" class="nav-link" data-scroll-target="#loading-data"> <span class="header-section-number">2.4.6.1</span> Loading data</a></li>
-<li><a href="#model-fitting" class="nav-link" data-scroll-target="#model-fitting"> <span class="header-section-number">2.4.6.2</span> Model fitting</a>
+<li><a href="#visualizing-the-dpcs" class="nav-link" data-scroll-target="#visualizing-the-dpcs"> <span class="header-section-number">2.4.6.2</span> Visualizing the DPCs</a></li>
+<li><a href="#model-fitting" class="nav-link" data-scroll-target="#model-fitting"> <span class="header-section-number">2.4.6.3</span> Model fitting</a>
 <ul class="collapse">
-<li><a href="#linear-regression" class="nav-link" data-scroll-target="#linear-regression"> <span class="header-section-number">2.4.6.2.1</span> Linear regression</a></li>
-<li><a href="#non-linear-regression" class="nav-link" data-scroll-target="#non-linear-regression"> <span class="header-section-number">2.4.6.2.2</span> Non-linear regression</a></li>
+<li><a href="#linear-regression" class="nav-link" data-scroll-target="#linear-regression"> <span class="header-section-number">2.4.6.3.1</span> Linear regression</a></li>
+<li><a href="#non-linear-regression" class="nav-link" data-scroll-target="#non-linear-regression"> <span class="header-section-number">2.4.6.3.2</span> Non-linear regression</a></li>
 </ul></li>
 </ul></li>
 </ul></li>
@@ -262,13 +263,13 @@
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># essential packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot) <span class="co"># for themes </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_minimal_grid</span>()) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>()) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are several ways to create a dataframe in R. I like to use the <code>tribble</code> function as below. The entered data will be assigned to a dataframe called <code>dpc</code>.</p>
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="ot">&lt;-</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span><span class="st">`</span><span class="at">y</span><span class="st">`</span>, </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span>y, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>   <span class="dv">0</span>,  <span class="fl">0.08</span>, </span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">7</span>,  <span class="fl">0.13</span>, </span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>,  <span class="fl">0.78</span>, </span>
@@ -295,8 +296,8 @@ Note
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -312,30 +313,30 @@ Note
 <div class="cell">
 <div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span><span class="st">"Area under the disease progress curve"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Calculated using the trapezoidal method"</span>)<span class="sc">+</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">1</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">1</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">2</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], </span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">2</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">3</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], </span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">3</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">4</span>])<span class="sc">/</span><span class="dv">2</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], </span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">4</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">5</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], </span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">5</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">6</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">7</span>], </span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">6</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">7</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity"</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span><span class="st">"Representation of AUDPC calculation"</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Using the trapezoidal method"</span>)<span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">1</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">1</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">2</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">2</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">3</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">3</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">4</span>])<span class="sc">/</span><span class="dv">2</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>,, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">4</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">5</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">5</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">6</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>,<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">7</span>], </span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">6</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">7</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="temporal_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -588,8 +589,8 @@ Note
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">linetype =</span> treat, </span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>              <span class="at">shape =</span> treat, </span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">group =</span> treat))<span class="sc">+</span></span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span><span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span><span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">15</span>, <span class="at">y =</span> <span class="fl">0.84</span>, <span class="at">label =</span> <span class="st">"1"</span>)<span class="sc">+</span></span>
 <span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">23</span>, <span class="at">y =</span> <span class="fl">0.6</span>, <span class="at">label =</span> <span class="st">"2"</span>)<span class="sc">+</span></span>
 <span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">32</span>, <span class="at">y =</span> <span class="fl">0.33</span>, <span class="at">label =</span> <span class="st">"3"</span>)<span class="sc">+</span></span>
@@ -782,7 +783,7 @@ Attaching package: 'patchwork'</code></pre>
 <section id="loading-data" class="level4" data-number="2.4.6.1">
 <h4 data-number="2.4.6.1" class="anchored" data-anchor-id="loading-data"><span class="header-section-number">2.4.6.1</span> Loading data</h4>
 <div class="cell">
-<div class="sourceCode" id="cb43"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>budblight <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/bud-blight-soybean.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>budblight <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/bud-blight-soybean.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stderr">
 <pre><code>
 ── Column specification ────────────────────────────────────────────────────────
@@ -809,7 +810,9 @@ cols(
 6 PD1      40     2  0.38</code></pre>
 </div>
 </div>
-<p>####Visualizing the DPCs</p>
+</section>
+<section id="visualizing-the-dpcs" class="level4" data-number="2.4.6.2">
+<h4 data-number="2.4.6.2" class="anchored" data-anchor-id="visualizing-the-dpcs"><span class="header-section-number">2.4.6.2</span> Visualizing the DPCs</h4>
 <p>Let’s have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.</p>
 <div class="cell">
 <div class="sourceCode" id="cb47"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> budblight <span class="sc">|&gt;</span></span>
@@ -843,12 +846,12 @@ cols(
 </div>
 </div>
 </section>
-<section id="model-fitting" class="level4" data-number="2.4.6.2">
-<h4 data-number="2.4.6.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">2.4.6.2</span> Model fitting</h4>
+<section id="model-fitting" class="level4" data-number="2.4.6.3">
+<h4 data-number="2.4.6.3" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">2.4.6.3</span> Model fitting</h4>
 <p>Remember that the first step in model selection is the visual appraisal of the curve data linearized with the model transformation. In the case the curves represent complete epidemics (close to 100%) appraisal of the absolute rate (difference in y between two times) over time is also helpful.</p>
 <p>For the treatments above, it looks like the curves are typical of a monocyclic disease (the case of soybean bud blight), for which the monomolecular is usually a good fit, but other models are also possible as well. For this exercise, we will use both the linear and the nonlinear estimation method.</p>
-<section id="linear-regression" class="level5" data-number="2.4.6.2.1">
-<h5 data-number="2.4.6.2.1" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">2.4.6.2.1</span> Linear regression</h5>
+<section id="linear-regression" class="level5" data-number="2.4.6.3.1">
+<h5 data-number="2.4.6.3.1" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">2.4.6.3.1</span> Linear regression</h5>
 <p>For convenience, we use the <code>fit_multi()</code> to handle multiple epidemics. The function returns a list object where a series of statistics are provided to aid in model selection and parameter estimation. We need to provide the names of columns (arguments): assessment time (<code>time_col</code>), disease incidence (<code>intensity_col</code>), and treatment (<code>strata_cols</code>).</p>
 <div class="cell">
 <div class="sourceCode" id="cb49"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>lin1 <span class="ot">&lt;-</span> <span class="fu">fit_multi</span>(</span>
@@ -947,8 +950,8 @@ cols(
 </div>
 </div>
 </section>
-<section id="non-linear-regression" class="level5" data-number="2.4.6.2.2">
-<h5 data-number="2.4.6.2.2" class="anchored" data-anchor-id="non-linear-regression"><span class="header-section-number">2.4.6.2.2</span> Non-linear regression</h5>
+<section id="non-linear-regression" class="level5" data-number="2.4.6.3.2">
+<h5 data-number="2.4.6.3.2" class="anchored" data-anchor-id="non-linear-regression"><span class="header-section-number">2.4.6.3.2</span> Non-linear regression</h5>
 <p>To estimate the parameters using the non-linear approach, we repeat the same arguments in the <code>fit_multi</code> function, but include an additional argument <code>nlin</code> set to <code>TRUE</code>.</p>
 <div class="cell">
 <div class="sourceCode" id="cb56"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>nlin1 <span class="ot">&lt;-</span> <span class="fu">fit_multi</span>(</span>
