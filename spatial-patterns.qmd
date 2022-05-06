@@ -80,7 +80,7 @@ A range of techniques, most based on statistical tests, can be used to detect de
 
 In this situation the individual plants are mapped, meaning that their relative positions to one another are known. It is the case when a census is used to map presence/absence data. The status of each unit (usually a plant) is noted is a binay variable. The plant is either diseased (D or 1) or non-diseased or healthy (H or 0). Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and join count.
 
-#### Runs test
+##### Runs test
 
 A run is defined as a succession of one or more diseased or healthy plants, which are followed and preceded by a plant of the other disease status or no plant at all. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
 
@@ -158,7 +158,7 @@ r
 
 ```
 
-#### Doublets
+##### Doublets
 
 Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the yard. If the observed number is greater than the expected number, contagion within the field is suspected.
 
@@ -198,7 +198,7 @@ print(paste("There are",Db,"doublets. The number of expected doublets is",EDb,".
 doublets.test(row1$y1)
 ```
 
-#### Join count
+##### Join count
 
 In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
 
@@ -344,11 +344,11 @@ joincount.test(factor(S3),
 
 ```
 
-### Grouped data
+#### Grouped data
 
 If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are autocorrelation (known as Moran's I), semivariance and SADIE (an alternative approach to autocorrelation.)
 
-#### Autocorrelation
+##### Autocorrelation
 
 Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity [@chapter2017].
 
@@ -480,7 +480,7 @@ df_correl |>
   labs(x = "Distance lag", y = "Spatial autocorrelation")
 ```
 
-#### Semivariance
+##### Semivariance
 
 Semi-variance is a key quantity in geostatistics. This differs from spatial autocorrelation because distances are usually measured in discrete spatial lags. The semi-variance can be defined as half the variance of the differences between all possible points spaced a constant distance apart.
 
@@ -518,7 +518,7 @@ lines(v2, lty = 1, lwd = 2)
 
 ```
 
-#### SADIE
+##### SADIE
 
 SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology [@chapter2017; @xu2004; @li2011]. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.
 
@@ -546,7 +546,7 @@ sadie_epi2 <- sadie(epi2)
 sadie_epi2
 ```
 
-The simple output shows the *Ia* value and associated P-value. As suggested by the low P-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided.
+The simple output shows the *Ia* value and associated *P*-value. As suggested by the low value of the *P*-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the `summary` function.
 
 ```{r}
 summary(sadie_epi2)
@@ -558,8 +558,83 @@ The plot function allows to map the clustering indices and so to identify region
 plot(sadie_epi2)
 ```
 
-A isocline plot is also possible to obtain by setting the `isocline` argument as `TRUE`.
+A isocline plot can be obtained by setting the `isocline` argument as `TRUE`.
 
 ```{r}
 plot(sadie_epi2, isoclines = TRUE)
 ```
+
+### Sparsely sampled data
+
+#### Count data
+
+##### Fit to distributions
+
+Two statistical distributions can be adopted as reference for the description of random (Poisson) or aggregated (negative binomial) patterns of disease data in the form of counts of infection within sampling units. Taking the count of lesions on a leaf as example, if the presence of a lesion does not increase or decrease the chance that other lesions will occur, the Poisson distribution describes the distribution of lesions on the leaf. Otherwise, the negative binomial provides a better description.
+
+Let's work with the previous simulation data of 144 quadrats with a variable number of diseased plants per quadrat. Notice that we won't consider the location of each quadrat as in the previous analyses of intensively mapped data. The epiphy package provides a function called `fit_two_distr` to fit these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the `count` function where the number of infection units is designated as `i`.
+
+
+```{r warning=FALSE}
+data_count <- epi2 |> 
+  mutate(i = n) |>  # create i vector
+  epiphy::count()   # create the map object of count class 
+
+fit_data_count <- fit_two_distr(data_count)
+summary(fit_data_count)
+
+```
+
+The `plot` function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.
+
+```{r}
+plot(fit_data_count, breaks = 5) 
+```
+
+Another way to plot the results
+
+```{r}
+df <- fit_data_count$freq |> 
+  pivot_longer(2:4, "pattern", "value")
+
+df |> 
+  ggplot(aes(category, value, fill = pattern))+
+  geom_col(alpha = 0.7, position = "dodge", width = 3)+
+  scale_fill_manual(values = c("darkred", "MediumSeaGreen", "steelblue"))+
+  theme(legend.position = "top")
+```
+
+
+```{r}
+```
+
+##### Index of aggregation
+
+```{r}
+idx <- agg_index(data_count, method = "fisher")
+idx
+chisq.test(idx)
+z.test(idx)
+
+# Lloyd index
+
+idx_lloyd <- agg_index(data_count, method = "lloyd")
+idx_lloyd
+
+idx_mori <- agg_index(data_count, method = "morisita")
+idx_mori
+
+# Using the vegan package
+library (vegan)
+z <- data_count$data$i
+mor <- dispindmorisita(z)
+mor
+
+```
+
+
+#### Incidence data
+
+
+
+
