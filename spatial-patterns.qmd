@@ -566,18 +566,18 @@ plot(sadie_epi2, isoclines = TRUE)
 
 ### Sparsely sampled data
 
-Different from intensively mapped data, sparsely sampled data do not contain information about the spatial location of the units, and so not being taken into account in the analysis of the spatial patterns. The analysis of sparsely sampled data usually involve characterization of the extent of variability in the mean level of disease intensity per sampling unit [@chapter2017]. Also according to those authors, there are two types of approaches to analyse these data in the context of spatial patterns of plant disease epidemics: testing the goodness of fit to statistical probability distributions and calculating indices of aggregation. These will be discussed further separated depending on the nature of the data, whether count or incidence (proportion), for which specific distributions are assumed to describe the data.
+Different from intensively mapped data, sparsely sampled data do not contain information about the spatial location of the units, and so it is not taken into account in the analysis. The analysis of sparsely sampled data usually involves characterizing the extent of variability in the mean level of disease intensity per sampling unit [@chapter2017]. There are two types of approaches to analyse these data in the context of spatial patterns of plant disease epidemics: 1) testing the goodness of fit to statistical probability distributions and 2) calculating indices of aggregation. These will be discussed further separated depending on the nature of the data, whether count or incidence (proportion), for which specific distributions are assumed to describe the data.
 			
 
 #### Count data
 
 ##### Fit to distributions
 
-Two statistical distributions can be adopted as reference for the description of random or aggregated patterns of disease data in the form of counts of infection within sampling units. Take the count of lesions on a leaf as an example. If the presence of a lesion does not increase or decrease the chance that other lesions will occur, the *Poisson* distribution describes the distribution of lesions on the leaf. Otherwise, the *negative binomial* provides a better description.
+Two statistical distributions can be adopted as reference for the description of random or aggregated patterns of disease data in the form of counts of infection within sampling units. Take the count of lesions on a leaf, or the count of diseased plants on a quadrat, as an example. If the presence of a lesion/diseased plant does not increase or decrease the chance that other lesions/diseased plants will occur, the *Poisson* distribution describes the distribution of lesions on the leaf. Otherwise, the *negative binomial* provides a better description.
 
-Let's work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won't consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of disease units per quadrat.
+Let's work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won't consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of infected units per sampling unit.
 
-The epiphy package provides a function called `fit_two_distr`, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the `count` function where the number of infection units is designated as `i`. It won't work with a single vector of numbers. We create the dataframe using:
+The *epiphy* package provides a function called `fit_two_distr`, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the `count` function where the number of infection units is designated as `i`. It won't work with a single vector of numbers. We create the dataframe using:
 
 ```{r warning=FALSE}
 data_count <- epi2 |> 
@@ -585,7 +585,7 @@ data_count <- epi2 |>
   epiphy::count()   # create the map object of count class
 ```
 
-We can now run the function that will look fo the the vector \`i\`. The function returns a list of four components including the outputs of the fitting process for both distribution and the result of the log-likelihood ratio test, the `llr`.
+We can now run the function that will look fo the the vector `i`. The function returns a list of four components including the outputs of the fitting process for both distribution and the result of the log-likelihood ratio test, the `llr`.
 
 ```{r warning=FALSE}
 fit_data_count <- fit_two_distr(data_count)
@@ -600,7 +600,7 @@ fit_data_count$llr
 The very low value of the P-value of the LLR test suggest that the negative binomial provides a better fit to the data. The `plot` function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.
 
 ```{r}
-plot(fit_data_count, breaks = 3) 
+plot(fit_data_count, breaks = 5) 
 ```
 
 See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using ggplot. Clearly, the negative binomial is a better description for the observed count data.
