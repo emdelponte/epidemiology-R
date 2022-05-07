@@ -4,7 +4,7 @@
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-## Introduction
+## Definitions
 
 A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop [@chapter2017]. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.
 
@@ -55,7 +55,7 @@ dat2 |>
   coord_fixed()
 ```
 
-A rare pattern found in nature is the regular pattern, but it could be generate artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
+A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
 
 ```{r}
 x3 <- rep(c(0,5,10,15,20),5) 
@@ -70,4 +70,44 @@ dat3 |>
   coord_fixed()
 ```
 
+## Spatiotemporal
 
+The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let's visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the `epiphy` R package. Let's use only one variety and one irrigation type.
+
+```{r warning=FALSE, message=FALSE}
+library(epiphy)
+tswv_1928 <- tomato_tswv$field_1928
+
+tswv_1928 |>
+  filter(variety == "Burwood-Prize"&
+         irrigation == "trenches") |> 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile(aes(group = seq_along(factor(t))))+
+  coord_fixed()+
+  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
+  labs(fill = "Status", title = "")+
+  theme_void()+
+  facet_wrap(~ t, nrow =1)
+```
+
+We can use the *gganimate* package to visualize the spatiotemporal dynamics of the epidemics.
+
+```{r, eval=FALSE}
+library(gganimate)
+tswv_1928 |>
+  filter(variety == "Burwood-Prize"&
+         irrigation == "trenches") |> 
+  ggplot(aes(y, x, fill = factor(i)))+
+  geom_tile(aes(group = seq_along(factor(t))))+
+  coord_fixed()+
+  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
+  labs(fill = "Status", title = "")+
+  theme_void()+
+  transition_states(t,
+                  transition_length = 1,
+                    state_length = 1)+
+   ggtitle('Assessment time: {closest_state}')
+anim_save("imgs/spatiotemporal.gif")
+```
+
+![](imgs/spatiotemporal.gif)

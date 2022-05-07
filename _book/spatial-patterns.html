@@ -284,7 +284,8 @@
         <nav id="TOC" role="doc-toc">
 <h2 id="toc-title">Table of contents</h2>
 <ul>
-<li><a href="#introduction" class="nav-link active" data-scroll-target="#introduction"> <span class="header-section-number">9.1</span> Introduction</a></li>
+<li><a href="#definitions" class="nav-link active" data-scroll-target="#definitions"> <span class="header-section-number">9.1</span> Definitions</a></li>
+<li><a href="#spatiotemporal" class="nav-link" data-scroll-target="#spatiotemporal"> <span class="header-section-number">9.2</span> Spatiotemporal</a></li>
 </ul>
 </nav>
     </div>
@@ -304,8 +305,8 @@
 </div>
 </div>
 </div>
-<section id="introduction" class="level2" data-number="9.1">
-<h2 data-number="9.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">9.1</span> Introduction</h2>
+<section id="definitions" class="level2" data-number="9.1">
+<h2 data-number="9.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">9.1</span> Definitions</h2>
 <p>A spatial disease pattern can be defined as the arrangement of diseased entities relative to each other and to the architecture of the host crop <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span>. Such arrangement is the realization of the underlying dispersal of the pathogen, from one or several sources within and/or outside the area of interest, under the influence of physical, biological and environmental factors.</p>
 <p>The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.</p>
 <p>The patterns can be classified into two main types that occur naturally: <strong>random</strong> or <strong>aggregated</strong>. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units. For example, a healthy unit close to a diseased unit is at higher risk than more distant units.</p>
@@ -350,7 +351,7 @@
 <p><img src="spatial-patterns_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>A rare pattern found in nature is the regular pattern, but it could be generate artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.</p>
+<p>A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.</p>
 <div class="cell">
 <div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x3 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">15</span>,<span class="dv">20</span>),<span class="dv">5</span>) </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y3 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>), <span class="at">each =</span> <span class="dv">5</span>)</span>
@@ -366,6 +367,47 @@
 <p><img src="spatial-patterns_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+<section id="spatiotemporal" class="level2" data-number="9.2">
+<h2 data-number="9.2" class="anchored" data-anchor-id="spatiotemporal"><span class="header-section-number">9.2</span> Spatiotemporal</h2>
+<p>The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let’s visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the <code>epiphy</code> R package. Let’s use only one variety and one irrigation type.</p>
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tswv_1928 <span class="ot">&lt;-</span> tomato_tswv<span class="sc">$</span>field_1928</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>tswv_1928 <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variety <span class="sc">==</span> <span class="st">"Burwood-Prize"</span><span class="sc">&amp;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>         irrigation <span class="sc">==</span> <span class="st">"trenches"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i)))<span class="sc">+</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="fu">seq_along</span>(<span class="fu">factor</span>(t))))<span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"MediumSeaGreen"</span>, <span class="st">"darkred"</span>))<span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>, <span class="at">title =</span> <span class="st">""</span>)<span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> t, <span class="at">nrow =</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="spatial-patterns_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can use the <em>gganimate</em> package to visualize the spatiotemporal dynamics of the epidemics.</p>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gganimate)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>tswv_1928 <span class="sc">|&gt;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(variety <span class="sc">==</span> <span class="st">"Burwood-Prize"</span><span class="sc">&amp;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>         irrigation <span class="sc">==</span> <span class="st">"trenches"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(y, x, <span class="at">fill =</span> <span class="fu">factor</span>(i)))<span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="fu">aes</span>(<span class="at">group =</span> <span class="fu">seq_along</span>(<span class="fu">factor</span>(t))))<span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"MediumSeaGreen"</span>, <span class="st">"darkred"</span>))<span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>, <span class="at">title =</span> <span class="st">""</span>)<span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">transition_states</span>(t,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                  <span class="at">transition_length =</span> <span class="dv">1</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                    <span class="at">state_length =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>   <span class="fu">ggtitle</span>(<span class="st">'Assessment time: {closest_state}'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="fu">anim_save</span>(<span class="st">"imgs/spatiotemporal.gif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="imgs/spatiotemporal.gif" class="img-fluid"></p>
 
 
 

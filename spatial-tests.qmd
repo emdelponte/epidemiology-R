@@ -6,7 +6,6 @@ title: "Statistical tests"
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-
 A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following Madden et al. (2007), two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data.
 
 ## Intensively mapped
@@ -23,9 +22,9 @@ Let's create a vector of binary (0 = non-diseased; 1 = diseased) data representi
 
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse) 
+library(gt)
 theme_set(theme_bw(base_size = 16))
 ```
-
 
 ```{r}
 y1 <- c(1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1)
@@ -220,13 +219,18 @@ oruns.test(S3)
 We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset `tomato_tswv` to a new dataframe called `tswv_1929`.
 
 ```{r message=FALSE, warning=FALSE}
-library(epiphy) 
+library(epiphy)
+library(DT)
 library(cowplot) # theming the ggplot
 tswv_1929 <- tomato_tswv$field_1929
-head(tswv_1929) 
+
+tswv_1929 |> 
+  head(6) |> 
+  gt()
+
 ```
 
-The inspection of the first rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
+The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
 
 ```{r}
 tswv_1929 |> 
@@ -544,7 +548,7 @@ plot(fit_data_count, breaks = 5)
 
 See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using ggplot. Clearly, the negative binomial is a better description for the observed count data.
 
-```{r}
+```{r warning=FALSE, message=FALSE}
 df <- fit_data_count$freq |> 
   pivot_longer(2:4, "pattern", "value")
 
@@ -583,3 +587,75 @@ mor
 ```
 
 ### Incidence data
+
+```{r}
+
+fhb <- read_csv("data/fhb.csv")
+
+fhb2 <- fhb %>%
+  filter(campo == 1) 
+library(lme4)
+glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb2)
+performance::icc(glm1)
+
+
+```
+
+
+```{r}
+tas <- read.csv("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt", sep = "")
+tas
+
+# Create incidence object for epiphy
+dat_tas <- tas |> 
+  mutate(n = group_size, i = count) |> 
+  epiphy::incidence()
+
+## Fit to two distributions
+fit_tas <- fit_two_distr(dat_tas)
+summary(fit_tas)
+fit_tas$llr 
+
+plot(fit_tas)
+
+```
+
+```{r}
+tas |> 
+  dplyr::count(count)
+binom.tas = glm(cbind(count, group_size - count)~1,
+              family=binomial,
+              data = tas)
+
+library(aod)
+bbinom.tas <- betabin(cbind(count, group_size - count)~1, ~ 1, data = tas)
+summary(bbinom.tas)
+summary(binom.tas)
+library(performance)
+check_overdispersion(binom.tas)
+
+
+library(epiphy)
+
+tas2 <- tas |> 
+  mutate(i = count,
+         n = group_size) |>  # create i vector
+  epiphy::incidence() 
+
+t <- agg_index(tas2, flavor = "incidence")
+calpha.test(t)
+```
+
+```{r}
+dw <- dogwood_anthracnose |> 
+  filter(t == 1990) |> 
+  epiphy::incidence()
+
+f <- fit_two_distr(dw)
+plot(f)
+summary(f)
+f$llr
+
+ag <- agg_index(dw)
+calpha.test(ag)
+```
