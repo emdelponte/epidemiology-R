@@ -1,0 +1,49 @@
+---
+title: "Data type and distributions"
+---
+
+::: {.callout-note appearance="simple"}
+This is a work in progress that is currently undergoing heavy technical editing and copy-editing
+:::
+
+
+The data used to express disease as incidence or any kind of severity measures vary in their nature as they can be discrete or continuous.
+
+**Discrete** variables are countable (involve integers) at a finite amount of time. That is, only a limited number of values (nominal or ordinal) is possible and these cannot be subdivided into parts. For example, a plant or plant part can be either disease or not diseased (nominal data). We cannot count 1.5 diseased plants. Also, a plant classified as diseased may exhibit a certain number of lesions (count data) or be classified into a specific class of severity (ordinal data, common in ordinal scales, e.g. 1-9). Disease data in the form of counts usually relate to the number of infections per sampling units. Most commonly, counts refer to the pathogen population that is assessed, such as number of airborne or soilborne propagules.
+
+A **continuous** variable, different from discrete, can be measured on a scale and can have any numeric value between two numbers. For example, the size of a lesion on a plant can be measured at a very precise scale (cm or mm). An estimate of severity in percent scale (% diseased area) can take any value between non zero and 100%. Although discrete at the individual level, incidence at the sample level can be treated as continuous, as it can take any value in proportion or percentage.
+
+The disease variables can also be described by a statistical distribution, which are models that give the probability that a particular value (or a range of values) will be drawn from a specific distribution. Knowledge about statistical or mathematical distributions constitute an important step to improve our understanding of data-collection methods, designs of experiments and data analysis such as data summarization or hypothesis testing.
+
+
+### Binomial distribution
+
+For incidence (and prevalence), the data is binary at the individual level, as there are only two possible outcomes in a *trial*: the plant or plant part is disease or not diseased. The statistical distribution that best describe the incidence data at the individual level is the *binomial distribution*.
+
+Let's simulate the binomial outcomes for a range of probabilities in a sample of 100 units, using the `rbinom` function in R. For a single trial (e.g. status of plants in a single plant row), the `size` argument is set to 1.
+
+```{r, warning=FALSE, message=FALSE}
+
+library(tidyverse)
+theme_set(theme_bw(base_size = 14)) # set global theme
+
+set.seed(123) # for reproducibility
+P.1 <- rbinom(100, size = 1, prob = 0.1)
+P.3 <- rbinom(100, size = 1, prob = 0.3)
+P.7 <- rbinom(100, size = 1, prob = 0.7)
+P.9 <- rbinom(100, size = 1, prob = 0.9)
+binomial_data <- data.frame(P.1, P.3, P.7, P.9)
+```
+
+We can then visualize the plots.
+
+```{r}
+binomial_data |>
+  pivot_longer(1:4, names_to = "P", 
+               values_to = "value") |> 
+  ggplot(aes(value))+
+  geom_histogram(fill = "MediumSeaGreen", 
+                 bins =10)+
+  facet_wrap(~P)+
+  labs(title = "Binomial distribution to describe binary data")
+```
