@@ -39,16 +39,16 @@ dat |> # R base pipe operator
 Now, we can generate new x and y vectors using `rnbinom` function which allows generating values for the negative binomial distribution (which should give rise to aggregated patterns) with parameters `size` and `prob`. Let's simulate 50 values with mean 12 and size 20 as dispersal parameter.
 
 ```{r}
-x2 <- rnbinom(n = 50, mu = 12, size = 20)
-y2 <- rnbinom(n = 50, mu = 5, size = 20)
-dat2 <- data.frame(x2, y2)
+x <- rnbinom(n = 50, mu = 12, size = 20)
+y <- rnbinom(n = 50, mu = 5, size = 20)
+dat2 <- data.frame(x, y)
 ```
 
 This should give us an aggregated pattern.
 
 ```{r}
 dat2 |>
-  ggplot(aes(x2, y2))+
+  ggplot(aes(x, y))+
   geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
@@ -58,17 +58,51 @@ dat2 |>
 A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
 
 ```{r}
-x3 <- rep(c(0,5,10,15,20),5) 
-y3 <- rep(c(0, 5, 10, 15, 20), each = 5)
-dat3 <- data.frame(x3, y3)
+x <- rep(c(0,5,10,15,20, 25, 30, 35, 40, 45), 5) 
+y <- rep(c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45), each = 10)
+dat3 <- data.frame(x, y)
 
 dat3 |>
-  ggplot(aes(x3, y3))+
+  ggplot(aes(x, y))+
   geom_point(size = 3, color = "darkred")+
-  ylim(0,20)+
-  xlim(0,20)+
+  ylim(0,45)+
+  xlim(0,45)+
   coord_fixed()
 ```
+
+We can create an animation showing the three patterns using *gganimate* package 
+
+```{r, warning=FALSE, message=FALSE, eval = F}
+rand <- dat |> 
+  mutate(i = "random")
+
+agg <- dat2 |> 
+  mutate(i = "aggregated")
+
+reg <- dat3 |> 
+  mutate(i = "regular")
+
+patterns <- rbind(agg, rand, reg)
+
+library(gganimate)
+
+patterns |> 
+ggplot(aes(x, y, color = factor(i)))+
+  geom_point(size = 4)+
+  theme_light()+
+  coord_fixed()+
+  ylim(0,25)+
+  xlim(0,25)+
+  transition_states(i)+
+  theme(legend.position = "none")+
+  ggtitle('Pattern: {closest_state}')
+anim_save("imgs/patterns.gif")
+
+```
+
+![](imgs/patterns.gif)
+
+
 
 ## Spatiotemporal
 
@@ -81,10 +115,10 @@ tswv_1928 <- tomato_tswv$field_1928
 tswv_1928 |>
   filter(variety == "Burwood-Prize"&
          irrigation == "trenches") |> 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile(aes(group = seq_along(factor(t))))+
+  ggplot(aes(x, y, color = factor(i)))+
+  geom_point(aes(group = seq_along(factor(t))), size =2)+
   coord_fixed()+
-  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
+  scale_color_manual(values = c("MediumSeaGreen", "darkred"))+
   labs(fill = "Status", title = "")+
   theme_void()+
   facet_wrap(~ t, nrow =1)
@@ -92,17 +126,17 @@ tswv_1928 |>
 
 We can use the *gganimate* package to visualize the spatiotemporal dynamics of the epidemics.
 
-```{r, eval=FALSE}
+```{r, warning=FALSE, message=FALSE, eval=FALSE}
 library(gganimate)
 tswv_1928 |>
   filter(variety == "Burwood-Prize"&
          irrigation == "trenches") |> 
-  ggplot(aes(y, x, fill = factor(i)))+
-  geom_tile(aes(group = seq_along(factor(t))))+
-  coord_fixed()+
-  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
+  ggplot(aes(y, x, color = factor(i)))+
+  geom_point(aes(group = seq_along(factor(t))), size =5)+
+  scale_color_manual(values = c("MediumSeaGreen", "darkred"))+
   labs(fill = "Status", title = "")+
   theme_void()+
+  coord_fixed()+
   transition_states(t,
                   transition_length = 1,
                     state_length = 1)+
@@ -111,3 +145,8 @@ anim_save("imgs/spatiotemporal.gif")
 ```
 
 ![](imgs/spatiotemporal.gif)
+
+
+
+
+
