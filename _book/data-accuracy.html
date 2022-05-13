@@ -11,6 +11,69 @@
     div.column{display: inline-block; vertical-align: top; width: 50%;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
   </style>
 
   <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -208,9 +271,12 @@
 <h2 id="toc-title">Table of contents</h2>
 <ul>
 <li><a href="#terminology" class="nav-link active" data-scroll-target="#terminology"> <span class="header-section-number">3.1</span> Terminology</a></li>
-<li><a href="#statistical-tests" class="nav-link" data-scroll-target="#statistical-tests"> <span class="header-section-number">3.2</span> Statistical tests</a>
+<li><a href="#statistical-summaries" class="nav-link" data-scroll-target="#statistical-summaries"> <span class="header-section-number">3.2</span> Statistical summaries</a>
 <ul class="collapse">
-<li><a href="#reliability" class="nav-link" data-scroll-target="#reliability"> <span class="header-section-number">3.2.1</span> Reliability</a></li>
+<li><a href="#reliability" class="nav-link" data-scroll-target="#reliability"> <span class="header-section-number">3.2.1</span> Reliability</a>
+<ul class="collapse">
+<li><a href="#inter-rater-reliability" class="nav-link" data-scroll-target="#inter-rater-reliability"> <span class="header-section-number">3.2.1.1</span> Inter-rater reliability</a></li>
+</ul></li>
 <li><a href="#precision" class="nav-link" data-scroll-target="#precision"> <span class="header-section-number">3.2.2</span> Precision</a></li>
 <li><a href="#accuracy-or-agreement" class="nav-link" data-scroll-target="#accuracy-or-agreement"> <span class="header-section-number">3.2.3</span> Accuracy or agreement</a></li>
 </ul></li>
@@ -235,18 +301,134 @@
 </div>
 <section id="terminology" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="terminology"><span class="header-section-number">3.1</span> Terminology</h2>
-<p>Disease severity, especially when expressed in percent area diseased, is acknowledged as a more difficult and less time- and cost-effective plant disease variable to obtain, especially when assessed visually. However, errors may occur even when assessing a more objective measure such as incidence. This is the case when an incorrect assignment or confusion of symptoms occur. In either case, the quality of the assessment of any disease variable is very important and should be gauged in the studies. Several terms can be used when evaluating the quality of disease assessments, including reliability, precision, accuracy or agreement.</p>
+<p>Disease severity, mainly when expressed in percent area diseased assessed visually, is acknowledged as a more difficult and less time- and cost-effective plant disease variable to obtain. However, errors may occur even when assessing a more objective measure such as incidence. This is the case when an incorrect assignment or confusion of symptoms occur. In either case, the quality of the assessment of any disease variable is very important and should be gauged in the studies. Several terms can be used when evaluating the quality of disease assessments, including reliability, precision, accuracy or agreement.</p>
 <ul>
 <li><p><strong>Reliability</strong>: The extent to which the same estimates or measurements of diseased specimens obtained under different conditions yield similar results. There are two types. The inter-rater reliability (or reproducibility) is a measure of consistency of disease assessment across the same specimens between raters or devices. The intra-rater reliability (or repeatability) measures consistency by the same rater or instrument on the same specimens (e.g.&nbsp;two assessments in time by the same rater).</p></li>
 <li><p><strong>Precision:</strong> A statistical term to express the measure of variability of the estimates or measurements of disease on the same specimens obtained by different raters or instruments. However, reliable or precise estimates (or measurements) are not necessarily close to an actual value, but precision is a component of accuracy or agreement.</p></li>
 <li><p><strong>Accuracy or agreement</strong>: These two terms can be treated as synonymous in plant pathological research. They refer to the closeness (or concordance) of an estimate or measurement to the actual severity value for a specimen on the same scale. Actual values may be obtained using various methods, against which estimates or measurements using an experimental assessment method are compared.</p></li>
 </ul>
 </section>
-<section id="statistical-tests" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="statistical-tests"><span class="header-section-number">3.2</span> Statistical tests</h2>
-<p>The assessment of the quality of estimates or measures is usually performed using statistical summaries or tests to evaluate</p>
+<section id="statistical-summaries" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="statistical-summaries"><span class="header-section-number">3.2</span> Statistical summaries</h2>
+<p>A formal assessment of the quality of estimates or measures is made using statistical summaries of the data expressed as indices that represent reliability, precision and accuracy. These indices can further be used to test hypothesis such as if one or another method is superior than the other.</p>
 <section id="reliability" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="reliability"><span class="header-section-number">3.2.1</span> Reliability</h3>
+<section id="inter-rater-reliability" class="level4" data-number="3.2.1.1">
+<h4 data-number="3.2.1.1" class="anchored" data-anchor-id="inter-rater-reliability"><span class="header-section-number">3.2.1.1</span> Inter-rater reliability</h4>
+<p>To calculate measures of inter-rater reliability, we will work with a fraction of a larger dataset used in a published <a href="https://bsppjournals.onlinelibrary.wiley.com/doi/abs/10.1111/ppa.13148">study</a>. There, the authors tested the effect of standard area diagrams (SADs) on the reliability and accuracy of visual estimates. The selected dataset consists of five columns with 20 rows. The first is the leaf number and the others correspond to assessments of percent severity by four raters (R1 to R4). Each row correspond to one symptomatic leaf. Let’s assign the tibble to a dataframe called <code>sbr</code>.</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span>leaf, <span class="sc">~</span>R1, <span class="sc">~</span>R2,  <span class="sc">~</span>R3, <span class="sc">~</span>R4,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>            1L, <span class="fl">0.6</span>, <span class="fl">0.6</span>,  <span class="fl">0.7</span>, <span class="fl">0.6</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>            2L,   <span class="dv">2</span>, <span class="fl">0.7</span>,    <span class="dv">5</span>,   <span class="dv">1</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>            3L,   <span class="dv">5</span>,   <span class="dv">5</span>,    <span class="dv">8</span>,   <span class="dv">5</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>            4L,   <span class="dv">2</span>,   <span class="dv">4</span>,    <span class="dv">6</span>,   <span class="dv">2</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            5L,   <span class="dv">6</span>,  <span class="dv">14</span>,   <span class="dv">10</span>,   <span class="dv">7</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            6L,   <span class="dv">5</span>,   <span class="dv">6</span>,   <span class="dv">10</span>,   <span class="dv">5</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            7L,  <span class="dv">10</span>,  <span class="dv">18</span>, <span class="fl">12.5</span>,  <span class="dv">12</span>,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            8L,  <span class="dv">15</span>,  <span class="dv">30</span>,   <span class="dv">22</span>,  <span class="dv">10</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>            9L,   <span class="dv">7</span>,   <span class="dv">2</span>,   <span class="dv">12</span>,   <span class="dv">8</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>           10L,   <span class="dv">6</span>,   <span class="dv">9</span>, <span class="fl">11.5</span>,   <span class="dv">8</span>,</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>           11L,   <span class="dv">7</span>,   <span class="dv">7</span>,   <span class="dv">20</span>,   <span class="dv">9</span>,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>           12L,   <span class="dv">6</span>,  <span class="dv">23</span>,   <span class="dv">22</span>,  <span class="dv">14</span>,</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>           13L,  <span class="dv">10</span>,  <span class="dv">35</span>, <span class="fl">18.5</span>,  <span class="dv">20</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>           14L,  <span class="dv">19</span>,  <span class="dv">10</span>,    <span class="dv">9</span>,  <span class="dv">10</span>,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>           15L,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">19</span>,  <span class="dv">20</span>,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>           16L,  <span class="dv">17</span>,  <span class="dv">30</span>,   <span class="dv">18</span>,  <span class="dv">13</span>,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>           17L,  <span class="dv">19</span>,  <span class="dv">53</span>,   <span class="dv">33</span>,  <span class="dv">38</span>,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>           18L,  <span class="dv">17</span>, <span class="fl">6.8</span>,   <span class="dv">15</span>,   <span class="dv">9</span>,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>           19L,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">18</span>,  <span class="dv">16</span>,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>           20L,  <span class="dv">18</span>,  <span class="dv">22</span>,   <span class="dv">24</span>,  <span class="dv">15</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>A first, exploratory analyses, we can perform is to visualize the estimates for each leaf across the raters, so we can appraise how the individual estimates differ across them.</p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set the global theme</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_light</span>())</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># transform from wide to long format</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="ot">&lt;-</span> sbr <span class="sc">|&gt;</span> </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>, <span class="at">names_to =</span> <span class="st">"rater"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"estimate"</span>) </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># create the plot</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(leaf, estimate, <span class="at">color =</span> rater,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">group =</span> leaf))<span class="sc">+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-accuracy_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Alternatively, we can visualize the distribution of the estimates by rater using boxplots.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(rater, estimate))<span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour =</span> <span class="cn">NA</span>, <span class="at">width =</span><span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>,<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">size =</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-accuracy_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Another nice visualization is the correlation matrix of the estimates between all possible pair of raters. We can use the <code>ggpairs</code> function of the <em>GGally</em> package for this task.</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'GGally':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_light</span>())</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create the new dataframe with only raters</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>raters <span class="ot">&lt;-</span> sbr[,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>] </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(raters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-accuracy_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) can be used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the <code>correlation</code> function of the <em>performance</em> package.</p>
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(correlation)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>raters_cor <span class="ot">&lt;-</span> <span class="fu">correlation</span>(raters)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>raters_cor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># Correlation Matrix (pearson-method)
+
+Parameter1 | Parameter2 |    r |       95% CI | t(18) |         p
+-----------------------------------------------------------------
+R1         |         R2 | 0.63 | [0.26, 0.84] |  3.46 | 0.003**  
+R1         |         R3 | 0.68 | [0.34, 0.86] |  3.96 | 0.003**  
+R1         |         R4 | 0.68 | [0.33, 0.86] |  3.89 | 0.003**  
+R2         |         R3 | 0.84 | [0.64, 0.94] |  6.60 | &lt; .001***
+R2         |         R4 | 0.89 | [0.74, 0.96] |  8.38 | &lt; .001***
+R3         |         R4 | 0.86 | [0.68, 0.94] |  7.20 | &lt; .001***
+
+p-value adjustment method: Holm (1979)
+Observations: 20</code></pre>
+</div>
+</div>
+<p>The means of the correlations or the respective coefficient of determination can be easily obtained as follows.</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>raters_cor<span class="sc">$</span>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.6325037 0.6825936 0.6756986 0.8413333 0.8922181 0.8615470</code></pre>
+</div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of Pearson's r</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.7643157</code></pre>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of R2</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r<span class="sc">^</span><span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.5947869</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="precision" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="precision"><span class="header-section-number">3.2.2</span> Precision</h3>
