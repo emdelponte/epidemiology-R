@@ -74,6 +74,25 @@
     code span.va { color: #19177c; } /* Variable */
     code span.vs { color: #4070a0; } /* VerbatimString */
     code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+    }
+    .hanging div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }
   </style>
 
   <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -374,27 +393,22 @@
 </div>
 <p>Another nice visualization is the correlation matrix of the estimates between all possible pair of raters. We can use the <code>ggpairs</code> function of the <em>GGally</em> package for this task.</p>
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
-<pre><code>Registered S3 method overwritten by 'GGally':
-  method from   
-  +.gg   ggplot2</code></pre>
-</div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_light</span>())</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create the new dataframe with only raters</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>raters <span class="ot">&lt;-</span> sbr[,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>] </span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(raters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(GGally)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_light</span>())</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create the new dataframe with only raters</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>raters <span class="ot">&lt;-</span> sbr[,<span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>] </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">ggpairs</span>(raters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-accuracy_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) can be used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the <code>correlation</code> function of the <em>performance</em> package.</p>
+<p>Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) is sometimes used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the <code>correlation</code> function of the <em>performance</em> package.</p>
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(correlation)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>raters_cor <span class="ot">&lt;-</span> <span class="fu">correlation</span>(raters)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>raters_cor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(correlation)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>raters_cor <span class="ot">&lt;-</span> <span class="fu">correlation</span>(raters)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>raters_cor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code># Correlation Matrix (pearson-method)
 
@@ -413,19 +427,101 @@ Observations: 20</code></pre>
 </div>
 <p>The means of the correlations or the respective coefficient of determination can be easily obtained as follows.</p>
 <div class="cell">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>raters_cor<span class="sc">$</span>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>raters_cor<span class="sc">$</span>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.6325037 0.6825936 0.6756986 0.8413333 0.8922181 0.8615470</code></pre>
 </div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of Pearson's r</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of Pearson's r</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.7643157</code></pre>
 </div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of R2</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r<span class="sc">^</span><span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of R2</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(raters_cor<span class="sc">$</span>r<span class="sc">^</span><span class="dv">2</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.5947869</code></pre>
+</div>
+</div>
+<p>Besides the Pearson’s R, an appropriate statistic to report in relability studies is the intraclass correlation (ICC), a measure of association when studying the reliability of raters. There are several formulations for the ICC whose choice may depend on the particular experimental design. According to the seminal work by <span class="citation" data-cites="shrout1979">Shrout and Fleiss (<a href="references.html#ref-shrout1979" role="doc-biblioref">1979</a>)</span>, these are:</p>
+<ul>
+<li><p>One-way random effects model, ICC(1,1): in our context, each leaf is rated by different raters who are considered as sampled from a larger pool of raters (random effects)</p></li>
+<li><p>Two-way random effects model, ICC(2,1): both raters and leaves are viewed as random effects</p></li>
+<li><p>Two-way mixed model, ICC(3,1): raters are considered as fixed effects and leaves are considered as random.</p></li>
+</ul>
+<p>Additionally, the ICC may depend on whether one consider the ratings are the average of not of several rating. When averaged is considered, these are called ICC(1,k), ICC(2,k) and ICC(3,k).</p>
+<p>The ICC can be computed using the <code>ICC()</code> or the <code>icc()</code> functions of the <em>psych</em> or <em>irr</em> packages, respectively. Let’s play first with the former using the dataframe where estimates by the raters are shown in each column.</p>
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ICC</span>(raters)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>Call: ICC(x = raters)
+
+Intraclass correlation coefficients 
+                         type  ICC    F df1 df2       p lower bound upper bound
+Single_raters_absolute   ICC1 0.64  8.1  19  60 1.8e-10        0.47        0.79
+Single_random_raters     ICC2 0.65 10.0  19  57 6.1e-12        0.47        0.80
+Single_fixed_raters      ICC3 0.69 10.0  19  57 6.1e-12        0.54        0.82
+Average_raters_absolute ICC1k 0.88  8.1  19  60 1.8e-10        0.78        0.94
+Average_random_raters   ICC2k 0.88 10.0  19  57 6.1e-12        0.78        0.94
+Average_fixed_raters    ICC3k 0.90 10.0  19  57 6.1e-12        0.82        0.95
+
+ Number of subjects = 20     Number of Judges =  4
+See the help file for a discussion of the other 4 McGraw and Wong estimates,</code></pre>
+</div>
+</div>
+<p>The output of interest is a dataframe with the results of all distinct ICCs. We note that the ICC1 and ICC2 gave very close results. Now, let’s obtain the various ICCs using the <em>irr</em> package. Differently from the the <code>ICC()</code> function, this one requires further specification of the model to use.</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(irr)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">icc</span>(raters, <span class="st">"oneway"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code> Single Score Intraclass Correlation
+
+   Model: oneway 
+   Type : consistency 
+
+   Subjects = 20 
+     Raters = 4 
+     ICC(1) = 0.641
+
+ F-Test, H0: r0 = 0 ; H1: r0 &gt; 0 
+   F(19,60) = 8.13 , p = 1.8e-10 
+
+ 95%-Confidence Interval for ICC Population Values:
+  0.44 &lt; ICC &lt; 0.813</code></pre>
+</div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">icc</span>(raters, <span class="st">"twoway"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code> Single Score Intraclass Correlation
+
+   Model: twoway 
+   Type : consistency 
+
+   Subjects = 20 
+     Raters = 4 
+   ICC(C,1) = 0.692
+
+ F-Test, H0: r0 = 0 ; H1: r0 &gt; 0 
+   F(19,57) = 9.98 , p = 6.08e-12 
+
+ 95%-Confidence Interval for ICC Population Values:
+  0.503 &lt; ICC &lt; 0.845</code></pre>
+</div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">icc</span>(raters, <span class="st">"twoway"</span>, <span class="st">"agreement"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code> Single Score Intraclass Correlation
+
+   Model: twoway 
+   Type : agreement 
+
+   Subjects = 20 
+     Raters = 4 
+   ICC(A,1) = 0.646
+
+ F-Test, H0: r0 = 0 ; H1: r0 &gt; 0 
+   F(19,40) = 9.98 , p = 7.9e-10 
+
+ 95%-Confidence Interval for ICC Population Values:
+  0.435 &lt; ICC &lt; 0.819</code></pre>
 </div>
 </div>
 </section>
@@ -438,6 +534,11 @@ Observations: 20</code></pre>
 
 
 
+<div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
+<div id="ref-shrout1979" class="csl-entry" role="doc-biblioentry">
+Shrout, P. E., and Fleiss, J. L. 1979. Intraclass correlations: Uses in assessing rater reliability. Psychological Bulletin. 86:420–428 Available at: <a href="http://dx.doi.org/10.1037/0033-2909.86.2.420">http://dx.doi.org/10.1037/0033-2909.86.2.420</a>.
+</div>
+</div>
 </section>
 </section>
 </main> <!-- /main -->

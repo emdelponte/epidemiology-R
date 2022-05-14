@@ -86,7 +86,7 @@ sbr2 |>
 
 Another nice visualization is the correlation matrix of the estimates between all possible pair of raters. We can use the `ggpairs` function of the *GGally* package for this task.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(GGally)
 theme_set(theme_light())
 
@@ -96,7 +96,7 @@ raters <- sbr[,2:5]
 ggpairs(raters)
 ```
 
-Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) can be used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
+Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) is sometimes used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
 
 ```{r, warning=FALSE, message=FALSE}
 library(correlation)
@@ -117,9 +117,31 @@ mean(raters_cor$r^2)
 
 ```
 
+Besides the Pearson's R, an appropriate statistic to report in relability studies is the intraclass correlation (ICC), a measure of association when studying the reliability of raters. There are several formulations for the ICC whose choice may depend on the particular experimental design. According to the seminal work by @shrout1979, these are:
 
+-   One-way random effects model, ICC(1,1): in our context, each leaf is rated by different raters who are considered as sampled from a larger pool of raters (random effects)
 
+-   Two-way random effects model, ICC(2,1): both raters and leaves are viewed as random effects
 
+-   Two-way mixed model, ICC(3,1): raters are considered as fixed effects and leaves are considered as random.
+
+Additionally, the ICC may depend on whether one consider the ratings are the average of not of several rating. When averaged is considered, these are called ICC(1,k), ICC(2,k) and ICC(3,k).
+
+The ICC can be computed using the `ICC()` or the `icc()` functions of the *psych* or *irr* packages, respectively. Let's play first with the former using the dataframe where estimates by the raters are shown in each column.
+
+```{r, warning=FALSE, message=FALSE}
+library(psych)
+ICC(raters)
+```
+
+The output of interest is a dataframe with the results of all distinct ICCs. We note that the ICC1 and ICC2 gave very close results. Now, let's obtain the various ICCs using the *irr* package. Differently from the the `ICC()` function, this one requires further specification of the model to use.
+
+```{r, warning=FALSE, message=FALSE}
+library(irr)
+icc(raters, "oneway")
+icc(raters, "twoway")
+icc(raters, "twoway", "agreement")
+```
 
 ### Precision
 
