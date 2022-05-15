@@ -12,19 +12,19 @@ Disease severity, mainly when expressed in percent area diseased assessed visual
 
 -   **Reliability**: The extent to which the same estimates or measurements of diseased specimens obtained under different conditions yield similar results. There are two types. The inter-rater reliability (or reproducibility) is a measure of consistency of disease assessment across the same specimens between raters or devices. The intra-rater reliability (or repeatability) measures consistency by the same rater or instrument on the same specimens (e.g. two assessments in time by the same rater).
 
--   **Precision:** A statistical term to express the measure of variability of the estimates or measurements of disease on the same specimens obtained by different raters or instruments. However, reliable or precise estimates (or measurements) are not necessarily close to an actual value, but precision is a component of accuracy or agreement.
+-   **Precision:** A statistical term to express the measure of variability of the estimates or measurements of disease on the same specimens obtained by different raters (or instruments). However, reliable or precise estimates (or measurements) are not necessarily close to an actual value, but precision is a component of accuracy or agreement.
 
 -   **Accuracy or agreement**: These two terms can be treated as synonymous in plant pathological research. They refer to the closeness (or concordance) of an estimate or measurement to the actual severity value for a specimen on the same scale. Actual values may be obtained using various methods, against which estimates or measurements using an experimental assessment method are compared.
 
 ## Statistical summaries
 
-A formal assessment of the quality of estimates or measures is made using statistical summaries of the data expressed as indices that represent reliability, precision and accuracy. These indices can further be used to test hypothesis such as if one or another method is superior than the other.
+A formal assessment of the quality of estimates or measures is made using statistical summaries of the data expressed as indices that represent reliability, precision and accuracy. These indices can further be used to test hypothesis such as if one or another method is superior than the other. The indices or the tests vary according to the nature of the variable, whether continuous, binary or categorical.
 
-### Reliability
+### Inter-rater reliability
 
-#### Inter-rater reliability
+To calculate measures of inter-rater reliability (or reproducibility) we will work with a fraction of a larger dataset used in a published [study](https://bsppjournals.onlinelibrary.wiley.com/doi/abs/10.1111/ppa.13148). There, the authors tested the effect of standard area diagrams (SADs) on the reliability and accuracy of visual estimates of severity of soybean rust.
 
-To calculate measures of inter-rater reliability, we will work with a fraction of a larger dataset used in a published [study](https://bsppjournals.onlinelibrary.wiley.com/doi/abs/10.1111/ppa.13148). There, the authors tested the effect of standard area diagrams (SADs) on the reliability and accuracy of visual estimates. The selected dataset consists of five columns with 20 rows. The first is the leaf number and the others correspond to assessments of percent severity by four raters (R1 to R4). Each row correspond to one symptomatic leaf. Let's assign the tibble to a dataframe called `sbr`.
+The selected dataset consists of five columns with 20 rows. The first is the leaf number and the others correspond to assessments of percent soybean rust severity by four raters (R1 to R4). Each row correspond to one symptomatic leaf. Let's assign the tibble to a dataframe called `sbr` (an acronym for soybean rust). Note that the variable is continuous.
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -55,7 +55,7 @@ sbr <- tribble(
 
 ```
 
-A first, exploratory analyses, we can perform is to visualize the estimates for each leaf across the raters, so we can appraise how the individual estimates differ across them.
+Let's explore the data using various approaches. First, we can visualize how the individual estimates by the raters differ for a same leaf.
 
 ```{r, warning=FALSE, message=FALSE}
 # set the global theme
@@ -70,8 +70,10 @@ sbr2 <- sbr |>
 sbr2 |> 
   ggplot(aes(leaf, estimate, color = rater,
              group = leaf))+
-  geom_point()+
-  geom_line()
+  geom_line(color = "black")+
+  geom_point(size = 2)+
+  labs(y = "Severity estimate (%)",
+       x = "Leaf number")
 ```
 
 Alternatively, we can visualize the distribution of the estimates by rater using boxplots.
@@ -80,23 +82,28 @@ Alternatively, we can visualize the distribution of the estimates by rater using
 sbr2 |> 
   ggplot(aes(rater, estimate))+
   geom_boxplot(outlier.colour = NA, width =0.5)+
-  geom_jitter(width = 0.1,shape = 1, size =2)
+  geom_jitter(width = 0.1,shape = 1, size =2)+
+  labs(y = "Severity estimate (%)",
+       x = "Rater")
 
 ```
 
-Another nice visualization is the correlation matrix of the estimates between all possible pair of raters. We can use the `ggpairs` function of the *GGally* package for this task.
+Another interesting visualization is the correlation matrix of the estimates between all possible pair of raters. The `ggpairs` function of the *GGally* package is handy for this task.
 
 ```{r, warning=FALSE, message=FALSE}
 library(GGally)
 theme_set(theme_light())
 
-# create the new dataframe with only raters
-raters <- sbr[,2:5] 
+# create a new dataframe with only raters
+raters <- sbr |> 
+  select(2:5)
 
 ggpairs(raters)
 ```
 
-Note that the correlation coefficients vary across all pairs of rater. In fact, the means of these correlations, or the respective squared values (R<sup>2</sup>) is sometimes used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
+#### Coefficient of determination
+
+We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson's R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
 
 ```{r, warning=FALSE, message=FALSE}
 library(correlation)
@@ -104,20 +111,20 @@ raters_cor <- correlation(raters)
 raters_cor
 ```
 
-The means of the correlations or the respective coefficient of determination can be easily obtained as follows.
+The means of coefficient of determination can be easily obtained as follows.
 
 ```{r}
-raters_cor$r
-
-# means of Pearson's r
-mean(raters_cor$r) 
+# All pairwise R2
+raters_cor$r^2
 
 # means of R2
 mean(raters_cor$r^2) 
 
 ```
 
-Besides the Pearson's R, an appropriate statistic to report in relability studies is the intraclass correlation (ICC), a measure of association when studying the reliability of raters. There are several formulations for the ICC whose choice may depend on the particular experimental design. According to the seminal work by @shrout1979, these are:
+#### Intraclass Correlation Coefficient
+
+A common statistic to report in reliability studies is the Intraclass Correlation Coefficient (ICC). There are several formulations for the ICC whose choice depend on the particular experimental design. Following the convention of the seminal work by @shrout1979, there are three main ICCs:
 
 -   One-way random effects model, ICC(1,1): in our context, each leaf is rated by different raters who are considered as sampled from a larger pool of raters (random effects)
 
@@ -125,9 +132,9 @@ Besides the Pearson's R, an appropriate statistic to report in relability studie
 
 -   Two-way mixed model, ICC(3,1): raters are considered as fixed effects and leaves are considered as random.
 
-Additionally, the ICC may depend on whether one consider the ratings are the average of not of several rating. When averaged is considered, these are called ICC(1,k), ICC(2,k) and ICC(3,k).
+Additionally, the ICC may depend on whether one consider the ratings are the average of not of several rating. When average is considered, these are called ICC(1,k), ICC(2,k) and ICC(3,k).
 
-The ICC can be computed using the `ICC()` or the `icc()` functions of the *psych* or *irr* packages, respectively. Let's play first with the former using the dataframe where estimates by the raters are shown in each column.
+The ICC can be computed using the `ICC()` or the `icc()` functions of the *psych* or *irr* packages, respectively. They both provide the coefficient, F value, and the upper and lower bounds of the 95% confidence interval.
 
 ```{r, warning=FALSE, message=FALSE}
 library(psych)
@@ -139,10 +146,105 @@ The output of interest is a dataframe with the results of all distinct ICCs. We 
 ```{r, warning=FALSE, message=FALSE}
 library(irr)
 icc(raters, "oneway")
+
+# The one used in the SBR paper
 icc(raters, "twoway")
-icc(raters, "twoway", "agreement")
+
+
 ```
+
+#### Overall Concordant Correlation Coefficient
+
+Another useful index is the Overall Concordance Correlation Coefficient (OCCC) for evaluating agreement among multiple observers. It was proposed by @barnhart2002 based on the original index proposed by @lin1989, earlier defined in the context of two fixed observers. In the paper, the authors introduced the OCCC in terms of the interobserver variability for assessing agreement among multiple fixed observers. As outcome, and similar to the original CCC, the approach addresses the precision and accuracy indices as components of the OCCC. The `epi.occc` function of the *epiR* packge does the job but it does compute a confidence interval.
+
+```{r}
+library(epiR)
+epi.occc(raters, na.rm = FALSE, pairs = TRUE)
+```
+
+### Intrarater reliability
+
+As defined, the intrarater reliability is also known as repeatability, because it measures consistency by the same rater at repeated assessments (e.g. different times) on the same sample. In some studies, we may be interested in testing whether a new method increases repeatability of assessments by a single rater compared with another one. The same indices used for assessing reproducibility (interrater) can be used to assess repeatability, and these are reported at the rater level. 
+
 
 ### Precision
 
-### Accuracy or agreement
+When assessing precision, one measures the variability of the estimates (or measurements) of disease on the same sampling units obtained by different raters (or instruments). A very high precision does not mean that the estimates are closer to the actual value (which is given by measures of bias). However, precision is component of overall accuracy, or agreement. 
+
+Different from reliability, that requires only the estimates or measures by the raters, now we need a reference (gold standard) value to compare the estimates to. These can be an accurate rater or measures by an instrument. Let's get back to the soybean rust severity estimation dataset and add a column for the (assumed) actual values of severity on each leaf. In that work, the actual severity values were obtained using image analysis. 
+
+```{r}
+sbr <- tibble::tribble(
+         ~leaf, ~actual, ~R1, ~R2,  ~R3, ~R4,
+            1L,    0.25, 0.6, 0.6,  0.7, 0.6,
+            2L,     2.5,   2, 0.7,    5,   1,
+            3L,    7.24,   5,   5,    8,   5,
+            4L,    7.31,   2,   4,    6,   2,
+            5L,    9.07,   6,  14,   10,   7,
+            6L,    11.6,   5,   6,   10,   5,
+            7L,   12.46,  10,  18, 12.5,  12,
+            8L,    13.1,  15,  30,   22,  10,
+            9L,   14.61,   7,   2,   12,   8,
+           10L,   16.06,   6,   9, 11.5,   8,
+           11L,    16.7,   7,   7,   20,   9,
+           12L,    19.5,   6,  23,   22,  14,
+           13L,   20.75,  10,  35, 18.5,  20,
+           14L,   23.56,  19,  10,    9,  10,
+           15L,   23.77,  15,  20,   19,  20,
+           16L,   24.45,  17,  30,   18,  13,
+           17L,   25.78,  19,  53,   33,  38,
+           18L,   26.03,  17, 6.8,   15,   9,
+           19L,   26.42,  15,  20,   18,  16,
+           20L,   28.89,  18,  22,   24,  15
+         )
+```
+
+We can explore visually the scatter plot for the relationship between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.
+
+```{r, warning=FALSE}
+sbr2 <- sbr |> 
+  pivot_longer(3:6, names_to = "rater",
+               values_to = "estimate") 
+
+sbr2 |> 
+  ggplot(aes(actual, estimate))+
+  geom_point(size = 3, alpha = 0.7)+
+  facet_wrap(~rater)+
+  ylim(0,45)+
+  xlim(0,45)+
+  geom_abline(intercept = 0, slope =1)+
+  labs(x = "Actual severity (%)",
+       y = "Estimate severity (%)")
+```
+
+The Pearson's r of the relationship, or the precision of the estimates by each rater, can be obtained using the `correlation` function of the *correlation* package.
+
+```{r}
+precision <- sbr2 |> 
+  select(-leaf) |> 
+  group_by(rater) |> 
+  correlation() 
+
+precision
+
+mean(precision$r)
+mean(precision$CI_low)
+mean(precision$CI_high)
+
+```
+
+
+### Accuracy 
+
+
+```{r}
+sbr2 |> 
+  ggplot(aes(actual, estimate-actual))+
+  geom_point(size = 3, alpha = 0.7)+
+  facet_wrap(~rater)+
+  geom_hline(yintercept = 0)+
+  labs(x = "Actual severity (%)",
+       y = "Error (Estimate - Actual)")
+```
+
+
