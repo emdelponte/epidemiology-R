@@ -191,12 +191,12 @@
     <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-terminology.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Terminology</span></a>
+  <a href="./data-terminology.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Disease variables</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./data-type-distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data type and distributions</span></a>
+  <a href="./data-type-distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data types and distributions</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -521,23 +521,8 @@ See the help file for a discussion of the other 4 McGraw and Wong estimates,</co
 <h4 data-number="3.2.1.3" class="anchored" data-anchor-id="overall-concordant-correlation-coefficient"><span class="header-section-number">3.2.1.3</span> Overall Concordant Correlation Coefficient</h4>
 <p>Another useful index is the Overall Concordance Correlation Coefficient (OCCC) for evaluating agreement among multiple observers. It was proposed by <span class="citation" data-cites="barnhart2002">Barnhart et al. (<a href="references.html#ref-barnhart2002" role="doc-biblioref">2002</a>)</span> based on the original index proposed by <span class="citation" data-cites="lin1989">Lin (<a href="references.html#ref-lin1989" role="doc-biblioref">1989</a>)</span>, earlier defined in the context of two fixed observers. In the paper, the authors introduced the OCCC in terms of the interobserver variability for assessing agreement among multiple fixed observers. As outcome, and similar to the original CCC, the approach addresses the precision and accuracy indices as components of the OCCC. The <code>epi.occc</code> function of the <em>epiR</em> packge does the job but it does compute a confidence interval.</p>
 <div class="cell">
-<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
-<pre><code>Loading required package: survival</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code>Package epiR 2.0.26 is loaded</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code>Type help(epi.about) for summary information</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code>Type browseVignettes(package = 'epiR') to learn how to use epiR for applied epidemiological analyses</code></pre>
-</div>
-<div class="cell-output-stderr">
-<pre><code></code></pre>
-</div>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.occc</span>(raters, <span class="at">na.rm =</span> <span class="cn">FALSE</span>, <span class="at">pairs =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">epi.occc</span>(raters, <span class="at">na.rm =</span> <span class="cn">FALSE</span>, <span class="at">pairs =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>
 Overall CCC           0.6372
@@ -553,60 +538,60 @@ Overall accuracy      0.8125</code></pre>
 </section>
 <section id="precision" class="level3" data-number="3.2.3">
 <h3 data-number="3.2.3" class="anchored" data-anchor-id="precision"><span class="header-section-number">3.2.3</span> Precision</h3>
-<p>When assessing precision, one measures the variability of the estimates (or measurements) of disease on the same sampling units obtained by different raters (or instruments). A very high precision does not mean that the estimates are closer to the actual value (which is given by measures of bias). However, precision is component of overall accuracy, or agreement.</p>
+<p>When assessing precision, one measures the variability of the estimates (or measurements) of disease on the same sampling units obtained by different raters (or instruments). A very high precision does not mean that the estimates are closer to the actual value (which is given by measures of bias). However, precision is a component of overall accuracy, or agreement. It is given by the Pearson’s correlation coefficient.</p>
 <p>Different from reliability, that requires only the estimates or measures by the raters, now we need a reference (gold standard) value to compare the estimates to. These can be an accurate rater or measures by an instrument. Let’s get back to the soybean rust severity estimation dataset and add a column for the (assumed) actual values of severity on each leaf. In that work, the actual severity values were obtained using image analysis.</p>
 <div class="cell">
-<div class="sourceCode" id="cb25"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span>leaf, <span class="sc">~</span>actual, <span class="sc">~</span>R1, <span class="sc">~</span>R2,  <span class="sc">~</span>R3, <span class="sc">~</span>R4,</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>            1L,    <span class="fl">0.25</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>,  <span class="fl">0.7</span>, <span class="fl">0.6</span>,</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>            2L,     <span class="fl">2.5</span>,   <span class="dv">2</span>, <span class="fl">0.7</span>,    <span class="dv">5</span>,   <span class="dv">1</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>            3L,    <span class="fl">7.24</span>,   <span class="dv">5</span>,   <span class="dv">5</span>,    <span class="dv">8</span>,   <span class="dv">5</span>,</span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>            4L,    <span class="fl">7.31</span>,   <span class="dv">2</span>,   <span class="dv">4</span>,    <span class="dv">6</span>,   <span class="dv">2</span>,</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>            5L,    <span class="fl">9.07</span>,   <span class="dv">6</span>,  <span class="dv">14</span>,   <span class="dv">10</span>,   <span class="dv">7</span>,</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>            6L,    <span class="fl">11.6</span>,   <span class="dv">5</span>,   <span class="dv">6</span>,   <span class="dv">10</span>,   <span class="dv">5</span>,</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>            7L,   <span class="fl">12.46</span>,  <span class="dv">10</span>,  <span class="dv">18</span>, <span class="fl">12.5</span>,  <span class="dv">12</span>,</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>            8L,    <span class="fl">13.1</span>,  <span class="dv">15</span>,  <span class="dv">30</span>,   <span class="dv">22</span>,  <span class="dv">10</span>,</span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>            9L,   <span class="fl">14.61</span>,   <span class="dv">7</span>,   <span class="dv">2</span>,   <span class="dv">12</span>,   <span class="dv">8</span>,</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>           10L,   <span class="fl">16.06</span>,   <span class="dv">6</span>,   <span class="dv">9</span>, <span class="fl">11.5</span>,   <span class="dv">8</span>,</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>           11L,    <span class="fl">16.7</span>,   <span class="dv">7</span>,   <span class="dv">7</span>,   <span class="dv">20</span>,   <span class="dv">9</span>,</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>           12L,    <span class="fl">19.5</span>,   <span class="dv">6</span>,  <span class="dv">23</span>,   <span class="dv">22</span>,  <span class="dv">14</span>,</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>           13L,   <span class="fl">20.75</span>,  <span class="dv">10</span>,  <span class="dv">35</span>, <span class="fl">18.5</span>,  <span class="dv">20</span>,</span>
-<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>           14L,   <span class="fl">23.56</span>,  <span class="dv">19</span>,  <span class="dv">10</span>,    <span class="dv">9</span>,  <span class="dv">10</span>,</span>
-<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>           15L,   <span class="fl">23.77</span>,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">19</span>,  <span class="dv">20</span>,</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>           16L,   <span class="fl">24.45</span>,  <span class="dv">17</span>,  <span class="dv">30</span>,   <span class="dv">18</span>,  <span class="dv">13</span>,</span>
-<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>           17L,   <span class="fl">25.78</span>,  <span class="dv">19</span>,  <span class="dv">53</span>,   <span class="dv">33</span>,  <span class="dv">38</span>,</span>
-<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>           18L,   <span class="fl">26.03</span>,  <span class="dv">17</span>, <span class="fl">6.8</span>,   <span class="dv">15</span>,   <span class="dv">9</span>,</span>
-<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>           19L,   <span class="fl">26.42</span>,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">18</span>,  <span class="dv">16</span>,</span>
-<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>           20L,   <span class="fl">28.89</span>,  <span class="dv">18</span>,  <span class="dv">22</span>,   <span class="dv">24</span>,  <span class="dv">15</span></span>
-<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>         <span class="sc">~</span>leaf, <span class="sc">~</span>actual, <span class="sc">~</span>R1, <span class="sc">~</span>R2,  <span class="sc">~</span>R3, <span class="sc">~</span>R4,</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>            1L,    <span class="fl">0.25</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>,  <span class="fl">0.7</span>, <span class="fl">0.6</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>            2L,     <span class="fl">2.5</span>,   <span class="dv">2</span>, <span class="fl">0.7</span>,    <span class="dv">5</span>,   <span class="dv">1</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>            3L,    <span class="fl">7.24</span>,   <span class="dv">5</span>,   <span class="dv">5</span>,    <span class="dv">8</span>,   <span class="dv">5</span>,</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>            4L,    <span class="fl">7.31</span>,   <span class="dv">2</span>,   <span class="dv">4</span>,    <span class="dv">6</span>,   <span class="dv">2</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>            5L,    <span class="fl">9.07</span>,   <span class="dv">6</span>,  <span class="dv">14</span>,   <span class="dv">10</span>,   <span class="dv">7</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>            6L,    <span class="fl">11.6</span>,   <span class="dv">5</span>,   <span class="dv">6</span>,   <span class="dv">10</span>,   <span class="dv">5</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>            7L,   <span class="fl">12.46</span>,  <span class="dv">10</span>,  <span class="dv">18</span>, <span class="fl">12.5</span>,  <span class="dv">12</span>,</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>            8L,    <span class="fl">13.1</span>,  <span class="dv">15</span>,  <span class="dv">30</span>,   <span class="dv">22</span>,  <span class="dv">10</span>,</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>            9L,   <span class="fl">14.61</span>,   <span class="dv">7</span>,   <span class="dv">2</span>,   <span class="dv">12</span>,   <span class="dv">8</span>,</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>           10L,   <span class="fl">16.06</span>,   <span class="dv">6</span>,   <span class="dv">9</span>, <span class="fl">11.5</span>,   <span class="dv">8</span>,</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>           11L,    <span class="fl">16.7</span>,   <span class="dv">7</span>,   <span class="dv">7</span>,   <span class="dv">20</span>,   <span class="dv">9</span>,</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>           12L,    <span class="fl">19.5</span>,   <span class="dv">6</span>,  <span class="dv">23</span>,   <span class="dv">22</span>,  <span class="dv">14</span>,</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>           13L,   <span class="fl">20.75</span>,  <span class="dv">10</span>,  <span class="dv">35</span>, <span class="fl">18.5</span>,  <span class="dv">20</span>,</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>           14L,   <span class="fl">23.56</span>,  <span class="dv">19</span>,  <span class="dv">10</span>,    <span class="dv">9</span>,  <span class="dv">10</span>,</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>           15L,   <span class="fl">23.77</span>,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">19</span>,  <span class="dv">20</span>,</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>           16L,   <span class="fl">24.45</span>,  <span class="dv">17</span>,  <span class="dv">30</span>,   <span class="dv">18</span>,  <span class="dv">13</span>,</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>           17L,   <span class="fl">25.78</span>,  <span class="dv">19</span>,  <span class="dv">53</span>,   <span class="dv">33</span>,  <span class="dv">38</span>,</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>           18L,   <span class="fl">26.03</span>,  <span class="dv">17</span>, <span class="fl">6.8</span>,   <span class="dv">15</span>,   <span class="dv">9</span>,</span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>           19L,   <span class="fl">26.42</span>,  <span class="dv">15</span>,  <span class="dv">20</span>,   <span class="dv">18</span>,  <span class="dv">16</span>,</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>           20L,   <span class="fl">28.89</span>,  <span class="dv">18</span>,  <span class="dv">22</span>,   <span class="dv">24</span>,  <span class="dv">15</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>         )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can explore visually the scatter plot for the relationship between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.</p>
+<p>We can explore visually via scatter plots for the relationships between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.</p>
 <div class="cell">
-<div class="sourceCode" id="cb26"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="ot">&lt;-</span> sbr <span class="sc">|&gt;</span> </span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">names_to =</span> <span class="st">"rater"</span>,</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"estimate"</span>) </span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, estimate))<span class="sc">+</span></span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rater)<span class="sc">+</span></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">45</span>)<span class="sc">+</span></span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">45</span>)<span class="sc">+</span></span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span><span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Actual severity (%)"</span>,</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Estimate severity (%)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="ot">&lt;-</span> sbr <span class="sc">|&gt;</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">6</span>, <span class="at">names_to =</span> <span class="st">"rater"</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"estimate"</span>) </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, estimate))<span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rater)<span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">45</span>)<span class="sc">+</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>,<span class="dv">45</span>)<span class="sc">+</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">intercept =</span> <span class="dv">0</span>, <span class="at">slope =</span><span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Actual severity (%)"</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Estimate severity (%)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-accuracy_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The Pearson’s r of the relationship, or the precision of the estimates by each rater, can be obtained using the <code>correlation</code> function of the <em>correlation</em> package.</p>
+<p>The Pearson’s r for the relationship, or the precision of the estimates by each rater, can be obtained using the <code>correlation</code> function of the <em>correlation</em> package.</p>
 <div class="cell">
-<div class="sourceCode" id="cb27"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>precision <span class="ot">&lt;-</span> sbr2 <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>leaf) <span class="sc">|&gt;</span> </span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(rater) <span class="sc">|&gt;</span> </span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">correlation</span>() </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>precision</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>precision <span class="ot">&lt;-</span> sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>leaf) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(rater) <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">correlation</span>() </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>precision</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code># Correlation Matrix (pearson-method)
 
@@ -620,15 +605,15 @@ R4    |     actual |   estimate | 0.71 | [0.39, 0.88] |  4.29 | &lt; .001***
 p-value adjustment method: Holm (1979)
 Observations: 20</code></pre>
 </div>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.7302795</code></pre>
 </div>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>CI_low)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>CI_low)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.4373825</code></pre>
 </div>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>CI_high)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(precision<span class="sc">$</span>CI_high)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 0.8847261</code></pre>
 </div>
@@ -637,13 +622,13 @@ Observations: 20</code></pre>
 <section id="accuracy" class="level3" data-number="3.2.4">
 <h3 data-number="3.2.4" class="anchored" data-anchor-id="accuracy"><span class="header-section-number">3.2.4</span> Accuracy</h3>
 <div class="cell">
-<div class="sourceCode" id="cb35"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, estimate<span class="sc">-</span>actual))<span class="sc">+</span></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rater)<span class="sc">+</span></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Actual severity (%)"</span>,</span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Error (Estimate - Actual)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, estimate<span class="sc">-</span>actual))<span class="sc">+</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>)<span class="sc">+</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>rater)<span class="sc">+</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Actual severity (%)"</span>,</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Error (Estimate - Actual)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-accuracy_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -744,7 +729,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./data-type-distributions.html" class="pagination-link">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data type and distributions</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data types and distributions</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

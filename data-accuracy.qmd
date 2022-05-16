@@ -157,7 +157,7 @@ icc(raters, "twoway")
 
 Another useful index is the Overall Concordance Correlation Coefficient (OCCC) for evaluating agreement among multiple observers. It was proposed by @barnhart2002 based on the original index proposed by @lin1989, earlier defined in the context of two fixed observers. In the paper, the authors introduced the OCCC in terms of the interobserver variability for assessing agreement among multiple fixed observers. As outcome, and similar to the original CCC, the approach addresses the precision and accuracy indices as components of the OCCC. The `epi.occc` function of the *epiR* packge does the job but it does compute a confidence interval.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(epiR)
 epi.occc(raters, na.rm = FALSE, pairs = TRUE)
 ```
@@ -169,7 +169,7 @@ As defined, the intrarater reliability is also known as repeatability, because i
 
 ### Precision
 
-When assessing precision, one measures the variability of the estimates (or measurements) of disease on the same sampling units obtained by different raters (or instruments). A very high precision does not mean that the estimates are closer to the actual value (which is given by measures of bias). However, precision is component of overall accuracy, or agreement. 
+When assessing precision, one measures the variability of the estimates (or measurements) of disease on the same sampling units obtained by different raters (or instruments). A very high precision does not mean that the estimates are closer to the actual value (which is given by measures of bias). However, precision is a component of overall accuracy, or agreement. It is given by the Pearson's correlation coefficient.
 
 Different from reliability, that requires only the estimates or measures by the raters, now we need a reference (gold standard) value to compare the estimates to. These can be an accurate rater or measures by an instrument. Let's get back to the soybean rust severity estimation dataset and add a column for the (assumed) actual values of severity on each leaf. In that work, the actual severity values were obtained using image analysis. 
 
@@ -199,7 +199,7 @@ sbr <- tibble::tribble(
          )
 ```
 
-We can explore visually the scatter plot for the relationship between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.
+We can explore visually via scatter plots for the relationships between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.
 
 ```{r, warning=FALSE}
 sbr2 <- sbr |> 
@@ -217,7 +217,7 @@ sbr2 |>
        y = "Estimate severity (%)")
 ```
 
-The Pearson's r of the relationship, or the precision of the estimates by each rater, can be obtained using the `correlation` function of the *correlation* package.
+The Pearson's r for the relationship, or the precision of the estimates by each rater, can be obtained using the `correlation` function of the *correlation* package.
 
 ```{r}
 precision <- sbr2 |> 
@@ -235,6 +235,7 @@ mean(precision$CI_high)
 
 
 ### Accuracy 
+
 
 
 ```{r}
