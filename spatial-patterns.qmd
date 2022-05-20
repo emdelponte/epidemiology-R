@@ -25,15 +25,20 @@ Now, the plot to visualize the random pattern.
 
 ```{r warning=FALSE, message=FALSE}
 library(tidyverse) 
-theme_set(theme_bw(base_size = 16))
+library(ggthemes)
+theme_set(theme_few())
 
-dat |> # R base pipe operator
+pr <- dat |> # R base pipe operator
   ggplot(aes(x, y))+
   geom_point(size =3, 
              color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
-  coord_fixed()
+  coord_fixed()+
+  theme_few()+
+  labs(x = "Distance x", y = "Distance y", 
+       title = "Random")
+pr
 ```
 
 Now, we can generate new x and y vectors using `rnbinom` function which allows generating values for the negative binomial distribution (which should give rise to aggregated patterns) with parameters `size` and `prob`. Let's simulate 50 values with mean 12 and size 20 as dispersal parameter.
@@ -47,12 +52,17 @@ dat2 <- data.frame(x, y)
 This should give us an aggregated pattern.
 
 ```{r}
-dat2 |>
+pag <- dat2 |>
   ggplot(aes(x, y))+
   geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
-  coord_fixed()
+  coord_fixed()+
+  theme_few()+
+  labs(x = "Distance x", y = "Distance y", 
+       title = "Aggregated")
+pag
+  
 ```
 
 A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
@@ -62,13 +72,26 @@ x <- rep(c(0,5,10,15,20, 25, 30, 35, 40, 45), 5)
 y <- rep(c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45), each = 10)
 dat3 <- data.frame(x, y)
 
-dat3 |>
+preg <- dat3 |>
   ggplot(aes(x, y))+
   geom_point(size = 3, color = "darkred")+
-  ylim(0,45)+
-  xlim(0,45)+
-  coord_fixed()
+  ylim(0,30)+
+  xlim(0,30)+
+  coord_fixed()+
+theme_few()+
+  labs(x = "Distance x", y = "Distance y", 
+       title = "Regular")
+preg
 ```
+
+```{r, warning=FALSE, message = FALSE}
+library(patchwork)
+
+preg + pr + pag
+ggsave("imgs/spatial.png", width = 10, height = 4)
+
+```
+
 
 We can create an animation showing the three patterns using *gganimate* package 
 

@@ -59,41 +59,71 @@ The precision and complexity of the analysis of progress curve data depends on t
 
 The AUDPC summarizes the "total measure of disease stress" and is largely used to compare epidemics [@jeger2001]. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let's extend the plot code to show those rectangles using the `annotate` function.
 
+
 ```{r}
-dpc |>
-  ggplot(aes(t, y)) +
+library(ggthemes)
+dpc1 <- dpc |>
+  ggplot(aes(t, y*100)) +
   labs(x = "Assessment time (days)",
-       y = "Disease intensity",
-       title ="Representation of AUDPC calculation",
-       subtitle = "Using the trapezoidal method")+
+       y = "Disease intensity (%)")+
+    geom_area(alpha = 0.5, fill = "MediumSeaGreen")+
+    geom_line(size = 1)+
+  geom_point(size = 3, shape = 16)+
+  theme_few()+
+  
+  scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
+
+dpc1
+```
+
+
+
+```{r}
+
+dpc2 <- dpc |>
+  ggplot(aes(t, y*100)) +
+  labs(x = "Assessment time (days)",
+       y = "Disease intensity (%)")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
-           ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
+           ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2*100, 
            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
-            ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
+            ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2*100, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
-            ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
+            ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2*100,
             color = "darkgreen",, fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
-            ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
+            ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2*100, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
-            ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
+            ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2*100, 
             color = "darkgreen",fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
-            ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
+            ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2*100, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
   geom_line(size = 1)+
-  geom_point(size = 3, shape = 16)
+  geom_point(size = 3, shape = 16)+
+  annotate(geom = "text", x = 26.5, y = 50,
+           label = "AUDPC = 3048.5", size = 6)+
+  theme_few()+
+  scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
+dpc2
   
 ```
+
+```{r, warning=FALSE, message=FALSE}
+library(patchwork)
+dpc1 + dpc2 
+ggsave("imgs/dpc.png", width =10, height =4)
+```
+
 
 In R, we can obtain the AUDPC for the DPC we created earlier using the `AUDPC` function offered by the *epifitter* package. Because we are using the percent data, we need to set the argument `y_proportion = FALSE`. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument `type` should be set to `"relative"`. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) [@simko2012].
 
 ```{r}
 library(epifitter)
-AUDPC(dpc$t, dpc$y, 
+AUDPC(dpc$t, dpc$y*100, 
       y_proportion = FALSE)
 
 # The relative AUDPC 
