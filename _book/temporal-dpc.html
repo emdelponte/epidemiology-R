@@ -313,7 +313,7 @@
 <section id="disease-progress-curves" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="disease-progress-curves"><span class="header-section-number">4.1</span> Disease progress curves</h2>
 <p>A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (<em>y</em>) in the host population is assessed sequentially in time (<em>t</em>).</p>
-<p>A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use <code>t</code> for time and <code>y</code> for disease intensity, expressed in proportion (0 to 1).</p>
+<p>A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use <code>t</code> for time and <code>y</code> for disease intensity, expressed in percentage (0 to 100%).</p>
 <p>Firstly, let’s load the essential R packages and set up the environment.</p>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># essential packages </span></span>
@@ -325,36 +325,23 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="ot">&lt;-</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span>y, </span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>   <span class="dv">0</span>,  <span class="fl">0.08</span>, </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">7</span>,  <span class="fl">0.13</span>, </span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>,  <span class="fl">0.78</span>, </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">21</span>,  <span class="fl">0.92</span>, </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">28</span>,  <span class="fl">0.99</span>, </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">35</span>, <span class="fl">0.995</span>, </span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">42</span>, <span class="fl">0.999</span>, </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>   <span class="dv">0</span>,  <span class="dv">8</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">7</span>,  <span class="dv">13</span>, </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>,  <span class="dv">78</span>, </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">21</span>,  <span class="dv">92</span>, </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">28</span>,  <span class="dv">99</span>, </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">35</span>, <span class="fl">99.5</span>, </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">42</span>, <span class="fl">99.9</span>, </span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now the plot</p>
-<div class="callout-note callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Note that I use the <a href="https://r4ds.had.co.nz/pipes.html">pipe</a> operator <code>|&gt;</code> in my programming to express a sequence of multiple operations in a more intuitive way.</p>
-</div>
-</div>
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity (%)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="temporal-dpc_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -377,7 +364,7 @@ Attaching package: 'ggthemes'</code></pre>
     theme_map</code></pre>
 </div>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dpc1 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y<span class="sc">*</span><span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity (%)"</span>)<span class="sc">+</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_area</span>(<span class="at">alpha =</span> <span class="fl">0.5</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
@@ -394,26 +381,26 @@ Attaching package: 'ggthemes'</code></pre>
 </div>
 <div class="cell">
 <div class="sourceCode" id="cb8"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dpc2 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y<span class="sc">*</span><span class="dv">100</span>)) <span class="sc">+</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity (%)"</span>)<span class="sc">+</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">1</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], </span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">1</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">2</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">1</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">2</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">2</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], </span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">2</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">3</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">2</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">3</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">3</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], </span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">3</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">4</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">3</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">4</span>])<span class="sc">/</span><span class="dv">2</span>,</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>,, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">4</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], </span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">4</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">5</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">4</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">5</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">5</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], </span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">5</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">6</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">5</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">6</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>,<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">7</span>], </span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">6</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">7</span>])<span class="sc">/</span><span class="dv">2</span><span class="sc">*</span><span class="dv">100</span>, </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">6</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">7</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
@@ -426,34 +413,26 @@ Attaching package: 'ggthemes'</code></pre>
 <p><img src="temporal-dpc_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="cell">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>dpc1 <span class="sc">+</span> dpc2 </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="temporal-dpc_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"imgs/dpc.png"</span>, <span class="at">width =</span><span class="dv">10</span>, <span class="at">height =</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>In R, we can obtain the AUDPC for the DPC we created earlier using the <code>AUDPC</code> function offered by the <em>epifitter</em> package. Because we are using the percent data, we need to set the argument <code>y_proportion = FALSE</code>. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument <code>type</code> should be set to <code>"relative"</code>. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) <span class="citation" data-cites="simko2012">(<a href="references.html#ref-simko2012" role="doc-biblioref">Simko and Piepho 2012</a>)</span>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epifitter)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPC</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y<span class="sc">*</span><span class="dv">100</span>, </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epifitter)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPC</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
 <pre><code>[1] 3048.15</code></pre>
 </div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The relative AUDPC </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPC</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>, </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"relative"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The relative AUDPC </span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPC</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"relative"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
-<pre><code>[1] 0.0072575</code></pre>
+<pre><code>[1] 0.72575</code></pre>
 </div>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To calculate AUDPS, the alternative to AUDPC</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPS</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># To calculate AUDPS, the alternative to AUDPC</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPS</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-stdout">
-<pre><code>[1] 34.258</code></pre>
+<pre><code>[1] 3425.8</code></pre>
 </div>
 </div>
 

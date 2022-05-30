@@ -10,7 +10,7 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
 
-A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in proportion (0 to 1).
+A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in percentage (0 to 100%).
 
 Firstly, let's load the essential R packages and set up the environment.
 
@@ -26,21 +26,18 @@ There are several ways to create a dataframe in R. I like to use the `tribble` f
 dpc <- 
   tribble(
    ~t,  ~y, 
-   0,  0.08, 
-   7,  0.13, 
-  14,  0.78, 
-  21,  0.92, 
-  28,  0.99, 
-  35, 0.995, 
-  42, 0.999, 
+   0,  8, 
+   7,  13, 
+  14,  78, 
+  21,  92, 
+  28,  99, 
+  35, 99.5, 
+  42, 99.9, 
   )
 ```
 
 Now the plot
 
-::: callout-note
-Note that I use the [pipe](https://r4ds.had.co.nz/pipes.html) operator `|>` in my programming to express a sequence of multiple operations in a more intuitive way.
-:::
 
 ```{r}
 dpc |>
@@ -48,7 +45,7 @@ dpc |>
   geom_line(size = 1)+
   geom_point(size = 4, shape = 16)+
   labs(x = "Assessment time (days)",
-       y = "Disease intensity")
+       y = "Disease intensity (%)")
 ```
 
 ## Curve descriptors: AUDPC
@@ -63,7 +60,7 @@ The AUDPC summarizes the "total measure of disease stress" and is largely used t
 ```{r}
 library(ggthemes)
 dpc1 <- dpc |>
-  ggplot(aes(t, y*100)) +
+  ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
     geom_area(alpha = 0.5, fill = "MediumSeaGreen")+
@@ -81,26 +78,26 @@ dpc1
 ```{r}
 
 dpc2 <- dpc |>
-  ggplot(aes(t, y*100)) +
+  ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
-           ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2*100, 
+           ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
-            ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2*100, 
+            ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
-            ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2*100,
+            ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
             color = "darkgreen",, fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
-            ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2*100, 
+            ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
-            ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2*100, 
+            ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
             color = "darkgreen",fill = "MediumSeaGreen", alpha = 0.5)+
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
-            ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2*100, 
+            ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
             color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
   geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
@@ -112,18 +109,12 @@ dpc2
   
 ```
 
-```{r, warning=FALSE, message=FALSE}
-library(patchwork)
-dpc1 + dpc2 
-ggsave("imgs/dpc.png", width =10, height =4)
-```
-
 
 In R, we can obtain the AUDPC for the DPC we created earlier using the `AUDPC` function offered by the *epifitter* package. Because we are using the percent data, we need to set the argument `y_proportion = FALSE`. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument `type` should be set to `"relative"`. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) [@simko2012].
 
 ```{r}
 library(epifitter)
-AUDPC(dpc$t, dpc$y*100, 
+AUDPC(dpc$t, dpc$y, 
       y_proportion = FALSE)
 
 # The relative AUDPC 
