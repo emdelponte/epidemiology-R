@@ -237,7 +237,7 @@ mean(precision$CI_high)
 ### Accuracy 
 
 
-Absolute errors
+#### Absolute errors
 
 ```{r}
 sbr2 |> 
@@ -248,3 +248,38 @@ sbr2 |>
   labs(x = "Actual severity (%)",
        y = "Error (Estimate - Actual)")
 ```
+
+#### Concordance correlation coefficient
+
+Lin's (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin's CCC increases in value as a function of the nearness of the data's reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).
+
+The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC statistics. Let's filter only rater 3 and calculate the CCC statistics.
+
+```{r}
+library(epiR)
+
+sbr3 <- sbr2 |> 
+  filter(rater == "R2")
+
+ccc <- epi.ccc(sbr3$actual, sbr3$estimate)
+
+# Concordance coefficient
+rho <- ccc$rho.c[,1]
+rho
+
+# Bias coefficient
+Cb <- ccc$C.b
+Cb
+# Precision
+r <- ccc$C.b*ccc$rho.c[,1]
+r
+
+# Scale-shift
+ss <- ccc$s.shift
+ss
+# Location-shift
+ls <- ccc$l.shift
+ls
+
+```
+

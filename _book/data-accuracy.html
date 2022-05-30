@@ -300,7 +300,11 @@
 </ul></li>
 <li><a href="#intrarater-reliability" class="nav-link" data-scroll-target="#intrarater-reliability"> <span class="header-section-number">3.2.2</span> Intrarater reliability</a></li>
 <li><a href="#precision" class="nav-link" data-scroll-target="#precision"> <span class="header-section-number">3.2.3</span> Precision</a></li>
-<li><a href="#accuracy" class="nav-link" data-scroll-target="#accuracy"> <span class="header-section-number">3.2.4</span> Accuracy</a></li>
+<li><a href="#accuracy" class="nav-link" data-scroll-target="#accuracy"> <span class="header-section-number">3.2.4</span> Accuracy</a>
+<ul class="collapse">
+<li><a href="#absolute-errors" class="nav-link" data-scroll-target="#absolute-errors"> <span class="header-section-number">3.2.4.1</span> Absolute errors</a></li>
+<li><a href="#concordance-correlation-coefficient" class="nav-link" data-scroll-target="#concordance-correlation-coefficient"> <span class="header-section-number">3.2.4.2</span> Concordance correlation coefficient</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </nav>
@@ -621,7 +625,8 @@ Observations: 20</code></pre>
 </section>
 <section id="accuracy" class="level3" data-number="3.2.4">
 <h3 data-number="3.2.4" class="anchored" data-anchor-id="accuracy"><span class="header-section-number">3.2.4</span> Accuracy</h3>
-<p>Absolute errors</p>
+<section id="absolute-errors" class="level4" data-number="3.2.4.1">
+<h4 data-number="3.2.4.1" class="anchored" data-anchor-id="absolute-errors"><span class="header-section-number">3.2.4.1</span> Absolute errors</h4>
 <div class="cell">
 <div class="sourceCode" id="cb29"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>sbr2 <span class="sc">|&gt;</span> </span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, estimate<span class="sc">-</span>actual))<span class="sc">+</span></span>
@@ -632,6 +637,50 @@ Observations: 20</code></pre>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Error (Estimate - Actual)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-accuracy_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="concordance-correlation-coefficient" class="level4" data-number="3.2.4.2">
+<h4 data-number="3.2.4.2" class="anchored" data-anchor-id="concordance-correlation-coefficient"><span class="header-section-number">3.2.4.2</span> Concordance correlation coefficient</h4>
+<p>Lin’s (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin’s CCC increases in value as a function of the nearness of the data’s reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).</p>
+<p>The <code>epi.ccc</code> function of the <em>epiR</em> package allows to obtain the Lin’s CCC statistics. Let’s filter only rater 3 and calculate the CCC statistics.</p>
+<div class="cell">
+<div class="sourceCode" id="cb30"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>sbr3 <span class="ot">&lt;-</span> sbr2 <span class="sc">|&gt;</span> </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(rater <span class="sc">==</span> <span class="st">"R2"</span>)</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>ccc <span class="ot">&lt;-</span> <span class="fu">epi.ccc</span>(sbr3<span class="sc">$</span>actual, sbr3<span class="sc">$</span>estimate)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Concordance coefficient</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>rho <span class="ot">&lt;-</span> ccc<span class="sc">$</span>rho.c[,<span class="dv">1</span>]</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>rho</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.5230656</code></pre>
+</div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Bias coefficient</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>Cb <span class="ot">&lt;-</span> ccc<span class="sc">$</span>C.b</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>Cb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.8948494</code></pre>
+</div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Precision</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> ccc<span class="sc">$</span>C.b<span class="sc">*</span>ccc<span class="sc">$</span>rho.c[,<span class="dv">1</span>]</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.4680649</code></pre>
+</div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scale-shift</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>ss <span class="ot">&lt;-</span> ccc<span class="sc">$</span>s.shift</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>ss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 1.609118</code></pre>
+</div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Location-shift</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>ls <span class="ot">&lt;-</span> ccc<span class="sc">$</span>l.shift</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] -0.06660692</code></pre>
 </div>
 </div>
 
@@ -648,6 +697,7 @@ Lin, L. I.-K. 1989. A concordance correlation coefficient to evaluate reproducib
 Shrout, P. E., and Fleiss, J. L. 1979. Intraclass correlations: Uses in assessing rater reliability. Psychological Bulletin. 86:420–428 Available at: <a href="http://dx.doi.org/10.1037/0033-2909.86.2.420">http://dx.doi.org/10.1037/0033-2909.86.2.420</a>.
 </div>
 </div>
+</section>
 </section>
 </section>
 </main> <!-- /main -->
