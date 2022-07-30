@@ -1,151 +1,157 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-  <meta charset="utf-8">
-  <meta name="generator" content="quarto-0.9.165">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>R4PDE - 11&nbsp; Statistical tests</title>
-  <style>
-    code{white-space: pre-wrap;}
-    span.smallcaps{font-variant: small-caps;}
-    span.underline{text-decoration: underline;}
-    div.column{display: inline-block; vertical-align: top; width: 50%;}
-    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
-    pre > code.sourceCode { white-space: pre; position: relative; }
-    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-    pre > code.sourceCode > span:empty { height: 1.2em; }
-    .sourceCode { overflow: visible; }
-    code.sourceCode > span { color: inherit; text-decoration: inherit; }
-    div.sourceCode { margin: 1em 0; }
-    pre.sourceCode { margin: 0; }
-    @media screen {
-    div.sourceCode { overflow: auto; }
-    }
-    @media print {
-    pre > code.sourceCode { white-space: pre-wrap; }
-    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-    }
-    pre.numberSource code
-      { counter-reset: source-line 0; }
-    pre.numberSource code > span
-      { position: relative; left: -4em; counter-increment: source-line; }
-    pre.numberSource code > span > a:first-child::before
-      { content: counter(source-line);
-        position: relative; left: -1em; text-align: right; vertical-align: baseline;
-        border: none; display: inline-block;
-        -webkit-touch-callout: none; -webkit-user-select: none;
-        -khtml-user-select: none; -moz-user-select: none;
-        -ms-user-select: none; user-select: none;
-        padding: 0 4px; width: 4em;
-        color: #aaaaaa;
-      }
-    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-    div.sourceCode
-      {   }
-    @media screen {
-    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-    }
-    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-    code span.at { color: #7d9029; } /* Attribute */
-    code span.bn { color: #40a070; } /* BaseN */
-    code span.bu { } /* BuiltIn */
-    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-    code span.ch { color: #4070a0; } /* Char */
-    code span.cn { color: #880000; } /* Constant */
-    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-    code span.dt { color: #902000; } /* DataType */
-    code span.dv { color: #40a070; } /* DecVal */
-    code span.er { color: #ff0000; font-weight: bold; } /* Error */
-    code span.ex { } /* Extension */
-    code span.fl { color: #40a070; } /* Float */
-    code span.fu { color: #06287e; } /* Function */
-    code span.im { } /* Import */
-    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-    code span.op { color: #666666; } /* Operator */
-    code span.ot { color: #007020; } /* Other */
-    code span.pp { color: #bc7a00; } /* Preprocessor */
-    code span.sc { color: #4070a0; } /* SpecialChar */
-    code span.ss { color: #bb6688; } /* SpecialString */
-    code span.st { color: #4070a0; } /* String */
-    code span.va { color: #19177c; } /* Variable */
-    code span.vs { color: #4070a0; } /* VerbatimString */
-    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-    div.csl-bib-body { }
-    div.csl-entry {
-      clear: both;
-    }
-    .hanging div.csl-entry {
-      margin-left:2em;
-      text-indent:-2em;
-    }
-    div.csl-left-margin {
-      min-width:2em;
-      float:left;
-    }
-    div.csl-right-inline {
-      margin-left:2em;
-      padding-left:1em;
-    }
-    div.csl-indent {
-      margin-left: 2em;
-    }
-  </style>
 
-  <script src="site_libs/quarto-nav/quarto-nav.js"></script>
-  <script src="site_libs/quarto-nav/headroom.min.js"></script>
-  <script src="site_libs/clipboard/clipboard.min.js"></script>
-  <meta name="quarto:offset" content="./">
-  <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-  <script src="site_libs/quarto-search/fuse.min.js"></script>
-  <script src="site_libs/quarto-search/quarto-search.js"></script>
-  <link href="./references.html" rel="next">
-  <link href="./spatial-patterns.html" rel="prev">
-  <script src="site_libs/quarto-html/quarto.js"></script>
-  <script src="site_libs/quarto-html/popper.min.js"></script>
-  <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-  <script src="site_libs/quarto-html/anchor.min.js"></script>
-  <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-  <link id="quarto-text-highlighting-styles" href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
-  <script src="site_libs/bootstrap/bootstrap.min.js"></script>
-  <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-  <link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet">
-  <script id="quarto-search-options" type="application/json">{
-    "location": "sidebar",
-    "copy-button": false,
-    "collapse-after": 3,
-    "panel-placement": "start",
-    "type": "textbox",
-    "limit": 20,
-    "language": {
-      "search-no-results-text": "No results",
-      "search-matching-documents-text": "matching documents",
-      "search-copy-link-title": "Copy link to search",
-      "search-hide-matches-text": "Hide additional matches",
-      "search-more-match-text": "more match in this document",
-      "search-more-matches-text": "more matches in this document",
-      "search-clear-button-title": "Clear",
-      "search-detached-cancel-button-title": "Cancel",
-      "search-submit-button-title": "Submit"
-    }
-  }</script>
-  <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5T7SZYQV79"></script>
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
 
-  <script type="text/javascript">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
-  </script>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
+
+<title>R4PDE - 11&nbsp; Statistical tests</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./spatial-patterns.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5T7SZYQV79"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
+</script>
+
+
 </head>
-<body class="floating">
+
+<body class="nav-sidebar floating">
+
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -182,99 +188,99 @@
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
-    <div class="sidebar-item-container"> 
-        <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Epidemic data</a>
-      <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
-        <i class="bi bi-chevron-right ms-2"></i>
-      </a>
-    </div>
-    <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-        <li class="sidebar-item">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">Epidemic data</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data-terminology.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Disease variables</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data-type-distributions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data types and distributions</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./data-accuracy.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Reliability and accuracy</span></a>
   </div>
 </li>
-    </ul>
+      </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-    <div class="sidebar-item-container"> 
-        <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Temporal analysis</a>
-      <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
-        <i class="bi bi-chevron-right ms-2"></i>
-      </a>
-    </div>
-    <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-        <li class="sidebar-item">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">Temporal analysis</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./temporal-dpc.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Disease progress curves</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./temporal-models.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Population models</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./temporal-fitting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Model fitting</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./temporal-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Simulation</span></a>
   </div>
 </li>
-    </ul>
+      </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-    <div class="sidebar-item-container"> 
-        <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Spatial gradients</a>
-      <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
-        <i class="bi bi-chevron-right ms-2"></i>
-      </a>
-    </div>
-    <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-        <li class="sidebar-item">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">Spatial gradients</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spatial-gradients.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Spatial gradients</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spatial-fitting.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Model fitting</span></a>
   </div>
 </li>
-    </ul>
+      </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
-    <div class="sidebar-item-container"> 
-        <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Spatial patterns</a>
-      <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
-        <i class="bi bi-chevron-right ms-2"></i>
-      </a>
-    </div>
-    <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-        <li class="sidebar-item">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Spatial patterns</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spatial-patterns.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Spatial patterns</span></a>
   </div>
 </li>
-        <li class="sidebar-item">
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./spatial-tests.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Statistical tests</span></a>
   </div>
 </li>
-    </ul>
+      </ul>
   </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
@@ -287,40 +293,54 @@
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc">
-<h2 id="toc-title">Table of contents</h2>
-<ul>
-<li><a href="#intensively-mapped" class="nav-link active" data-scroll-target="#intensively-mapped"> <span class="header-section-number">11.1</span> Intensively mapped</a>
-<ul class="collapse">
-<li><a href="#binary-data" class="nav-link" data-scroll-target="#binary-data"> <span class="header-section-number">11.1.1</span> Binary data</a>
-<ul class="collapse">
-<li><a href="#runs-test" class="nav-link" data-scroll-target="#runs-test"> <span class="header-section-number">11.1.1.1</span> Runs test</a></li>
-<li><a href="#doublets" class="nav-link" data-scroll-target="#doublets"> <span class="header-section-number">11.1.1.2</span> Doublets</a></li>
-<li><a href="#join-count" class="nav-link" data-scroll-target="#join-count"> <span class="header-section-number">11.1.1.3</span> Join count</a></li>
-</ul></li>
-<li><a href="#grouped-data" class="nav-link" data-scroll-target="#grouped-data"> <span class="header-section-number">11.1.2</span> Grouped data</a>
-<ul class="collapse">
-<li><a href="#autocorrelation" class="nav-link" data-scroll-target="#autocorrelation"> <span class="header-section-number">11.1.2.1</span> Autocorrelation</a></li>
-<li><a href="#semivariance" class="nav-link" data-scroll-target="#semivariance"> <span class="header-section-number">11.1.2.2</span> Semivariance</a></li>
-<li><a href="#sadie" class="nav-link" data-scroll-target="#sadie"> <span class="header-section-number">11.1.2.3</span> SADIE</a></li>
-</ul></li>
-</ul></li>
-<li><a href="#sparsely-sampled-data" class="nav-link" data-scroll-target="#sparsely-sampled-data"> <span class="header-section-number">11.2</span> Sparsely sampled data</a>
-<ul class="collapse">
-<li><a href="#count-data" class="nav-link" data-scroll-target="#count-data"> <span class="header-section-number">11.2.1</span> Count data</a>
-<ul class="collapse">
-<li><a href="#fit-to-distributions" class="nav-link" data-scroll-target="#fit-to-distributions"> <span class="header-section-number">11.2.1.1</span> Fit to distributions</a></li>
-<li><a href="#indices-of-aggregation" class="nav-link" data-scroll-target="#indices-of-aggregation"> <span class="header-section-number">11.2.1.2</span> Indices of aggregation</a></li>
-</ul></li>
-<li><a href="#incidence-data" class="nav-link" data-scroll-target="#incidence-data"> <span class="header-section-number">11.2.2</span> Incidence data</a></li>
-</ul></li>
-</ul>
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#intensively-mapped" id="toc-intensively-mapped" class="nav-link active" data-scroll-target="#intensively-mapped"> <span class="header-section-number">11.1</span> Intensively mapped</a>
+  <ul class="collapse">
+  <li><a href="#binary-data" id="toc-binary-data" class="nav-link" data-scroll-target="#binary-data"> <span class="header-section-number">11.1.1</span> Binary data</a>
+  <ul class="collapse">
+  <li><a href="#runs-test" id="toc-runs-test" class="nav-link" data-scroll-target="#runs-test"> <span class="header-section-number">11.1.1.1</span> Runs test</a></li>
+  <li><a href="#doublets" id="toc-doublets" class="nav-link" data-scroll-target="#doublets"> <span class="header-section-number">11.1.1.2</span> Doublets</a></li>
+  <li><a href="#join-count" id="toc-join-count" class="nav-link" data-scroll-target="#join-count"> <span class="header-section-number">11.1.1.3</span> Join count</a></li>
+  </ul></li>
+  <li><a href="#grouped-data" id="toc-grouped-data" class="nav-link" data-scroll-target="#grouped-data"> <span class="header-section-number">11.1.2</span> Grouped data</a>
+  <ul class="collapse">
+  <li><a href="#autocorrelation" id="toc-autocorrelation" class="nav-link" data-scroll-target="#autocorrelation"> <span class="header-section-number">11.1.2.1</span> Autocorrelation</a></li>
+  <li><a href="#semivariance" id="toc-semivariance" class="nav-link" data-scroll-target="#semivariance"> <span class="header-section-number">11.1.2.2</span> Semivariance</a></li>
+  <li><a href="#sadie" id="toc-sadie" class="nav-link" data-scroll-target="#sadie"> <span class="header-section-number">11.1.2.3</span> SADIE</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sparsely-sampled-data" id="toc-sparsely-sampled-data" class="nav-link" data-scroll-target="#sparsely-sampled-data"> <span class="header-section-number">11.2</span> Sparsely sampled data</a>
+  <ul class="collapse">
+  <li><a href="#count-data" id="toc-count-data" class="nav-link" data-scroll-target="#count-data"> <span class="header-section-number">11.2.1</span> Count data</a>
+  <ul class="collapse">
+  <li><a href="#fit-to-distributions" id="toc-fit-to-distributions" class="nav-link" data-scroll-target="#fit-to-distributions"> <span class="header-section-number">11.2.1.1</span> Fit to distributions</a></li>
+  <li><a href="#indices-of-aggregation" id="toc-indices-of-aggregation" class="nav-link" data-scroll-target="#indices-of-aggregation"> <span class="header-section-number">11.2.1.2</span> Indices of aggregation</a></li>
+  </ul></li>
+  <li><a href="#incidence-data" id="toc-incidence-data" class="nav-link" data-scroll-target="#incidence-data"> <span class="header-section-number">11.2.2</span> Incidence data</a></li>
+  </ul></li>
+  </ul>
 </nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
-<header id="title-block-header" class="quarto-title-block default">
 
-<div class="quarto-title"><h1 class="title d-none d-lg-block display-7"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Statistical tests</span></h1></div></header>
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Statistical tests</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
 
 <div class="callout-note callout callout-style-simple">
 <div class="callout-body d-flex">
@@ -343,19 +363,19 @@
 <p>A run is defined as a succession of one or more diseased or healthy plants, which are followed and preceded by a plant of the other disease status or no plant at all. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.</p>
 <p>Let’s create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 20 plants and assign it to <code>y</code>. For plotting purposes, we make a dataframe for more complete information.</p>
 <div class="cell">
-<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>) <span class="co"># position of each plant</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>z1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>row1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x1, y1, z1) <span class="co"># create a dataframe</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>row1 <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>row1 <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x1, z1, <span class="at">label =</span> x1, <span class="at">color =</span> <span class="fu">factor</span>(y1)))<span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span><span class="dv">15</span>, <span class="at">size =</span><span class="dv">6</span>)<span class="sc">+</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
@@ -373,7 +393,7 @@
 </div>
 <p>We can write a code in R and create a function named <code>oruns.test</code> for the ordinary runs test.</p>
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>oruns.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>oruns.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># identify the sequence</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> x </span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the number or runs</span></span>
@@ -400,20 +420,20 @@
 </div>
 <p>We can now run the test for the example series above.</p>
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(row1<span class="sc">$</span>y1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(row1<span class="sc">$</span>y1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 7 runs. The number of expected runs is 10.6 P-value: 0.084166 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
 <p>There are built-in functions in R packages that allow for running the ordinary runs test. Let’s load the packages and runt the test. Note that the results of the <code>runs.test</code> is the same as the one produced by our custom function.</p>
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(randtests)</span></span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(randtests)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#runs.test(row1$y1, threshold = 0.5)</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">RunsTest</span>(row1<span class="sc">$</span>y1)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Runs Test for Randomness
 
@@ -428,7 +448,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <p>Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the yard. If the observed number is greater than the expected number, contagion within the field is suspected.</p>
 <p>Let’s manually produce a code to execute the doublets test. To facilitate, we can create a function and name it <code>doublets.test</code>. The only argument needed is the vector of binary data.</p>
 <div class="cell">
-<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doublets.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doublets.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the sequence</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> x</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the number of doublets Db</span></span>
@@ -456,9 +476,9 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb10"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function calling the vector</span></span>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function calling the vector</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">doublets.test</span>(row1<span class="sc">$</span>y1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 4 doublets. The number of expected doublets is 2.8 . P-value: 0.4497 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
@@ -468,7 +488,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <p>In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.</p>
 <p>In R, we can use the <code>join.count</code> function of the <code>spdep</code> package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.</p>
 <div class="cell">
-<div class="sourceCode" id="cb12"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enter the data</span></span>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enter the data</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
@@ -477,7 +497,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 </div>
 <p>Visualize the two-dimensional array:</p>
 <div class="cell">
-<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">raster</span>(<span class="fu">matrix</span>(S2, <span class="dv">5</span> ,<span class="dv">5</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame</span></span>
@@ -496,19 +516,19 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 </div>
 <p>Load the library</p>
 <div class="cell">
-<div class="sourceCode" id="cb14"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the <code>cell2nb</code> function by informing the number of rows and columns. The argument “rook” means shared edge, but it could be the “queen”, for shared edge or vertex. We can use the default.</p>
 <div class="cell">
-<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>, </span>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>, </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">5</span>, </span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>joincount.test</code> function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.</p>
 <div class="cell">
-<div class="sourceCode" id="cb16"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
@@ -537,18 +557,18 @@ Same colour statistic           Expectation              Variance
 <p>The function returns a list with a class for each of the status (in this case 0 and 1) with several components. We should look at the <strong>P-value</strong>. The alternative hypothesis (greater) is that the same status joins occur more frequently than expected if they were labelled in a spatial random way. In this case, we do not reject the null hypothesis of randomness.</p>
 <p>We can run the ordinary runs and doublets tests, which only considers the adjacent neighbor, for the same series and compare the results.</p>
 <div class="cell">
-<div class="sourceCode" id="cb18"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 17 runs. The number of expected runs is 13.5 P-value: 0.149673 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">doublets.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">doublets.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 3 doublets. The number of expected doublets is 5.28 . P-value: 0.3009 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
 <p>Let’s repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence to reject the null hypothesis, indicating aggregation of plants.</p>
 <div class="cell">
-<div class="sourceCode" id="cb22"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
@@ -556,7 +576,7 @@ Same colour statistic           Expectation              Variance
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S3), </span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
@@ -581,14 +601,14 @@ sample estimates:
 Same colour statistic           Expectation              Variance 
             5.0416667             2.7500000             0.2486957 </code></pre>
 </div>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 8 runs. The number of expected runs is 13.5 P-value: 0.024904 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
 <p>We can apply these tests for a real example epidemic data provided by the <a href="https://chgigot.github.io/epiphy/">epiphy</a> R package. Let’s work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset <code>tomato_tswv</code> to a new dataframe called <code>tswv_1929</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb26"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cowplot) <span class="co"># theming the ggplot</span></span>
 <span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="ot">&lt;-</span> tomato_tswv<span class="sc">$</span>field_1929</span>
@@ -597,12 +617,13 @@ Same colour statistic           Expectation              Variance
 <span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">6</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="imdpmhivxx" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+
+<div id="vukqcsxxuc" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#imdpmhivxx .gt_table {
+#vukqcsxxuc .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -627,7 +648,7 @@ Same colour statistic           Expectation              Variance
   border-left-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_heading {
+#vukqcsxxuc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -639,7 +660,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_title {
+#vukqcsxxuc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -651,7 +672,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-width: 0;
 }
 
-#imdpmhivxx .gt_subtitle {
+#vukqcsxxuc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -663,13 +684,13 @@ Same colour statistic           Expectation              Variance
   border-top-width: 0;
 }
 
-#imdpmhivxx .gt_bottom_border {
+#vukqcsxxuc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_col_headings {
+#vukqcsxxuc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -684,7 +705,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_col_heading {
+#vukqcsxxuc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -704,7 +725,7 @@ Same colour statistic           Expectation              Variance
   overflow-x: hidden;
 }
 
-#imdpmhivxx .gt_column_spanner_outer {
+#vukqcsxxuc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -716,15 +737,15 @@ Same colour statistic           Expectation              Variance
   padding-right: 4px;
 }
 
-#imdpmhivxx .gt_column_spanner_outer:first-child {
+#vukqcsxxuc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#imdpmhivxx .gt_column_spanner_outer:last-child {
+#vukqcsxxuc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#imdpmhivxx .gt_column_spanner {
+#vukqcsxxuc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -736,7 +757,7 @@ Same colour statistic           Expectation              Variance
   width: 100%;
 }
 
-#imdpmhivxx .gt_group_heading {
+#vukqcsxxuc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -761,7 +782,7 @@ Same colour statistic           Expectation              Variance
   vertical-align: middle;
 }
 
-#imdpmhivxx .gt_empty_group_heading {
+#vukqcsxxuc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -776,15 +797,15 @@ Same colour statistic           Expectation              Variance
   vertical-align: middle;
 }
 
-#imdpmhivxx .gt_from_md > :first-child {
+#vukqcsxxuc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#imdpmhivxx .gt_from_md > :last-child {
+#vukqcsxxuc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#imdpmhivxx .gt_row {
+#vukqcsxxuc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -803,7 +824,7 @@ Same colour statistic           Expectation              Variance
   overflow-x: hidden;
 }
 
-#imdpmhivxx .gt_stub {
+#vukqcsxxuc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -816,7 +837,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#imdpmhivxx .gt_stub_row_group {
+#vukqcsxxuc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -830,11 +851,11 @@ Same colour statistic           Expectation              Variance
   vertical-align: top;
 }
 
-#imdpmhivxx .gt_row_group_first td {
+#vukqcsxxuc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#imdpmhivxx .gt_summary_row {
+#vukqcsxxuc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -844,16 +865,16 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#imdpmhivxx .gt_first_summary_row {
+#vukqcsxxuc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_first_summary_row.thick {
+#vukqcsxxuc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#imdpmhivxx .gt_last_summary_row {
+#vukqcsxxuc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -863,7 +884,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_grand_summary_row {
+#vukqcsxxuc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -873,7 +894,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#imdpmhivxx .gt_first_grand_summary_row {
+#vukqcsxxuc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -883,11 +904,11 @@ Same colour statistic           Expectation              Variance
   border-top-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_striped {
+#vukqcsxxuc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#imdpmhivxx .gt_table_body {
+#vukqcsxxuc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -896,7 +917,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_footnotes {
+#vukqcsxxuc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -910,7 +931,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_footnote {
+#vukqcsxxuc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -919,7 +940,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#imdpmhivxx .gt_sourcenotes {
+#vukqcsxxuc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -933,7 +954,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#imdpmhivxx .gt_sourcenote {
+#vukqcsxxuc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -941,36 +962,36 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#imdpmhivxx .gt_left {
+#vukqcsxxuc .gt_left {
   text-align: left;
 }
 
-#imdpmhivxx .gt_center {
+#vukqcsxxuc .gt_center {
   text-align: center;
 }
 
-#imdpmhivxx .gt_right {
+#vukqcsxxuc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#imdpmhivxx .gt_font_normal {
+#vukqcsxxuc .gt_font_normal {
   font-weight: normal;
 }
 
-#imdpmhivxx .gt_font_bold {
+#vukqcsxxuc .gt_font_bold {
   font-weight: bold;
 }
 
-#imdpmhivxx .gt_font_italic {
+#vukqcsxxuc .gt_font_italic {
   font-style: italic;
 }
 
-#imdpmhivxx .gt_super {
+#vukqcsxxuc .gt_super {
   font-size: 65%;
 }
 
-#imdpmhivxx .gt_two_val_uncert {
+#vukqcsxxuc .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -979,31 +1000,31 @@ Same colour statistic           Expectation              Variance
   margin-left: 0.1em;
 }
 
-#imdpmhivxx .gt_footnote_marks {
+#vukqcsxxuc .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#imdpmhivxx .gt_asterisk {
+#vukqcsxxuc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#imdpmhivxx .gt_slash_mark {
+#vukqcsxxuc .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#imdpmhivxx .gt_fraction_numerator {
+#vukqcsxxuc .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#imdpmhivxx .gt_fraction_denominator {
+#vukqcsxxuc .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1060,7 +1081,7 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let’s visualize these data for each sampling time.</p>
 <div class="cell">
-<div class="sourceCode" id="cb27"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i)))<span class="sc">+</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()<span class="sc">+</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
@@ -1073,10 +1094,10 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.</p>
 <div class="cell">
-<div class="sourceCode" id="cb28"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(x, y) <span class="sc">|&gt;</span> </span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>       x               y        
  Min.   : 1.00   Min.   : 1.00  
  1st Qu.: 6.75   1st Qu.:15.75  
@@ -1088,7 +1109,7 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>There are 60 rows and 24 columns.</p>
 <div class="cell">
-<div class="sourceCode" id="cb30"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Neighbor grid</span></span>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Neighbor grid</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>nb1 <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">60</span>, </span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">24</span>, </span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>)</span>
@@ -1100,7 +1121,7 @@ Same colour statistic           Expectation              Variance
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S1), </span>
 <span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
@@ -1128,14 +1149,14 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.</p>
 <div class="cell">
-<div class="sourceCode" id="cb32"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
@@ -1160,14 +1181,14 @@ sample estimates:
 Same colour statistic           Expectation              Variance 
             82.958333             81.900625              9.342754 </code></pre>
 </div>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"3"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S3), </span>
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
 
@@ -1203,12 +1224,12 @@ Same colour statistic           Expectation              Variance
 <p>Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span>.</p>
 <p>We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span>, which was extracted from table 11.3 of Campbell and Madden (1990). The data represent a single transect with the number of <em>Macrophomia phaseolina</em> propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.</p>
 <div class="cell">
-<div class="sourceCode" id="cb36"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">i =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>),</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">41</span>, <span class="dv">60</span>, <span class="dv">81</span>, <span class="dv">22</span>, <span class="dv">8</span>, <span class="dv">20</span>, <span class="dv">28</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">43</span>, <span class="dv">61</span>, <span class="dv">50</span>)</span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>    i  y
 1   1 41
 2   2 60
@@ -1230,7 +1251,7 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>We can produce a plot to visualize the number of propagules across the transect.</p>
 <div class="cell">
-<div class="sourceCode" id="cb38"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span> </span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, y))<span class="sc">+</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
 <span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Relative position within a transect"</span>, </span>
@@ -1243,10 +1264,10 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>To calculate the autocorrelation coefficient in R, we can use the <code>ac</code> function of the <em>tseries</em> package.</p>
 <div class="cell">
-<div class="sourceCode" id="cb39"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ac_mp <span class="ot">&lt;-</span> <span class="fu">acf</span>(mp<span class="sc">$</span>y, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">pl =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>ac_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
 Autocorrelations of series 'mp$y', by lag
 
@@ -1256,9 +1277,9 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 <p>Let’s store the results in a dataframe to facilitate visualization using ggplot.</p>
 <div class="cell">
-<div class="sourceCode" id="cb41"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">index =</span> ac_mp<span class="sc">$</span>lag, ac_mp<span class="sc">$</span>acf)</span>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">index =</span> ac_mp<span class="sc">$</span>lag, ac_mp<span class="sc">$</span>acf)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ac_mp_dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>  index   ac_mp.acf
 1     0  1.00000000
 2     1  0.58579374
@@ -1270,7 +1291,7 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 <p>And now the plot known as autocorrelogram.</p>
 <div class="cell">
-<div class="sourceCode" id="cb43"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span> </span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(index, ac_mp.acf, <span class="at">label =</span> <span class="fu">round</span>(ac_mp.acf,<span class="dv">3</span>)))<span class="sc">+</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>)<span class="sc">+</span></span>
@@ -1284,7 +1305,7 @@ Autocorrelations of series 'mp$y', by lag
 <p>The values we obtained here are not the same but quite close to the values reported in Madden et al.&nbsp;(2007). For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.</p>
 <p>The method above is usually referred to Moran’s I (Moran, 1950). Let’s use another example dataset from the book to calculate the Moran’s I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.</p>
 <div class="cell">
-<div class="sourceCode" id="cb44"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>epi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/xu-madden-simulated.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>epi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/xu-madden-simulated.csv"</span>)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform from wide to long format </span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the n variable to store as a vector</span></span>
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>epi1 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span> </span>
@@ -1295,24 +1316,24 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 <p>Using <code>moran</code> function of the <em>spdep</em> R package.</p>
 <div class="cell">
-<div class="sourceCode" id="cb45"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>cell2nb</code> function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.</p>
 <div class="cell">
-<div class="sourceCode" id="cb46"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">12</span>, <span class="dv">12</span>, <span class="at">type=</span><span class="st">"queen"</span>, <span class="at">torus =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">12</span>, <span class="dv">12</span>, <span class="at">type=</span><span class="st">"queen"</span>, <span class="at">torus =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>nb2listw</code> function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the <code>col.W</code> neighbor list.</p>
 <div class="cell">
-<div class="sourceCode" id="cb47"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>col.W <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nb, <span class="at">style=</span><span class="st">"W"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>col.W <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nb, <span class="at">style=</span><span class="st">"W"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The Moran’s I statistic is given by the <code>moran</code> function</p>
 <div class="cell">
-<div class="sourceCode" id="cb48"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran</span>(<span class="at">x =</span> epi1, <span class="co"># numeric vector</span></span>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran</span>(<span class="at">x =</span> epi1, <span class="co"># numeric vector</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">listw =</span> col.W, <span class="co"># the nb list</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">n =</span> <span class="dv">12</span>, <span class="co"># number of zones</span></span>
 <span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">S0 =</span> <span class="fu">Szero</span>(col.W)) <span class="co"># global sum of weights</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>$I
 [1] 0.05818595
 
@@ -1322,9 +1343,9 @@ $K
 </div>
 <p>The Moran’s test for spatial autocorrelation uses spatial weights matrix in weights list form.</p>
 <div class="cell">
-<div class="sourceCode" id="cb50"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran.test</span>(<span class="at">x =</span> epi1, </span>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran.test</span>(<span class="at">x =</span> epi1, </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">listw =</span> col.W)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Moran I test under randomisation
 
@@ -1339,25 +1360,25 @@ Moran I statistic       Expectation          Variance
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb52"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>correl_I <span class="ot">&lt;-</span> <span class="fu">sp.correlogram</span>(nb, epi1, </span>
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>correl_I <span class="ot">&lt;-</span> <span class="fu">sp.correlogram</span>(nb, epi1, </span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">order =</span> <span class="dv">10</span>,</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">method =</span> <span class="st">"I"</span>,  </span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can generate a correlogram using the output of the <code>sp.correlogram</code> function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017</a>)</span>. Let’s store the results in a dataframe.</p>
 <div class="cell">
-<div class="sourceCode" id="cb53"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(correl_I<span class="sc">$</span>res) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(correl_I<span class="sc">$</span>res) <span class="sc">|&gt;</span> </span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the spatial autocorrelation for 10 distance lags</span></span>
 <span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(df_correl<span class="sc">$</span>X1,<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code> [1]  0.698  0.340  0.086 -0.002 -0.009 -0.024 -0.090 -0.180 -0.217 -0.124</code></pre>
 </div>
 </div>
 <p>Then, we can generate the plot using ggplot.</p>
 <div class="cell">
-<div class="sourceCode" id="cb55"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span> </span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(lag, X1))<span class="sc">+</span></span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
 <span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">10</span>)<span class="sc">+</span></span>
@@ -1374,14 +1395,14 @@ Moran I statistic       Expectation          Variance
 <p>Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.</p>
 <p>For the semi-variance, we will use the <code>variog</code> function of the <em>geoR</em> package. We need the data in the long format (x, y and z). Let’s reshape the data to the long format and store it in <code>epi2</code> dataframe.</p>
 <div class="cell">
-<div class="sourceCode" id="cb56"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span>epi <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span>epi <span class="sc">|&gt;</span> </span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>,</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"y"</span>,</span>
 <span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">as.numeric</span>(y))</span>
 <span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 3
       x     y     n
   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
@@ -1394,24 +1415,24 @@ Moran I statistic       Expectation          Variance
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb58"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoR)</span>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoR)</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the coordinates are x and y and the data is the n</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">variog</span>(<span class="at">coords =</span> epi2[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">data =</span> epi2[,<span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>variog: computing omnidirectional variogram</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb60"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model fitting</span></span>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Model fitting</span></span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">variofit</span>(v1, <span class="at">ini.cov.pars =</span> <span class="fu">c</span>(<span class="dv">1200</span>, <span class="dv">12</span>), </span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">cov.model =</span> <span class="st">"exponential"</span>, </span>
 <span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">fix.nugget =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>variofit: covariance model used is exponential 
 variofit: weights used: npairs 
 variofit: minimisation function used: optim </code></pre>
 </div>
-<div class="sourceCode" id="cb62"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting </span></span>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting </span></span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(v1, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">15</span>))</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(v2, <span class="at">lty =</span> <span class="dv">1</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1427,7 +1448,7 @@ variofit: minimisation function used: optim </code></pre>
 <p>An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.</p>
 <p>In R, we can use the <code>sadie</code> function of the <em>epiphy</em> package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>. We can map the original data as follows:</p>
 <div class="cell">
-<div class="sourceCode" id="cb63"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span> </span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> n, <span class="at">fill =</span> n))<span class="sc">+</span></span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()<span class="sc">+</span></span>
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">size =</span> <span class="dv">5</span>)<span class="sc">+</span></span>
@@ -1439,13 +1460,13 @@ variofit: minimisation function used: optim </code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb64"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>sadie_epi2 <span class="ot">&lt;-</span> <span class="fu">sadie</span>(epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Computation of Perry's indices:</code></pre>
 </div>
-<div class="sourceCode" id="cb66"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>sadie_epi2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>sadie_epi2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Spatial Analysis by Distance IndicEs (sadie)
 
 Call:
@@ -1456,8 +1477,8 @@ Ia: 2.4622 (Pa = &lt; 2.22e-16)</code></pre>
 </div>
 <p>The simple output shows the <em>Ia</em> value and associated <em>P</em>-value. As suggested by the low value of the <em>P</em>-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the <code>summary</code> function.</p>
 <div class="cell">
-<div class="sourceCode" id="cb68"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 sadie.data.frame(data = epi2)
@@ -1485,14 +1506,14 @@ Number of permutations: 100</code></pre>
 </div>
 <p>The plot function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).</p>
 <div class="cell">
-<div class="sourceCode" id="cb70"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-41-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>A isocline plot can be obtained by setting the <code>isocline</code> argument as <code>TRUE</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb71"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2, <span class="at">isoclines =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2, <span class="at">isoclines =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -1511,15 +1532,15 @@ Number of permutations: 100</code></pre>
 <p>Let’s work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won’t consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of infected units per sampling unit.</p>
 <p>The <em>epiphy</em> package provides a function called <code>fit_two_distr</code>, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the <code>count</code> function where the number of infection units is designated as <code>i</code>. It won’t work with a single vector of numbers. We create the dataframe using:</p>
 <div class="cell">
-<div class="sourceCode" id="cb72"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data_count <span class="ot">&lt;-</span> epi2 <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data_count <span class="ot">&lt;-</span> epi2 <span class="sc">|&gt;</span> </span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> n) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
 <span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">count</span>()   <span class="co"># create the map object of count class</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now run the function that will look fo the the vector <code>i</code>. The function returns a list of four components including the outputs of the fitting process for both distribution and the result of the log-likelihood ratio test, the <code>llr</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb73"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fit_data_count <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(data_count)</span>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fit_data_count <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(data_count)</span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_data_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Fitting of two distributions by maximum likelihood
 for 'count' data.
 Parameter estimates:
@@ -1540,8 +1561,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb75"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>fit_data_count<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>fit_data_count<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
                LogLik Df  Chisq Pr(&gt;Chisq)    
@@ -1553,14 +1574,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <p>The very low value of the P-value of the LLR test suggest that the negative binomial provides a better fit to the data. The <code>plot</code> function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.</p>
 <div class="cell">
-<div class="sourceCode" id="cb77"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_data_count, <span class="at">breaks =</span> <span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_data_count, <span class="at">breaks =</span> <span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using ggplot. Clearly, the negative binomial is a better description for the observed count data.</p>
 <div class="cell">
-<div class="sourceCode" id="cb78"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span> </span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">"pattern"</span>, <span class="st">"value"</span>)</span>
 <span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
@@ -1579,15 +1600,15 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <section id="indices-of-aggregation" class="level4" data-number="11.2.1.2">
 <h4 data-number="11.2.1.2" class="anchored" data-anchor-id="indices-of-aggregation"><span class="header-section-number">11.2.1.2</span> Indices of aggregation</h4>
 <div class="cell">
-<div class="sourceCode" id="cb79"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"fisher"</span>)</span>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"fisher"</span>)</span>
 <span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>idx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Fisher's index of dispersion:
 (Version for count data)
 34.25</code></pre>
 </div>
-<div class="sourceCode" id="cb81"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(idx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chisq.test</span>(idx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>
     Chi-squared test for (N - 1)*index following a chi-squared
     distribution (df = N - 1)
@@ -1595,8 +1616,8 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 data:  idx
 X-squared = 4897.2, df = 143, p-value &lt; 2.2e-16</code></pre>
 </div>
-<div class="sourceCode" id="cb83"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">z.test</span>(idx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">z.test</span>(idx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>
     One-sample z-test
 
@@ -1604,36 +1625,36 @@ data:  idx
 z = 82.085, p-value &lt; 2.2e-16
 alternative hypothesis: two.sided</code></pre>
 </div>
-<div class="sourceCode" id="cb85"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lloyd index</span></span>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lloyd index</span></span>
 <span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a>idx_lloyd <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"lloyd"</span>)</span>
 <span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a>idx_lloyd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Lloyd's index of patchiness:
 2.194</code></pre>
 </div>
-<div class="sourceCode" id="cb87"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>idx_mori <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"morisita"</span>)</span>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>idx_mori <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"morisita"</span>)</span>
 <span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>idx_mori</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Morisita's coefficient of dispersion:
 (Version for count data)
 2.186</code></pre>
 </div>
-<div class="sourceCode" id="cb89"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the vegan package</span></span>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the vegan package</span></span>
 <span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (vegan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: permute</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: lattice</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>This is vegan 2.5-7</code></pre>
 </div>
-<div class="sourceCode" id="cb93"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> data_count<span class="sc">$</span>data<span class="sc">$</span>i</span>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>z <span class="ot">&lt;-</span> data_count<span class="sc">$</span>data<span class="sc">$</span>i</span>
 <span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>mor <span class="ot">&lt;-</span> <span class="fu">dispindmorisita</span>(z)</span>
 <span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>mor</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>      imor     mclu      muni      imst pchisq
 1 2.185591 1.008728 0.9922162 0.5041152      0</code></pre>
 </div>
@@ -1643,8 +1664,8 @@ alternative hypothesis: two.sided</code></pre>
 <section id="incidence-data" class="level3" data-number="11.2.2">
 <h3 data-number="11.2.2" class="anchored" data-anchor-id="incidence-data"><span class="header-section-number">11.2.2</span> Incidence data</h3>
 <div class="cell">
-<div class="sourceCode" id="cb95"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>fhb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/fhb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>fhb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/fhb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
 <pre><code>
 ── Column specification ────────────────────────────────────────────────────────
 cols(
@@ -1654,24 +1675,24 @@ cols(
   status = col_double()
 )</code></pre>
 </div>
-<div class="sourceCode" id="cb97"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>fhb2 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>fhb2 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
 <span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(campo <span class="sc">==</span> <span class="dv">1</span>) </span>
 <span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: Matrix</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>
 Attaching package: 'Matrix'</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>The following objects are masked from 'package:tidyr':
 
     expand, pack, unpack</code></pre>
 </div>
-<div class="sourceCode" id="cb101"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>glm1 <span class="ot">&lt;-</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> fhb2)</span>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>glm1 <span class="ot">&lt;-</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> fhb2)</span>
 <span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">icc</span>(glm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code># Intraclass Correlation Coefficient
 
      Adjusted ICC: 0.641
@@ -1679,9 +1700,9 @@ Attaching package: 'Matrix'</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb103"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
 <span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>tas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>   quad group_size count
 1     1          6     4
 2     2          6     6
@@ -1746,23 +1767,23 @@ Attaching package: 'Matrix'</code></pre>
 61   61          6     6
 62   62          6     6</code></pre>
 </div>
-<div class="sourceCode" id="cb105"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
 <span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span> </span>
 <span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span> </span>
 <span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
 <span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
 <span id="cb105-7"><a href="#cb105-7" aria-hidden="true" tabindex="-1"></a>fit_tas <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dat_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Warning in chisq.test2(freq$observed, freq$random, n_est = n_est[["random"]], :
 Chi-squared approximation may be incorrect.</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Warning in chisq.test2(freq$observed, freq$aggregated, n_est =
 n_est[["aggregated"]], : Chi-squared approximation may be incorrect.</code></pre>
 </div>
-<div class="sourceCode" id="cb108"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Fitting of two distributions by maximum likelihood
 for 'incidence' data.
 Parameter estimates:
@@ -1783,8 +1804,8 @@ theta 0.475101 0.209789  2.2647  0.023534 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode" id="cb110"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
               LogLik Df  Chisq Pr(&gt;Chisq)    
@@ -1793,15 +1814,15 @@ aggregated : -57.430  1 35.263   2.88e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode" id="cb112"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb113"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>tas <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>tas <span class="sc">|&gt;</span> </span>
 <span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>  count  n
 1     2  1
 2     3  6
@@ -1809,14 +1830,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 4     5  4
 5     6 47</code></pre>
 </div>
-<div class="sourceCode" id="cb115"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count)<span class="sc">~</span><span class="dv">1</span>,</span>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count)<span class="sc">~</span><span class="dv">1</span>,</span>
 <span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">family=</span>binomial,</span>
 <span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> tas)</span>
 <span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aod)</span>
 <span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>bbinom.tas <span class="ot">&lt;-</span> <span class="fu">betabin</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count)<span class="sc">~</span><span class="dv">1</span>, <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> tas)</span>
 <span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bbinom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>Beta-binomial model
 -------------------
 betabin(formula = cbind(count, group_size - count) ~ 1, random = ~1, 
@@ -1836,8 +1857,8 @@ Log-likelihood statistics
    Log-lik      nbpar    df res.   Deviance        AIC       AICc 
 -5.743e+01          2         60   8.25e+01  1.189e+02  1.191e+02 </code></pre>
 </div>
-<div class="sourceCode" id="cb117"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
 glm(formula = cbind(count, group_size - count) ~ 1, family = binomial, 
@@ -1861,19 +1882,19 @@ AIC: 152.12
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode" id="cb119"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<div class="sourceCode cell-code" id="cb119"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb119-1"><a href="#cb119-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
 <span id="cb119-2"><a href="#cb119-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_overdispersion</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code># Overdispersion test
 
        dispersion ratio =   2.348
   Pearson's Chi-Squared = 143.206
                 p-value = &lt; 0.001</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Overdispersion detected.</code></pre>
 </div>
-<div class="sourceCode" id="cb122"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span> </span>
 <span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
@@ -1882,7 +1903,7 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb122-8"><a href="#cb122-8" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span>
 <span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     C(alpha) test
 
@@ -1891,25 +1912,25 @@ z = 7.9886, p-value = 1.365e-15</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb124"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>dw <span class="ot">&lt;-</span> dogwood_anthracnose <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb124"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb124-1"><a href="#cb124-1" aria-hidden="true" tabindex="-1"></a>dw <span class="ot">&lt;-</span> dogwood_anthracnose <span class="sc">|&gt;</span> </span>
 <span id="cb124-2"><a href="#cb124-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb124-3"><a href="#cb124-3" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
 <span id="cb124-4"><a href="#cb124-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb124-5"><a href="#cb124-5" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dw)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Warning in chisq.test2(freq$observed, freq$random, n_est = n_est[["random"]], :
 Chi-squared approximation may be incorrect.</code></pre>
 </div>
-<div class="cell-output-stderr">
+<div class="cell-output cell-output-stderr">
 <pre><code>Warning in chisq.test2(freq$observed, freq$aggregated, n_est =
 n_est[["aggregated"]], : Chi-squared approximation may be incorrect.</code></pre>
 </div>
-<div class="sourceCode" id="cb127"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid" width="672"></p>
 </div>
-<div class="sourceCode" id="cb128"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Fitting of two distributions by maximum likelihood
 for 'incidence' data.
 Parameter estimates:
@@ -1930,8 +1951,8 @@ theta 0.522217 0.094371  5.5337 3.136e-08 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode" id="cb130"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>f<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>f<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
               LogLik Df  Chisq Pr(&gt;Chisq)    
@@ -1940,9 +1961,9 @@ aggregated : -273.29  1 288.35  &lt; 2.2e-16 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode" id="cb132"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(dw)</span>
+<div class="sourceCode cell-code" id="cb132"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb132-1"><a href="#cb132-1" aria-hidden="true" tabindex="-1"></a>ag <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(dw)</span>
 <span id="cb132-2"><a href="#cb132-2" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(ag)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-stdout">
+<div class="cell-output cell-output-stdout">
 <pre><code>
     C(alpha) test
 
@@ -1950,7 +1971,6 @@ data:  ag
 z = 27.297, p-value &lt; 2.2e-16</code></pre>
 </div>
 </div>
-
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
@@ -1966,9 +1986,28 @@ Xu, X.-M., and Madden, L. V. 2004. Use of SADIE statistics to study spatial dyna
 </div>
 </section>
 </section>
+
 </main> <!-- /main -->
-<script type="application/javascript">
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1988,7 +2027,10 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.blur();
     // flash "checked"
     button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
     setTimeout(function() {
+      button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
     // clear code selection
@@ -2071,6 +2113,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+
 
 
 </body></html>
