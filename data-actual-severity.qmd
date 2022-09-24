@@ -22,7 +22,7 @@ The actual severity values are usually approximated using image analysis where e
 
 The ratio between the non diseased and diseased area of the unit (e.g. a fraction of the whole leaf image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according a review on standard area diagrams [@delponte2017].
 
-Here, we will use the `measure_disease` function of the *pliman* (Plant IMage ANanalysis) [@olivoto2022a] R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases [@olivoto2022]. The workflow is based on two main steps: 1) preparing the image palettes that define each class of the image; and 2) run the function that will classify each pixel of the images according the colors of the palettes.
+Here, we will use the `measure_disease` function of the *pliman* (Plant IMage ANanalysis) [@olivoto2022a] R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases [@olivoto2022]. The workflow is based on two main steps: 1) preparing the image palettes that define each class of the image; and 2) run the function that will classify each pixel of the images according to the colors of the palettes.
 
 ## Defining color palettes
 
@@ -104,7 +104,7 @@ With the argument `save_image` set to TRUE, the images are all saved in the fold
 
 ## How good are these measurements?
 
-These 10 images were previously processed in QUANT software for determining severity. Let's create a tibble for the image code and respective "actual" severity - assuming QUANT's measures as reference.
+These 10 images were previously processed in QUANT software for measuring severity which is also based on image thresholding . Let's create a tibble for the image code and respective "actual" severity - assuming QUANT's measures as reference.
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
@@ -132,11 +132,11 @@ dat <- left_join(severity, quant)
 
 dat %>%
   ggplot(aes(actual, symptomatic)) +
-  geom_point(size = 4, shape = 1) +
+  geom_point(size = 5, shape = 16, color = "gray50") +
   ylim(0, 100) +
   xlim(0, 100) +
   geom_abline(slope = 1, intercept = 0) +
-  theme_bw() +
+  theme_light() +
   labs(x = "Quant",
        y = "pliman")
 
@@ -155,4 +155,4 @@ ccc$rho.c
 
 The community of R users may enjoy using [pliman](https://tiagoolivoto.github.io/pliman/) as an alternative to proprietary software or other point-and-click open source solutions such as imageJ. The simplicity of the batch processing approach can greatly improve the speed of the assessment and the user can set arguments to run R in parallel for enhanced computational speed.
 
-The most critical step, as I mentioned, is the definition of the reference color palettes. A few preliminary runs may be needed for a few leaves to check whether the segmentation is being performed correctly, based on visual judgement. This is no different than any other color-threshold based methods when the choices made by the user affect the final result and contribute to variation among assessors. The cons are the same encountered in the direct competitors, which is the necessity to have images obtained at uniform and controlled conditions, especially a contrasting background.
+The most critical step, as I mentioned, is the definition of the reference image palettes. A few preliminary runs may be needed for a few images to check whether the segmentation is being performed correctly, based on visual judgement. This is no different than any other color-threshold based methods when the choices made by the user affect the final result and contribute to variation among assessors. The cons are the same encountered in the direct competitors, which is the necessity to have images obtained at uniform and controlled conditions, especially a contrasting background.
