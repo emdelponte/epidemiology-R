@@ -153,7 +153,7 @@ icc(raters, "twoway")
 
 ```
 
-#### Overall Concordant Correlation Coefficient
+#### Overall Concordance Correlation Coefficient
 
 Another useful index is the Overall Concordance Correlation Coefficient (OCCC) for evaluating agreement among multiple observers. It was proposed by @barnhart2002 based on the original index proposed by @lin1989, earlier defined in the context of two fixed observers. In the paper, the authors introduced the OCCC in terms of the interobserver variability for assessing agreement among multiple fixed observers. As outcome, and similar to the original CCC, the approach addresses the precision and accuracy indices as components of the OCCC. The `epi.occc` function of the *epiR* packge does the job but it does compute a confidence interval.
 
@@ -253,13 +253,14 @@ sbr2 |>
 
 Lin's (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin's CCC increases in value as a function of the nearness of the data's reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).
 
-The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC statistics. Let's filter only rater 3 and calculate the CCC statistics.
+The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC statistics. Let's filter only rater 2 and calculate the CCC statistics for this rater.
 
 ```{r}
 library(epiR)
 
-sbr3 <- sbr2 |> 
-  filter(rater == "R2")
+# Only rater 2
+sbr3 <- sbr2 |> filter(rater == "R2")
+
 
 ccc <- epi.ccc(sbr3$actual, sbr3$estimate)
 
@@ -281,5 +282,9 @@ ss
 ls <- ccc$l.shift
 ls
 
+Metrics <- c("Agreement", "Bias coefficient", "Precision", "scale-shift", "location-shift")
+Value <- c(rho, Cb, r, ss, ls)
+res <- data.frame(Metrics, Value)
+res
 ```
 

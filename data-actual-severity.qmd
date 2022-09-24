@@ -1,0 +1,158 @@
+---
+title: "Measuring severity"
+---
+
+::: {.callout-note appearance="simple"}
+This is a work in progress that is currently undergoing heavy technical editing and copy-editing
+:::
+
+::: {.callout-important appearance="simple"}
+This chapter is adapted from a post published in [Open Plant Pathology](https://openplantpathology.org/posts/2021-05-31-measuring-plant-disease-severity-using-the-pliman-r-package/)
+:::
+
+## The actual severity
+
+Among the different ways to express plant disease severity, the percent area affected (symptomatic) by the disease is one of the most common especially when dealing with diseases that affect leaves. To evaluate whether the visual estimates of plant disease severity are sufficiently accurate (as seen in the previous chapter), one needs the actual severity values. These are also needed when preparing standard area diagrams (SADs) which are diagrammatic representations of severity values used as an aid prior or during the visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
+
+The actual severity values are usually approximated using image analysis where each pixel of the image is labeled according to three different classes:
+
+1.  Diseased (or symptomatic)
+2.  Non-diseased (or healthy)
+3.  Background (the non-plant portion of the image)
+
+The ratio between the non diseased and diseased area of the unit (e.g. a fraction of the whole leaf image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according a review on standard area diagrams [@delponte2017].
+
+Here, we will use the `measure_disease` function of the *pliman* (Plant IMage ANanalysis) [@olivoto2022a] R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases [@olivoto2022]. The workflow is based on two main steps: 1) preparing the image palettes that define each class of the image; and 2) run the function that will classify each pixel of the images according the colors of the palettes.
+
+## Defining color palettes
+
+The most critical is the initial step, when the user needs to correctly define the color palettes. In *pliman* the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).
+
+The reference image palettes can be made simply by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the *pliman* to determine disease severity showed the effect of different palettes prepared independently by three researchers [@olivoto2022]. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.
+
+Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png.
+
+![](imgs/pliman1.png)
+
+Now that we have the image palettes, we can start by importing the image palettes into the environment for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
+
+```{r}
+library(pliman)
+h <- image_import("imgs/sbr_h.png")
+s <- image_import("imgs/sbr_s.png")
+b <- image_import("imgs/sbr_b.png")
+
+```
+
+We can visualize the imported images using the `image_combine()` function.
+
+```{r}
+image_combine(h, s, b, ncol =3)
+```
+
+## Measuring severity
+
+### Single image
+
+To determine severity in a single image (img46.png), the image file needs to be loaded and assigned to an object using the same `image_import()` function used to load the palettes for each of the predefined classes. We can then visualize the image, again using `image_combine()`.
+
+```{r}
+img <- image_import("imgs/originals/img46.png")
+image_combine(img)
+
+```
+
+Now the fun begins with the `measure_disease()` function to determine severity. Four arguments are needed, the one representing the target image and each of the three images of the color palettes. As the author of the package says "pliman will take care of all details!"
+
+```{r}
+set.seed(123)
+measure_disease(
+  img = img,
+  img_healthy = h,
+  img_symptoms = s,
+  img_background = b,
+  show_image = TRUE
+)
+```
+
+### Multiple images
+
+That was fun, but usually we don't have a single image to process but several. It would take a longer time to process each one using the above procedure, thus becoming tedious.
+
+To automate the process, *pliman* offers a batch processing approach. For such, instead of using `img` argument, one can use `img_pattern` and define the prefix of names of the images. In addition, we also need to define the folder where the original files are located.
+
+If the users wants to save the processed masks, the `save_image` argument needs to be set to TRUE and the directory where the images will be saved also should be informed. Check below how to process 10 images of soybean rust symptoms. The outcome is a `list` object with the measures of the percent healthy and percent symptomatic area for each leaf in the `severity` object.
+
+```{r}
+pliman <- measure_disease(
+  pattern = "img",
+  dir_original = "imgs/originals" ,
+  dir_processed = "imgs/processed",
+  save_image = TRUE,
+  img_healthy = h,
+  img_symptoms = s,
+  img_background = b,
+  show_image = FALSE
+)
+severity <- pliman$severity
+severity
+```
+
+With the argument `save_image` set to TRUE, the images are all saved in the folder with the standard prefix "proc."
+
+![](imgs/pliman2.png)
+
+## How good are these measurements?
+
+These 10 images were previously processed in QUANT software for determining severity. Let's create a tibble for the image code and respective "actual" severity - assuming QUANT's measures as reference.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyverse)
+quant <- tribble(
+  ~img, ~actual,
+   "img5",     75,
+  "img11",     24,
+  "img35",     52,
+  "img37",     38,
+  "img38",     17,
+  "img46",      7,
+  "img63",    2.5,
+  "img67",   0.25,
+  "img70",     67,
+  "img75",     10
+  )
+
+
+```
+
+We can now combine the two dataframes and produce a scatter plot relating the two measures.
+
+```{r}
+dat <- left_join(severity, quant)
+
+dat %>%
+  ggplot(aes(actual, symptomatic)) +
+  geom_point(size = 4, shape = 1) +
+  ylim(0, 100) +
+  xlim(0, 100) +
+  geom_abline(slope = 1, intercept = 0) +
+  theme_bw() +
+  labs(x = "Quant",
+       y = "pliman")
+
+
+```
+
+The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the *pliman* measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!
+
+```{r}
+library(epiR)
+ccc <- epi.ccc(dat$actual, dat$symptomatic)
+ccc$rho.c
+```
+
+## Conclusion
+
+The community of R users may enjoy using [pliman](https://tiagoolivoto.github.io/pliman/) as an alternative to proprietary software or other point-and-click open source solutions such as imageJ. The simplicity of the batch processing approach can greatly improve the speed of the assessment and the user can set arguments to run R in parallel for enhanced computational speed.
+
+The most critical step, as I mentioned, is the definition of the reference color palettes. A few preliminary runs may be needed for a few leaves to check whether the segmentation is being performed correctly, based on visual judgement. This is no different than any other color-threshold based methods when the choices made by the user affect the final result and contribute to variation among assessors. The cons are the same encountered in the direct competitors, which is the necessity to have images obtained at uniform and controlled conditions, especially a contrasting background.
