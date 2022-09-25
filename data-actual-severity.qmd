@@ -36,7 +36,7 @@ Here, I cut and pasted several sections of images representative of each class f
 
 Now that we have the image palettes, we can start by importing the image palettes into the environment for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library(pliman)
 h <- image_import("imgs/sbr_h.png")
 s <- image_import("imgs/sbr_s.png")
@@ -92,7 +92,11 @@ pliman <- measure_disease(
   img_healthy = h,
   img_symptoms = s,
   img_background = b,
-  show_image = FALSE
+  show_image = FALSE,
+  col_leaf = "green", #leaf color
+  col_lesions = "red", #lesion color
+  col_background = "black", #background color
+  show_original = FALSE #do not show original 
 )
 severity <- pliman$severity
 severity
@@ -101,6 +105,10 @@ severity
 With the argument `save_image` set to TRUE, the images are all saved in the folder with the standard prefix "proc."
 
 ![](imgs/pliman2.png)
+
+Let's have a look at one of the processed images.
+
+![](imgs/processed/proc_img46.jpg){width="452"}
 
 ## How good are these measurements?
 
