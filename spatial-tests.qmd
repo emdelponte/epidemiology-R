@@ -551,33 +551,29 @@ We can now run the function that will look fo the the vector `i`. The function r
 ```{r warning=FALSE}
 fit_data_count <- fit_two_distr(data_count)
 summary(fit_data_count)
-
 ```
 
 ```{r}
 fit_data_count$llr
 ```
 
-The very low value of the P-value of the LLR test suggest that the negative binomial provides a better fit to the data. The `plot` function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.
+The very low value of the *P*-value of the LLR test suggest that the negative binomial provides a better fit to the data. The `plot()` function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.
 
 ```{r}
 plot(fit_data_count, breaks = 5) 
 ```
 
-See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using ggplot. Clearly, the negative binomial is a better description for the observed count data.
+See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using *ggplot*. Clearly, the negative binomial is a better description for the observed count data.
 
 ```{r warning=FALSE, message=FALSE}
-df <- fit_data_count$freq |> 
+df <- fit_data_count$freq |>
   pivot_longer(2:4, "pattern", "value")
 
-df |> 
-  ggplot(aes(category, value, fill = pattern))+
-  geom_col(position = "dodge", width = 2)+
-  scale_fill_manual(values = c("darkred", "MediumSeaGreen", "steelblue"))+
+df |>
+  ggplot(aes(category, value, fill = pattern)) +
+  geom_col(position = "dodge", width = 2) +
+  scale_fill_manual(values = c("darkred", "MediumSeaGreen", "steelblue")) +
   theme(legend.position = "top")
-```
-
-```{r}
 ```
 
 #### Indices of aggregation
