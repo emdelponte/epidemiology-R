@@ -105,7 +105,6 @@ There are built-in functions in R packages that allow for running the ordinary r
 library(DescTools)
 r <- RunsTest(row1$y1)
 r
-
 ```
 
 #### Doublets
@@ -116,30 +115,41 @@ Let's manually produce a code to execute the doublets test. To facilitate, we ca
 
 ```{r}
 doublets.test <- function(x) {
-# Identify the sequence
-S <- x
-# Compute the number of doublets Db
-matrix <- cbind(S[-length(S)], S[-1])
-pairs <- table(data.frame(matrix))
-Db <- pairs[2,2]
-# Count the number of diseased plants
-N <- length(S) 
-# Count the number of total plants
-m = sum(S) 
-# Expected number of doublets
-EDb = m *((m -1)/N)
-# Standard deviation 
-SDb = sqrt ( EDb * (1 - (2 / N)))
-# Calculate the Z-value 
-ZDb = (Db - EDb)/ SDb 
-# two-sided P-value calculation
-pvalue <- (2*pnorm(abs(ZDb), lower.tail = FALSE))
-# Result of the test
-result <- ifelse(abs(ZDb) >= 1.64, 
-c("aggregation or clustering"), 
-c("randomness")) 
-# Print the results
-print(paste("There are",Db,"doublets. The number of expected doublets is",EDb,".","P-value:", round(pvalue,4), ". Alternative hypothesis: non-randomness"))
+  # Identify the sequence
+  S <- x
+  # Compute the number of doublets Db
+  matrix <- cbind(S[-length(S)], S[-1])
+  pairs <- table(data.frame(matrix))
+  Db <- pairs[2, 2]
+  # Count the number of diseased plants
+  N <- length(S)
+  # Count the number of total plants
+  m = sum(S)
+  # Expected number of doublets
+  EDb = m * ((m - 1) / N)
+  # Standard deviation
+  SDb = sqrt(EDb * (1 - (2 / N)))
+  # Calculate the Z-value
+  ZDb = (Db - EDb) / SDb
+  # two-sided P-value calculation
+  pvalue <- (2 * pnorm(abs(ZDb), lower.tail = FALSE))
+  # Result of the test
+  result <- ifelse(abs(ZDb) >= 1.64,
+                   c("aggregation or clustering"),
+                   c("randomness"))
+  # Print the results
+  print(
+    paste(
+      "There are",
+      Db,
+      "doublets. The number of expected doublets is",
+      EDb,
+      ".",
+      "P-value:",
+      round(pvalue, 4),
+      ". Alternative hypothesis: non-randomness"
+    )
+  )
 }
 ```
 
