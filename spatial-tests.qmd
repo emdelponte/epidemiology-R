@@ -593,17 +593,15 @@ idx_mori <- agg_index(data_count, method = "morisita")
 idx_mori
 
 # Using the vegan package
-library (vegan)
+library(vegan)
 z <- data_count$data$i
 mor <- dispindmorisita(z)
 mor
-
 ```
 
 ### Incidence data
 
 ```{r}
-
 fhb <- read_csv("data/fhb.csv")
 
 fhb2 <- fhb %>%
@@ -611,38 +609,40 @@ fhb2 <- fhb %>%
 library(lme4)
 glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb2)
 performance::icc(glm1)
-
-
 ```
 
 
 ```{r}
-tas <- read.csv("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt", sep = "")
+tas <-
+  read.csv(
+    "https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt",
+    sep = ""
+  )
 tas
 
 # Create incidence object for epiphy
-dat_tas <- tas |> 
-  mutate(n = group_size, i = count) |> 
+dat_tas <- tas |>
+  mutate(n = group_size, i = count) |>
   epiphy::incidence()
 
 ## Fit to two distributions
 fit_tas <- fit_two_distr(dat_tas)
 summary(fit_tas)
-fit_tas$llr 
+fit_tas$llr
 
 plot(fit_tas)
-
 ```
 
 ```{r}
-tas |> 
+tas |>
   dplyr::count(count)
-binom.tas = glm(cbind(count, group_size - count)~1,
-              family=binomial,
-              data = tas)
+binom.tas = glm(cbind(count, group_size - count) ~ 1,
+                family = binomial,
+                data = tas)
 
 library(aod)
-bbinom.tas <- betabin(cbind(count, group_size - count)~1, ~ 1, data = tas)
+bbinom.tas <-
+  betabin(cbind(count, group_size - count) ~ 1, ~ 1, data = tas)
 summary(bbinom.tas)
 summary(binom.tas)
 library(performance)
@@ -651,10 +651,10 @@ check_overdispersion(binom.tas)
 
 library(epiphy)
 
-tas2 <- tas |> 
+tas2 <- tas |>
   mutate(i = count,
          n = group_size) |>  # create i vector
-  epiphy::incidence() 
+  epiphy::incidence()
 
 t <- agg_index(tas2, flavor = "incidence")
 calpha.test(t)
