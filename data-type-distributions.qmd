@@ -10,7 +10,7 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 The data used to express disease as incidence or any kind of severity measures vary in their nature as they can be discrete or continuous.
 
-**Discrete** variables are countable (involve integers) at a finite amount of time. That is, only a limited number of values (nominal or ordinal) is possible and these cannot be subdivided into parts. For example, a plant or plant part can be either disease or not diseased (nominal data). We cannot count 1.5 diseased plants. Also, a plant classified as diseased may exhibit a certain number of lesions (count data) or be classified into a specific class of severity (ordinal data, common in ordinal scales, e.g. 1-9). Disease data in the form of counts usually relate to the number of infections per sampling units. Most commonly, counts refer to the pathogen population that is assessed, such as number of airborne or soilborne propagules.
+**Discrete** variables are countable (involve integers) at a finite amount of time. That is, only a limited number of values (nominal or ordinal) is possible and these cannot be subdivided into parts. For example, a plant or plant part can be either disease or not diseased (nominal data). We cannot count 1.5 diseased plants. Also, a plant classified as diseased may exhibit a certain number of lesions (count data) or be classified into a specific class of severity (ordinal data, common in ordinal scales, e.g., 1-9). Disease data in the form of counts usually relate to the number of infections per sampling units. Most commonly, counts refer to the pathogen population that is assessed, such as number of airborne or soilborne propagules.
 
 A **continuous** variable, different from discrete, can be measured on a scale and can have any numeric value between two numbers. For example, the size of a lesion on a plant can be measured at a very precise scale (cm or mm). An estimate of severity in percent scale (% diseased area) can take any value between non zero and 100%. Although discrete at the individual level, incidence at the sample level can be treated as continuous, as it can take any value in proportion or percentage.
 
@@ -23,10 +23,9 @@ The disease variables can also be described by a statistical distribution, which
 
 For incidence (and prevalence), the data is binary at the individual level, as there are only two possible outcomes in a *trial*: the plant or plant part is disease or not diseased. The statistical distribution that best describe the incidence data at the individual level is the *binomial distribution*.
 
-Let's simulate the binomial outcomes for a range of probabilities in a sample of 100 units, using the `rbinom` function in R. For a single trial (e.g. status of plants in a single plant row), the `size` argument is set to 1.
+Let's simulate the binomial outcomes for a range of probabilities in a sample of 100 units, using the `rbinom()` function in R. For a single trial (e.g., status of plants in a single plant row), the `size` argument is set to 1.
 
 ```{r, warning=FALSE, message=FALSE}
-
 library(tidyverse)
 theme_set(theme_bw(base_size = 14)) # set global theme
 
@@ -42,19 +41,19 @@ We can then visualize the plots.
 
 ```{r}
 binomial_data |>
-  pivot_longer(1:4, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 bins =10)+
-  facet_wrap(~P)+
+  pivot_longer(1:4, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 bins = 10) +
+  facet_wrap( ~ P) +
   labs(title = "Binomial distribution to describe binary data")
 ```
 
 
 ### Beta distribution
 
-Disease incidence (or prevalence) at the sample or population level can be expressed as proportion of diseased individuals. The same applies to disease severity when expressed as proportion of the organ area affected (a ratio variable). For such cases, the beta distribution, which is bounded between 0 and 1, provides a good description. Let's simulate some data using the `rbeta` function.
+Disease incidence (or prevalence) at the sample or population level can be expressed as proportion of diseased individuals. The same applies to disease severity when expressed as proportion of the organ area affected (a ratio variable). For such cases, the beta distribution, which is bounded between 0 and 1, provides a good description. Let's simulate some data using the `rbeta()` function.
 
 ```{r}
 beta1.5 <- rbeta(n = 1000, shape1 = 1, shape2 = 5)
@@ -66,25 +65,24 @@ beta_data <- data.frame(beta1.5, beta5.5)
 Notice that there are two shape parameters in the beta distribution: `shape1` and `shape2` to be defined. This makes the distribution very flexible and with different potential shapes as we can see below.
 
 ```{r, warning=FALSE}
-
 library(tidyverse)
 theme_set(theme_bw(base_size = 14)) # set global theme
 
 beta_data |>
-  pivot_longer(1:2, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 color = "white", 
-                 bins = 15)+
-  scale_x_continuous(limits = c(0,1))+
-  facet_wrap(~P)+
+  pivot_longer(1:2, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 color = "white",
+                 bins = 15) +
+  scale_x_continuous(limits = c(0, 1)) +
+  facet_wrap( ~ P) +
   labs(title = "Beta distribution to describe proportion data")
 ```
 
 ### Poisson distribution
 
-The number of diseased plants, plant parts or individual symptoms (lesions) are discrete variables (integers) which cannot take negative values. These can be described by a Poisson distribution, a discrete distribution that counts the number of events in a Poisson process. In R, we can used the `rpois` function to obtain 100 random observations following a Poisson distribution. For such, we need to inform the number of observation (n = 100) and `lambda`, the vector of means.
+The number of diseased plants, plant parts or individual symptoms (lesions) are discrete variables (integers) which cannot take negative values. These can be described by a Poisson distribution, a discrete distribution that counts the number of events in a Poisson process. In R, we can used the `rpois()` function to obtain 100 random observations following a Poisson distribution. For such, we need to inform the number of observation (n = 100) and `lambda`, the vector of means.
 
 ```{r}
 poisson5 <- rpois(100, lambda = 10)
@@ -94,19 +92,19 @@ poisson_data <- data.frame(poisson5, poisson35)
 
 ```{r}
 poisson_data |>
-  pivot_longer(1:2, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 color = "white", 
-                 bins = 15)+
-  facet_wrap(~P)+
+  pivot_longer(1:2, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 color = "white",
+                 bins = 15) +
+  facet_wrap( ~ P) +
   labs(title = "Poisson distribution to describe count data")
 ```
 
 ### Gamma distribution
 
-When working with a continuous variables, such as lesion size, these random variables are usually described by the normal distribution. However, the problem is that the normal (Gaussian) distribution includes negative values, a  non realistic situation. Therefore, we can use the gamma distribution, which cannot take negative values, to simulate continuous plant disease data. We can use the `rgamma` function that requires the number of samples (n = 100 in our case) and the `shape`, or the mean value.
+When working with a continuous variables, such as lesion size, these random variables are usually described by the normal distribution. However, the problem is that the normal (Gaussian) distribution includes negative values, an unrealistic situation. Therefore, we can use the gamma distribution, which cannot take negative values, to simulate continuous plant disease data. We can use the `rgamma()` function that requires the number of samples (n = 100 in our case) and the `shape`, or the mean value.
 
 ```{r}
 gamma10 <- rgamma(n = 100, shape = 10, scale = 1)
@@ -116,13 +114,13 @@ gamma_data <- data.frame(gamma10, gamma35)
 
 ```{r}
 gamma_data |>
-  pivot_longer(1:2, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 color = "white", 
-                 bins = 15)+
-  ylim(0, max(gamma_data$gamma35) )+
-  facet_wrap(~P)+
+  pivot_longer(1:2, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 color = "white",
+                 bins = 15) +
+  ylim(0, max(gamma_data$gamma35)) +
+  facet_wrap( ~ P) +
   labs(title = "Gamma distribution to describe continous data")
 ```
