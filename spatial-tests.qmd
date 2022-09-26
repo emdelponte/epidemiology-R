@@ -162,7 +162,7 @@ doublets.test(row1$y1)
 
 In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
 
-In R, we can use the `join.count` function of the `spdep` package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2017]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
+In R, we can use the `join.count()` function of the `spdep` package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2017]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
 
 ```{r}
 # Enter the data
@@ -197,15 +197,15 @@ Load the library
 library(spdep)
 ```
 
-First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the `cell2nb` function by informing the number of rows and columns. The argument "rook" means shared edge, but it could be the "queen", for shared edge or vertex. We can use the default.
+First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the `cell2nb()` function by informing the number of rows and columns. The argument "rook" means shared edge, but it could be the "queen", for shared edge or vertex. We can use the default.
 
 ```{r}
-nb <- cell2nb(nrow = 5, 
-              ncol = 5, 
-              type="rook")
+nb <- cell2nb(nrow = 5,
+              ncol = 5,
+              type = "rook")
 ```
 
-The `joincount.test` function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.
+The `joincount.test()` function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.
 
 ```{r}
 joincount.test(factor(S2), 
