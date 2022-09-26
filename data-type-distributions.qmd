@@ -41,19 +41,19 @@ We can then visualize the plots.
 
 ```{r}
 binomial_data |>
-  pivot_longer(1:4, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 bins =10)+
-  facet_wrap(~P)+
+  pivot_longer(1:4, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 bins = 10) +
+  facet_wrap( ~ P) +
   labs(title = "Binomial distribution to describe binary data")
 ```
 
 
 ### Beta distribution
 
-Disease incidence (or prevalence) at the sample or population level can be expressed as proportion of diseased individuals. The same applies to disease severity when expressed as proportion of the organ area affected (a ratio variable). For such cases, the beta distribution, which is bounded between 0 and 1, provides a good description. Let's simulate some data using the `rbeta` function.
+Disease incidence (or prevalence) at the sample or population level can be expressed as proportion of diseased individuals. The same applies to disease severity when expressed as proportion of the organ area affected (a ratio variable). For such cases, the beta distribution, which is bounded between 0 and 1, provides a good description. Let's simulate some data using the `rbeta()` function.
 
 ```{r}
 beta1.5 <- rbeta(n = 1000, shape1 = 1, shape2 = 5)
@@ -65,25 +65,24 @@ beta_data <- data.frame(beta1.5, beta5.5)
 Notice that there are two shape parameters in the beta distribution: `shape1` and `shape2` to be defined. This makes the distribution very flexible and with different potential shapes as we can see below.
 
 ```{r, warning=FALSE}
-
 library(tidyverse)
 theme_set(theme_bw(base_size = 14)) # set global theme
 
 beta_data |>
-  pivot_longer(1:2, names_to = "P", 
-               values_to = "value") |> 
-  ggplot(aes(value))+
-  geom_histogram(fill = "MediumSeaGreen", 
-                 color = "white", 
-                 bins = 15)+
-  scale_x_continuous(limits = c(0,1))+
-  facet_wrap(~P)+
+  pivot_longer(1:2, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "MediumSeaGreen",
+                 color = "white",
+                 bins = 15) +
+  scale_x_continuous(limits = c(0, 1)) +
+  facet_wrap( ~ P) +
   labs(title = "Beta distribution to describe proportion data")
 ```
 
 ### Poisson distribution
 
-The number of diseased plants, plant parts or individual symptoms (lesions) are discrete variables (integers) which cannot take negative values. These can be described by a Poisson distribution, a discrete distribution that counts the number of events in a Poisson process. In R, we can used the `rpois` function to obtain 100 random observations following a Poisson distribution. For such, we need to inform the number of observation (n = 100) and `lambda`, the vector of means.
+The number of diseased plants, plant parts or individual symptoms (lesions) are discrete variables (integers) which cannot take negative values. These can be described by a Poisson distribution, a discrete distribution that counts the number of events in a Poisson process. In R, we can used the `rpois()` function to obtain 100 random observations following a Poisson distribution. For such, we need to inform the number of observation (n = 100) and `lambda`, the vector of means.
 
 ```{r}
 poisson5 <- rpois(100, lambda = 10)
