@@ -357,12 +357,12 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<p>A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following Madden et al.&nbsp;(2007), two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data.</p>
+<p>A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following <span class="citation" data-cites="madden2017">Madden et al. (<a href="references.html#ref-madden2017" role="doc-biblioref">2017b</a>)</span>, two major groups can be formed. The sparsely sampled (incidence or count data) data or intensively mapped (binary or grouped data) data.</p>
 <section id="intensively-mapped" class="level2" data-number="12.1">
 <h2 data-number="12.1" class="anchored" data-anchor-id="intensively-mapped"><span class="header-section-number">12.1</span> Intensively mapped</h2>
 <section id="binary-data" class="level3" data-number="12.1.1">
 <h3 data-number="12.1.1" class="anchored" data-anchor-id="binary-data"><span class="header-section-number">12.1.1</span> Binary data</h3>
-<p>In this situation the individual plants are mapped, meaning that their relative positions to one another are known. It is the case when a census is used to map presence/absence data. The status of each unit (usually a plant) is noted is a binay variable. The plant is either diseased (D or 1) or non-diseased or healthy (H or 0). Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and join count.</p>
+<p>In this situation the individual plants are mapped, meaning that their relative positions to one another are known. It is the case when a census is used to map presence/absence data. The status of each unit (usually a plant) is noted as a binary variable. The plant is either diseased (D or 1) or non-diseased or healthy (H or 0). Several statistical tests can be used to detect a deviation from randomness. The most commonly used tests are runs, doublets and join count.</p>
 <section id="runs-test" class="level4" data-number="12.1.1.1">
 <h4 data-number="12.1.1.1" class="anchored" data-anchor-id="runs-test"><span class="header-section-number">12.1.1.1</span> Runs test</h4>
 <p>A run is defined as a succession of one or more diseased or healthy plants, which are followed and preceded by a plant of the other disease status or no plant at all. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.</p>
@@ -380,48 +380,59 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <p>We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>row1 <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x1, z1, <span class="at">label =</span> x1, <span class="at">color =</span> <span class="fu">factor</span>(y1)))<span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span><span class="dv">15</span>, <span class="at">size =</span><span class="dv">6</span>)<span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">max</span>(z1))<span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkred"</span>, <span class="st">"MediumSeaGreen"</span>))<span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">nudge_y =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="fl">0.5</span>,<span class="fl">2.5</span>)<span class="sc">+</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>)<span class="sc">+</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Status"</span>, <span class="at">title =</span> <span class="st">"Sequence of diseased (1) or non-diseased (0) units (plants)"</span>, </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"The numbers represent the position of the unit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>row1 <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x1, z1, <span class="at">label =</span> x1, <span class="at">color =</span> <span class="fu">factor</span>(y1))) <span class="sc">+</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">15</span>, <span class="at">size =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">max</span>(z1)) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkred"</span>, <span class="st">"MediumSeaGreen"</span>)) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">nudge_y =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">2.5</span>) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">color =</span> <span class="st">"Status"</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Sequence of diseased (1) or non-diseased (0) units (plants)"</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"The numbers represent the position of the unit"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>We can write a code in R and create a function named <code>oruns.test</code> for the ordinary runs test.</p>
+<p>We can write a code in R and create a function named <code>oruns.test()</code> for the ordinary runs test.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>oruns.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># identify the sequence</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> x </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the number or runs</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>U <span class="ot">=</span> <span class="fu">max</span>(<span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">diff</span>(S)<span class="sc">!=</span><span class="dv">0</span>)))</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the number of diseased plants</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">sum</span>(S)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the total number of plants</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>N <span class="ot">=</span> <span class="fu">length</span>(S)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the number of expected runs</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>EU <span class="ot">=</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">2</span> <span class="sc">*</span> m<span class="sc">*</span>(N <span class="sc">-</span> m)<span class="sc">/</span>N)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the standard deviation in the sample</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>sU <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> m <span class="sc">*</span> (N <span class="sc">-</span> m) <span class="sc">*</span> (<span class="dv">2</span> <span class="sc">*</span> m <span class="sc">*</span>(N<span class="sc">-</span>m)<span class="sc">-</span>N)<span class="sc">/</span> (N<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span>(N<span class="dv">-1</span>)))</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the z-value</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>Z <span class="ot">=</span> (U <span class="sc">-</span> EU)<span class="sc">/</span>sU</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the p-value for the Z</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>pvalue <span class="ot">&lt;-</span> (<span class="dv">2</span><span class="sc">*</span><span class="fu">pnorm</span>(<span class="fu">abs</span>(Z), <span class="at">lower.tail=</span><span class="cn">FALSE</span>))</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># test if Z is lower than 1.64</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Z <span class="sc">&lt;</span> <span class="fl">1.64</span>, </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"clustering"</span>), </span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"randomness"</span>))</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"There are"</span>, U,<span class="st">"runs. The number of expected runs is"</span>, <span class="fu">round</span>(EU,<span class="dv">1</span>), <span class="st">"P-value:"</span>,<span class="fu">round</span>(pvalue,<span class="dv">6</span>), <span class="st">". Alternative hypothesis: non-randomness"</span>))</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># identify the sequence</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> x</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute the number or runs</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">=</span> <span class="fu">max</span>(<span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">diff</span>(S) <span class="sc">!=</span> <span class="dv">0</span>)))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute the number of diseased plants</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">=</span> <span class="fu">sum</span>(S)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count the total number of plants</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">=</span> <span class="fu">length</span>(S)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the number of expected runs</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  EU <span class="ot">=</span> <span class="dv">1</span> <span class="sc">+</span> (<span class="dv">2</span> <span class="sc">*</span> m <span class="sc">*</span> (N <span class="sc">-</span> m) <span class="sc">/</span> N)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the standard deviation in the sample</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  sU <span class="ot">=</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> m <span class="sc">*</span> (N <span class="sc">-</span> m) <span class="sc">*</span> (<span class="dv">2</span> <span class="sc">*</span> m <span class="sc">*</span> (N <span class="sc">-</span> m) <span class="sc">-</span> N) <span class="sc">/</span> (N <span class="sc">^</span> <span class="dv">2</span> <span class="sc">*</span> (N <span class="sc">-</span> <span class="dv">1</span>)))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the z-value</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  Z <span class="ot">=</span> (U <span class="sc">-</span> EU) <span class="sc">/</span> sU</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Obtain the p-value for the Z</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  pvalue <span class="ot">&lt;-</span> (<span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="fu">abs</span>(Z), <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># test if Z is lower than 1.64</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(Z <span class="sc">&lt;</span> <span class="fl">1.64</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">c</span>(<span class="st">"clustering"</span>),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">c</span>(<span class="st">"randomness"</span>))</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print the results</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      <span class="st">"There are"</span>,</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      U,</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">"runs. The number of expected runs is"</span>,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(EU, <span class="dv">1</span>),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">"P-value:"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(pvalue, <span class="dv">6</span>),</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">". Alternative hypothesis: non-randomness"</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now run the test for the example series above.</p>
 <div class="cell">
@@ -430,7 +441,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <pre><code>[1] "There are 7 runs. The number of expected runs is 10.6 P-value: 0.084166 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
-<p>There are built-in functions in R packages that allow for running the ordinary runs test. Let’s load the packages and runt the test. Note that the results of the <code>runs.test</code> is the same as the one produced by our custom function.</p>
+<p>There are built-in functions in R packages that allow for running the ordinary runs test. Let’s load the packages and run the test. Note that the results of the <code>runs.test</code> is the same as the one produced by our custom function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(randtests)</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#runs.test(row1$y1, threshold = 0.5)</span></span>
@@ -454,31 +465,42 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <p>Let’s manually produce a code to execute the doublets test. To facilitate, we can create a function and name it <code>doublets.test</code>. The only argument needed is the vector of binary data.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doublets.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the sequence</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>S <span class="ot">&lt;-</span> x</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the number of doublets Db</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>matrix <span class="ot">&lt;-</span> <span class="fu">cbind</span>(S[<span class="sc">-</span><span class="fu">length</span>(S)], S[<span class="sc">-</span><span class="dv">1</span>])</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pairs <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">data.frame</span>(matrix))</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>Db <span class="ot">&lt;-</span> pairs[<span class="dv">2</span>,<span class="dv">2</span>]</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of diseased plants</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="fu">length</span>(S) </span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Count the number of total plants</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>m <span class="ot">=</span> <span class="fu">sum</span>(S) </span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Expected number of doublets</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>EDb <span class="ot">=</span> m <span class="sc">*</span>((m <span class="sc">-</span><span class="dv">1</span>)<span class="sc">/</span>N)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation </span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>SDb <span class="ot">=</span> <span class="fu">sqrt</span> ( EDb <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">2</span> <span class="sc">/</span> N)))</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the Z-value </span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>ZDb <span class="ot">=</span> (Db <span class="sc">-</span> EDb)<span class="sc">/</span> SDb </span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># two-sided P-value calculation</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>pvalue <span class="ot">&lt;-</span> (<span class="dv">2</span><span class="sc">*</span><span class="fu">pnorm</span>(<span class="fu">abs</span>(ZDb), <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Result of the test</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">abs</span>(ZDb) <span class="sc">&gt;=</span> <span class="fl">1.64</span>, </span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"aggregation or clustering"</span>), </span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="st">"randomness"</span>)) </span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the results</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"There are"</span>,Db,<span class="st">"doublets. The number of expected doublets is"</span>,EDb,<span class="st">"."</span>,<span class="st">"P-value:"</span>, <span class="fu">round</span>(pvalue,<span class="dv">4</span>), <span class="st">". Alternative hypothesis: non-randomness"</span>))</span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Identify the sequence</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> x</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compute the number of doublets Db</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  matrix <span class="ot">&lt;-</span> <span class="fu">cbind</span>(S[<span class="sc">-</span><span class="fu">length</span>(S)], S[<span class="sc">-</span><span class="dv">1</span>])</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  pairs <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">data.frame</span>(matrix))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  Db <span class="ot">&lt;-</span> pairs[<span class="dv">2</span>, <span class="dv">2</span>]</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count the number of diseased plants</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  N <span class="ot">&lt;-</span> <span class="fu">length</span>(S)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count the number of total plants</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  m <span class="ot">=</span> <span class="fu">sum</span>(S)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Expected number of doublets</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  EDb <span class="ot">=</span> m <span class="sc">*</span> ((m <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> N)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Standard deviation</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  SDb <span class="ot">=</span> <span class="fu">sqrt</span>(EDb <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> (<span class="dv">2</span> <span class="sc">/</span> N)))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the Z-value</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  ZDb <span class="ot">=</span> (Db <span class="sc">-</span> EDb) <span class="sc">/</span> SDb</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="co"># two-sided P-value calculation</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  pvalue <span class="ot">&lt;-</span> (<span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="fu">abs</span>(ZDb), <span class="at">lower.tail =</span> <span class="cn">FALSE</span>))</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Result of the test</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(<span class="fu">abs</span>(ZDb) <span class="sc">&gt;=</span> <span class="fl">1.64</span>,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">c</span>(<span class="st">"aggregation or clustering"</span>),</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">c</span>(<span class="st">"randomness"</span>))</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print the results</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>      <span class="st">"There are"</span>,</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>      Db,</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>      <span class="st">"doublets. The number of expected doublets is"</span>,</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>      EDb,</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>      <span class="st">"."</span>,</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>      <span class="st">"P-value:"</span>,</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">round</span>(pvalue, <span class="dv">4</span>),</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>      <span class="st">". Alternative hypothesis: non-randomness"</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the function calling the vector</span></span>
@@ -491,7 +513,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <section id="join-count" class="level4" data-number="12.1.1.3">
 <h4 data-number="12.1.1.3" class="anchored" data-anchor-id="join-count"><span class="header-section-number">12.1.1.3</span> Join count</h4>
 <p>In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.</p>
-<p>In R, we can use the <code>join.count</code> function of the <code>spdep</code> package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.</p>
+<p>In R, we can use the <code>join.count()</code> function of the <code>spdep</code> package to perform a joint count test. First we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Enter the data</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
@@ -503,17 +525,17 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <p>Visualize the two-dimensional array:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">raster</span>(<span class="fu">matrix</span>(S2, <span class="dv">5</span> ,<span class="dv">5</span>))</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">matrix</span>(S2, <span class="dv">5</span> , <span class="dv">5</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="ot">&lt;-</span> raster<span class="sc">::</span><span class="fu">as.data.frame</span>(mapS2,<span class="at">xy=</span><span class="cn">TRUE</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">as.data.frame</span>(mapS2, <span class="at">xy =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Map using ggplot</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="sc">|&gt;</span> </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> layer, <span class="at">fill =</span> <span class="fu">factor</span>(layer)))<span class="sc">+</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span><span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>)<span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="sc">|&gt;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> lyr<span class="fl">.1</span>, <span class="at">fill =</span> <span class="fu">factor</span>(lyr<span class="fl">.1</span>))) <span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>) <span class="sc">+</span></span>
 <span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"MediumSeaGreen"</span>, <span class="st">"darkred"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
@@ -523,13 +545,13 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the <code>cell2nb</code> function by informing the number of rows and columns. The argument “rook” means shared edge, but it could be the “queen”, for shared edge or vertex. We can use the default.</p>
+<p>First, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the <code>cell2nb()</code> function by informing the number of rows and columns. The argument “rook” means shared edge, but it could be the “queen”, for shared edge or vertex. We can use the default.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>, </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">5</span>, </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">5</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">type =</span> <span class="st">"rook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>joincount.test</code> function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.</p>
+<p>The <code>joincount.test()</code> function runs the BB join count test for spatial autocorrelation. From the function description, the method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the nb object we created previously.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -623,12 +645,12 @@ Same colour statistic           Expectation              Variance
 <span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div id="ltaftqhtog" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<div id="lngvxgdxnr" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>html {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', 'Fira Sans', 'Droid Sans', Arial, sans-serif;
 }
 
-#ltaftqhtog .gt_table {
+#lngvxgdxnr .gt_table {
   display: table;
   border-collapse: collapse;
   margin-left: auto;
@@ -653,7 +675,7 @@ Same colour statistic           Expectation              Variance
   border-left-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_heading {
+#lngvxgdxnr .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -665,7 +687,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_title {
+#lngvxgdxnr .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -677,7 +699,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-width: 0;
 }
 
-#ltaftqhtog .gt_subtitle {
+#lngvxgdxnr .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -689,13 +711,13 @@ Same colour statistic           Expectation              Variance
   border-top-width: 0;
 }
 
-#ltaftqhtog .gt_bottom_border {
+#lngvxgdxnr .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_col_headings {
+#lngvxgdxnr .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -710,7 +732,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_col_heading {
+#lngvxgdxnr .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -730,7 +752,7 @@ Same colour statistic           Expectation              Variance
   overflow-x: hidden;
 }
 
-#ltaftqhtog .gt_column_spanner_outer {
+#lngvxgdxnr .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -742,15 +764,15 @@ Same colour statistic           Expectation              Variance
   padding-right: 4px;
 }
 
-#ltaftqhtog .gt_column_spanner_outer:first-child {
+#lngvxgdxnr .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ltaftqhtog .gt_column_spanner_outer:last-child {
+#lngvxgdxnr .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ltaftqhtog .gt_column_spanner {
+#lngvxgdxnr .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -762,7 +784,7 @@ Same colour statistic           Expectation              Variance
   width: 100%;
 }
 
-#ltaftqhtog .gt_group_heading {
+#lngvxgdxnr .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -787,7 +809,7 @@ Same colour statistic           Expectation              Variance
   vertical-align: middle;
 }
 
-#ltaftqhtog .gt_empty_group_heading {
+#lngvxgdxnr .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -802,15 +824,15 @@ Same colour statistic           Expectation              Variance
   vertical-align: middle;
 }
 
-#ltaftqhtog .gt_from_md > :first-child {
+#lngvxgdxnr .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ltaftqhtog .gt_from_md > :last-child {
+#lngvxgdxnr .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ltaftqhtog .gt_row {
+#lngvxgdxnr .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -829,7 +851,7 @@ Same colour statistic           Expectation              Variance
   overflow-x: hidden;
 }
 
-#ltaftqhtog .gt_stub {
+#lngvxgdxnr .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -842,7 +864,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#ltaftqhtog .gt_stub_row_group {
+#lngvxgdxnr .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -856,11 +878,11 @@ Same colour statistic           Expectation              Variance
   vertical-align: top;
 }
 
-#ltaftqhtog .gt_row_group_first td {
+#lngvxgdxnr .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ltaftqhtog .gt_summary_row {
+#lngvxgdxnr .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -870,16 +892,16 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#ltaftqhtog .gt_first_summary_row {
+#lngvxgdxnr .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_first_summary_row.thick {
+#lngvxgdxnr .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ltaftqhtog .gt_last_summary_row {
+#lngvxgdxnr .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -889,7 +911,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_grand_summary_row {
+#lngvxgdxnr .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -899,7 +921,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#ltaftqhtog .gt_first_grand_summary_row {
+#lngvxgdxnr .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -909,11 +931,11 @@ Same colour statistic           Expectation              Variance
   border-top-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_striped {
+#lngvxgdxnr .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ltaftqhtog .gt_table_body {
+#lngvxgdxnr .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -922,7 +944,7 @@ Same colour statistic           Expectation              Variance
   border-bottom-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_footnotes {
+#lngvxgdxnr .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -936,7 +958,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_footnote {
+#lngvxgdxnr .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-left: 4px;
@@ -945,7 +967,7 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#ltaftqhtog .gt_sourcenotes {
+#lngvxgdxnr .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -959,7 +981,7 @@ Same colour statistic           Expectation              Variance
   border-right-color: #D3D3D3;
 }
 
-#ltaftqhtog .gt_sourcenote {
+#lngvxgdxnr .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -967,36 +989,36 @@ Same colour statistic           Expectation              Variance
   padding-right: 5px;
 }
 
-#ltaftqhtog .gt_left {
+#lngvxgdxnr .gt_left {
   text-align: left;
 }
 
-#ltaftqhtog .gt_center {
+#lngvxgdxnr .gt_center {
   text-align: center;
 }
 
-#ltaftqhtog .gt_right {
+#lngvxgdxnr .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ltaftqhtog .gt_font_normal {
+#lngvxgdxnr .gt_font_normal {
   font-weight: normal;
 }
 
-#ltaftqhtog .gt_font_bold {
+#lngvxgdxnr .gt_font_bold {
   font-weight: bold;
 }
 
-#ltaftqhtog .gt_font_italic {
+#lngvxgdxnr .gt_font_italic {
   font-style: italic;
 }
 
-#ltaftqhtog .gt_super {
+#lngvxgdxnr .gt_super {
   font-size: 65%;
 }
 
-#ltaftqhtog .gt_two_val_uncert {
+#lngvxgdxnr .gt_two_val_uncert {
   display: inline-block;
   line-height: 1em;
   text-align: right;
@@ -1005,31 +1027,31 @@ Same colour statistic           Expectation              Variance
   margin-left: 0.1em;
 }
 
-#ltaftqhtog .gt_footnote_marks {
+#lngvxgdxnr .gt_footnote_marks {
   font-style: italic;
   font-weight: normal;
   font-size: 75%;
   vertical-align: 0.4em;
 }
 
-#ltaftqhtog .gt_asterisk {
+#lngvxgdxnr .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ltaftqhtog .gt_slash_mark {
+#lngvxgdxnr .gt_slash_mark {
   font-size: 0.7em;
   line-height: 0.7em;
   vertical-align: 0.15em;
 }
 
-#ltaftqhtog .gt_fraction_numerator {
+#lngvxgdxnr .gt_fraction_numerator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: 0.45em;
 }
 
-#ltaftqhtog .gt_fraction_denominator {
+#lngvxgdxnr .gt_fraction_denominator {
   font-size: 0.6em;
   line-height: 0.6em;
   vertical-align: -0.05em;
@@ -1086,12 +1108,12 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let’s visualize these data for each sampling time.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i)))<span class="sc">+</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()<span class="sc">+</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"MediumSeaGreen"</span>, <span class="st">"darkred"</span>))<span class="sc">+</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> t)<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i))) <span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"MediumSeaGreen"</span>, <span class="st">"darkred"</span>)) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> t) <span class="sc">+</span></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
@@ -1115,17 +1137,17 @@ Same colour statistic           Expectation              Variance
 <p>There are 60 rows and 24 columns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Neighbor grid</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>nb1 <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">60</span>, </span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">24</span>, </span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">type=</span><span class="st">"rook"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>nb1 <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">60</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">ncol =</span> <span class="dv">24</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">type =</span> <span class="st">"rook"</span>)</span>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>S1 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"1"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
 <span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S1), </span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S1),</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>               <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
@@ -1155,12 +1177,12 @@ Same colour statistic           Expectation              Variance
 <p>We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2),</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>               <span class="fu">nb2listw</span>(nb1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     Join count test under nonfree sampling
@@ -1187,8 +1209,8 @@ Same colour statistic           Expectation              Variance
             82.958333             81.900625              9.342754 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"3"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"3"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S3), </span>
@@ -1226,8 +1248,8 @@ Same colour statistic           Expectation              Variance
 <p>If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are autocorrelation (known as Moran’s I), semivariance and SADIE (an alternative approach to autocorrelation.)</p>
 <section id="autocorrelation" class="level4" data-number="12.1.2.1">
 <h4 data-number="12.1.2.1" class="anchored" data-anchor-id="autocorrelation"><span class="header-section-number">12.1.2.1</span> Autocorrelation</h4>
-<p>Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>.</p>
-<p>We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>, which was extracted from table 11.3 of Campbell and Madden (1990). The data represent a single transect with the number of <em>Macrophomia phaseolina</em> propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.</p>
+<p>Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>.</p>
+<p>We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>, which was extracted from table 11.3 of <span class="citation" data-cites="Campbell1990">Campbell and Madden. L. (<a href="references.html#ref-Campbell1990" role="doc-biblioref">1990</a>)</span>. The data represent a single transect with the number of <em>Macrophomia phaseolina</em> propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">i =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>),</span>
@@ -1256,18 +1278,20 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>We can produce a plot to visualize the number of propagules across the transect.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span> </span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, y))<span class="sc">+</span></span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Relative position within a transect"</span>, </span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Number of propagules"</span>,</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Macrophomina phaseolina in the soil"</span>,</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Source: Campbell and Madden (1990)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, y)) <span class="sc">+</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>) <span class="sc">+</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Relative position within a transect"</span>,</span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of propagules"</span>,</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Macrophomina phaseolina in the soil"</span>,</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Source: Campbell and Madden (1990)"</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>To calculate the autocorrelation coefficient in R, we can use the <code>ac</code> function of the <em>tseries</em> package.</p>
+<p>To calculate the autocorrelation coefficient in R, we can use the <code>ac()</code> function of the <em>tseries</em> package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ac_mp <span class="ot">&lt;-</span> <span class="fu">acf</span>(mp<span class="sc">$</span>y, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">pl =</span> <span class="cn">FALSE</span>)</span>
@@ -1280,7 +1304,7 @@ Autocorrelations of series 'mp$y', by lag
  1.000  0.586  0.126 -0.033 -0.017 -0.181 </code></pre>
 </div>
 </div>
-<p>Let’s store the results in a dataframe to facilitate visualization using ggplot.</p>
+<p>Let’s store the results in a dataframe to facilitate visualization using <em>ggplot</em>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">index =</span> ac_mp<span class="sc">$</span>lag, ac_mp<span class="sc">$</span>acf)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ac_mp_dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1296,43 +1320,43 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 <p>And now the plot known as autocorrelogram.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span> </span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(index, ac_mp.acf, <span class="at">label =</span> <span class="fu">round</span>(ac_mp.acf,<span class="dv">3</span>)))<span class="sc">+</span></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>)<span class="sc">+</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">6</span>)<span class="sc">+</span></span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>)<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(index, ac_mp.acf, <span class="at">label =</span> <span class="fu">round</span>(ac_mp.acf, <span class="dv">3</span>))) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">vjust =</span> <span class="dv">0</span>, <span class="at">nudge_y =</span> <span class="fl">0.05</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">6</span>) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
 <span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance lag"</span>, <span class="at">y =</span> <span class="st">"Autocorrelation coefficient"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>The values we obtained here are not the same but quite close to the values reported in Madden et al.&nbsp;(2007). For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.</p>
-<p>The method above is usually referred to Moran’s I (Moran, 1950). Let’s use another example dataset from the book to calculate the Moran’s I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.</p>
+<p>The values we obtained here are not the same but quite close to the values reported in <span class="citation" data-cites="madden2017">Madden et al. (<a href="references.html#ref-madden2017" role="doc-biblioref">2017b</a>)</span>. For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.</p>
+<p>The method above is usually referred to Moran’s I <span class="citation" data-cites="Moran1950">(<a href="references.html#ref-Moran1950" role="doc-biblioref">Moran 1950</a>)</span>. Let’s use another example dataset from the book to calculate the Moran’s I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of <span class="citation" data-cites="xu2004">Xu and Madden (<a href="references.html#ref-xu2004" role="doc-biblioref">2004</a>)</span>. The data is stored in a CSV file.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>epi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/xu-madden-simulated.csv"</span>)</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform from wide to long format </span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Transform from wide to long format</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the n variable to store as a vector</span></span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>epi1 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>epi1 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span></span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>,</span>
 <span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"y"</span>,</span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Using <code>moran</code> function of the <em>spdep</em> R package.</p>
+<p>Using <code>moran()</code> function of the <em>spdep</em> R package.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>cell2nb</code> function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.</p>
+<p>The <code>cell2nb()</code> function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">12</span>, <span class="dv">12</span>, <span class="at">type=</span><span class="st">"queen"</span>, <span class="at">torus =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">12</span>, <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"queen"</span>, <span class="at">torus =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The <code>nb2listw</code> function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the <code>col.W</code> neighbor list.</p>
+<p>The <code>nb2listw()</code> function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the <code>col.W</code> neighbor list.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>col.W <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nb, <span class="at">style=</span><span class="st">"W"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>col.W <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nb, <span class="at">style =</span> <span class="st">"W"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>The Moran’s I statistic is given by the <code>moran</code> function</p>
+<p>The Moran’s I statistic is given by the <code>moran()</code> function</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran</span>(<span class="at">x =</span> epi1, <span class="co"># numeric vector</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">listw =</span> col.W, <span class="co"># the nb list</span></span>
@@ -1370,7 +1394,7 @@ Moran I statistic       Expectation          Variance
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">method =</span> <span class="st">"I"</span>,  </span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can generate a correlogram using the output of the <code>sp.correlogram</code> function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. Let’s store the results in a dataframe.</p>
+<p>We can generate a correlogram using the output of the <code>sp.correlogram()</code> function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>. Let’s store the results in a dataframe.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(correl_I<span class="sc">$</span>res) <span class="sc">|&gt;</span> </span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
@@ -1381,12 +1405,12 @@ Moran I statistic       Expectation          Variance
 <pre><code> [1]  0.698  0.340  0.086 -0.002 -0.009 -0.024 -0.090 -0.180 -0.217 -0.124</code></pre>
 </div>
 </div>
-<p>Then, we can generate the plot using ggplot.</p>
+<p>Then, we can generate the plot using <em>ggplot</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span> </span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(lag, X1))<span class="sc">+</span></span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>)<span class="sc">+</span></span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">10</span>)<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(lag, X1)) <span class="sc">+</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"MediumSeaGreen"</span>) <span class="sc">+</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">10</span>) <span class="sc">+</span></span>
 <span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance lag"</span>, <span class="at">y =</span> <span class="st">"Spatial autocorrelation"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid" width="672"></p>
@@ -1398,12 +1422,12 @@ Moran I statistic       Expectation          Variance
 <p>Semi-variance is a key quantity in geostatistics. This differs from spatial autocorrelation because distances are usually measured in discrete spatial lags. The semi-variance can be defined as half the variance of the differences between all possible points spaced a constant distance apart.</p>
 <p>The semi-variance at a distance d = 0 will be zero, because there are no differences between points that are compared to themselves. However, as points are compared to increasingly distant points, the semi-variance increases. At some distance, called the <em>Range</em>, the semi-variance will become approximately equal to the variance of the whole surface itself. This is the greatest distance over which the value at a point on the surface is related to the value at another point. In fact, when the distance between two sampling units is small, the sampling units are close together and, usually, variability is low. As the distance increases, so (usually) does the variability.</p>
 <p>Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.</p>
-<p>For the semi-variance, we will use the <code>variog</code> function of the <em>geoR</em> package. We need the data in the long format (x, y and z). Let’s reshape the data to the long format and store it in <code>epi2</code> dataframe.</p>
+<p>For the semi-variance, we will use the <code>variog()</code> function of the <em>geoR</em> package. We need the data in the long format (x, y and z). Let’s reshape the data to the long format and store it in <code>epi2</code> dataframe.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span>epi <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>,</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"y"</span>,</span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">"n"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">y =</span> <span class="fu">as.numeric</span>(y))</span>
 <span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1447,18 +1471,18 @@ variofit: minimisation function used: optim </code></pre>
 </section>
 <section id="sadie" class="level4" data-number="12.1.2.3">
 <h4 data-number="12.1.2.3" class="anchored" data-anchor-id="sadie"><span class="header-section-number">12.1.2.3</span> SADIE</h4>
-<p>SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology <span class="citation" data-cites="chapter2017 xu2004 li2011">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>; <a href="references.html#ref-xu2004" role="doc-biblioref">Xu and Madden 2004</a>; <a href="references.html#ref-li2011" role="doc-biblioref">Li, Madden, and Xu 2011</a>)</span>. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.</p>
-<p>SADIE quantifies spatial pattern by calculating the minimum total distance to regaularity. That is, the distance that individuals must be moved from the starting point defined by the observed counts to the end point at which there is the same number of individuals in each sampling unit. Therefore, if the data are highly aggregated, the distance to regularity will be large, but if the data are close to regular to start with, the distance to regularity will be smaller.</p>
+<p>SADIE (spatial analysis by distance indices) is an alternative to autocorrelation and semi-variance methods described previously, which has found use in plant pathology <span class="citation" data-cites="chapter2017 xu2004 li2011">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>; <a href="references.html#ref-xu2004" role="doc-biblioref">Xu and Madden 2004</a>; <a href="references.html#ref-li2011" role="doc-biblioref">Li et al. 2011</a>)</span>. Similar to those methods, the spatial coordinates for the disease intensity (count of diseased individuals) or pathogen propagules values should be provided.</p>
+<p>SADIE quantifies spatial pattern by calculating the minimum total distance to regularity. That is, the distance that individuals must be moved from the starting point defined by the observed counts to the end point at which there is the same number of individuals in each sampling unit. Therefore, if the data are highly aggregated, the distance to regularity will be large, but if the data are close to regular to start with, the distance to regularity will be smaller.</p>
 <p>The null hypothesis to test is that the observed pattern is random. SADIE calculates an index of aggregation (<em>Ia</em>). When this is equal to 1, the pattern is random. If this is greater than 1, the pattern is aggregated. Hypothesis testing is based on the randomization procedure. The null hypothesis of randomness, with an alternative hypothesis of aggregation.</p>
 <p>An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.</p>
-<p>In R, we can use the <code>sadie</code> function of the <em>epiphy</em> package. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>. We can map the original data as follows:</p>
+<p>In R, we can use the <code>sadie()</code> function of the <em>epiphy</em> package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>. We can map the original data as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span> </span>
-<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> n, <span class="at">fill =</span> n))<span class="sc">+</span></span>
-<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>()<span class="sc">+</span></span>
-<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">size =</span> <span class="dv">5</span>)<span class="sc">+</span></span>
-<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
-<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()<span class="sc">+</span></span>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span></span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> n, <span class="at">fill =</span> n)) <span class="sc">+</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="at">size =</span> <span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>() <span class="sc">+</span></span>
 <span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"MediumSeaGreen"</span>, <span class="at">high =</span> <span class="st">"darkred"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="672"></p>
@@ -1480,7 +1504,7 @@ sadie.data.frame(data = epi2)
 Ia: 2.4622 (Pa = &lt; 2.22e-16)</code></pre>
 </div>
 </div>
-<p>The simple output shows the <em>Ia</em> value and associated <em>P</em>-value. As suggested by the low value of the <em>P</em>-value, the pattern is highly aggregated. The summary function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the <code>summary</code> function.</p>
+<p>The simple output shows the <em>Ia</em> value and associated <em>P</em>-value. As suggested by the low value of the <em>P</em>-value, the pattern is highly aggregated. The <code>summary()</code> function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the <code>summary()</code> function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1509,7 +1533,7 @@ Ia: 2.4622 (Pa = &lt; 2.22e-16)
 Number of permutations: 100</code></pre>
 </div>
 </div>
-<p>The plot function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).</p>
+<p>The <code>plot()</code> function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1528,14 +1552,14 @@ Number of permutations: 100</code></pre>
 </section>
 <section id="sparsely-sampled-data" class="level2" data-number="12.2">
 <h2 data-number="12.2" class="anchored" data-anchor-id="sparsely-sampled-data"><span class="header-section-number">12.2</span> Sparsely sampled data</h2>
-<p>Different from intensively mapped data, sparsely sampled data do not contain information about the spatial location of the units, and so it is not taken into account in the analysis. The analysis of sparsely sampled data usually involves characterizing the extent of variability in the mean level of disease intensity per sampling unit <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. There are two types of approaches to analyse these data in the context of spatial patterns of plant disease epidemics: 1) testing the goodness of fit to statistical probability distributions and 2) calculating indices of aggregation. These will be discussed further separated depending on the nature of the data, whether count or incidence (proportion), for which specific distributions are assumed to describe the data.</p>
+<p>Different from intensively mapped data, sparsely sampled data do not contain information about the spatial location of the units, and so it is not taken into account in the analysis. The analysis of sparsely sampled data usually involves characterizing the extent of variability in the mean level of disease intensity per sampling unit <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>. There are two types of approaches to analyse these data in the context of spatial patterns of plant disease epidemics: 1) testing the goodness of fit to statistical probability distributions and 2) calculating indices of aggregation. These will be discussed further separated depending on the nature of the data, whether count or incidence (proportion), for which specific distributions are assumed to describe the data.</p>
 <section id="count-data" class="level3" data-number="12.2.1">
 <h3 data-number="12.2.1" class="anchored" data-anchor-id="count-data"><span class="header-section-number">12.2.1</span> Count data</h3>
 <section id="fit-to-distributions" class="level4" data-number="12.2.1.1">
 <h4 data-number="12.2.1.1" class="anchored" data-anchor-id="fit-to-distributions"><span class="header-section-number">12.2.1.1</span> Fit to distributions</h4>
 <p>Two statistical distributions can be adopted as reference for the description of random or aggregated patterns of disease data in the form of counts of infection within sampling units. Take the count of lesions on a leaf, or the count of diseased plants on a quadrat, as an example. If the presence of a lesion/diseased plant does not increase or decrease the chance that other lesions/diseased plants will occur, the <em>Poisson</em> distribution describes the distribution of lesions on the leaf. Otherwise, the <em>negative binomial</em> provides a better description.</p>
 <p>Let’s work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won’t consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of infected units per sampling unit.</p>
-<p>The <em>epiphy</em> package provides a function called <code>fit_two_distr</code>, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the <code>count</code> function where the number of infection units is designated as <code>i</code>. It won’t work with a single vector of numbers. We create the dataframe using:</p>
+<p>The <em>epiphy</em> package provides a function called <code>fit_two_distr()</code>, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the <code>count()</code> function where the number of infection units is designated as <code>i</code>. It won’t work with a single vector of numbers. We create the dataframe using:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data_count <span class="ot">&lt;-</span> epi2 <span class="sc">|&gt;</span> </span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> n) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
@@ -1577,29 +1601,26 @@ aggregated :  -616.51  1 4076.4  &lt; 2.2e-16 ***
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<p>The very low value of the P-value of the LLR test suggest that the negative binomial provides a better fit to the data. The <code>plot</code> function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.</p>
+<p>The very low value of the <em>P</em>-value of the LLR test suggest that the negative binomial provides a better fit to the data. The <code>plot()</code> function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_data_count, <span class="at">breaks =</span> <span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using ggplot. Clearly, the negative binomial is a better description for the observed count data.</p>
+<p>See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using <em>ggplot</em>. Clearly, the negative binomial is a better description for the observed count data.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span></span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">"pattern"</span>, <span class="st">"value"</span>)</span>
 <span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span> </span>
-<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(category, value, <span class="at">fill =</span> pattern))<span class="sc">+</span></span>
-<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">width =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkred"</span>, <span class="st">"MediumSeaGreen"</span>, <span class="st">"steelblue"</span>))<span class="sc">+</span></span>
+<span id="cb78-4"><a href="#cb78-4" aria-hidden="true" tabindex="-1"></a>df <span class="sc">|&gt;</span></span>
+<span id="cb78-5"><a href="#cb78-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(category, value, <span class="at">fill =</span> pattern)) <span class="sc">+</span></span>
+<span id="cb78-6"><a href="#cb78-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>, <span class="at">width =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb78-7"><a href="#cb78-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"darkred"</span>, <span class="st">"MediumSeaGreen"</span>, <span class="st">"steelblue"</span>)) <span class="sc">+</span></span>
 <span id="cb78-8"><a href="#cb78-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid" width="672"></p>
 </div>
-</div>
-<div class="cell">
-
 </div>
 </section>
 <section id="indices-of-aggregation" class="level4" data-number="12.2.1.2">
@@ -1646,7 +1667,7 @@ alternative hypothesis: two.sided</code></pre>
 2.186</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the vegan package</span></span>
-<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span> (vegan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(vegan)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Loading required package: permute</code></pre>
 </div>
@@ -1705,8 +1726,12 @@ Attaching package: 'Matrix'</code></pre>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>, <span class="at">sep =</span> <span class="st">""</span>)</span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>tas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">""</span></span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>tas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   quad group_size count
 1     1          6     4
@@ -1773,8 +1798,8 @@ Attaching package: 'Matrix'</code></pre>
 62   62          6     6</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
-<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span> </span>
-<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span> </span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span></span>
 <span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
 <span id="cb105-5"><a href="#cb105-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb105-6"><a href="#cb105-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
@@ -1809,7 +1834,7 @@ theta 0.475101 0.209789  2.2647  0.023534 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
@@ -1821,11 +1846,11 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="spatial-tests_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="672"></p>
+<p><img src="spatial-tests_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>tas <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a>tas <span class="sc">|&gt;</span></span>
 <span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  count  n
@@ -1835,13 +1860,14 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 4     5  4
 5     6 47</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count)<span class="sc">~</span><span class="dv">1</span>,</span>
-<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">family=</span>binomial,</span>
-<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">data =</span> tas)</span>
+<div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
+<span id="cb115-3"><a href="#cb115-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> tas)</span>
 <span id="cb115-4"><a href="#cb115-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb115-5"><a href="#cb115-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aod)</span>
-<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>bbinom.tas <span class="ot">&lt;-</span> <span class="fu">betabin</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count)<span class="sc">~</span><span class="dv">1</span>, <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> tas)</span>
-<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bbinom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb115-6"><a href="#cb115-6" aria-hidden="true" tabindex="-1"></a>bbinom.tas <span class="ot">&lt;-</span></span>
+<span id="cb115-7"><a href="#cb115-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">betabin</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> tas)</span>
+<span id="cb115-8"><a href="#cb115-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bbinom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Beta-binomial model
 -------------------
@@ -1901,10 +1927,10 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb122"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb122-1"><a href="#cb122-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb122-2"><a href="#cb122-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span> </span>
+<span id="cb122-3"><a href="#cb122-3" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
 <span id="cb122-4"><a href="#cb122-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
 <span id="cb122-5"><a href="#cb122-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> group_size) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
-<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>() </span>
+<span id="cb122-6"><a href="#cb122-6" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
 <span id="cb122-7"><a href="#cb122-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb122-8"><a href="#cb122-8" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span>
 <span id="cb122-9"><a href="#cb122-9" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1932,7 +1958,7 @@ n_est[["aggregated"]], : Chi-squared approximation may be incorrect.</code></pre
 </div>
 <div class="sourceCode cell-code" id="cb127"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb127-1"><a href="#cb127-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="spatial-tests_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid" width="672"></p>
+<p><img src="spatial-tests_files/figure-html/unnamed-chunk-52-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(f)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1978,15 +2004,27 @@ z = 27.297, p-value &lt; 2.2e-16</code></pre>
 </div>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
+<div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
+<div id="ref-Campbell1990" class="csl-entry" role="doc-biblioentry">
+Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epidemiology</em>. Wiley.
+</div>
+<div id="ref-gigot2018" class="csl-entry" role="doc-biblioentry">
+Gigot, C. 2018. <em>Epiphy: Analysis of plant disease epidemics</em>.
+</div>
 <div id="ref-li2011" class="csl-entry" role="doc-biblioentry">
-Li, Baohua, Laurence V. Madden, and Xiangming Xu. 2011. <span>“Spatial Analysis by Distance Indices: An Alternative Local Clustering Index for Studying Spatial Patterns.”</span> <em>Methods in Ecology and Evolution</em> 3 (2): 368–77. <a href="https://doi.org/10.1111/j.2041-210x.2011.00165.x">https://doi.org/10.1111/j.2041-210x.2011.00165.x</a>.
+Li, B., Madden, L. V., and Xu, X. 2011. Spatial analysis by distance indices: an alternative local clustering index for studying spatial patterns. Methods in Ecology and Evolution. 3:368–377 Available at: <a href="http://dx.doi.org/10.1111/j.2041-210x.2011.00165.x">http://dx.doi.org/10.1111/j.2041-210x.2011.00165.x</a>.
 </div>
 <div id="ref-chapter2017" class="csl-entry" role="doc-biblioentry">
-Madden, Laurence V., Gareth Hughes, and Frank van den Bosch, eds. 2017. <span>“CHAPTER 9: Spatial Aspects of Epidemics<span></span>III: Patterns of Plant Disease.”</span> In, 235–78. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058.009">https://doi.org/10.1094/9780890545058.009</a>.
+Madden, L. V., Hughes, G., and van den Bosch, F. 2017a. Spatial aspects of epidemics<span></span>III: Patterns of plant disease. In The American Phytopathological Society, p. 235–278. Available at: <a href="http://dx.doi.org/10.1094/9780890545058.009">http://dx.doi.org/10.1094/9780890545058.009</a>.
+</div>
+<div id="ref-madden2017" class="csl-entry" role="doc-biblioentry">
+Madden, L. V., Hughes, G., and van den Bosch, F. 2017b. <em>The study of plant disease epidemics</em>. The American Phytopathological Society. Available at: <a href="http://dx.doi.org/10.1094/9780890545058">http://dx.doi.org/10.1094/9780890545058</a>.
+</div>
+<div id="ref-Moran1950" class="csl-entry" role="doc-biblioentry">
+Moran, P. A. P. 1950. <a href="https://doi.org/10.2307/2332142">Notes on continuous stochastic phenomena</a>. Biometrika. 37:17.
 </div>
 <div id="ref-xu2004" class="csl-entry" role="doc-biblioentry">
-Xu, X.-M., and L. V. Madden. 2004. <span>“Use of SADIE Statistics to Study Spatial Dynamics of Plant Disease Epidemics.”</span> <em>Plant Pathology</em> 53 (1): 38–49. <a href="https://doi.org/10.1111/j.1365-3059.2004.00949.x">https://doi.org/10.1111/j.1365-3059.2004.00949.x</a>.
+Xu, X.-M., and Madden, L. V. 2004. Use of <span>SADIE</span> statistics to study spatial dynamics of plant disease epidemics. Plant Pathology. 53:38–49 Available at: <a href="http://dx.doi.org/10.1111/j.1365-3059.2004.00949.x">http://dx.doi.org/10.1111/j.1365-3059.2004.00949.x</a>.
 </div>
 </div>
 </section>
