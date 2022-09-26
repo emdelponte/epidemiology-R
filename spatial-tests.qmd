@@ -36,47 +36,57 @@ row1 <- data.frame(x1, y1, z1) # create a dataframe
 We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.
 
 ```{r message=FALSE, warning=FALSE}
-
-row1 |> 
-  ggplot(aes(x1, z1, label = x1, color = factor(y1)))+
-  geom_point(shape =15, size =6)+
-  theme_void()+
-  scale_x_continuous(breaks = max(z1))+
-  scale_color_manual(values = c("darkred", "MediumSeaGreen"))+
-  geom_text(vjust = 0, nudge_y = 0.5)+
-coord_fixed()+
-  ylim(-0.5,2.5)+
-  theme(legend.position = "right")+
-  labs(color = "Status", title = "Sequence of diseased (1) or non-diseased (0) units (plants)", 
+row1 |>
+  ggplot(aes(x1, z1, label = x1, color = factor(y1))) +
+  geom_point(shape = 15, size = 6) +
+  theme_void() +
+  scale_x_continuous(breaks = max(z1)) +
+  scale_color_manual(values = c("darkred", "MediumSeaGreen")) +
+  geom_text(vjust = 0, nudge_y = 0.5) +
+  coord_fixed() +
+  ylim(-0.5, 2.5) +
+  theme(legend.position = "right") +
+  labs(color = "Status",
+       title = "Sequence of diseased (1) or non-diseased (0) units (plants)",
        subtitle = "The numbers represent the position of the unit")
 ```
 
-We can write a code in R and create a function named `oruns.test` for the ordinary runs test.
+We can write a code in R and create a function named `oruns.test()` for the ordinary runs test.
 
 ```{r}
 oruns.test <- function(x) {
-# identify the sequence
-S <- x 
-# Compute the number or runs
-U = max(cumsum(c(1, diff(S)!=0)))
-# Compute the number of diseased plants
-m = sum(S)
-# Count the total number of plants
-N = length(S)
-# Calculate the number of expected runs
-EU = 1 + (2 * m*(N - m)/N)
-# Calculate the standard deviation in the sample
-sU = sqrt(2 * m * (N - m) * (2 * m *(N-m)-N)/ (N^2 *(N-1)))
-# Calculate the z-value
-Z = (U - EU)/sU
-# Obtain the p-value for the Z
-pvalue <- (2*pnorm(abs(Z), lower.tail=FALSE))
-# test if Z is lower than 1.64
-result <- ifelse(Z < 1.64, 
-c("clustering"), 
-c("randomness"))
-# Print the results
-print(paste("There are", U,"runs. The number of expected runs is", round(EU,1), "P-value:",round(pvalue,6), ". Alternative hypothesis: non-randomness"))
+  # identify the sequence
+  S <- x
+  # Compute the number or runs
+  U = max(cumsum(c(1, diff(S) != 0)))
+  # Compute the number of diseased plants
+  m = sum(S)
+  # Count the total number of plants
+  N = length(S)
+  # Calculate the number of expected runs
+  EU = 1 + (2 * m * (N - m) / N)
+  # Calculate the standard deviation in the sample
+  sU = sqrt(2 * m * (N - m) * (2 * m * (N - m) - N) / (N ^ 2 * (N - 1)))
+  # Calculate the z-value
+  Z = (U - EU) / sU
+  # Obtain the p-value for the Z
+  pvalue <- (2 * pnorm(abs(Z), lower.tail = FALSE))
+  # test if Z is lower than 1.64
+  result <- ifelse(Z < 1.64,
+                   c("clustering"),
+                   c("randomness"))
+  # Print the results
+  print(
+    paste(
+      "There are",
+      U,
+      "runs. The number of expected runs is",
+      round(EU, 1),
+      "P-value:",
+      round(pvalue, 6),
+      ". Alternative hypothesis: non-randomness"
+    )
+  )
 }
 ```
 
