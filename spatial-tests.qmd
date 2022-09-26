@@ -356,52 +356,51 @@ ac_mp_dat
 And now the plot known as autocorrelogram.
 
 ```{r}
-ac_mp_dat |> 
-  ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf,3)))+
-  geom_col(fill = "MediumSeaGreen")+
-  geom_text(vjust = 0, nudge_y = 0.05)+
-  scale_x_continuous(n.breaks = 6)+
-  geom_hline(yintercept = 0)+
+ac_mp_dat |>
+  ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf, 3))) +
+  geom_col(fill = "MediumSeaGreen") +
+  geom_text(vjust = 0, nudge_y = 0.05) +
+  scale_x_continuous(n.breaks = 6) +
+  geom_hline(yintercept = 0) +
   labs(x = "Distance lag", y = "Autocorrelation coefficient")
-  
 ```
 
-The values we obtained here are not the same but quite close to the values reported in Madden et al. (2007). For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.
+The values we obtained here are not the same but quite close to the values reported in @madden2017. For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.
 
-The method above is usually referred to Moran's I (Moran, 1950). Let's use another example dataset from the book to calculate the Moran's I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of Xu and Madden (2004). The data is stored in a csv file.
+The method above is usually referred to Moran's I [@Moran1950]. Let's use another example dataset from the book to calculate the Moran's I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of @xu2004. The data is stored in a CSV file.
 
 ```{r warning=FALSE, message=FALSE}
 epi <- read_csv("data/xu-madden-simulated.csv")
-# Transform from wide to long format 
+# Transform from wide to long format
 # Pull the n variable to store as a vector
-epi1 <- epi |> 
+epi1 <- epi |>
   pivot_longer(2:13,
                names_to = "y",
-               values_to = "n") |> 
+               values_to = "n") |>
   pull(n)
 
 ```
 
-Using `moran` function of the *spdep* R package.
+Using `moran()` function of the *spdep* R package.
 
 ```{r}
 set.seed(100)
 library(spdep)
 ```
 
-The `cell2nb` function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.
+The `cell2nb()` function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.
 
 ```{r}
-nb <- cell2nb(12, 12, type="queen", torus = FALSE)
+nb <- cell2nb(12, 12, type = "queen", torus = FALSE)
 ```
 
-The `nb2listw` function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the `col.W` neighbor list.
+The `nb2listw()` function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the `col.W` neighbor list.
 
 ```{r}
-col.W <- nb2listw(nb, style="W")
+col.W <- nb2listw(nb, style = "W")
 ```
 
-The Moran's I statistic is given by the `moran` function
+The Moran's I statistic is given by the `moran()` function
 
 ```{r}
 moran(x = epi1, # numeric vector
