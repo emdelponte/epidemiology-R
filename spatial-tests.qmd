@@ -233,7 +233,6 @@ S3 <- c(1,1,1,0,0,
 joincount.test(factor(S3), 
                 nb2listw(nb))
 oruns.test(S3)
-
 ```
 
 We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset `tomato_tswv` to a new dataframe called `tswv_1929`.
@@ -253,12 +252,12 @@ tswv_1929 |>
 The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
 
 ```{r}
-tswv_1929 |> 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile()+
-  coord_fixed()+
-  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))+
-  facet_wrap(~ t)+
+tswv_1929 |>
+  ggplot(aes(x, y, fill = factor(i))) +
+  geom_tile() +
+  coord_fixed() +
+  scale_fill_manual(values = c("MediumSeaGreen", "darkred")) +
+  facet_wrap( ~ t) +
   labs(fill = "Status")
 ```
 
@@ -274,38 +273,37 @@ There are 60 rows and 24 columns.
 
 ```{r}
 # Neighbor grid
-nb1 <- cell2nb(nrow = 60, 
-              ncol = 24, 
-              type="rook")
+nb1 <- cell2nb(nrow = 60,
+               ncol = 24,
+               type = "rook")
 
 # Pull the binary sequence of time 1
-S1 <- tswv_1929 |> 
-  filter(t == "1") |> 
+S1 <- tswv_1929 |>
+  filter(t == "1") |>
   pull(i)
 
-joincount.test(factor(S1), 
-                nb2listw(nb1))
+joincount.test(factor(S1),
+               nb2listw(nb1))
 ```
 
 We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.
 
 ```{r}
 # Pull the binary sequence of time 1
-S2 <- tswv_1929 |> 
-  filter(t == "2") |> 
+S2 <- tswv_1929 |>
+  filter(t == "2") |>
   pull(i)
 
-joincount.test(factor(S2), 
-                nb2listw(nb1))
+joincount.test(factor(S2),
+               nb2listw(nb1))
 
 # Pull the binary sequence of time 1
-S3 <- tswv_1929 |> 
-  filter(t == "3") |> 
+S3 <- tswv_1929 |>
+  filter(t == "3") |>
   pull(i)
 
 joincount.test(factor(S3), 
                 nb2listw(nb1))
-
 ```
 
 ### Grouped data
