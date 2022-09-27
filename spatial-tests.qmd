@@ -41,7 +41,7 @@ row1 |>
   geom_point(shape = 15, size = 6) +
   theme_void() +
   scale_x_continuous(breaks = max(z1)) +
-  scale_color_manual(values = c("darkred", "MediumSeaGreen")) +
+  scale_color_manual(values = c("darkorange", "black")) +
   geom_text(vjust = 0, nudge_y = 0.5) +
   coord_fixed() +
   ylim(-0.5, 2.5) +
@@ -185,10 +185,10 @@ mapS3 <- terra::as.data.frame(mapS2, xy = TRUE)
 # Map using ggplot
 mapS3 |>
   ggplot(aes(x, y, label = lyr.1, fill = factor(lyr.1))) +
-  geom_tile(color = "black", size = 0.5) +
+  geom_tile(color = "white", size = 0.5) +
   theme_void() +
   labs(fill = "Status") +
-  scale_fill_manual(values = c("MediumSeaGreen", "darkred"))
+  scale_fill_manual(values = c("darkorange", "black"))
 ```
 
 Load the library
@@ -244,8 +244,7 @@ library(cowplot) # theming the ggplot
 tswv_1929 <- tomato_tswv$field_1929
 
 tswv_1929 |> 
-  head(6) |> 
-  gt()
+  head(6) 
 
 ```
 
@@ -256,7 +255,7 @@ tswv_1929 |>
   ggplot(aes(x, y, fill = factor(i))) +
   geom_tile() +
   coord_fixed() +
-  scale_fill_manual(values = c("MediumSeaGreen", "darkred")) +
+  scale_fill_manual(values = c("darkorange", "black")) +
   facet_wrap( ~ t) +
   labs(fill = "Status")
 ```
@@ -329,7 +328,7 @@ We can produce a plot to visualize the number of propagules across the transect.
 ```{r}
 mp |>
   ggplot(aes(i, y)) +
-  geom_col(fill = "MediumSeaGreen") +
+  geom_col(fill = "darkorange") +
   labs(
     x = "Relative position within a transect",
     y = "Number of propagules",
@@ -358,7 +357,7 @@ And now the plot known as autocorrelogram.
 ```{r}
 ac_mp_dat |>
   ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf, 3))) +
-  geom_col(fill = "MediumSeaGreen") +
+  geom_col(fill = "darkorange") +
   geom_text(vjust = 0, nudge_y = 0.05) +
   scale_x_continuous(n.breaks = 6) +
   geom_hline(yintercept = 0) +
@@ -438,7 +437,7 @@ Then, we can generate the plot using *ggplot*.
 ```{r}
 df_correl |>
   ggplot(aes(lag, X1)) +
-  geom_col(fill = "MediumSeaGreen") +
+  geom_col(fill = "darkorange") +
   scale_x_continuous(n.breaks = 10) +
   labs(x = "Distance lag", y = "Spatial autocorrelation")
 ```
@@ -499,7 +498,7 @@ epi2 |>
   geom_text(size = 5) +
   theme_void() +
   coord_fixed() +
-  scale_fill_gradient(low = "MediumSeaGreen", high = "darkred")
+  scale_fill_gradient(low = "darkorange", high = "black")
 ```
 
 ```{r}
@@ -572,7 +571,7 @@ df <- fit_data_count$freq |>
 df |>
   ggplot(aes(category, value, fill = pattern)) +
   geom_col(position = "dodge", width = 2) +
-  scale_fill_manual(values = c("darkred", "MediumSeaGreen", "steelblue")) +
+  scale_fill_manual(values = c("black", "darkorange", "steelblue")) +
   theme(legend.position = "top")
 ```
 
@@ -610,7 +609,6 @@ library(lme4)
 glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb2)
 performance::icc(glm1)
 ```
-
 
 ```{r}
 tas <-
