@@ -35,7 +35,6 @@ pr <- dat |> # R base pipe operator
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
-  theme_few()+
   labs(x = "Distance x", y = "Distance y", 
        title = "Random")
 pr
@@ -58,7 +57,6 @@ pag <- dat2 |>
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
-  theme_few()+
   labs(x = "Distance x", y = "Distance y", 
        title = "Aggregated")
 pag
@@ -78,7 +76,6 @@ preg <- dat3 |>
   ylim(0,30)+
   xlim(0,30)+
   coord_fixed()+
-theme_few()+
   labs(x = "Distance x", y = "Distance y", 
        title = "Regular")
 preg
@@ -92,8 +89,7 @@ ggsave("imgs/spatial.png", width = 10, height = 4)
 
 ```
 
-
-We can create an animation showing the three patterns using *gganimate* package 
+We can create an animation showing the three patterns using *gganimate* package
 
 ```{r, warning=FALSE, message=FALSE, eval = F}
 rand <- dat |> 
@@ -111,21 +107,18 @@ library(gganimate)
 
 patterns |> 
 ggplot(aes(x, y, color = factor(i)))+
-  geom_point(size = 4)+
-  theme_light()+
+  geom_point(size = 4, color = "darkred")+
   coord_fixed()+
   ylim(0,25)+
   xlim(0,25)+
   transition_states(i)+
-  theme(legend.position = "none")+
+  theme_few()+
   ggtitle('Pattern: {closest_state}')
 anim_save("imgs/patterns.gif")
 
 ```
 
 ![](imgs/patterns.gif)
-
-
 
 ## Spatiotemporal
 
@@ -141,7 +134,7 @@ tswv_1928 |>
   ggplot(aes(x, y, color = factor(i)))+
   geom_point(aes(group = seq_along(factor(t))), size =2)+
   coord_fixed()+
-  scale_color_manual(values = c("MediumSeaGreen", "darkred"))+
+  scale_color_manual(values = c("grey70", "darkred"))+
   labs(fill = "Status", title = "")+
   theme_void()+
   facet_wrap(~ t, nrow =1)
@@ -156,7 +149,7 @@ tswv_1928 |>
          irrigation == "trenches") |> 
   ggplot(aes(y, x, color = factor(i)))+
   geom_point(aes(group = seq_along(factor(t))), size =5)+
-  scale_color_manual(values = c("MediumSeaGreen", "darkred"))+
+  scale_color_manual(values = c("gray70", "darkred"))+
   labs(fill = "Status", title = "")+
   theme_void()+
   coord_fixed()+
@@ -167,9 +160,4 @@ tswv_1928 |>
 anim_save("imgs/spatiotemporal.gif")
 ```
 
-![](imgs/spatiotemporal.gif)
-
-
-
-
-
+![](imgs/spatiotemporal.gif){width="685"}
