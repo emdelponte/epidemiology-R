@@ -299,6 +299,8 @@ We can explore visually via scatter plots for the relationships between the actu
 ```{r}
 #| warning: false
 #| message: false
+#| #| label: fig-scater
+#| fig-cap: "Scatterplots for the relationship between estimated and actula severity for each rater"
 sbr2 <- sbr |> 
   pivot_longer(3:6, names_to = "rater",
                values_to = "estimate") 
@@ -325,11 +327,11 @@ precision <- sbr2 |>
 kable(precision[1:4])
 ```
 
+The mean precision can then be obtained.
 
 ```{r}
 mean(precision$r)
-mean(precision$CI_low)
-mean(precision$CI_high)
+
 ```
 
 
@@ -340,7 +342,11 @@ mean(precision$CI_high)
 
 #### Absolute errors
 
+It is useful to visualize the errors of the estimates which are obtained by subtracting the estimates from the actual severity values. This plot allows to visualize patterns in over or underestimations across a range of actual severity values.
+
 ```{r}
+#| label: fig-errors
+#| fig-cap: "Error (estimated - actual) of visual severity estimates"
 sbr2 |> 
   ggplot(aes(actual, estimate-actual))+
   geom_point(size = 3, alpha = 0.7)+
@@ -357,32 +363,23 @@ Lin's (1989, 2000) proposed the concordance correlation coefficient (CCC) for ag
 The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC statistics. Let's filter only rater 2 and calculate the CCC statistics for this rater.
 
 ```{r}
-library(epiR)
+#| label: tbl-ccc
+#| tbl-cap: "Statitics of the concordance correlation coefficient summarizing accuracy and precision of visual severity estimates of soybean rust for four raters"
 
+library(epiR)
 # Only rater 2
 sbr3 <- sbr2 |> filter(rater == "R2")
-
-
 ccc <- epi.ccc(sbr3$actual, sbr3$estimate)
-
 # Concordance coefficient
 rho <- ccc$rho.c[,1]
-rho
-
 # Bias coefficient
 Cb <- ccc$C.b
-Cb
 # Precision
 r <- ccc$C.b*ccc$rho.c[,1]
-r
-
 # Scale-shift
 ss <- ccc$s.shift
-ss
 # Location-shift
 ls <- ccc$l.shift
-ls
-
 Metrics <- c("Agreement", "Bias coefficient", "Precision", "scale-shift", "location-shift")
 Value <- c(rho, Cb, r, ss, ls)
 res <- data.frame(Metrics, Value)
