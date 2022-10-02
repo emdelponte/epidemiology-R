@@ -8,6 +8,33 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 The assessment of disease in space, in terms of changes in the intensity as it spreads over distance, is called **disease gradient**. In reality, it is the dispersal (migration) of the pathogen by various means (e.g. wind, vectors, rain, movement of infected material or human mediation) that promotes the spread of plant diseases within a field or across continents and generates the disease gradients. There are two kinds of gradients, the inoculum gradient where host availability is not necessarily required and the disease gradient where the three elements of the disease triangle are required.
 
+Let's have a look at an actual gradient of stripe rust on wheat collected in a field experiment at Hermiston in 2002 [@Sackett2005] and whose data was made freely available [@mikaberidze2015]. The data was stored in the `.dat` format and we can use the `read_delim` function to import this kind of file. There are five columns. The first and second are distances in feet and meters, respectively, from the source of infection and the other three variables are measures of stripe rust severity on replicate plots.
+
+```{r}
+#| message: false
+library(readr)
+hermiston <- read_delim("data/hermiston2002_repl.dat")
+hermiston
+```
+
+We can visualize the gradients by making a line plot. But first we need to transform the data from wide to long format to more easily plot the replicates with different colors.
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(ggthemes)
+theme_set(theme_light())
+hermiston |> 
+  pivot_longer(3:5, names_to = "replicate", values_to = "severity") |> 
+  ggplot(aes(dist_m, severity, color = replicate))+
+  geom_point(size = 2)+
+  geom_line(size = 1)+
+  scale_color_grey()+
+  labs(x = "Distance from the source (m)",
+       y = "Stripe rust severity (%)",
+       color = "Replicate")
+```
+
 In disease gradients, assuming that there is only a single source of inoculum, the intensity of the disease decreases more steeply within short distances of the source, and less steeply at greater distances until they reach zero or a low background level of occasional diseased plants. The shapes of the gradients are defined by mechanisms associated with the dispersal of the inoculum which depends on the biology of the pathogen but strongly to environmental factors that affect pathogen dispersal.
 
 When studying disease gradients, researchers need to make sure that there is a well-defined single source of inoculum. In gradients, this is called a **focus** (where foci are deemed the plural), from where the inoculum originates. Three types of foci can be defined: point, line or area sources. While the point source can be a plant or group of plants at any position in the plot or field (center or corner), line and area sources are usually defined as one or more rows of diseased plants at one side of the plot or field.
@@ -90,9 +117,9 @@ ggsave("imgs/gradients.png", width =9, height =9, bg = "white")
 
 The resulting gradients can be classified in two types: primary or secondary. The primary gradient originates only from the initial focus, while the secondary gradient originates from the movement of inoculum produced at previously infected (due to primary gradients) plants to other plants at increasing distances from the source. It is expected that a mix of both kinds of gradients exists as the disease increases over time.
 
-Similar to disease progress curves, models can be fitted empirically to observed disease gradient curves and provide insights into the mechanisms of inoculum dispersal and deposition, the source of inoculum, and the physical processes underlying dispersal.
+## Gradient models
 
-## Models
+Similar to disease progress curves, models can be fitted empirically to observed disease gradient curves and provide insights into the mechanisms of inoculum dispersal and deposition, the source of inoculum, and the physical processes underlying dispersal.
 
 When modeling disease gradients, the distance is represented by $x$, a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the **deterministic** type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained it [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx)
 
