@@ -10,12 +10,11 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 The data used to express disease as incidence or any kind of severity measures vary in their nature as they can be discrete or continuous.
 
-**Discrete** variables are countable (involve integers) at a finite amount of time. That is, only a limited number of values (nominal or ordinal) is possible and these cannot be subdivided into parts. For example, a plant or plant part can be either disease or not diseased (nominal data). We cannot count 1.5 diseased plants. Also, a plant classified as diseased may exhibit a certain number of lesions (count data) or be classified into a specific class of severity (ordinal data, common in ordinal scales, e.g., 1-9). Disease data in the form of counts usually relate to the number of infections per sampling units. Most commonly, counts refer to the pathogen population that is assessed, such as number of airborne or soilborne propagules.
+**Discrete** variables are countable (involve integers) at a finite amount of time. That is, only a limited number of values (nominal or ordinal) is possible and these cannot be subdivided into parts. For example, a plant or plant part can be either disease or not diseased (nominal data). One can't count 1.5 diseased plants. Also, a plant classified as diseased may exhibit a certain number of lesions (count data) or be classified into a specific class of severity (ordinal data, common in ordinal scales, e.g., 1-9). Disease data in the form of counts usually relate to the number of infections per sampling units. Most commonly, counts refer to the pathogen population that is assessed, such as number of airborne or soilborne propagules.
 
 A **continuous** variable, different from discrete, can be measured on a scale and can have any numeric value between two numbers. For example, the size of a lesion on a plant can be measured at a very precise scale (cm or mm). An estimate of severity in percent scale (% diseased area) can take any value between non zero and 100%. Although discrete at the individual level, incidence at the sample level can be treated as continuous, as it can take any value in proportion or percentage.
 
 The disease variables can also be described by a statistical distribution, which are models that give the probability that a particular value (or a range of values) will be drawn from a specific distribution. Knowledge about statistical or mathematical distributions constitute an important step to improve our understanding of data-collection methods, designs of experiments and data analysis such as data summarization or hypothesis testing.
-
 
 ## Statistical distributions
 
@@ -40,16 +39,16 @@ binomial_data <- data.frame(P.1, P.3, P.7, P.9)
 We can then visualize the plots.
 
 ```{r}
+#| label: fig-binomial
+#| fig-cap: "Binomial distribution to describe binary data"
 binomial_data |>
   pivot_longer(1:4, names_to = "P",
                values_to = "value") |>
   ggplot(aes(value)) +
-  geom_histogram(fill = "MediumSeaGreen",
+  geom_histogram(fill = "darkorange",
                  bins = 10) +
-  facet_wrap( ~ P) +
-  labs(title = "Binomial distribution to describe binary data")
+  facet_wrap( ~ P) 
 ```
-
 
 ### Beta distribution
 
@@ -65,6 +64,8 @@ beta_data <- data.frame(beta1.5, beta5.5)
 Notice that there are two shape parameters in the beta distribution: `shape1` and `shape2` to be defined. This makes the distribution very flexible and with different potential shapes as we can see below.
 
 ```{r, warning=FALSE}
+#| label: fig-beta
+#| fig-cap: "Binomial distribution to describe proportion data"
 library(tidyverse)
 theme_set(theme_bw(base_size = 14)) # set global theme
 
@@ -72,12 +73,11 @@ beta_data |>
   pivot_longer(1:2, names_to = "P",
                values_to = "value") |>
   ggplot(aes(value)) +
-  geom_histogram(fill = "MediumSeaGreen",
+  geom_histogram(fill = "darkorange",
                  color = "white",
                  bins = 15) +
   scale_x_continuous(limits = c(0, 1)) +
-  facet_wrap( ~ P) +
-  labs(title = "Beta distribution to describe proportion data")
+  facet_wrap( ~ P) 
 ```
 
 ### Poisson distribution
@@ -91,15 +91,16 @@ poisson_data <- data.frame(poisson5, poisson35)
 ```
 
 ```{r}
+#| label: fig-poisson
+#| fig-cap: "Binomial distribution to describe count data"
 poisson_data |>
   pivot_longer(1:2, names_to = "P",
                values_to = "value") |>
   ggplot(aes(value)) +
-  geom_histogram(fill = "MediumSeaGreen",
+  geom_histogram(fill = "darkorange",
                  color = "white",
                  bins = 15) +
-  facet_wrap( ~ P) +
-  labs(title = "Poisson distribution to describe count data")
+  facet_wrap( ~ P) 
 ```
 
 ### Gamma distribution
@@ -113,14 +114,15 @@ gamma_data <- data.frame(gamma10, gamma35)
 ```
 
 ```{r}
+#| label: fig-gamma
+#| fig-cap: "Binomial distribution to describe continuous data"
 gamma_data |>
   pivot_longer(1:2, names_to = "P",
                values_to = "value") |>
   ggplot(aes(value)) +
-  geom_histogram(fill = "MediumSeaGreen",
+  geom_histogram(fill = "darkorange",
                  color = "white",
                  bins = 15) +
   ylim(0, max(gamma_data$gamma35)) +
-  facet_wrap( ~ P) +
-  labs(title = "Gamma distribution to describe continous data")
+  facet_wrap( ~ P) 
 ```

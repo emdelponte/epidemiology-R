@@ -16,10 +16,12 @@ Disease severity, mainly when expressed in percent area diseased assessed visual
 
 **Accuracy or agreement**: These two terms can be treated as synonymous in plant pathological research. They refer to the closeness (or concordance) of an estimate or measurement to the actual severity value for a specimen on the same scale. Actual values may be obtained using various methods, against which estimates or measurements using an experimental assessment method are compared.
 
-An analogy commonly used to explain accuracy and precision is the archer shooting arrows at a target and trying to hit the bull's eye (center of the target) with each of five arrows. The figure below is used to demonstrate four situations from the combination of two levels (high and low) for precision and accuracy. The figure was produced using `ggplot` function of *ggplot2.*
+An analogy commonly used to explain accuracy and precision is the archer shooting arrows at a target and trying to hit the bull's eye (center of the target) with each of five arrows. The figure below is used to demonstrate four situations from the combination of two levels (high and low) for precision and accuracy. The figure was produced using the `ggplot` function of *ggplot2* package.
 
 ```{r}
-#| code-fold: true
+#| label: fig-target
+#| fig-cap: "The accuracy and precision of the archer is determined by the location of the group of arrows"  
+
 library(ggplot2)
 target <- 
   ggplot(data.frame(c(1:10),c(1:10)))+
@@ -76,13 +78,10 @@ lalp <- target +
 
 
 library(patchwork)
-p <- (hahp | lahp) /
+(hahp | lahp) /
 (halp | lalp)
 
-ggsave("imgs/accuracy1.png", width =6, height =6, bg = "white")
 ```
-
-![](imgs/accuracy1.png){width="551"}
 
 ## Statistical summaries
 
@@ -94,40 +93,46 @@ To calculate measures of inter-rater reliability (or reproducibility) we will wo
 
 The selected dataset consists of five columns with 20 rows. The first is the leaf number and the others correspond to assessments of percent soybean rust severity by four raters (R1 to R4). Each row correspond to one symptomatic leaf. Let's assign the tibble to a dataframe called `sbr` (an acronym for soybean rust). Note that the variable is continuous.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false 
+
 library(tidyverse)
 sbr <- tribble(
-         ~leaf, ~R1, ~R2,  ~R3, ~R4,
-            1L, 0.6, 0.6,  0.7, 0.6,
-            2L,   2, 0.7,    5,   1,
-            3L,   5,   5,    8,   5,
-            4L,   2,   4,    6,   2,
-            5L,   6,  14,   10,   7,
-            6L,   5,   6,   10,   5,
-            7L,  10,  18, 12.5,  12,
-            8L,  15,  30,   22,  10,
-            9L,   7,   2,   12,   8,
-           10L,   6,   9, 11.5,   8,
-           11L,   7,   7,   20,   9,
-           12L,   6,  23,   22,  14,
-           13L,  10,  35, 18.5,  20,
-           14L,  19,  10,    9,  10,
-           15L,  15,  20,   19,  20,
-           16L,  17,  30,   18,  13,
-           17L,  19,  53,   33,  38,
-           18L,  17, 6.8,   15,   9,
-           19L,  15,  20,   18,  16,
-           20L,  18,  22,   24,  15
+~leaf, ~R1, ~R2,  ~R3, ~R4,
+1, 0.6, 0.6,  0.7, 0.6,
+2,   2, 0.7,    5,   1,
+3,   5,   5,    8,   5,
+4,   2,   4,    6,   2,
+5,   6,  14,   10,   7,
+6,   5,   6,   10,   5,
+7,  10,  18, 12.5,  12,
+8,  15,  30,   22,  10,
+9,   7,   2,   12,   8,
+10,  6,   9, 11.5,   8,
+11,  7,   7,   20,   9,
+12,  6,  23,   22,  14,
+13, 10,  35, 18.5,  20,
+14, 19,  10,    9,  10,
+15, 15,  20,   19,  20,
+16, 17,  30,   18,  13,
+17, 19,  53,   33,  38,
+18, 17, 6.8,   15,   9,
+19, 15,  20,   18,  16,
+20, 18,  22,   24,  15
          )
-
-
 ```
 
 Let's explore the data using various approaches. First, we can visualize how the individual estimates by the raters differ for a same leaf.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-raters1
+#| fig-cap: "Visual estimates of soybean rust severity for each leaf by each of four raters"
 # set the global theme
-theme_set(theme_light())
+theme_set(theme_bw())
+library(ggthemes)
 
 # transform from wide to long format
 sbr2 <- sbr |> 
@@ -140,13 +145,18 @@ sbr2 |>
              group = leaf))+
   geom_line(color = "black")+
   geom_point(size = 2)+
+  scale_color_colorblind()+
   labs(y = "Severity estimate (%)",
-       x = "Leaf number")
+       x = "Leaf number",
+       color = "Rater")
 ```
 
 Alternatively, we can visualize the distribution of the estimates by rater using boxplots.
 
 ```{r}
+#| label: fig-raters2
+#| fig-cap: "Distribution of severity estimates of soybean rust by rater"
+
 sbr2 |> 
   ggplot(aes(rater, estimate))+
   geom_boxplot(outlier.colour = NA, width =0.5)+
@@ -158,7 +168,12 @@ sbr2 |>
 
 Another interesting visualization is the correlation matrix of the estimates between all possible pair of raters. The `ggpairs` function of the *GGally* package is handy for this task.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-correl
+#| fig-cap: "Correlation plots relating severity estimates for all pairs of raters"
+
 library(GGally)
 theme_set(theme_light())
 
@@ -173,20 +188,26 @@ ggpairs(raters)
 
 We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson's R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| label: tbl-correl
+#| tbl-cap: "Pearson correlation coefficients for all pairs of raters"
+
 library(correlation)
 raters_cor <- correlation(raters)
-raters_cor
+library(knitr)
+kable(raters_cor[1:3]) # only first 3 variables
 ```
 
 The means of coefficient of determination can be easily obtained as follows.
 
 ```{r}
 # All pairwise R2
-raters_cor$r^2
+round(raters_cor$r^2,2)
 
 # means of R2
-mean(raters_cor$r^2) 
+round(mean(raters_cor$r^2), 2)
 
 ```
 
@@ -204,28 +225,35 @@ Additionally, the ICC may depend on whether the ratings are an average or not of
 
 The ICC can be computed using the `ICC()` or the `icc()` functions of the *psych* or *irr* packages, respectively. They both provide the coefficient, F value, and the upper and lower bounds of the 95% confidence interval.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(psych)
-ICC(raters)
+ic <- ICC(raters)
+kable(ic$results[1:2]) # only selected columns
+# call ic list for full results
+
 ```
 
 The output of interest is a dataframe with the results of all distinct ICCs. We note that the ICC1 and ICC2 gave very close results. Now, let's obtain the various ICCs using the *irr* package. Differently from the the `ICC()` function, this one requires further specification of the model to use.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(irr)
 icc(raters, "oneway")
 
 # The one used in the SBR paper
 icc(raters, "twoway")
-
-
 ```
 
 #### Overall Concordance Correlation Coefficient
 
 Another useful index is the Overall Concordance Correlation Coefficient (OCCC) for evaluating agreement among multiple observers. It was proposed by @barnhart2002 based on the original index proposed by @lin1989, earlier defined in the context of two fixed observers. In the paper, the authors introduced the OCCC in terms of the interobserver variability for assessing agreement among multiple fixed observers. As outcome, and similar to the original CCC, the approach addresses the precision and accuracy indices as components of the OCCC. The `epi.occc` function of the *epiR* packge does the job but it does compute a confidence interval.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(epiR)
 epi.occc(raters, na.rm = FALSE, pairs = TRUE)
 ```
@@ -242,40 +270,42 @@ Different from reliability, that requires only the estimates or measures by the 
 
 ```{r}
 sbr <- tibble::tribble(
-         ~leaf, ~actual, ~R1, ~R2,  ~R3, ~R4,
-            1L,    0.25, 0.6, 0.6,  0.7, 0.6,
-            2L,     2.5,   2, 0.7,    5,   1,
-            3L,    7.24,   5,   5,    8,   5,
-            4L,    7.31,   2,   4,    6,   2,
-            5L,    9.07,   6,  14,   10,   7,
-            6L,    11.6,   5,   6,   10,   5,
-            7L,   12.46,  10,  18, 12.5,  12,
-            8L,    13.1,  15,  30,   22,  10,
-            9L,   14.61,   7,   2,   12,   8,
-           10L,   16.06,   6,   9, 11.5,   8,
-           11L,    16.7,   7,   7,   20,   9,
-           12L,    19.5,   6,  23,   22,  14,
-           13L,   20.75,  10,  35, 18.5,  20,
-           14L,   23.56,  19,  10,    9,  10,
-           15L,   23.77,  15,  20,   19,  20,
-           16L,   24.45,  17,  30,   18,  13,
-           17L,   25.78,  19,  53,   33,  38,
-           18L,   26.03,  17, 6.8,   15,   9,
-           19L,   26.42,  15,  20,   18,  16,
-           20L,   28.89,  18,  22,   24,  15
+~leaf, ~actual, ~R1, ~R2,  ~R3, ~R4,
+1,    0.25, 0.6, 0.6,  0.7, 0.6,
+2,     2.5,   2, 0.7,    5,   1,
+3,    7.24,   5,   5,    8,   5,
+4,    7.31,   2,   4,    6,   2,
+5,    9.07,   6,  14,   10,   7,
+6,    11.6,   5,   6,   10,   5,
+7,   12.46,  10,  18, 12.5,  12,
+8,    13.1,  15,  30,   22,  10,
+9,   14.61,   7,   2,   12,   8,
+10,   16.06,  6,   9, 11.5,   8,
+11,    16.7,  7,   7,   20,   9,
+12,    19.5,  6,  23,   22,  14,
+13,   20.75, 10,  35, 18.5,  20,
+14,   23.56, 19,  10,    9,  10,
+15,   23.77, 15,  20,   19,  20,
+16,   24.45, 17,  30,   18,  13,
+17,   25.78, 19,  53,   33,  38,
+18,   26.03, 17, 6.8,   15,   9,
+19,   26.42, 15,  20,   18,  16,
+20,   28.89, 18,  22,   24,  15
          )
 ```
 
 We can explore visually via scatter plots for the relationships between the actual value and the estimates by each rater. To facilitate, we need the data in the long format.
 
-```{r, warning=FALSE}
+```{r}
+#| warning: false
+#| message: false
 sbr2 <- sbr |> 
   pivot_longer(3:6, names_to = "rater",
                values_to = "estimate") 
 
 sbr2 |> 
   ggplot(aes(actual, estimate))+
-  geom_point(size = 3, alpha = 0.7)+
+  geom_point(size = 2, alpha = 0.7)+
   facet_wrap(~rater)+
   ylim(0,45)+
   xlim(0,45)+
@@ -292,12 +322,18 @@ precision <- sbr2 |>
   group_by(rater) |> 
   correlation() 
 
-precision
+kable(precision[1:4])
+```
 
+
+```{r}
 mean(precision$r)
 mean(precision$CI_low)
 mean(precision$CI_high)
+```
 
+
+```{r}
 ```
 
 ### Accuracy
@@ -316,7 +352,7 @@ sbr2 |>
 
 #### Concordance correlation coefficient
 
-Lin's (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin's CCC increases in value as a function of the nearness of the data's reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).
+Lin's (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin's CCC increases in value as a function of the nearness of the data reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).
 
 The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC statistics. Let's filter only rater 2 and calculate the CCC statistics for this rater.
 
@@ -350,5 +386,5 @@ ls
 Metrics <- c("Agreement", "Bias coefficient", "Precision", "scale-shift", "location-shift")
 Value <- c(rho, Cb, r, ss, ls)
 res <- data.frame(Metrics, Value)
-res
+kable(res)
 ```
