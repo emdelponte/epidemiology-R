@@ -24,6 +24,7 @@ g1 <- xo |>
   ggplot(aes(d, y4))+
   geom_point()+
   geom_line()+
+  ylim(0,8)+
   labs(y = "N. of new lesions",
        x = "Distance (m)",
        title = "1994 wet season")
@@ -32,6 +33,7 @@ g2 <- xo |>
   ggplot(aes(d, y5))+
   geom_point()+
   geom_line()+
+   ylim(0,8)+
   labs(y = "N. of new lesions",
        x = "Distance (m)",
        title = "1995 wet season")
@@ -50,27 +52,28 @@ library(patchwork)
 The second gradient is of stripe rust, caused by *Puccinia striiformis* f. sp. *tritici,* on wheat collected in a field experiment at Hermiston in 2002 [@Sackett2005] and whose data was made freely available [@mikaberidze2015]. Let's enter data manually as a tibble format. There are five columns. The first and second are distances in feet and meters, respectively, from the source of infection. The other three columns are measures of stripe rust severity on replicated plots.
 
 ```{r}
-hermiston <- tibble::tribble(
-               ~dist_f, ~dist_m,  ~`1`,  ~`2`,  ~`3`,
-                    0L,       0,    65,    65,    39,
-                    5L,     1.5,    35,    44,   7.5,
-                   10L,       3,  21.5,  14.5,  1.75,
-                   20L,     6.1,     8,  0.75,   0.2,
-                   40L,    12.2,     1,  0.08, 0.025,
-                   60L,    18.3,  0.25, 0.026, 0.015,
-                   80L,    24.4, 0.035, 0.015, 0.009,
-                  100L,    30.5,  0.01, 0.003, 0.008,
-                  120L,    36.6, 0.008, 0.016,  0.01,
-                  140L,    42.7, 0.003, 0.003,  0.01,
-                  160L,    48.8, 0.001, 0.006, 0.006,
-                  180L,    54.9, 0.001, 0.002, 0.002,
-                  200L,      61, 0.001, 0.003, 0.004,
-                  220L,    67.1, 0.001, 0.003, 0.002,
-                  240L,    73.2, 0.001, 0.001,     0,
-                  260L,    79.2, 0.001, 0.002,     0,
-                  280L,    85.3, 0.001, 0.001,     0,
-                  300L,    91.4, 0.001, 0.001, 0.001
-               )
+hermiston <- 
+  tibble::tribble(
+  ~dist_f, ~dist_m,  ~`1`,  ~`2`,  ~`3`,
+  0,       0,    65,    65,    39,
+  5,     1.5,    35,    44,   7.5,
+  10,       3,  21.5,  14.5,  1.75,
+  20,     6.1,     8,  0.75,   0.2,
+  40,    12.2,     1,  0.08, 0.025,
+  60,    18.3,  0.25, 0.026, 0.015,
+  80,    24.4, 0.035, 0.015, 0.009,
+  100,    30.5,  0.01, 0.003, 0.008,
+  120,    36.6, 0.008, 0.016,  0.01,
+  140,    42.7, 0.003, 0.003,  0.01,
+  160,    48.8, 0.001, 0.006, 0.006,
+  180,    54.9, 0.001, 0.002, 0.002,
+  200,      61, 0.001, 0.003, 0.004,
+  220,    67.1, 0.001, 0.003, 0.002,
+  240,    73.2, 0.001, 0.001,     0,
+  260,    79.2, 0.001, 0.002,     0,
+  280,    85.3, 0.001, 0.001,     0,
+  300,    91.4, 0.001, 0.001, 0.001
+  )
 
 
 ```
@@ -180,19 +183,20 @@ The resulting gradients can be classified in two types: primary or secondary. Th
 As an example of primary and secondary gradients, let's visualize the gradients of Septoria leaf spot, caused by *Septoria lycopersici*, on tomato [@parker1997]. The gradients were measured during two times, thus enabling a comparison of primary and secondary dispersal/disease gradients. More details of the study and experimental approach were provided in [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryandSecondaryGradients.aspx) The data is entered below as a tribble and the plot produced using g*gplot2*.
 
 ```{r}
-septoria <- tibble::tribble(
-                ~d, ~date1, ~date4,
-               60,    75,    87,
-              120,    40,    78,
-              180,    30,    68,
-              240,    20,    62,
-              300,    15,    50,
-              360,    12,    27,
-              420,    10,    32,
-              480,    12,    12,
-              540,     8,    13,
-              600,     5,     5,
-              660,     4,     4
+septoria <- 
+tibble::tribble(
+ ~d, ~date1, ~date4,
+ 60,    75,    87,
+ 120,    40,    78,
+ 180,    30,    68,
+ 240,    20,    62,
+ 300,    15,    50,
+ 360,    12,    27,
+ 420,    10,    32,
+ 480,    12,    12,
+ 540,     8,    13,
+ 600,     5,     5,
+ 660,     4,     4
               )
 
 septoria |> 
