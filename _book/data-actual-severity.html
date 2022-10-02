@@ -314,7 +314,6 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#multiple-images" id="toc-multiple-images" class="nav-link" data-scroll-target="#multiple-images"> <span class="header-section-number">5.3.2</span> Multiple images</a></li>
   </ul></li>
   <li><a href="#how-good-are-these-measurements" id="toc-how-good-are-these-measurements" class="nav-link" data-scroll-target="#how-good-are-these-measurements"> <span class="header-section-number">5.4</span> How good are these measurements?</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion"> <span class="header-section-number">5.5</span> Conclusion</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-actual-severity.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -366,14 +365,18 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <li>Non-diseased (or healthy)</li>
 <li>Background (the non-plant portion of the image)</li>
 </ol>
-<p>The ratio between the non diseased and diseased area of the unit (e.g.&nbsp;a fraction of the whole leaf image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according a review on standard area diagrams <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
-<p>Here, we will use the <code>measure_disease</code> function of the <em>pliman</em> (Plant IMage ANanalysis) <span class="citation" data-cites="olivoto2022a">(<a href="references.html#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span> R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The workflow is based on two main steps: 1) preparing the image palettes that define each class of the image; and 2) run the function that will classify each pixel of the images according to the colors of the palettes.</p>
+<p>The ratio between the diseased area and total are of the unit (e.g.&nbsp;a fraction or the whole leaf image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according a review on standard area diagrams <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
+<p>Here, we will use the <code>measure_disease</code> function of the <em>pliman</em> (Plant IMage ANalysis) <span class="citation" data-cites="olivoto2022a">(<a href="references.html#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span> R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The workflow is based on two main steps:</p>
+<ol type="1">
+<li>Prepare the image palettes that define each class of the image</li>
+<li>Run the function that will classify each pixel of the images according to the colors of the palettes.</li>
+</ol>
 </section>
 <section id="defining-color-palettes" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="defining-color-palettes"><span class="header-section-number">5.2</span> Defining color palettes</h2>
 <p>The most critical is the initial step, when the user needs to correctly define the color palettes. In <em>pliman</em> the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).</p>
 <p>The reference image palettes can be made simply by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the <em>pliman</em> to determine disease severity showed the effect of different palettes prepared independently by three researchers <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.</p>
-<p>Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png.</p>
+<p>Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png. They can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs">here in this folder</a> for downloading.</p>
 <p><img src="imgs/pliman1.png" class="img-fluid"></p>
 <p>Now that we have the image palettes, we can start by importing the image palettes into the environment for further analysis. Let’s create an image object for each palette named h (healthy), s (symptoms) and b (background).</p>
 <div class="cell">
@@ -395,6 +398,19 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="single-image" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="single-image"><span class="header-section-number">5.3.1</span> Single image</h3>
 <p>To determine severity in a single image (img46.png), the image file needs to be loaded and assigned to an object using the same <code>image_import()</code> function used to load the palettes for each of the predefined classes. We can then visualize the image, again using <code>image_combine()</code>.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The collection of images used in this chapter can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs/originals">here</a>.</p>
+</div>
+</div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img46.png"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -434,7 +450,7 @@ attr(,"class")
 <section id="multiple-images" class="level3" data-number="5.3.2">
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="multiple-images"><span class="header-section-number">5.3.2</span> Multiple images</h3>
 <p>That was fun, but usually we don’t have a single image to process but several. It would take a longer time to process each one using the above procedure, thus becoming tedious.</p>
-<p>To automate the process, <em>pliman</em> offers a batch processing approach. For such, instead of using <code>img</code> argument, one can use <code>img_pattern</code> and define the prefix of names of the images. In addition, we also need to define the folder where the original files are located.</p>
+<p>To automate the process, <em>pliman</em> offers a batch processing approach. For such, instead of using <code>img</code> argument, one can use <code>pattern</code> and define the prefix of names of the images. In addition, we also need to define the folder where the original files are located.</p>
 <p>If the users wants to save the processed masks, the <code>save_image</code> argument needs to be set to TRUE and the directory where the images will be saved also should be informed. Check below how to process 10 images of soybean rust symptoms. The outcome is a <code>list</code> object with the measures of the percent healthy and percent symptomatic area for each leaf in the <code>severity</code> object.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pliman <span class="ot">&lt;-</span> <span class="fu">measure_disease</span>(</span>
@@ -461,7 +477,7 @@ attr(,"class")
 <pre><code>Processing image img37 |============                             | 30% 00:00:05 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img38 |================                         | 40% 00:00:07 </code></pre>
+<pre><code>Processing image img38 |================                         | 40% 00:00:06 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing image img46 |====================                     | 50% 00:00:08 </code></pre>
@@ -470,16 +486,16 @@ attr(,"class")
 <pre><code>Processing image img5 |=========================                 | 60% 00:00:10 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img63 |=============================            | 70% 00:00:13 </code></pre>
+<pre><code>Processing image img63 |=============================            | 70% 00:00:14 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img67 |=================================        | 80% 00:00:17 </code></pre>
+<pre><code>Processing image img67 |=================================        | 80% 00:00:18 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img70 |=====================================    | 90% 00:00:20 </code></pre>
+<pre><code>Processing image img70 |=====================================    | 90% 00:00:22 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img75 |=========================================| 100% 00:00:21 </code></pre>
+<pre><code>Processing image img75 |=========================================| 100% 00:00:24 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>severity <span class="ot">&lt;-</span> pliman<span class="sc">$</span>severity</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -505,7 +521,7 @@ attr(,"class")
 </section>
 <section id="how-good-are-these-measurements" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="how-good-are-these-measurements"><span class="header-section-number">5.4</span> How good are these measurements?</h2>
-<p>These 10 images were previously processed in QUANT software for measuring severity which is also based on image thresholding . Let’s create a tibble for the image code and respective “actual” severity - assuming QUANT’s measures as reference.</p>
+<p>These 10 images were previously processed in QUANT software for measuring severity which is also based on image threshold. Let’s create a tibble for the image code and respective “actual” severity - assuming QUANT measures as reference.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>quant <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
@@ -551,11 +567,7 @@ attr(,"class")
 1 0.9940941 0.9774812 0.9984606</code></pre>
 </div>
 </div>
-</section>
-<section id="conclusion" class="level2" data-number="5.5">
-<h2 data-number="5.5" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">5.5</span> Conclusion</h2>
-<p>The community of R users may enjoy using <a href="https://tiagoolivoto.github.io/pliman/">pliman</a> as an alternative to proprietary software or other point-and-click open source solutions such as imageJ. The simplicity of the batch processing approach can greatly improve the speed of the assessment and the user can set arguments to run R in parallel for enhanced computational speed.</p>
-<p>The most critical step, as I mentioned, is the definition of the reference image palettes. A few preliminary runs may be needed for a few images to check whether the segmentation is being performed correctly, based on visual judgement. This is no different than any other color-threshold based methods when the choices made by the user affect the final result and contribute to variation among assessors. The cons are the same encountered in the direct competitors, which is the necessity to have images obtained at uniform and controlled conditions, especially a contrasting background.</p>
+<p>In conclusion, the most critical step, as mentioned, is the definition of the reference image palettes. A few preliminary runs may be needed for a few images to check whether the segmentation is being performed correctly, based on visual judgement. This is no different than any other color-threshold based methods when the choices made by the user affect the final result and contribute to variation among assessors. The cons are the same encountered in the direct competitors, which is the necessity to have images obtained at uniform and controlled conditions, especially a contrasting background.</p>
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
