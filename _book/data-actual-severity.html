@@ -359,7 +359,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="the-actual-severity" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="the-actual-severity"><span class="header-section-number">5.1</span> The actual severity</h2>
 <p>Among the different ways to express plant disease severity, the percent area affected (symptomatic) by the disease is one of the most common especially when dealing with diseases that affect leaves. To evaluate whether the visual estimates of plant disease severity are sufficiently accurate (as seen in the previous chapter), one needs the actual severity values. These are also needed when preparing standard area diagrams (SADs) which are diagrammatic representations of severity values used as an aid prior or during the visual assessment to standardize and produce more accurate results across different raters <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
-<p>The actual severity values are usually approximated using image analysis where each pixel of the image is labeled according to three different classes:</p>
+<p>The actual severity values are usually approximated using image analysis where the image is segmented and each pixel of the image is labeled according to three different classes:</p>
 <ol type="1">
 <li>Diseased (or symptomatic)</li>
 <li>Non-diseased (or healthy)</li>
@@ -374,7 +374,12 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>The most critical is the initial step, when the user needs to correctly define the color palettes. In <em>pliman</em> the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).</p>
 <p>The reference image palettes can be constructed by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the <em>pliman</em> to determine disease severity showed the effect of different palettes prepared independently by three researchers <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.</p>
 <p>Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png. They can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs">here in this folder</a> for downloading.</p>
-<p><img src="imgs/pliman1.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="Fig_palettes"><img src="imgs/pliman1.png" class="img-fluid figure-img"></a></p>
+<p></p><figcaption class="figure-caption">Preparation of image palettes by manually sampling fraction of the images that represent background, heatlhy leaf and lesions</figcaption><p></p>
+</figure>
+</div>
 <p>Now that we have the image palettes, we can start by importing them into the environment for further analysis. Let’s create an image object for each palette named h (healthy), s (symptoms) and b (background).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pliman)</span>
@@ -386,7 +391,12 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(h, s, b, <span class="at">ncol =</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<div id="fig-palettes" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="data-actual-severity_files/figure-html/fig-palettes-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 5.1: Image palettes created to segment images into background, sypomtoms and healthy area of the image</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
@@ -412,7 +422,12 @@ Tip
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img46.png"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<div id="fig-img" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="data-actual-severity_files/figure-html/fig-img-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 5.2: Imported image for further analysis</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Now the fun begins with the <code>measure_disease()</code> function to determine severity. Four arguments are needed when using the reference image palettes, the one representing the target image and each of the three images of the color palettes. As the author of the package says “pliman will take care of all details!”. The severity is the value shown under symptomatic in the output.</p>
@@ -426,7 +441,7 @@ Tip
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">TRUE</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$severity
@@ -470,7 +485,7 @@ attr(,"class")
 <pre><code>Processing image img37 |============                             | 30% 00:00:03 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img38 |================                         | 40% 00:00:04 </code></pre>
+<pre><code>Processing image img38 |================                         | 40% 00:00:03 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing image img46 |====================                     | 50% 00:00:04 </code></pre>
@@ -507,9 +522,19 @@ attr(,"class")
 </div>
 </div>
 <p>With the argument <code>save_image</code> set to TRUE, the images are all saved in the folder with the standard prefix “proc.”</p>
-<p><img src="imgs/pliman2.png" class="img-fluid"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="fig_folder"><img src="imgs/pliman2.png" class="img-fluid figure-img"></a></p>
+<p></p><figcaption class="figure-caption">Images created by pliman and exported to a specific folder</figcaption><p></p>
+</figure>
+</div>
 <p>Let’s have a look at one of the processed images.</p>
-<p><img src="imgs/processed/proc_img46.jpg" class="img-fluid" width="452"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="fig_proc1"><img src="imgs/processed/proc_img46.jpg" class="img-fluid figure-img" width="452"></a></p>
+<p></p><figcaption class="figure-caption">Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.</figcaption><p></p>
+</figure>
+</div>
 </section>
 </section>
 <section id="how-good-are-these-measurements" class="level2" data-number="5.4">
@@ -547,7 +572,12 @@ attr(,"class")
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Quant"</span>,</span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"pliman"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+<div id="fig-scatter" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="data-actual-severity_files/figure-html/fig-scatter-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 5.3: Scatter plot for the relationship between severity values measured by pliman and Quant software</figcaption><p></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the <em>pliman</em> measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!</p>

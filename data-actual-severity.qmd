@@ -14,7 +14,7 @@ This chapter is adapted from a post published in [Open Plant Pathology](https://
 
 Among the different ways to express plant disease severity, the percent area affected (symptomatic) by the disease is one of the most common especially when dealing with diseases that affect leaves. To evaluate whether the visual estimates of plant disease severity are sufficiently accurate (as seen in the previous chapter), one needs the actual severity values. These are also needed when preparing standard area diagrams (SADs) which are diagrammatic representations of severity values used as an aid prior or during the visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
 
-The actual severity values are usually approximated using image analysis where each pixel of the image is labeled according to three different classes:
+The actual severity values are usually approximated using image analysis where the image is segmented and each pixel of the image is labeled according to three different classes:
 
 1.  Diseased (or symptomatic)
 2.  Non-diseased (or healthy)
@@ -34,7 +34,7 @@ The reference image palettes can be constructed by manually sampling small areas
 
 Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png. They can be found [here in this folder](https://github.com/emdelponte/epidemiology-R/tree/main/imgs) for downloading.
 
-![](imgs/pliman1.png)
+[![Preparation of image palettes by manually sampling fraction of the images that represent background, heatlhy leaf and lesions](imgs/pliman1.png){fig-align="center"}](Fig_palettes)
 
 Now that we have the image palettes, we can start by importing them into the environment for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
 
@@ -49,6 +49,8 @@ b <- image_import("imgs/sbr_b.png")
 We can visualize the imported image palettes using the `image_combine()` function.
 
 ```{r}
+#| label: fig-palettes
+#| fig-cap: "Image palettes created to segment images into background, sypomtoms and healthy area of the image" 
 image_combine(h, s, b, ncol =3)
 ```
 
@@ -63,6 +65,8 @@ The collection of images used in this chapter can be found [here](https://github
 :::
 
 ```{r}
+#| label: fig-img
+#| fig-cap: "Imported image for further analysis " 
 img <- image_import("imgs/originals/img46.png")
 image_combine(img)
 
@@ -106,11 +110,11 @@ severity
 
 With the argument `save_image` set to TRUE, the images are all saved in the folder with the standard prefix "proc."
 
-![](imgs/pliman2.png)
+[![Images created by pliman and exported to a specific folder](imgs/pliman2.png)](fig_folder)
 
 Let's have a look at one of the processed images.
 
-![](imgs/processed/proc_img46.jpg){width="452"}
+[![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.](imgs/processed/proc_img46.jpg){width="452"}](fig_proc1)
 
 ## How good are these measurements?
 
@@ -138,6 +142,8 @@ quant <- tribble(
 We can now combine the two dataframes and produce a scatter plot relating the two measures.
 
 ```{r}
+#| label: fig-scatter
+#| fig-cap: "Scatter plot for the relationship between severity values measured by pliman and Quant software" 
 dat <- left_join(severity, quant)
 
 dat %>%
@@ -155,7 +161,9 @@ dat %>%
 
 The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the *pliman* measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(epiR)
 ccc <- epi.ccc(dat$actual, dat$symptomatic)
 ccc$rho.c
