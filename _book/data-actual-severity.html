@@ -307,7 +307,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#the-actual-severity" id="toc-the-actual-severity" class="nav-link active" data-scroll-target="#the-actual-severity"> <span class="header-section-number">5.1</span> The actual severity</a></li>
-  <li><a href="#defining-color-palettes" id="toc-defining-color-palettes" class="nav-link" data-scroll-target="#defining-color-palettes"> <span class="header-section-number">5.2</span> Defining color palettes</a></li>
+  <li><a href="#image-palettes" id="toc-image-palettes" class="nav-link" data-scroll-target="#image-palettes"> <span class="header-section-number">5.2</span> Image palettes</a></li>
   <li><a href="#measuring-severity" id="toc-measuring-severity" class="nav-link" data-scroll-target="#measuring-severity"> <span class="header-section-number">5.3</span> Measuring severity</a>
   <ul class="collapse">
   <li><a href="#single-image" id="toc-single-image" class="nav-link" data-scroll-target="#single-image"> <span class="header-section-number">5.3.1</span> Single image</a></li>
@@ -365,27 +365,24 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <li>Non-diseased (or healthy)</li>
 <li>Background (the non-plant portion of the image)</li>
 </ol>
-<p>The ratio between the diseased area and total are of the unit (e.g.&nbsp;a fraction or the whole leaf image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according a review on standard area diagrams <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
-<p>Here, we will use the <code>measure_disease</code> function of the <em>pliman</em> (Plant IMage ANalysis) <span class="citation" data-cites="olivoto2022a">(<a href="references.html#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span> R package to determine the actual severity values. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The workflow is based on two main steps:</p>
-<ol type="1">
-<li>Prepare the image palettes that define each class of the image</li>
-<li>Run the function that will classify each pixel of the images according to the colors of the palettes.</li>
-</ol>
+<p>The ratio between the diseased area and total area of the unit (e.g.&nbsp;the whole plant organ or section image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according to a review on standard area diagrams <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
+<p>Here, we will use the <code>measure_disease</code> function of the <em>pliman</em> (Plant IMage ANalysis) <span class="citation" data-cites="olivoto2022a">(<a href="references.html#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span> R package to obtain measures of severity. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>.</p>
+<p>There are basically two methods to measure severity. The first is based on image palettes that define each class of the image. The second is based on RGB-based indices <span class="citation" data-cites="alves2021">(<a href="references.html#ref-alves2021" role="doc-biblioref">Alves et al. 2021</a>)</span>.</p>
 </section>
-<section id="defining-color-palettes" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="defining-color-palettes"><span class="header-section-number">5.2</span> Defining color palettes</h2>
+<section id="image-palettes" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="image-palettes"><span class="header-section-number">5.2</span> Image palettes</h2>
 <p>The most critical is the initial step, when the user needs to correctly define the color palettes. In <em>pliman</em> the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).</p>
-<p>The reference image palettes can be made simply by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the <em>pliman</em> to determine disease severity showed the effect of different palettes prepared independently by three researchers <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.</p>
+<p>The reference image palettes can be constructed by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the <em>pliman</em> to determine disease severity showed the effect of different palettes prepared independently by three researchers <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.</p>
 <p>Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png. They can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs">here in this folder</a> for downloading.</p>
 <p><img src="imgs/pliman1.png" class="img-fluid"></p>
-<p>Now that we have the image palettes, we can start by importing the image palettes into the environment for further analysis. Let’s create an image object for each palette named h (healthy), s (symptoms) and b (background).</p>
+<p>Now that we have the image palettes, we can start by importing them into the environment for further analysis. Let’s create an image object for each palette named h (healthy), s (symptoms) and b (background).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pliman)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_h.png"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_s.png"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_b.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We can visualize the imported images using the <code>image_combine()</code> function.</p>
+<p>We can visualize the imported image palettes using the <code>image_combine()</code> function.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(h, s, b, <span class="at">ncol =</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -397,7 +394,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <h2 data-number="5.3" class="anchored" data-anchor-id="measuring-severity"><span class="header-section-number">5.3</span> Measuring severity</h2>
 <section id="single-image" class="level3" data-number="5.3.1">
 <h3 data-number="5.3.1" class="anchored" data-anchor-id="single-image"><span class="header-section-number">5.3.1</span> Single image</h3>
-<p>To determine severity in a single image (img46.png), the image file needs to be loaded and assigned to an object using the same <code>image_import()</code> function used to load the palettes for each of the predefined classes. We can then visualize the image, again using <code>image_combine()</code>.</p>
+<p>To determine severity in a single image (img46.png), the image file needs to be loaded and assigned to an object using the same <code>image_import()</code> function used to load the palettes. We can then visualize the image, again using <code>image_combine()</code>.</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -418,7 +415,7 @@ Tip
 <p><img src="data-actual-severity_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>Now the fun begins with the <code>measure_disease()</code> function to determine severity. Four arguments are needed, the one representing the target image and each of the three images of the color palettes. As the author of the package says “pliman will take care of all details!”</p>
+<p>Now the fun begins with the <code>measure_disease()</code> function to determine severity. Four arguments are needed when using the reference image palettes, the one representing the target image and each of the three images of the color palettes. As the author of the package says “pliman will take care of all details!”. The severity is the value shown under symptomatic in the output.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
@@ -449,7 +446,7 @@ attr(,"class")
 </section>
 <section id="multiple-images" class="level3" data-number="5.3.2">
 <h3 data-number="5.3.2" class="anchored" data-anchor-id="multiple-images"><span class="header-section-number">5.3.2</span> Multiple images</h3>
-<p>That was fun, but usually we don’t have a single image to process but several. It would take a longer time to process each one using the above procedure, thus becoming tedious.</p>
+<p>Measuring severity in single images is fun, but usually we don’t have a single image to process but several. It would take a longer time to process each one using the above procedure, thus becoming tedious.</p>
 <p>To automate the process, <em>pliman</em> offers a batch processing approach. For such, instead of using <code>img</code> argument, one can use <code>pattern</code> and define the prefix of names of the images. In addition, we also need to define the folder where the original files are located.</p>
 <p>If the users wants to save the processed masks, the <code>save_image</code> argument needs to be set to TRUE and the directory where the images will be saved also should be informed. Check below how to process 10 images of soybean rust symptoms. The outcome is a <code>list</code> object with the measures of the percent healthy and percent symptomatic area for each leaf in the <code>severity</code> object.</p>
 <div class="cell">
@@ -461,41 +458,37 @@ attr(,"class")
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_leaf =</span> <span class="st">"green"</span>, <span class="co">#leaf color</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_lesions =</span> <span class="st">"red"</span>, <span class="co">#lesion color</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_background =</span> <span class="st">"black"</span>, <span class="co">#background color</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_original =</span> <span class="cn">FALSE</span> <span class="co">#do not show original </span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">FALSE</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing image img11 |====                                     | 10% 00:00:00 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img35 |========                                 | 20% 00:00:04 </code></pre>
+<pre><code>Processing image img35 |========                                 | 20% 00:00:02 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img37 |============                             | 30% 00:00:05 </code></pre>
+<pre><code>Processing image img37 |============                             | 30% 00:00:03 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img38 |================                         | 40% 00:00:06 </code></pre>
+<pre><code>Processing image img38 |================                         | 40% 00:00:04 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img46 |====================                     | 50% 00:00:08 </code></pre>
+<pre><code>Processing image img46 |====================                     | 50% 00:00:04 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img5 |=========================                 | 60% 00:00:10 </code></pre>
+<pre><code>Processing image img5 |=========================                 | 60% 00:00:06 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img63 |=============================            | 70% 00:00:14 </code></pre>
+<pre><code>Processing image img63 |=============================            | 70% 00:00:08 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img67 |=================================        | 80% 00:00:18 </code></pre>
+<pre><code>Processing image img67 |=================================        | 80% 00:00:10 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img70 |=====================================    | 90% 00:00:22 </code></pre>
+<pre><code>Processing image img70 |=====================================    | 90% 00:00:11 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img75 |=========================================| 100% 00:00:24 </code></pre>
+<pre><code>Processing image img75 |=========================================| 100% 00:00:12 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>severity <span class="ot">&lt;-</span> pliman<span class="sc">$</span>severity</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -571,6 +564,9 @@ attr(,"class")
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
+<div id="ref-alves2021" class="csl-entry" role="doc-biblioentry">
+Alves, K. S., Guimarães, M., Ascari, J. P., Queiroz, M. F., Alfenas, R. F., Mizubuti, E. S. G., et al. 2021. RGB-based phenotyping of foliar disease severity under controlled conditions. Tropical Plant Pathology. 47:105–117 Available at: <a href="http://dx.doi.org/10.1007/S40858-021-00448-Y">http://dx.doi.org/10.1007/S40858-021-00448-Y</a>.
+</div>
 <div id="ref-delponte2017" class="csl-entry" role="doc-biblioentry">
 Del Ponte, E. M., Pethybridge, S. J., Bock, C. H., Michereff, S. J., Machado, F. J., and Spolti, P. 2017. Standard Area Diagrams for Aiding Severity Estimation: Scientometrics, Pathosystems, and Methodological Trends in the Last 25 Years. Phytopathology®. 107:1161–1174 Available at: <a href="http://dx.doi.org/10.1094/PHYTO-02-17-0069-FI">http://dx.doi.org/10.1094/PHYTO-02-17-0069-FI</a>.
 </div>
