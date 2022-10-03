@@ -85,6 +85,75 @@ library(patchwork)
 
 ```
 
+Another way to visualize accuracy and precision is via scatter plots for the relationship between the actual values and the estimates.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+theme_set(theme_bw())
+dat <- 
+tibble::tribble(
+  ~actual,   ~ap,   ~ip,   ~ai,   ~ii,
+        0,     0,    10,     0,    10,
+       10,    10,    20,     5,    10,
+       20,    20,    30,    30,    25,
+       30,    30,    40,    30,    15,
+       40,    40,    50,    30,    35,
+       50,    50,    60,    60,    65,
+       60,    60,    70,    50,    45
+  )
+
+ap <- dat |> 
+  ggplot(aes(actual, ap))+
+  geom_abline(intercept = 0, slope = 1, 
+              linetype = 2, size = 1)+
+    geom_smooth(method = "lm")+
+   geom_point(color = "orange", size = 3)+
+   ylim(0,70)+
+  xlim(0,70)+
+  labs(x = "Actual", y = "Estimate",
+       title = "High Acccuracy High Precision")
+
+ip <- dat |> 
+  ggplot(aes(actual, ip))+
+  geom_abline(intercept = 0, slope = 1, 
+              linetype = 2, size = 1)+
+  geom_smooth(method = "lm", se = F)+
+  geom_point(color = "orange", size = 3)+
+  ylim(0,70)+
+  xlim(0,70)+
+  labs(x = "Actual", y = "Estimate",
+       title = "Low Acccuracy High Precision")
+
+ai <- dat |> 
+  ggplot(aes(actual, ai))+
+  geom_abline(intercept = 0, slope = 1, 
+              linetype = 2, size = 1)+
+  geom_smooth(method = "lm", se = F)+
+  geom_point(color = "orange", size = 3)+
+  ylim(0,70)+
+  xlim(0,70)+
+  labs(x = "Actual", y = "Estimate",
+       title = "High Acccuracy Low precision")
+
+ii <- dat |> 
+  ggplot(aes(actual, ii))+
+  geom_abline(intercept = 0, slope = 1, 
+              linetype = 2, size = 1)+
+  geom_smooth(method = "lm", se = F)+
+  geom_point(color = "orange", size = 3)+
+  ylim(0,70)+
+  xlim(0,70)+
+  labs(x = "Actual", y = "Estimate",
+       title = "Low Acccuracy Low Precision")
+
+library(patchwork)
+(ap | ip) / (ai | ii)
+
+```
+
 ## Statistical summaries
 
 A formal assessment of the quality of estimates or measures is made using statistical summaries of the data expressed as indices that represent reliability, precision and accuracy. These indices can further be used to test hypothesis such as if one or another method is superior than the other. The indices or the tests vary according to the nature of the variable, whether continuous, binary or categorical.
