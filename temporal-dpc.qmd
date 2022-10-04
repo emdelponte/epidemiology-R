@@ -14,7 +14,9 @@ A DPC summarizes the interaction of the three main components of the disease tri
 
 Firstly, let's load the essential R packages and set up the environment.
 
-```{r warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(tidyverse) # essential packages 
 library(cowplot) # for themes 
 theme_set(theme_bw(base_size = 16)) # set global theme
@@ -56,12 +58,15 @@ The precision and complexity of the analysis of progress curve data depends on t
 The AUDPC summarizes the "total measure of disease stress" and is largely used to compare epidemics [@jeger2001]. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let's extend the plot code to show those rectangles using the `annotate` function.
 
 ```{r}
+#| warning: false
+#| message: false
+
 library(ggthemes)
 dpc1 <- dpc |>
   ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
-    geom_area(alpha = 0.5, fill = "MediumSeaGreen")+
+    geom_area(fill = "darkorange")+
     geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
   theme_few()+
@@ -79,22 +84,22 @@ dpc2 <- dpc |>
        y = "Disease intensity (%)")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
            ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
-           color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
+           color = "darkgreen", fill = "darkorange")+
    annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
             ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
-            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
+            color = "darkgreen", fill = "darkorange")+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
             ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
-            color = "darkgreen",, fill = "MediumSeaGreen", alpha = 0.5)+
+            color = "darkgreen",, fill = "darkorange")+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
             ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
-            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
+            color = "darkgreen", fill = "darkorange")+
    annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
             ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
-            color = "darkgreen",fill = "MediumSeaGreen", alpha = 0.5)+
+            color = "darkgreen",fill = "darkorange")+
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
             ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
-            color = "darkgreen", fill = "MediumSeaGreen", alpha = 0.5)+
+            color = "darkgreen", fill = "darkorange")+
   geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
   annotate(geom = "text", x = 26.5, y = 50,
