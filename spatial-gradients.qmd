@@ -13,19 +13,26 @@ In the first example [@mundt1999], the objective of the authors was to measure t
 ```{r}
 #| warning: false
 #| message: false
+#| label: fig-grad1
+#| fig-cap: "Primary gradients of bacerial blight of rice in two wet seasons in the Philippines" 
 library(tidyverse)
 theme_set(theme_bw())
-d <- c(0.0, 0.22, 0.44, 0.66) # distance in meters
-y4 <- c(3.083, 0.521, 0.083, 0.021) # n. of new lesions in 1994 trial
-y5 <- c(7.185, .380, 0.157, 0.028) # n. of new lesion in 1995 trial
-xo <- data.frame(d, y4, y5)
+
+xo <- 
+tibble::tribble(
+    ~d,   ~y4,   ~y5,
+     0, 3.083, 7.185,
+  0.22, 0.521,  0.38,
+  0.44, 0.083, 0.157,
+  0.66, 0.021, 0.028
+  )
 
 g1 <- xo |> 
   ggplot(aes(d, y4))+
   geom_point()+
   geom_line()+
   ylim(0,8)+
-  labs(y = "N. of new lesions",
+  labs(y = "Numer of new lesions",
        x = "Distance (m)",
        title = "1994 wet season")
 
@@ -34,19 +41,14 @@ g2 <- xo |>
   geom_point()+
   geom_line()+
    ylim(0,8)+
-  labs(y = "N. of new lesions",
+  labs(y = "Numer of new lesions",
        x = "Distance (m)",
        title = "1995 wet season")
 
 library(patchwork)
 (g1 | g2) +  plot_annotation(
-  title = 'Primary gradients of bacterial blight of rice',
-  caption = "Source: Mundt et al. (1999)")
+    caption = "Source: Mundt et al. (1999)")
   
-
-
-
-
 ```
 
 The second gradient is of stripe rust, caused by *Puccinia striiformis* f. sp. *tritici,* on wheat collected in a field experiment at Hermiston in 2002 [@Sackett2005] and whose data was made freely available [@mikaberidze2015]. Let's enter data manually as a tibble format. There are five columns. The first and second are distances in feet and meters, respectively, from the source of infection. The other three columns are measures of stripe rust severity on replicated plots.
@@ -55,30 +57,32 @@ The second gradient is of stripe rust, caused by *Puccinia striiformis* f. sp. *
 hermiston <- 
   tibble::tribble(
   ~dist_f, ~dist_m,  ~`1`,  ~`2`,  ~`3`,
-  0,       0,    65,    65,    39,
-  5,     1.5,    35,    44,   7.5,
+  0,        0,    65,    65,    39,
+  5,      1.5,    35,    44,   7.5,
   10,       3,  21.5,  14.5,  1.75,
   20,     6.1,     8,  0.75,   0.2,
   40,    12.2,     1,  0.08, 0.025,
   60,    18.3,  0.25, 0.026, 0.015,
   80,    24.4, 0.035, 0.015, 0.009,
-  100,    30.5,  0.01, 0.003, 0.008,
-  120,    36.6, 0.008, 0.016,  0.01,
-  140,    42.7, 0.003, 0.003,  0.01,
-  160,    48.8, 0.001, 0.006, 0.006,
-  180,    54.9, 0.001, 0.002, 0.002,
-  200,      61, 0.001, 0.003, 0.004,
-  220,    67.1, 0.001, 0.003, 0.002,
-  240,    73.2, 0.001, 0.001,     0,
-  260,    79.2, 0.001, 0.002,     0,
-  280,    85.3, 0.001, 0.001,     0,
-  300,    91.4, 0.001, 0.001, 0.001
+  100,   30.5,  0.01, 0.003, 0.008,
+  120,   36.6, 0.008, 0.016,  0.01,
+  140,   42.7, 0.003, 0.003,  0.01,
+  160,   48.8, 0.001, 0.006, 0.006,
+  180,   54.9, 0.001, 0.002, 0.002,
+  200,     61, 0.001, 0.003, 0.004,
+  220,   67.1, 0.001, 0.003, 0.002,
+  240,   73.2, 0.001, 0.001,     0,
+  260,   79.2, 0.001, 0.002,     0,
+  280,   85.3, 0.001, 0.001,     0,
+  300,   91.4, 0.001, 0.001, 0.001
   )
 
 
 ```
 
 ```{r}
+#| label: fig-grad2
+#| fig-cap: "Primary gradients of stripe rust of wheat on a replicated experiment" 
 #| warning: false
 library(tidyverse)
 library(ggthemes)
@@ -89,16 +93,54 @@ hermiston |>
   geom_point(size = 2)+
   geom_line(size = 1)+
   scale_color_colorblind()+
-  labs(title = "Primary disease gradients", 
-       x = "Distance from the source (m)",
+  labs(x = "Distance from the source (m)",
        y = "Stripe rust severity (%)",
        color = "Replicate",
        caption = "source: Sackett et al. (2005)")
 ```
 
-As it is clear in the above examples, in disease gradients, assuming that there is only a single source of inoculum, the intensity of the disease decreases more steeply within short distances of the source, and less steeply at greater distances until they reach zero or a low background level of occasional diseased plants.
+As it is clear in the above examples, in disease gradients, assuming that there is only a single source of inoculum, the intensity of the disease decreases more steeply within short distances of the source, and less steeply at greater distances until they reach zero or a low background level of occasional diseased plants. The shapes of the gradients are defined by mechanisms associated with the dispersal of the inoculum which depends on the biology of the pathogen but strongly to environmental factors that affect pathogen dispersal.
 
-The shapes of the gradients are defined by mechanisms associated with the dispersal of the inoculum which depends on the biology of the pathogen but strongly to environmental factors that affect pathogen dispersal.
+The resulting gradients can be classified in two types: primary or secondary. The **primary** gradient originates only from the initial focus, while the **secondary** gradient originates from the movement of inoculum produced at previously infected (due to primary gradients) plants to other plants at increasing distances from the source. It is expected that a mix of both kinds of gradients exists as the disease increases over time.
+
+As an example of primary and secondary gradients, let's visualize the gradients of Septoria leaf spot, caused by *Septoria lycopersici*, on tomato [@parker1997]. The gradients were measured during two times, thus enabling a comparison of primary and secondary dispersal/disease gradients. More details of the study and experimental approach were provided in [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryandSecondaryGradients.aspx) The data is entered below as a tribble and the plot produced using g*gplot2*.
+
+```{r}
+#| label: fig-grad3
+#| fig-cap: "Primary and secondary gradients of defoliation due to Septoria leaf spot on tomato" 
+septoria <- 
+tibble::tribble(
+ ~d, ~date1, ~date4,
+ 60,     75,    87,
+ 120,    40,    78,
+ 180,    30,    68,
+ 240,    20,    62,
+ 300,    15,    50,
+ 360,    12,    27,
+ 420,    10,    32,
+ 480,    12,    12,
+ 540,     8,    13,
+ 600,     5,     5,
+ 660,     4,     4
+                )
+
+septoria |> 
+  pivot_longer(2:3, names_to = "date", 
+               values_to = "defoliation") |> 
+  ggplot(aes(d, defoliation, color = date))+
+  geom_point()+
+  geom_line()+
+  scale_color_colorblind()+
+  annotate(geom = "text", x = 200, y = 12, 
+           label = "Primary gradient", hjust = "left")+
+   annotate(geom = "text", x = 200, y = 72, 
+           label = "Secondary gradient", hjust = "left")+
+  labs(x = "Distance from focus (m)",
+       y = "Percent defoliation",
+       color = "Date",
+       caption = "Parker et al. (1997)")
+
+```
 
 When studying disease gradients, researchers need to make sure that there is a well-defined single source of inoculum. In gradients, this is called a **focus** (where foci are deemed the plural), from where the inoculum originates. Three types of foci can be defined: point, line or area sources. While the point source can be a plant or group of plants at any position in the plot or field (center or corner), line and area sources are usually defined as one or more rows of diseased plants at one side of the plot or field.
 
@@ -176,45 +218,4 @@ ggsave("imgs/gradients.png", width =9, height =9, bg = "white")
 
 ```
 
-![](imgs/gradients.png){width="584"}
-
-The resulting gradients can be classified in two types: primary or secondary. The primary gradient originates only from the initial focus, while the secondary gradient originates from the movement of inoculum produced at previously infected (due to primary gradients) plants to other plants at increasing distances from the source. It is expected that a mix of both kinds of gradients exists as the disease increases over time.
-
-As an example of primary and secondary gradients, let's visualize the gradients of Septoria leaf spot, caused by *Septoria lycopersici*, on tomato [@parker1997]. The gradients were measured during two times, thus enabling a comparison of primary and secondary dispersal/disease gradients. More details of the study and experimental approach were provided in [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryandSecondaryGradients.aspx) The data is entered below as a tribble and the plot produced using g*gplot2*.
-
-```{r}
-septoria <- 
-tibble::tribble(
- ~d, ~date1, ~date4,
- 60,    75,    87,
- 120,    40,    78,
- 180,    30,    68,
- 240,    20,    62,
- 300,    15,    50,
- 360,    12,    27,
- 420,    10,    32,
- 480,    12,    12,
- 540,     8,    13,
- 600,     5,     5,
- 660,     4,     4
-              )
-
-septoria |> 
-  pivot_longer(2:3, names_to = "date", 
-               values_to = "defoliation") |> 
-  ggplot(aes(d, defoliation, color = date))+
-  geom_point()+
-  geom_line()+
-  scale_color_colorblind()+
-  annotate(geom = "text", x = 200, y = 12, 
-           label = "Primary gradient", hjust = "left")+
-   annotate(geom = "text", x = 200, y = 72, 
-           label = "Secondary gradient", hjust = "left")+
-  labs(title = "Disease gradients",
-       subtitle = "Septoria leaf spot on tomato",
-       x = "Distrance from focus (m)",
-       y = "Percent defoliation",
-       color = "Date",
-       caption = "Parker et al. (1997)")
-
-```
+![Example of location and size of inoculum sources for the study of disease gradients](imgs/gradients.png){#fig-gradient width="584"}
