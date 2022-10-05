@@ -36,10 +36,11 @@ $y = y_0 e^{r_Et}$,
 
 where $y0$ is and $r$ are obtained via estimation. Let's simulate two curves by varying $r$ while fixing $y0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the \`stat_function\`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum by half, etc.).
 
+```{r}
+#| warning: false
+#| message: false
 
-```{r warning=FALSE, message=FALSE}
 library(tidyverse) # essential packages 
-library(cowplot) # for themes 
 theme_set(theme_bw(base_size = 16)) # set global theme
 ```
 
@@ -52,33 +53,32 @@ dat <- data.frame(t = seq(1:tmax), y = seq(0:1)) # define the axes
 
 In the plot below, note that the infection rate in one curve was doubled ($r$ = 0.12)
 
-
-
 ```{r}
+#| warning: false
+#| label: fig-exp1
+#| fig-cap: "Exponential curves with two rates of infection (0.06 and 0.12) and the same initial inoculum (0.001) " 
 
 dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) y0 * exp(r * t), linetype = 1) +
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 2) +
   ylim(0, 1) +
-  labs(
-    title = "Exponential model",
-    subtitle = "2 times r (dashed) same y0",
-    x = "Time"
-  )
+  labs(x = "Time")
 
 ```
 
 Now the inoculum was increased five times while using the same doubled rate.
 
 ```{r}
+#| warning: false
+#| label: fig-exp2
+#| fig-cap: "Exponential curves with the same rate of infection (0.12) and single and five times the initial inoculum (0.001)" 
 dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 1) +
   stat_function(fun = function(t) y0 * 5 * exp(r * 2 * t), linetype = 2) +
   ylim(0, 1) +
-  labs(title = "Exponential model", x = "Time",
-       subtitle = "5 times y0 (dashed) same r")
+  labs(x = "Time")
 
 ```
 
@@ -99,13 +99,14 @@ This model commonly describes the temporal patterns of the monocyclic epidemics.
 Let's simulate two monomolecular curve with different rate parameters where one is one third of the other.
 
 ```{r}
+#| warning: false
+#| label: fig-mono1
+#| fig-cap: "Monomolecular curves with two rates of infection (0.06 and 0.02) and the same initial inoculum (0.001) " 
 dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r * t))) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-(r / 3) * t))) +
-  labs(title = "Monomolecular model",
-         subtitle = "Fixed y0 = 0.001", x = "Time"
-       ) +
+  labs(x = "Time") +
   annotate(geom = "text", x = 35, y = 0.77, label = "r = 0.06") +
   annotate(geom = "text", x = 50, y = 0.55, label = "r = 0.02")
 ```
@@ -113,12 +114,14 @@ dat |>
 Now inoculum was increased 100 times with the reduced rate.
 
 ```{r}
+#| warning: false
+#| label: fig-mono2
+#| fig-cap: "Monomolecular curves with one rate (0.06) and the  initial inoculum increased 100 times"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r / 2 * t))) +
   stat_function(fun = function(t) 1 - ((1 - (y0 * 100)) * exp(-r / 2 * t))) +
-  labs(title = "Monomolecular model", 
-       subtitle = "Fixed r = 0.06", x = "Time") +
+  labs(x = "Time") +
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.01") +
   annotate(geom = "text", x = 45, y = 0.65, label = "y0 = 0.001")
 
@@ -143,6 +146,9 @@ where $r_L$ is the apparent infection rate of the logistic model and $y0$ is the
 Let's check two curves where in one the infection rate is double while keeping the same initial inoculum.
 
 ```{r}
+#| warning: false
+#| label: fig-log1
+#| fig-cap: "Logistic curves with two rates of infection (0.18 and 0.024) and the same initial inoculum (0.001) "
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -150,7 +156,7 @@ dat |>
     fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 2 * t))
   ) +
   stat_function(fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 4 * t))) +
-  labs(title = "Logistic model", subtitle = "Fixed y0 = 0.001", x = "Time") +
+  labs(x = "Time") +
   annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.18") +
   annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.024")
 ```
@@ -158,6 +164,9 @@ dat |>
 Now the inoculum is reduced 10 times for a same infection rate.
 
 ```{r}
+#| warning: false
+#| label: fig-log2
+#| fig-cap: "Logistic curves with a single rate of infection (0.24) and two initial inoculum (0.001 and 0.0001) "
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -165,7 +174,7 @@ dat |>
     fun = function(t) 1 / (1 + ((1 - (y0 / 10)) / (y0 / 10)) * exp(-r * 3 * t))
   ) +
   stat_function(fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 3 * t))) +
-  labs(title = "Logistic model", subtitle = "Fixed r = 0.24", x = "Time") +
+  labs(x = "Time") +
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 50, y = 0.10, label = "y0 = 0.0001")
 
@@ -187,6 +196,9 @@ where $r_G$ is the apparent infection rate for the Gompertz models and $y_0$ is 
 Let's check curves for two rates.
 
 ```{r}
+#| warning: false
+#| label: fig-gomp1
+#| fig-cap: "Gompertz curves with two rates of infection (0.12 and 0.03) and the same initial inoculum (0.001)"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -194,14 +206,17 @@ dat |>
     fun = function(t) exp(log(y0) * exp(-r/2 * t))
   ) +
   stat_function(fun = function(t) exp(log(y0) * exp(-r*2 * t))) +
-  labs(title = "Gompertz model", subtitle = "Fixed y0 = 0.001", x = "Time") +
+  labs(x = "Time") +
   annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.12") +
   annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.03")
 ```
 
-And those when inoculum was reduced thousand times.
+And those when inoculum was reduced one thousand times.
 
 ```{r}
+#| warning: false
+#| label: fig-gomp2
+#| fig-cap: "Gompertz curves with a single rate of infection (0.12) and two levels of initial inoculum (0.001 and 0.00001)"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -209,7 +224,7 @@ dat |>
     fun = function(t) exp(log(y0) * exp(-r*2 * t))
   ) +
   stat_function(fun = function(t) exp(log(y0/1000) * exp(-r*2 * t))) +
-  labs(title = "Gompertz model", subtitle = "Fixed r = 0.12", x = "Time") +
+  labs(x = "Time") +
   annotate(geom = "text", x = 15, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 25, y = 0.10, label = "y0 = 0.00001")
 
