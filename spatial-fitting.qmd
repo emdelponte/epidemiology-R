@@ -1,22 +1,21 @@
 ---
 title: "Fitting gradient models"
 ---
- 
+
 ::: {.callout-note appearance="simple"}
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
 ```{r message=FALSE, warning=FALSE}
+#| message: false
+#| warning: false
 library(tidyverse)
-library(ggthemes)
-library(patchwork)
-library(cowplot) # for themes 
 theme_set(theme_bw(base_size = 16)) # set global theme
 ```
 
 ## Dataset
 
-The hypothetical data below shows a gradient for the number of lesions counted at varying distances in meters from the source. Let's create two vectors, one for the distances $x$ and the other for the lesion count $Y$, and then a dataframe by combining the two vectors.
+The hypothetical data below shows a gradient for the number of lesions counted at varying distances in meters from the source. Let's create two vectors, one for the distances $x$ and the other for the lesion count $Y$, and then a data frame by combining the two vectors.
 
 ```{r}
 # create the two vectors
@@ -29,6 +28,8 @@ grad1 # show the gradient
 ## Visualize the gradient
 
 ```{r}
+#| label: fig-fit_grad1
+#| fig-cap: "Hypothetical gradient of lesion count over distances from the inoculum source" 
 grad1 |> 
   ggplot(aes(x, Y))+
   geom_point()+
@@ -37,36 +38,20 @@ grad1 |>
        x = "Distance (m)")
 ```
 
-# Linear regression
+## Linear regression
 
 A linear regression model is fitted to the transformed variables according to the model. The higher the coefficient of determination, the better is the fit of the model to the data.
 
-Exponential model
+### Exponential model
 
 ```{r}
 reg_exp <- lm(log(Y) ~ x, data = grad1)
-summary(reg_exp)
+summary(reg_exp)$r.squared
 ```
 
-Power law model with $C = 0$.
-
 ```{r}
-reg_p <- lm(log(Y) ~ log(x), data = grad1)
-summary(reg_p)
-```
-
-Power law model with $C = 0.4$.
-
-```{r}
-reg_pm <- lm(log(Y) ~ log(x + 0.4), data = grad1)
-summary(reg_pm)
-```
-
-Graphs for the fitted models
-
-Exponential
-
-```{r}
+#| label: fig-fit_grad2
+#| fig-cap: "Fit of the exponential model to the log of lesion count over distances from the inoculum source" 
 grad1 |> 
   ggplot(aes(x, log(Y)))+
   geom_point()+
@@ -75,12 +60,18 @@ grad1 |>
  labs(y = "Log of Lesion count",
        x = "Distance (m)")
 
-
 ```
 
-Power law model
+### Power law model 
 
 ```{r}
+reg_p <- lm(log(Y) ~ log(x), data = grad1)
+summary(reg_p)$r.squared
+```
+
+```{r}
+#| label: fig-fit_grad3
+#| fig-cap: "Fit of the power law model to the log of lesion count over log of the distance from the inoculum source" 
 grad1 |> 
   ggplot(aes(log(x), log(Y)))+
   geom_point()+
@@ -91,17 +82,30 @@ grad1 |>
 
 ```
 
-Modified power law model
+### Modified power law model
 
 ```{r}
+reg_pm <- lm(log(Y) ~ log(x + 0.4), data = grad1)
+summary(reg_pm)$r.squared
+```
+
+
+```{r}
+#| label: fig-fit_grad4
+#| fig-cap: "Fit of the modified power law model to the log of lesion count over log + 0.4 of the distances from the inoculum source" 
 grad1 |> 
   ggplot(aes(log(x+0.4), log(Y)))+
   geom_point()+
   geom_line()+
   geom_abline(slope = coef(reg_pm)[[2]], intercept = coef(reg_pm)[[1]])+
  labs(y = "Log of Lesion count",
-       x = "Log of distance (m)")
+       x = "Log of distance + 0.4 (m)")
 
 ```
 
-Conclusion: The modified power law model provided the best fit.
+Based on the (highest) coefficient of determination, the modified power law provided the best fit. The graphs for the fitted models confirm this conclusion.
+
+
+
+
+
