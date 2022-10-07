@@ -6,23 +6,22 @@ title: "Model fitting"
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-In this tutorial, you will learn how to fit models to multiple actual disease progress curves (DPCs) data obtained from the literature. I will demonstrate how to fit and select the models using the *epifitter* package. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
+Now we will fit models to multiple actual disease progress curves (DPCs) data obtained from the literature again using the *epifitter* package. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
 
-To illustrate, I will use two datasets available from Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We then provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
+To illustrate, I will use two datasets available in Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
 
 ### Non-replicated epidemics
 
-We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval, up to 49 days.The data are available in chapter 4 (page 93). Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
+We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days. The data are available in chapter 4 (page 93) [@chapter2017b]. Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
 
 ### Entering data
 
-
-```{r warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(tidyverse) # essential packages 
-library(cowplot) # for themes 
 theme_set(theme_bw(base_size = 16)) # set global theme
 ```
-
 
 ```{r}
 pepper <- 
@@ -41,11 +40,14 @@ pepper <-
 
 ### Visualize the DPCs
 
-Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 ([@chapter2017b] page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
+Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (@chapter2017b page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
 
-Because the data was entered in the wide format (each DPCs in a different columns) we need to reshape it to the long format. The `pivot_longer` function will do the job of reshaping from wide to long format so we can finally use the `ggplot` function to produce the plot.
+Because the data was entered in the wide format (each DPC is in a different column) we need to reshape it to the long format. The `pivot_longer()` function will do the job of reshaping from wide to long format so we can finally use the `ggplot()` function to produce the plot.
 
-```{r, echo = TRUE}
+```{r}
+#| echo: true
+#| label: fig-dpcs
+#| fig-cap: "Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from @chapter2017b page 94"
 pepper |> 
   pivot_longer(2:4, names_to ="treat", values_to = "inc") |> 
   ggplot (aes(t, inc, 
@@ -76,8 +78,6 @@ library(epifitter)
 epi1 <- fit_lin(time = pepper$t,  
                 y = pepper$`1` )
 epi1$Stats
-
-
 ```
 
 ```{r}
@@ -105,7 +105,6 @@ Let's then create a new data set called `pepper2` using the data transposing fun
 pepper2 <- pepper |> 
   pivot_longer(2:4, names_to ="treat", values_to = "inc")
 
-
 ```
 
 Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in `strata_cols` argument.
@@ -118,21 +117,20 @@ epi_all <- fit_multi(
   strata_cols = "treat",
   nlin = FALSE
 )
-
-
-
 ```
 
 Now let's select the statistics of model fitting. Again, *Epifitter* ranks the models based on the CCC (the higher the better) but it is important to check the RSE as well - the lower the better. In fact, the RSE is more important when the goal is prediction.
 
-```{r echo=TRUE}
+```{r}
 epi_all$Parameters |> 
   select(treat, model, best_model, RSE, CCC)
 ```
 
 To be more certain about our decision, let's advance to the final step which is to produce the plots with the observed and predicted values for each assessment time by calling the `Data` dataframe of the \``epi_all` list.
 
-```{r, echo = TRUE}
+```{r}
+#| label: fig-fitted
+#| fig-cap: "Observed (dots) and fitted (line) values for three tobacco etch epidemics in pepper"
 epi_all$Data |>
  filter(model %in% c("Gompertz", "Logistic")) |> 
   ggplot(aes(time, predicted, shape = treat)) +
@@ -148,7 +146,9 @@ epi_all$Data |>
 
 Overall, the logistic model seems a better fit for all the curves. Let's produce a plot with the prediction error versus time.
 
-```{r echo=TRUE}
+```{r}
+#| label: fig-error
+#| fig-cap: "Prediction error (dotted lines) by two models fitted to the progress curves of three tobacco etch epidemics in pepper"
 epi_all$Data |>
  filter(model %in% c("Gompertz", "Logistic")) |> 
   ggplot(aes(time, predicted -y, shape = treat)) +
@@ -165,7 +165,7 @@ epi_all$Data |>
 
 The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.
 
-```{r, echo = TRUE}
+```{r}
   epi_all$Parameters |>
     filter(model == "Logistic") |>
     select(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr 
@@ -174,8 +174,9 @@ The plots above confirms the logistic model as good fit overall because the erro
 
 We can produce a plot for visual inference on the differences in the parameters.
 
-```{r, echo = TRUE}
-
+```{r}
+#| label: fig-params
+#| fig-cap: "Estimated infection rates (left) and initial inoculum (right) by a logistic model fitted to the progress curves of three epidemics of tobacco etch on pepper"
 p1 <- epi_all$Parameters |>
   filter(model == "Logistic") |>
   ggplot(aes(treat, r)) +
@@ -185,7 +186,7 @@ p1 <- epi_all$Parameters |>
     size = 1
   ) +
   labs(
-    x = "Time",
+    x = "Epidemic",
     y = "r"
   )
 
@@ -198,7 +199,7 @@ p2 <- epi_all$Parameters |>
     size = 1
   ) +
   labs(
-    x = "Time",
+    x = "Epidemic",
     y = "y0"
   )
 
@@ -215,21 +216,28 @@ Again, we will use a dataset of progress curves shown in page 98 [@chapter2017b]
 
 #### Loading data
 
-```{r, echo = TRUE}
+```{r}
+#| message: false
+#| warning: false
+
 budblight <- read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/bud-blight-soybean.csv")
 ```
 
 Let's have a look at the first six rows of the dataset and check the data type for each column. There is an additional column representing the replicates, called block.
 
-```{r, echo = TRUE}
-head(budblight)
+```{r}
+budblight
 ```
 
 #### Visualizing the DPCs
 
 Let's have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.
 
-```{r echo=TRUE}
+```{r}
+#| label: fig-bud1
+#| fig-cap: "Disease progress curves for the incidence of budblight of soybean in Brazil for four planting dates"
+#| fig-width: 8
+#| fig-height: 10
 p3 <- budblight |>
   ggplot(aes(
     time, y,
@@ -242,10 +250,7 @@ p3 <- budblight |>
   facet_wrap(~treat, ncol =1)+
   labs(y = "Disease incidence",
        x = "Time (days after emergence)")
-  
-```
 
-```{r echo=TRUE}
 p4 <- budblight |>
   ggplot(aes(
     time, log(1 / (1 - y)),
@@ -270,7 +275,7 @@ For the treatments above, it looks like the curves are typical of a monocyclic d
 
 For convenience, we use the `fit_multi()` to handle multiple epidemics. The function returns a list object where a series of statistics are provided to aid in model selection and parameter estimation. We need to provide the names of columns (arguments): assessment time (`time_col`), disease incidence (`intensity_col`), and treatment (`strata_cols`).
 
-```{r, echo = TRUE}
+```{r}
 lin1 <- fit_multi(
   time_col = "time",
   intensity_col = "y",
@@ -282,27 +287,25 @@ lin1 <- fit_multi(
 
 Let's look at how well the four models fitted the data. Epifitter suggests the best fitted model (1 to 4, where 1 is best) for each treatment. Let's have a look at the statistics of model fitting.
 
-```{r, echo = TRUE}
-
-  lin1$Parameters |> 
-    select(treat, best_model, model, CCC, RSE)
+```{r}
+lin1$Parameters |> 
+select(treat, best_model, model, CCC, RSE)
 ```
 
 And now we extract values for each parameter estimated from the fit of the monomolecular model.
 
-```{r, echo = TRUE}
-
-
-  lin1$Parameters |>
-  filter(model == "Monomolecular") |>
-  select(treat, y0, r)
+```{r}
+lin1$Parameters |>
+filter(model == "Monomolecular") |>
+select(treat, y0, r)
 
 ```
 
 Now we visualize the fit of the monomolecular model (using `filter` function - see below) to the data together with the observed data and then reproduce the right plots in Fig. 4.17 from the book.
 
-```{r, echo = TRUE}
-
+```{r}
+#| label: fig-bud2
+#| fig-cap: "Observed (dot) and fitted values by a monomolecular model (line) to the data on the incidence of budblight of soybean in Brazil for four planting dates"
 lin1$Data |>
   filter(model == "Monomolecular") |>
   ggplot(aes(time, predicted)) +
@@ -318,8 +321,9 @@ lin1$Data |>
 
 Now we can plot the means and respective 95% confidence interval of the apparent infection rate ($r$) and initial inoculum ($y_0$) for visual inference.
 
-```{r, echo = TRUE}
-
+```{r}
+#| label: fig-bud3
+#| fig-cap: "Estimates of the infection rate (left) and initial inoculum (right) from the fit of a monomolecular model  to the data on the incidence of budblight of soybean in Brazil for four planting dates"
 p5 <- lin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
@@ -329,8 +333,8 @@ p5 <- lin1$Parameters |>
     size = 1
   ) +
   labs(
-    x = "Time",
-    y = "r"
+    x = "Epidemic",
+    y = "Infection rate (r)"
   )
 
 p6 <- lin1$Parameters |>
@@ -343,17 +347,20 @@ p6 <- lin1$Parameters |>
   ) +
   labs(
     x = "Time",
-    y = "y0"
+    y = "Initial inoculum (y0)"
   )
 
-p5 | p2
+p5 | p6
 ```
 
 ##### Non-linear regression
 
 To estimate the parameters using the non-linear approach, we repeat the same arguments in the `fit_multi` function, but include an additional argument `nlin` set to `TRUE`.
 
-```{r, echo = TRUE}
+```{r}
+#| message: false
+#| warning: false
+
 nlin1 <- fit_multi(
   time_col = "time",
   intensity_col = "y",
@@ -365,23 +372,22 @@ nlin1 <- fit_multi(
 
 Let's check statistics of model fit.
 
-```{r, echo = TRUE}
+```{r}
 nlin1$Parameters |>
-  select(treat, model, CCC, RSE, best_model)
+select(treat, model, CCC, RSE, best_model)
 ```
 
 And now we obtain the two parameters of interest. Note that the values are not the sames as those estimated using linear regression, but they are similar and highly correlated.
 
-```{r, echo = TRUE}
-
-  nlin1$Parameters |>
-    filter(model == "Monomolecular") |>
-    select(treat, y0, r)
-
+```{r}
+nlin1$Parameters |>
+filter(model == "Monomolecular") |>
+select(treat, y0, r)
 ```
 
-```{r, echo = TRUE}
-
+```{r}
+#| label: fig-bud4
+#| fig-cap: "Estimates of the infection rate (left) and initial inoculum (right) from the fit of a monomolecular model  to the data on the incidence of budblight of soybean in Brazil for four planting dates"
 p7 <- nlin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
@@ -391,8 +397,8 @@ p7 <- nlin1$Parameters |>
     size = 1
   ) +
   labs(
-    x = "Time",
-    y = "r"
+    x = "Epidemic",
+    y = "Infection rate (r)"
   )
 
 p8 <- nlin1$Parameters |>
@@ -404,8 +410,8 @@ p8 <- nlin1$Parameters |>
     size = 1
   ) +
   labs(
-    x = "Time",
-    y = "y0"
+    x = "Epidemic",
+    y = "Initial inoculum (y0)"
   )
 
 p7 | p8

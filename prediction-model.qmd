@@ -13,19 +13,19 @@ library(tidyverse)
 wb <- 
   tibble::tribble(
      ~T, ~inf,
-     10, 0.00,
+     10, 0.01,
     15, 0.14,
     20, 0.54,
     25, 0.75,
     30, 0.79,
-    35, 0.00
+    35, 0.01
     )
+ wb
+ 
+attach(wb)
+library(minpack.lm)
+betawb <- nlsLM(inf ~ (b1 * T^b2 * (1 - T))^b3 , data = wb)
 
-
-betawb <- nls(
-  formula = inf ~ b1 * (T - 10)^b2 * (35 - T)^b3,
-data = wb,
-algorithm = "port")
 
 ```
 
