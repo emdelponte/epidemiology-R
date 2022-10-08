@@ -28,19 +28,19 @@ Let's input the HB scale data and store as a data frame in R so we can prepare a
 #| label: tbl-HB
 #| tbl-cap: "The Horsfal-Barrat quantitative ordinal scale used as a tool for assessing plant disease severity "
 HB <- tibble::tribble(
-  ~score, ~'range', ~midpoint,
-  0,  '0',   0,   
-  1,   '0+ to 3', 1.5,   
-  2,   '3+ to 6', 4.5,   
-  3,  '6+ to 12', 9.0,  
+  ~ordinal, ~'range', ~midpoint,
+  0,          '0',    0,   
+  1,    '0+ to 3',  1.5,   
+  2,    '3+ to 6',  4.5,   
+  3,   '6+ to 12',  9.0,  
   4,  '12+ to 25', 18.5, 
   5,  '25+ to 50', 37.5, 
   6,  '50+ to 75', 62.5, 
   7,  '75+ to 88', 81.5, 
   8,  '88+ to 94', 91.0, 
   9,  '94+ to 97', 95.5, 
-  10, '97+ to 100' , 98.5,  
-  11,  '100', 100 
+  10,'97+ to 100', 98.5,  
+  11,      '100',   100 
   )
 knitr::kable(HB, align = "c")
 ```
@@ -55,7 +55,7 @@ Let's visualize the different sizes of the percent interval encompassing each sc
 library(tidyverse)
 theme_set(theme_bw())
 HB |> 
-  ggplot(aes(midpoint, score))+
+  ggplot(aes(midpoint, ordinal))+
   geom_point(size =2)+
   geom_line()+
   scale_x_continuous(breaks = c(0, 3, 6, 12, 25, 50, 75, 88, 94, 97))+
@@ -78,7 +78,7 @@ We can repeat those procedures to visualize the Chiang scale.
 #| label: tbl-chiang
 #| tbl-cap: "The Chiang quantitative ordinal scale used as a tool for assessing plant disease severity "
 chiang <- tibble::tribble(
-  ~score, ~'range', ~midpoint,
+  ~ordinal, ~'range', ~midpoint,
   0,          '0',     0,   
   1,  '0+ to 0.1',  0.05,   
   2,'0.1+ to 0.5',   0.3,   
@@ -94,7 +94,7 @@ chiang <- tibble::tribble(
   12, '60+ to 70',    65,
   13, '70+ to 80',    75,
   14, '80+ to 90',    85,
-  15, '90+ to 100',   95
+  15,'90+ to 100',   95
   )
 knitr::kable(chiang, align = "c")
 ```
@@ -107,7 +107,7 @@ knitr::kable(chiang, align = "c")
 library(tidyverse)
 theme_set(theme_bw())
 chiang |> 
-  ggplot(aes(midpoint, score))+
+  ggplot(aes(midpoint, ordinal))+
   geom_point(size =2)+
   geom_line()+
   scale_x_continuous(breaks = c(0, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100))+
