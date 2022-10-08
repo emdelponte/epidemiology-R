@@ -126,3 +126,33 @@ gamma_data |>
   ylim(0, max(gamma_data$gamma35)) +
   facet_wrap( ~ P) 
 ```
+
+### Sampling ordinal data
+
+For ordinal data, such as a limited number of ranked-values in an ordinal scale (e.g. 0 to 5) we can use the `sample()` function and define the probability associated with each rank. Let's generate 30 units with a distinct ordinal score. In the first situation, the higher probabilities (0.5) are for scores 4 and 5 and lower (0.1) for scores 0 and 1, and in the second situation is the converse.
+
+```{r}
+ordinal1 <- sample(0:5, 30, replace = TRUE, prob = c(0.1, 0.1, 0.2, 0.2, 0.5, 0.5))
+ordinal2 <- sample(0:5, 30, replace = TRUE, prob = c(0.5, 0.5, 0.2, 0.2, 0.1, 0.1))
+ordinal_data <- data.frame(ordinal1, ordinal2)
+
+
+```
+
+```{r}
+#| label: fig-ordinal
+#| fig-cap: "Sampling of ordinal data"
+ordinal_data |>
+  pivot_longer(1:2, names_to = "P",
+               values_to = "value") |>
+  ggplot(aes(value)) +
+  geom_histogram(fill = "darkorange",
+                 color = "white",
+                 bins = 6) +
+  facet_wrap( ~ P) 
+```
+
+
+
+
+
