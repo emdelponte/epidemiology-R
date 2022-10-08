@@ -6,10 +6,6 @@ title: "Measuring severity"
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-::: {.callout-important appearance="simple"}
-This chapter is adapted from a post published in [Open Plant Pathology](https://openplantpathology.org/posts/2021-05-31-measuring-plant-disease-severity-using-the-pliman-r-package/)
-:::
-
 ## The actual severity
 
 Among the different ways to express plant disease severity, the percent area affected (symptomatic) by the disease is one of the most common especially when dealing with diseases that affect leaves. To evaluate whether the visual estimates of plant disease severity are sufficiently accurate (as seen in the previous chapter), one needs the actual severity values. These are also needed when preparing standard area diagrams (SADs) which are diagrammatic representations of severity values used as an aid prior or during the visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
@@ -22,21 +18,21 @@ The actual severity values are usually approximated using image analysis where t
 
 The ratio between the diseased area and total area of the unit (e.g. the whole plant organ or section image) gives the proportion of diseased area or the percent area affected (when multiplied by 100). Several different proprietary or open-source software has been used by researchers to determine the actual severity according to a review on standard area diagrams [@delponte2017].
 
-Here, we will use the `measure_disease` function of the *pliman* (Plant IMage ANalysis) [@olivoto2022a] R package to obtain measures of severity. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce concordant results for most of the cases [@olivoto2022].
+Here, we will use the `measure_disease()` function of the *pliman* (Plant IMage ANalysis) [@olivoto2022a] R package to measures percent area affected. The package was compared with other software for determining plant disease severity on five different plant diseases and showed to produce accurate results for most of the cases [@olivoto2022].
 
-There are basically two methods to measure severity. The first is based on image palettes that define each class of the image. The second is based on RGB-based indices [@alves2021].
+There are basically two methods to measure severity. The first is based on image palettes that define each class of the image. The second is based on RGB-based indices [@alves2021]. Let's see the first method and also one interactive way of setting the color palettes.
 
 ## Image palettes
 
-The most critical is the initial step, when the user needs to correctly define the color palettes. In *pliman* the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).
+The most critical is the initial step, when the user needs to correctly define the color palettes for each class. In *pliman* the palettes are actually separate images representing each of three classes named background (b), symptomatic (s) and healthy (h).
 
 The reference image palettes can be constructed by manually sampling small areas of the image and producing a composite image. Of course, the results may vary depending on how these areas are chosen. A work on the validation of the *pliman* to determine disease severity showed the effect of different palettes prepared independently by three researchers [@olivoto2022]. The observation of the processed masks during the calibration of the palettes is important to create reference palettes that are most representative of the respective class.
 
 Here, I cut and pasted several sections of images representative of each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate image PNG file (JPG also works). These were named: sbr_b.png, sbr_h.png and sbr_s.png. They can be found [here in this folder](https://github.com/emdelponte/epidemiology-R/tree/main/imgs) for downloading.
 
-[![Preparation of image palettes by manually sampling fraction of the images that represent background, heatlhy leaf and lesions](imgs/pliman1.png){#fig-pliman1 fig-align="center"}](Fig_palettes)
+[![Preparation of image palettes by manually sampling fraction of the images that represent background, heatlhy leaf and lesions](imgs/pliman1.png){#fig-pliman1 style="margin: 15px" fig-align="center"}](Fig_palettes)
 
-Now that we have the image palettes, we can start by importing them into the environment for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
+Now that we have the image palettes, we need to import them into the environment, using `image_import()` function for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
 
 ```{r, warning=FALSE, message=FALSE}
 library(pliman)
@@ -58,7 +54,7 @@ image_combine(h, s, b, ncol =3)
 
 ### Single image
 
-To determine severity in a single image (img46.png), the image file needs to be loaded and assigned to an object using the same `image_import()` function used to load the palettes. We can then visualize the image, again using `image_combine()`.
+To determine severity in a single image (e.g. img46.png), the image file needs to be loaded and assigned to an object using the same `image_import()` function used to load the palettes. We can then visualize the image, again using `image_combine()`.
 
 ::: callout-tip
 The collection of images used in this chapter can be found [here](https://github.com/emdelponte/epidemiology-R/tree/main/imgs/originals).
@@ -72,7 +68,7 @@ image_combine(img)
 
 ```
 
-Now the fun begins with the `measure_disease()` function to determine severity. Four arguments are needed when using the reference image palettes, the one representing the target image and each of the three images of the color palettes. As the author of the package says "pliman will take care of all details!". The severity is the value shown under symptomatic in the output.
+Now the fun begins with the `measure_disease()` function. Four arguments are needed when using the reference image palettes, the one representing the target image and each of the three images of the color palettes. As the author of the package says "pliman will take care of all details!". The severity is the value shown under symptomatic in the output.
 
 ```{r}
 set.seed(123)
@@ -110,11 +106,11 @@ severity
 
 With the argument `save_image` set to TRUE, the images are all saved in the folder with the standard prefix "proc."
 
-[![Images created by pliman and exported to a specific folder](imgs/pliman2.png){#fig-pliman2}](fig_folder)
+[![Images created by pliman and exported to a specific folder](imgs/pliman2.png){#fig-pliman2 style="margin: 15px" fig-align="center"}](fig_folder)
 
 Let's have a look at one of the processed images.
 
-[![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.](imgs/processed/proc_img46.jpg){#fig-processed fig-align="center" width="452"}](fig_proc1)
+[![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.](imgs/processed/proc_img46.jpg){#fig-processed style="margin: 15px" fig-align="center" width="452"}](fig_proc1)
 
 ## How good are these measurements?
 
