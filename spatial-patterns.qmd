@@ -24,6 +24,8 @@ dat <- data.frame(x,y) # dataframe for plotting
 Now, the plot to visualize the random pattern.
 
 ```{r}
+#| label: fig-random
+#| fig-cap: "Random pattern of a plant disease epidemic"
 #| warning: false
 #| message: false
 
@@ -54,6 +56,8 @@ dat2 <- data.frame(x, y)
 This should give us an aggregated pattern.
 
 ```{r}
+#| label: fig-aggregated
+#| fig-cap: "Aggregated pattern of a plant disease epidemic"
 pag <- dat2 |>
   ggplot(aes(x, y))+
   geom_point(size = 3, color = "darkred")+
@@ -69,6 +73,8 @@ pag
 A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
 
 ```{r}
+#| label: fig-regular
+#| fig-cap: "Regular pattern of a plant disease epidemic"
 x <- rep(c(0,5,10,15,20, 25, 30, 35, 40, 45), 5) 
 y <- rep(c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45), each = 10)
 dat3 <- data.frame(x, y)
@@ -89,7 +95,6 @@ preg
 #| message: false
 
 library(patchwork)
-
 preg + pr + pag
 ggsave("imgs/spatial.png", width = 10, height = 4)
 
@@ -98,6 +103,8 @@ ggsave("imgs/spatial.png", width = 10, height = 4)
 We can create an animation showing the three patterns using *gganimate* package
 
 ```{r}
+#| label: fig-anima
+#| fig-cap: "The spatial patterns of plant disease epidemcs: random, aggreated and regular"
 #| warning: false
 #| message: false
 #| eval: false
@@ -131,9 +138,11 @@ anim_save("imgs/patterns.gif")
 
 ## Spatiotemporal
 
-The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let's visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the `epiphy` R package. Let's use only one variety and one irrigation type.
+The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let's visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the *epiphy* R package. Let's use only one variety and one irrigation type.
 
 ```{r}
+#| label: fig-spatiotemporal1
+#| fig-cap: "Spatial patterns of tomato spotted wilt virus at six assessment times"
 #| warning: false
 #| message: false
 library(epiphy)
@@ -146,8 +155,9 @@ tswv_1928 |>
   geom_point(aes(group = seq_along(factor(t))), size =2)+
   coord_fixed()+
   scale_color_manual(values = c("grey70", "darkred"))+
-  labs(fill = "Status", title = "")+
+  labs(color = "Status", title = "")+
   theme_void()+
+  theme(legend.position = "bottom")+
   facet_wrap(~ t, nrow =1)
 ```
 
@@ -164,7 +174,7 @@ tswv_1928 |>
   ggplot(aes(y, x, color = factor(i)))+
   geom_point(aes(group = seq_along(factor(t))), size =5)+
   scale_color_manual(values = c("gray70", "darkred"))+
-  labs(fill = "Status", title = "")+
+  labs(color = "Status", title = "")+
   theme_void()+
   coord_fixed()+
   transition_states(t,
@@ -174,4 +184,4 @@ tswv_1928 |>
 anim_save("imgs/spatiotemporal.gif")
 ```
 
-![](imgs/spatiotemporal.gif){width="685"}
+![Spatial patterns for the incidence of spotted wilt virus assessed during six times during the epidemics](imgs/spatiotemporal.gif){#fig-spatiotemporal2 width="685"}
