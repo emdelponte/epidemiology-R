@@ -357,7 +357,19 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="quantitative-ordinal-scale" class="level3" data-number="6.1.1">
 <h3 data-number="6.1.1" class="anchored" data-anchor-id="quantitative-ordinal-scale"><span class="header-section-number">6.1.1</span> Quantitative ordinal scale</h3>
 <p>In the quantitative scale, each score represents a defined interval of the percentage scale. The most well-known quantitative ordinal scale is the Horsfall-Barratt (HB) scale, developed in the early 1940s when the science of plant pathology was in need of more quantitative approaches <span class="citation" data-cites="hebert1982">(<a href="references.html#ref-hebert1982" role="doc-biblioref">Hebert 1982</a>)</span>. The HB scale splits the percent scale into 12 consecutive logarithmic-based intervals of severity from 0 to 100% . The consecutive intervals increase in size from 0 to 50% and decline in size from 50 to 100%.</p>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>The divisions of the H-B scale were based on two assumptions. First, on the logarithmic relationship between the intensity of a stimulus and sensation. Second, that the rater tends to focus on objects that are of smaller size when observing objects of two colors <span class="citation" data-cites="madden2017">(<a href="references.html#ref-madden2017" role="doc-biblioref">Madden et al. 2017</a>)</span>. The topic is point of controversy in the literature, as there is little experimental evidence of these assumptions. To date, evidence shows a linear relationship between visually estimated and actual severity <span class="citation" data-cites="nutter2006a">(<a href="references.html#ref-nutter2006a" role="doc-biblioref">Nutter and Esker 2006</a>)</span>.</p>
+</div>
+</div>
 <p>To overcome the problems associated with the H-B scale <span class="citation" data-cites="bock2013">(<a href="references.html#ref-bock2013" role="doc-biblioref">Bock et al. 2013</a>)</span>, a new scale was recently proposed, following a linear relationship with percentage area diseased at severities &gt;10% (class 6 on the scale) <span class="citation" data-cites="liu2019 chiang2014">(<a href="references.html#ref-liu2019" role="doc-biblioref">Liu et al. 2019</a>; <a href="references.html#ref-chiang2014" role="doc-biblioref">Chiang et al. 2014</a>)</span></p>
 <p>Let’s create the HB scale as a data frame in R and show it in a table and in a graph.</p>
 <div class="cell">
@@ -560,15 +572,15 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>Let’s use with a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a dataframe named scores.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>unit <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>sample <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(unit, sample)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>score <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>scores <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(unit, score)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(scores)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
 <thead>
 <tr class="header">
 <th style="text-align: right;">unit</th>
-<th style="text-align: right;">sample</th>
+<th style="text-align: right;">score</th>
 </tr>
 </thead>
 <tbody>
@@ -626,7 +638,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <p>The ordinal score used in this example has 6 as the maximum score. The function returns the DSI value.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DSI</span>(scores<span class="sc">$</span>unit, scores<span class="sc">$</span>sample, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">DSI</span>(scores<span class="sc">$</span>unit, scores<span class="sc">$</span>score, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 40.27778</code></pre>
 </div>
