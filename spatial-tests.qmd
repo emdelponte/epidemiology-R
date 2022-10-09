@@ -511,12 +511,16 @@ summary(sadie_epi2)
 The `plot()` function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).
 
 ```{r}
+#| label: fig-sadie1
+#| fig-cap: "Map of the SADIE clustering indices where red identifiy patches (outflow) and blue identify gaps (inflow)"
 plot(sadie_epi2)
 ```
 
 A isocline plot can be obtained by setting the `isocline` argument as `TRUE`.
 
 ```{r}
+#| label: fig-sadie2
+#| fig-cap: "Map of the SADIE clustering indices"
 plot(sadie_epi2, isoclines = TRUE)
 ```
 
@@ -534,7 +538,8 @@ Let's work with the previous simulation data of 144 quadrats with a variable cou
 
 The *epiphy* package provides a function called `fit_two_distr()`, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the `count()` function where the number of infection units is designated as `i`. It won't work with a single vector of numbers. We create the dataframe using:
 
-```{r warning=FALSE}
+```{r}
+#| warning: false
 data_count <- epi2 |> 
   mutate(i = n) |>  # create i vector
   epiphy::count()   # create the map object of count class
@@ -542,7 +547,8 @@ data_count <- epi2 |>
 
 We can now run the function that will look fo the the vector `i`. The function returns a list of four components including the outputs of the fitting process for both distribution and the result of the log-likelihood ratio test, the `llr`.
 
-```{r warning=FALSE}
+```{r}
+#| warning: false
 fit_data_count <- fit_two_distr(data_count)
 summary(fit_data_count)
 ```
@@ -554,12 +560,18 @@ fit_data_count$llr
 The very low value of the *P*-value of the LLR test suggest that the negative binomial provides a better fit to the data. The `plot()` function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.
 
 ```{r}
+#| label: fig-freq
+#| fig-cap: "Frequencies of the observed and expected aggregated and random distributions"
 plot(fit_data_count, breaks = 5) 
 ```
 
 See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using *ggplot*. Clearly, the negative binomial is a better description for the observed count data.
 
-```{r warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-freq1
+#| fig-cap: "Frequencies of the observed and expected aggregated and random distributions"
 df <- fit_data_count$freq |>
   pivot_longer(2:4, "pattern", "value")
 
