@@ -28,14 +28,14 @@ The concept of yield levels is important to recognize as a framework to study cr
 
 The datasets used to characterize a disease:yield relationship should ideally have a wide range of values of yield and disease. Two different approaches have been used to obtain such data: 1) experimentation conducted in the field or greenhouse; or 2) from surveys in naturally infected commercial fields. Whatever the case, the relationship between a measure of yield (in absolute or relative terms) and disease variable can be appraised using scatter plots that depict a "damage curve" [@chapter2017a]. The disease variable most commonly represent the assessment of disease at a single time (critical point). Sometimes, the data obtained from multiple assessments during the epidemics is used to calculate the area under the disease progress curve that is used to represent disease variable.
 
-Let's work with actual data for the incidence of white mold disease and yield of soybean determined across different locations and years in Brazil [@lehner2016]. The data was made freely available in this [repository](https://github.com/emdelponte/paper-white-mold-meta-analysis "link").
+Let's work with actual data for the incidence of white mold disease and yield of soybean determined across different locations and years in Brazil [@lehner2016]. The variation in disease and yield was obtained by applying different fungicides that varied in efficacy, thus resulting in variable final disease incidence. The data was made freely available in this [repository](https://github.com/emdelponte/paper-white-mold-meta-analysis "link").
 
 ```{r}
 #| message: false
 #| warning: false
 
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_bw(base_size = 16))
 wm <- read_csv("https://raw.githubusercontent.com/emdelponte/paper-white-mold-meta-analysis/gh-pages/dat-white-mold-br.csv")
 glimpse(wm)
 
@@ -44,26 +44,51 @@ glimpse(wm)
 As seen above using `glimpse()` function, the full data set has 17 variables. Let's reduce the data set to a few variables (study, inc and yld) and the trials number 1 and 2.
 
 ```{r}
-wm <- wm |> 
+wm2 <- wm |> 
   select(study, inc, yld) |> 
   filter(study %in% c(1,2)) 
-wm
+wm2
 ```
 
-We can now produce the damage curves for each study. As it can be seen, the relationship can be described by a straight line.
+We can now produce the damage curves for each study. As it can be seen, the relationship can be adequately described by a straight line.
 
 ```{r}
 #| message: false
-wm |> 
+wm2 |> 
   ggplot(aes(inc, yld, 
              group = study, 
              color = factor(study)))+
   geom_point(size = 2)+
   ggthemes::scale_color_colorblind()+
-  geom_smooth(method = "lm", se = F, 
-              color = "black", fullrange = T)+
-  ylim(1500, 3500)+
+  geom_smooth(method = "lm", se = F, color = "black", fullrange = T)+
+  ylim(1800, 3500)+
+  facet_wrap(~study)+
   labs(x = "White mold incidence (%)",
        y = "Soybean yield (kg/ha)",
        color = "Study")
 ```
+
+We can plot the relationships for all studies combined, which will resemble a "spaghetti" plot after adding the individual regression lines.
+
+```{r}
+#| message: false
+#| warning: false
+p1 <- wm |> 
+  ggplot(aes(inc, yld, group = study))+
+  geom_point(size = 2, alpha = 0.5)+
+  ylim(0, 5000)+
+  labs(x = "White mold incidence (%)",
+       y = "Soybean yield (kg/ha)")
+
+p2 <- wm |> 
+  ggplot(aes(inc, yld, group = study))+
+  geom_smooth(method = "lm", se = F, fullrange = T, color = "black")+
+  ylim(0, 5000)+
+  labs(x = "White mold incidence (%)",
+       y = "Soybean yield (kg/ha)")
+
+library(patchwork)
+p1 | p2
+```
+
+
