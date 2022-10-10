@@ -22,9 +22,43 @@ The famous epidemics in the ancient history, such as the late blight of potatoes
 
 According to @chapter2017a, knowledge about the disease:yield relationship falls within crop loss assessment, a general branch of epidemiology that study the relationship between the attack by harmful organisms and the resulting yield (or yield loss) of crops. In fact, the study (analysis and modeling) of crop losses is considered central to plant pathology as no plant protection scientific reasoning could be possible without a measure of crop loss [@Savary2006].
 
-The concept of yield levels is important to recognize as a framework to study crop loss: There are three levels (from higher to lower) of yield: theoretical, attainable and actual. The **theoretical** (also known as potential) yield is determined mainly by the genotype of the crop grown under ideal conditions. It can be obtained in experimental plots managed with high input of fertilizers and pesticides. The **attainable** yield is obtained in commercial crops managed with a full range of modern technology to maximize yield. It considers the presence of *limiting factors* such as water and fertilizers. The **actual** yield is generally less than or equal to attainable yield, and is obtained under the effect of *reducing factors* such as those caused by pest (disease, insects, weeds) injuries - defined as measurable symptom caused by a harmful organism. It is the crop yield actually harvested in a farmer's field.
+The concept of yield levels is important to recognize as a framework to study crop losses: There are three levels (from higher to lower) of yield: theoretical, attainable and actual. The **theoretical** (also known as potential) yield is determined mainly by *defining factors* such as the genotype of the crop grown under ideal conditions. It can be obtained in experimental plots managed with high input of fertilizers and pesticides. The **attainable** yield is obtained in commercial crops managed with a full range of modern technology to maximize yield. It considers the presence of *limiting factors* such as water and fertilizers. The **actual** yield is generally less than or equal to attainable yield, and is obtained under the effect of *reducing factors* such as those caused by pest (disease, insects, weeds) injuries - defined as measurable symptom caused by a harmful organism. It is the crop yield actually harvested in a farmer's field. **Yield loss** (expressed in absolute or relative terms) is the difference between the attainable and the actual yield. Yield loss studies are only possible when reliable field data are collected in sufficient number to allow the development of statistical (empirical) models as well as the validation of mechanistic simulation yield loss models.
 
-**Yield loss** (expressed in absolute or relative terms) is the difference between the attainable and the actual yield. Yield loss studies are only possible when reliable field data are collected in sufficient number to allow the development of statistical (empirical) models as well as the validation of mechanistic simulation yield loss models.
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-yield
+#| fig-cap: "Yield levels"
+#| code-fold: true
+library(tidyverse)
+yl <- tibble::tribble(
+  ~yield, ~value,
+  "Theoretical", 25,
+  "Attainable", 20,
+  "Actual", 15,
+  "", 0
+)
+yl |> 
+  ggplot(aes(reorder(yield,-value), value))+
+  geom_col(width = 0.5, fill = "darkorange", alpha = 0.5)+
+  theme_minimal()+
+  geom_hline(yintercept = 25, linetype = 2)+
+  geom_hline(yintercept = 20, linetype = 2)+
+  geom_hline(yintercept = 15, linetype = 2)+
+  theme(axis.text.y=element_blank(),
+        axis.ticks.x = element_blank())+
+  annotate(geom = "text", x = 1.8, y = 22, label ="Defining factors 
+           (genotype and environment)")+
+  annotate(geom = "text", x = 2.8, y = 17.5, label ="Limiting factors
+        (fertilizers, water)")+
+  annotate(geom = "text", x = 3.8, y = 12, label ="Reducing factors
+           (pest, weeds, diseases)")+
+  annotate("segment", x = 4, y = 20, xend = 4, yend = 15,
+         arrow = arrow(type = "closed", length = unit(0.02, "npc")))+
+  annotate(geom = "text", x = 4.3, y = 17, label ="Yield loss")+
+  labs(x = "", y = "")
+  
+```
 
 ## Disease:yield data and graphs
 
