@@ -1,6 +1,4 @@
----
-title: "Disease progress curves"
----
+# Disease progress curves
 
 ::: {.callout-note appearance="simple"}
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
@@ -15,7 +13,6 @@ Once the infection is established, the pathogen *colonizes* the plant tissues an
 ```{mermaid}
 %%| label: fig-diagram
 %%| fig-cap: "Five main processes of the disease cycle"
-%%| fig-width: 6
 
 flowchart
   A[Infection] --> B[Colonization]
@@ -24,15 +21,14 @@ flowchart
   E[Survival] -- Primary inoculum --> D
   D  --> A
   D  -.-> A
-  C --> E
-
+  C --> E 
 ```
 
-Epidemiologists are generally interested in determining the length of the incubation, latent and infectious periods as influenced by factors related to the host, pathogen or the environment. This is relevant because the longer it takes for the completion of these periods, the lower is the potential number of repeated cycles. In summary, the single "infection cycle" represents all events that occur from infection to dispersal and this occurs only once for many diseases, while for others there may be multiple cycles, what was defined as an "infection chain". 
+Epidemiologists are generally interested in determining the length of the incubation, latent and infectious periods as influenced by factors related to the host, pathogen or the environment. This is relevant because the longer it takes for the completion of these periods, the lower is the potential number of repeated cycles. In summary, the single "infection cycle" represents all events that occur from infection to dispersal and this occurs only once for many diseases, while for others there may be multiple cycles, what was defined as an "infection chain".
 
 Vanderplank classified plant disease epidemics into two basic types: monocyclic or polycyclic. In **monocyclic** epidemics, inoculum capable of infecting the crop is not produced during the epidemics which are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a **polycyclic** epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle.
 
-## Disease progress curves
+## Disease curves
 
 A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
 
@@ -44,7 +40,6 @@ Firstly, let's load the essential R packages and set up the environment.
 #| warning: false
 #| message: false
 library(tidyverse) # essential packages 
-library(cowplot) # for themes 
 theme_set(theme_bw(base_size = 16)) # set global theme
 ```
 
@@ -67,15 +62,17 @@ dpc <-
 Now the plot
 
 ```{r}
-#| label: fig-dpc
-#| fig-cap: "A typical disease progress curve for an epidemic that reaches the maximum value" 
-dpc |>
+#| message: false
+dpc1 <- dpc |>
   ggplot(aes(t, y)) +
   geom_line(size = 1)+
   geom_point(size = 4, shape = 16)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")
+ggsave("imgs/dpc1.png")
 ```
+
+![A typical disease progress curve for an epidemic that reaches the maximum value](imgs/dpc1.png){#fig-dpc1}
 
 ## Curve descriptors: AUDPC
 
@@ -86,13 +83,9 @@ The precision and complexity of the analysis of progress curve data depends on t
 The AUDPC summarizes the "total measure of disease stress" and is largely used to compare epidemics [@jeger2001]. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let's extend the plot code to show those rectangles using the `annotate` function.
 
 ```{r}
-#| label: fig-audpc1
-#| fig-cap: "Representation of the area under the disease progress curve" 
-#| warning: false
 #| message: false
 
-library(ggthemes)
-dpc1 <- dpc |>
+dpc2 <- dpc |>
   ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
@@ -100,15 +93,15 @@ dpc1 <- dpc |>
     geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
   scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
+ggsave("imgs/dpc2.png")
 
-dpc1
 ```
 
-```{r}
-#| label: fig-audpc2
-#| fig-cap: "Representation of the area under the disease progress curve calculated using the trapezoidal method" 
+![Representation of the area under the disease progress curve](imgs/dpc2.png){#fig-audpc2 fig-align="center"}
 
-dpc2 <- dpc |>
+```{r}
+#| message: false
+dpc3 <- dpc |>
   ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
@@ -120,7 +113,7 @@ dpc2 <- dpc |>
             color = "darkgreen", fill = "darkorange")+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
             ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
-            color = "darkgreen",, fill = "darkorange")+
+            color = "darkgreen", fill = "darkorange")+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
             ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
             color = "darkgreen", fill = "darkorange")+
@@ -135,9 +128,12 @@ dpc2 <- dpc |>
   annotate(geom = "text", x = 26.5, y = 50,
            label = "AUDPC = 3048.5", size = 6)+
   scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
-dpc2
+ggsave("imgs/dpc3.png")
+
   
 ```
+
+![Representation of the area under the disease progress curve calculated using the trapezoidal method](imgs/dpc3.png){#fig-dpc3 fig-align="center"}
 
 In R, we can obtain the AUDPC for the DPC we created earlier using the `AUDPC` function offered by the *epifitter* package. Because we are using the percent data, we need to set the argument `y_proportion = FALSE`. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument `type` should be set to `"relative"`. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) [@simko2012].
 
