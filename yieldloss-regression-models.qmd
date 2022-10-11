@@ -29,7 +29,7 @@ wm1
 wm1 |> 
   ggplot(aes(inc, yld))+
   geom_point(size = 2)+
-  #geom_smooth(method = "lm", se = F, color = "black", fullrange = T)+
+  geom_smooth(method = "lm", se = F, color = "black", fullrange = T)+
   ylim(1800, 3500)+
   labs(x = "White mold incidence (%)",
        y = "Soybean yield (kg/ha)",
@@ -42,4 +42,17 @@ Fitting a linear regression model
 lm1 <-  lm(yld ~ inc, data = wm1) 
 summary(lm1)
 
+```
+
+The damage curves can be expressed in relative terms. For this, we divide the slope by the intercept and multiply by 100.
+
+```{r}
+slope <- -14.2/3329.14*100
+x = seq(0,1,0.1)
+y = seq(0,1,0.1)
+dat <- data.frame(x,y)
+dat |> 
+  ggplot(aes(x,y))+
+  geom_point(color = "white")+  
+  geom_abline(aes(intercept = 1, slope = slope))
 ```
