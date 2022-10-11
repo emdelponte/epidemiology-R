@@ -1,0 +1,47 @@
+---
+title: "Statistical models"
+editor: visual
+bibliography: references.bib
+---
+
+::: {.callout-note appearance="simple"}
+This is a work in progress that is currently undergoing heavy technical editing and copy-editing
+:::
+
+```{r}
+#| message: false
+#| warning: false
+library(tidyverse)
+theme_set(theme_bw(base_size = 16))
+wm <- read_csv("https://raw.githubusercontent.com/emdelponte/paper-white-mold-meta-analysis/gh-pages/dat-white-mold-br.csv")
+```
+
+```{r}
+wm1 <- wm |> 
+  select(study, inc, yld) |> 
+  filter(study %in% c(1)) 
+wm1
+```
+
+
+```{r}
+#| message: false
+#| warning: false
+wm1 |> 
+  ggplot(aes(inc, yld))+
+  geom_point(size = 2)+
+  #geom_smooth(method = "lm", se = F, color = "black", fullrange = T)+
+  ylim(1800, 3500)+
+  labs(x = "White mold incidence (%)",
+       y = "Soybean yield (kg/ha)",
+       color = "Study")
+```
+
+Fitting a linear regression model
+
+```{r}
+lm1 <- lm(yld ~ inc, data = wm1)
+summary(lm1)
+```
+
+
