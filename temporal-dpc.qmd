@@ -6,7 +6,7 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 ## How epidemics occur
 
-Before understanding how epidemics develop in time, it important to know how an epidemic occur. An epidemic begins when the **primary inoculum** (a variable number of propagules able to infect the plant) that is *surviving* somewhere establishes an intimate contact with individuals of the host population - this process is called *infection*. These inocula are usually surviving externally to the plant host and need to *disperse* (move), passively or by means of a vector, to reach the plant. It can also be that a growing host encounter a localized (static) source of inoculum.
+Before knowing how epidemics develop in time, it is important to understand how an epidemic occur. An epidemic begins when the **primary inoculum** (a variable number of propagules able to infect the plant) that is *surviving* somewhere establishes an intimate contact with individuals of the host population - this process is called *infection*. These inocula are usually surviving externally to the plant host and need to *disperse* (move), passively or by means of a vector, to reach the plant. It can also be that a growing host encounter a localized (static) source of inoculum.
 
 Once the infection is established, the pathogen *colonizes* the plant tissues and disease symptoms are noticed. When this happens, the **incubation period** can be measured in time units. A successful colonization will lead to *reproduction* of the pathogen inside and/or external to the crop, and so the **latent period** is completed, and can also be measure in time units. Finally, the **infectious period** takes place and continues until the pathogen is not capable of producing the **secondary inoculum** on the infected site.
 
@@ -26,11 +26,57 @@ flowchart
 
 Epidemiologists are generally interested in determining the length of the incubation, latent and infectious periods as influenced by factors related to the host, pathogen or the environment. This is relevant because the longer it takes for the completion of these periods, the lower is the potential number of repeated cycles. In summary, the single "infection cycle" represents all events that occur from infection to dispersal and this occurs only once for many diseases, while for others there may be multiple cycles, what was defined as an "infection chain".
 
+## Disease curves
+
+A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
+
+A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a data frame in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in percentage (0 to 100%).
+
+Firstly, let's load the essential R packages and set up the environment.
+
+```{r}
+#| warning: false
+#| message: false
+library(tidyverse) # essential packages 
+theme_set(theme_bw(base_size = 16)) # set global theme
+```
+
+There are several ways to create a data frame in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
+
+```{r}
+dpc <- 
+  tribble(
+   ~t,  ~y, 
+   0,  8, 
+   7,  13, 
+  14,  78, 
+  21,  92, 
+  28,  99, 
+  35, 99.5, 
+  42, 99.9, 
+  )
+```
+
+Now the plot
+
+```{r}
+#| message: false
+dpc1 <- dpc |>
+  ggplot(aes(t, y)) +
+  geom_line(size = 1)+
+  geom_point(size = 4, shape = 16)+
+  labs(x = "Assessment time (days)",
+       y = "Disease intensity (%)")
+ggsave("imgs/dpc1.png")
+```
+
+![A typical disease progress curve for an epidemic that reaches the maximum value](imgs/dpc1.png){#fig-dpc1}
+
 ## Epidemic classification
 
-Vanderplank classified plant disease epidemics into two basic types: monocyclic or polycyclic [@plantdi1963]. In **monocyclic** epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidmeics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals.
+Vanderplank analysed the shapes of great number of epidemic curves and classified the epidemics into two basic types: monocyclic or polycyclic [@plantdi1963]. In **monocyclic** epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidemics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Tipically, the progress curves for monocyclic epidemics have a saturation type shape.
 
-Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a **polycyclic** epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle @fig-cycles.
+Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a **polycyclic** epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle. These epidemics most commonly present a sigmoid shape @fig-cycles.
 
 ::: callout-tip
 The code below produces two simulated disease progress curves (see next section), one typical for monocyclic and the other for polycyclic epidemics, using the [epifitter](https://alvesks.github.io/epifitter/) package. Click on code to see the scripts used to generate the figure.
@@ -77,57 +123,19 @@ ggsave("imgs/cycles.png", bg = "white", width = 8, height =4)
 
 ![Hypothetical curves for monocyclic (left) and polycyclic (right) epidemics. Each circle represents a single infection cycle.](imgs/cycles.png){#fig-cycles fig-align="center"}
 
-## Disease curves
 
-A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
-
-A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a dataframe in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in percentage (0 to 100%).
-
-Firstly, let's load the essential R packages and set up the environment.
-
-```{r}
-#| warning: false
-#| message: false
-library(tidyverse) # essential packages 
-theme_set(theme_bw(base_size = 16)) # set global theme
-```
-
-There are several ways to create a data frame in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
-
-```{r}
-dpc <- 
-  tribble(
-   ~t,  ~y, 
-   0,  8, 
-   7,  13, 
-  14,  78, 
-  21,  92, 
-  28,  99, 
-  35, 99.5, 
-  42, 99.9, 
-  )
-```
-
-Now the plot
-
-```{r}
-#| message: false
-dpc1 <- dpc |>
-  ggplot(aes(t, y)) +
-  geom_line(size = 1)+
-  geom_point(size = 4, shape = 16)+
-  labs(x = "Assessment time (days)",
-       y = "Disease intensity (%)")
-ggsave("imgs/dpc1.png")
-```
-
-![A typical disease progress curve for an epidemic that reaches the maximum value](imgs/dpc1.png){#fig-dpc1}
-
-## Curve descriptors: AUDPC
+## Curve descriptors and AUDPC
 
 The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. The curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing DPCs, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
 
-The precision and complexity of the analysis of progress curve data depends on the objective of the study. In general, the goal is to synthesize similarities and different among epidemics based on common descriptors of the disease progress curves. For example, the simple appraisal of the disease intensity at any time during the course of the epidemic should be sufficient for certain situations. Furthermore, a few descriptors can be extracted including the epidemic duration, the initial and maximum disease, and the area under the disease progress curve (AUDPC).
+The precision and complexity of the analysis of progress curve data depends on the objective of the study. In general, the goal is to synthesize similarities and differences among epidemics based on common descriptors of the disease progress curves. For example, the simple appraisal of the disease intensity at any time during the course of the epidemic should be sufficient for certain situations. Furthermore, a few quantitative and qualitative descriptors can be extracted including:
+
+- Epidemic duration
+- Maximum disease
+- Curve shape
+- Area under the area under the disease progress curve (AUDPC).
+
+Let's visualize the AUDPC in the same plot that we produced above.
 
 ```{r}
 #| message: false
@@ -150,6 +158,7 @@ The AUDPC summarizes the "total measure of disease stress" and is largely used t
 
 ```{r}
 #| message: false
+#| code-fold: true
 dpc3 <- dpc |>
   ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
