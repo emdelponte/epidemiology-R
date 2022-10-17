@@ -24,7 +24,40 @@ flowchart
   C --> E 
 ```
 
-Epidemiologists are generally interested in determining the length of the incubation, latent and infectious periods as influenced by factors related to the host, pathogen or the environment. This is relevant because the longer it takes for the completion of these periods, the lower is the potential number of repeated cycles. In summary, the single "infection cycle" represents all events that occur from infection to dispersal and this occurs only once for many diseases, while for others there may be multiple cycles, what was defined as an "infection chain".
+Epidemiologists are generally interested in determining the length of the incubation, latent and infectious periods as influenced by factors related to the host, pathogen or the environment. This is relevant because the longer it takes for the completion of the incubation and latent periods, the lower is the potential number of repeated cycles. In summary, the single "infection cycle" represents all events that occur from infection to dispersal and this occurs only once for many diseases, while for others there may be multiple cycles, what was defined as an "infection chain".
+
+```{r}
+#| warning: false
+#| code-fold: true
+library(tidyverse)
+theme_set(theme_bw(base_size = 16))
+periods <- tibble::tribble(
+  ~period, ~length, ~color, ~order,
+  "Incubation", 10, 0, 1,
+  "Latent" , 15, 0, 2,
+  "Infectious", 25, 15, 3
+)
+
+p <- periods |> 
+  ggplot(aes(reorder(period, order), length, fill = period))+
+  geom_col()+
+  geom_col(aes(period, color), color = "white", fill = "white")+
+  coord_flip()+
+  theme_void()+
+  theme(legend.position = "none")+
+  
+  annotate(geom = "text", x = 0.5, y = 15, label = "----- Time --->")+
+  annotate(geom = "text", x = 1, y = 5, label = "Incubation", color = "white")+
+  annotate(geom = "text", x = 2, y = 8, label = "Latent", color = "white")+
+  annotate(geom = "text", x = 3, y = 20, label = "Infectious", color = "white")+
+  annotate(geom = "text", x = 1, y = 10.5, label = "Visible symptoms", angle = 90, size = 2)+
+  annotate(geom = "text", x = 2, y = 15.5, label = "Start reproduction", angle = 90, size =2)+
+  annotate(geom = "text", x = 3, y = 25.5, label = "End reproduction", angle = 90, size =2)+
+  scale_fill_manual(values = c("darkgreen",  "brown", "darkorange"))
+  ggsave("imgs/periods.png", width =6, height =2, bg = "white")
+```
+
+![Time-related epidemiological periods](imgs/periods.png){#fig-periods fig-align="center"}
 
 ## Disease curves
 
@@ -123,17 +156,16 @@ ggsave("imgs/cycles.png", bg = "white", width = 8, height =4)
 
 ![Hypothetical curves for monocyclic (left) and polycyclic (right) epidemics. Each circle represents a single infection cycle.](imgs/cycles.png){#fig-cycles fig-align="center"}
 
-
 ## Curve descriptors and AUDPC
 
 The depiction and analysis of disease progress curves can provide useful information for gaining understanding of the underlying epidemic process. The curves are extensively used to evaluate how disease control measures affect epidemics. When characterizing DPCs, a researcher may be interested in describing and comparing epidemics that result from different treatments, or simply in their variations as affected by changes in environment, host or pathogen.
 
 The precision and complexity of the analysis of progress curve data depends on the objective of the study. In general, the goal is to synthesize similarities and differences among epidemics based on common descriptors of the disease progress curves. For example, the simple appraisal of the disease intensity at any time during the course of the epidemic should be sufficient for certain situations. Furthermore, a few quantitative and qualitative descriptors can be extracted including:
 
-- Epidemic duration
-- Maximum disease
-- Curve shape
-- Area under the area under the disease progress curve (AUDPC).
+-   Epidemic duration
+-   Maximum disease
+-   Curve shape
+-   Area under the area under the disease progress curve (AUDPC).
 
 Let's visualize the AUDPC in the same plot that we produced above.
 
