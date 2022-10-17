@@ -54,7 +54,15 @@ p <- periods |>
   annotate(geom = "text", x = 2, y = 15.5, label = "Start reproduction", angle = 90, size =2)+
   annotate(geom = "text", x = 3, y = 25.5, label = "End reproduction", angle = 90, size =2)+
   scale_fill_manual(values = c("darkgreen",  "brown", "darkorange"))
-  ggsave("imgs/periods.png", width =6, height =2, bg = "white")
+  
+  library(png)
+  library(cowplot)
+  incubation <- readPNG("imgs/incubation.png", native = TRUE)
+  latent <- readPNG("imgs/latent.png", native = TRUE)
+  p2 <- p + draw_image(incubation , x = 0.5, y = 13, scale = 5)+
+    draw_image(latent , x = 1.5, y = 20, scale = 5)
+  ggsave("imgs/periods.png", width =6, height =2, bg = "white")  
+    
 ```
 
 ![Time-related epidemiological periods](imgs/periods.png){#fig-periods fig-align="center"}
