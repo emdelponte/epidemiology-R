@@ -6,7 +6,7 @@ title: "Standard area diagrams"
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-## Definitions 
+## Definitions
 
 According to a glossary on phytopathometry [@bock2021], standard area diagram is "*a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen. Standard area diagram sets, commonly abbreviated to SADs, are usually presented as a set of diagrams for interpolation using the percentage scale".*
 
@@ -16,9 +16,9 @@ The SADs, also known as diagrammatic scales, have long use in plant pathology, d
 
 Modern SADs have been designed using colors in numbers of two to thousands (true-color). An example of SAD are shown.
 
-![Examples of SADs](imgs/sads.png){#fig-sad2 fig-align="center" width="646"}
+![Examples of SADs](imgs/sads.png){#fig-sad2 fig-align="center" width="706"}
 
-## Best practices for SAD development 
+## Best practices for SAD development
 
 A systematic review of the literature on SADs highlighted the most important aspects related with the development and validation of the tool [@delponte2017]. A list of best practices was proposed in that review to guide future research in the area. Follows the most important aspects to be noted:
 
@@ -40,9 +40,40 @@ A systematic review of the literature on SADs highlighted the most important asp
 
 -   Both pre- and posttest experiment conditions should be the same to avoid any impact of distraction on accuracy of estimates during the tests.
 
-## Design of diagrams
+## Design of diagrams in R
 
-The diagrams used in the set have been designed using several methods and technology, ranging from hand drawing to actual photos [@delponte2017]. There is an increasing tendency to use actual photos that are analysed digitally, using standard software, to determine the percent area affected.
+The diagrams used in the set have been designed using several methods and technology, ranging from hand drawing to actual photos [@delponte2017]. There is an increasing tendency to use actual photos that are analysed digitally, using standard image analysis software, to determine the percent area affected. In this approach, a large set of images is analyzed and some images are chosen to represent the severities of the SAD.
+
+In R, we the pliman package has a function called [`sad()`](https://tiagoolivoto.github.io/pliman/reference/sad.html) which allows producing a SADs with a pre-defined number of diagrams. Firstly, as shown in the [previous chapter](data-actual-severity.html), the set of images to be selected for the SADs needs to be analysed using the `measure_disease()` function. The leaves with the smallest and highest severity will always be in the SAD. The other severities are sampled sequentially to achieve the `n` images after severity has been ordered in an ascending order. For example, if there are 30 leaves and n is set to 3, the leaves sampled will be the 1st, 15th, and 30th with the smallest severity values.
+
+Let's use the same set of 20 soybean leaves depicting the rust symptoms and create the `sbr` object.
+
+```{r}
+#| message: false
+library(pliman)
+h <- image_import("imgs/sbr_h.png")
+s <- image_import("imgs/sbr_s.png")
+b <- image_import("imgs/sbr_b.png")
+
+sbr <- measure_disease(
+  pattern = "img",
+  dir_original = "imgs/originals" ,
+  dir_processed = "imgs/processed",
+  save_image = TRUE,
+  img_healthy = h,
+  img_symptoms = s,
+  img_background = b,
+  show_image = FALSE,
+  show_original = FALSE,
+  col_background = "white" # set background of the img to white
+)
+```
+
+Now we can use the `sad()` function to create an SADs with five diagrams side by side.
+
+```{r}
+sad(sbr, 5, ncol = 5)
+```
 
 ## Analysis of SADs validation data
 
