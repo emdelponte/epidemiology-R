@@ -8,13 +8,15 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 ## Definitions
 
-According to a glossary on phytopathometry [@bock2021], standard area diagram is "*a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen. Standard area diagram sets, commonly abbreviated to SADs, are usually presented as a set of diagrams for interpolation using the percentage scale".*
+According to a glossary on phytopathometry [@bock2021], standard area diagram (SAD) is define as:
 
-The SADs, also known as diagrammatic scales, have long use in plant pathology, dating back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severities of rust pustules on wheat leaves. Modern SADs have been designed in various color types: black or white, two-color or true-color (actual photos). Follows examples of SADs in black and white and true-color:
+> *a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen.*
 
-![SADs for loquat scab on fruit. Each number represent severity as the percent area affected [@gonzález-domínguez2014]](imgs/sad-loquat.png){#fig-sad-loquat fig-align="center" width="625"}
+The SADs, also known as diagrammatic scales, are a set of diagrams which have long use in plant pathology. The tool dates back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severities of rust pustules on wheat leaves. SADs have been designed in various color types (black or white, two-color or true-color) and and incremental scales (approximated linear or logarithmic) [@delponte2017]. Follows examples of SADs in black and white and true-color:
 
-![SADs for soybean rust. Each number represent severity as the percent area affected [@franceschi2020]](imgs/sad-sbr.png){#fig-sad-sbr fig-align="center" width="669"}
+![Actual photos of symptoms of loquat scab on fruit (left) and a SADs with eight diagrams (right). Each number represents severity as the percent area affected [@gonzález-domínguez2014]](imgs/sad-loquat.png){#fig-sad-loquat fig-align="center" width="625"}
+
+![SADs for soybean rust. Each number represents severity as the percent area affected [@franceschi2020]](imgs/sad-sbr.png){#fig-sad-sbr fig-align="center" width="669"}
 
 More SADs can be found in the SADBank, a curated collection of articles on SAD development and validation. Click on the image below to get access to the database.
 
@@ -22,7 +24,7 @@ More SADs can be found in the SADBank, a curated collection of articles on SAD d
 
 ## Best practices for SAD development
 
-A systematic review of the literature on SADs highlighted the most important aspects related with the development and validation of the tool [@delponte2017]. A list of best practices was proposed in that review to guide future research in the area. Follows the most important aspects to be noted:
+A systematic review of the literature on SADs highlighted the most important aspects related with the development and validation of the tool [@delponte2017]. A list of best practices was proposed in the review to guide future research in the area. Follows the most important aspects to be noted:
 
 -   Sample a minimum number (e.g., n = 100) of specimens from natural epidemics representing the range of disease severity and typical symptoms observed.
 
@@ -44,11 +46,11 @@ A systematic review of the literature on SADs highlighted the most important asp
 
 ## Designing SADs in R
 
-The diagrams used in the set have been designed using several methods and technology, ranging from hand drawing to actual photos [@delponte2017]. There is an increasing tendency to use actual photos that are analysed digitally, using standard image analysis software, to determine the percent area affected. In this approach, a large set of images is analyzed and some images are chosen to represent the severities of the SAD.
+The diagrams used in the set have been designed using several methods and technology, ranging from hand drawing to actual photos [@delponte2017]. There is an increasing tendency to use actual photos that are analysed digitally, using standard image analysis software, to determine the percent area affected. In this approach, a large set of images is analyzed and some images are chosen to represent the severities of the SAD according to the scale structure.
 
-In R, we the pliman package has a function called [`sad()`](https://tiagoolivoto.github.io/pliman/reference/sad.html) which allows producing a SADs with a pre-defined number of diagrams. Firstly, as shown in the [previous chapter](data-actual-severity.html), the set of images to be selected for the SADs needs to be analysed using the `measure_disease()` function. The leaves with the smallest and highest severity will always be in the SAD. The other severities are sampled sequentially to achieve the `n` images after severity has been ordered in an ascending order. For example, if there are 30 leaves and n is set to 3, the leaves sampled will be the 1st, 15th, and 30th with the smallest severity values.
+In R, we the pliman package has a function called `sad()` which allows the automatic generation of a SADs with a pre-defined number of diagrams. Firstly, as shown in the [previous chapter](data-actual-severity.html), the set of images to be selected needs to be analysed using the `measure_disease()` function. Then, a SADs is automatically generated. In the function, the leaves with the smallest and highest severity will be selected for the SAD. The intermediate diagrams are sampled sequentially to achieve the pre-defined number of images after the severity has been ordered from low to high. More details of the function [here](https://tiagoolivoto.github.io/pliman/reference/sad.html).
 
-Let's use the same set of 10 soybean leaves depicting the rust symptoms and create the `sbr` object.
+Let's use the [same set](data-actual-severity.html#multiple-images) of 10 soybean leaves, as seen in the previous chapter, depicting the rust symptoms and create the `sbr` object.
 
 ```{r}
 #| message: false
@@ -67,13 +69,13 @@ sbr <- measure_disease(
   img_symptoms = s,
   img_background = b,
   show_image = FALSE,
-  show_original = FALSE,
+  show_original = TRUE,
   col_background = "white", 
   verbose = FALSE
 )
 ```
 
-Now we can use the `sad()` function to create an SADs with five diagrams side by side.
+We are ready to run the `sad()` function to create a SADs with five diagrams side by side.
 
 ```{r}
 sad(sbr, 5, ncol = 5)
