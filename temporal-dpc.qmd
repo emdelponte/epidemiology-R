@@ -28,6 +28,7 @@ Epidemiologists are generally interested in determining the length of the incuba
 
 ```{r}
 #| warning: false
+#| message: false
 #| code-fold: true
 library(tidyverse)
 theme_set(theme_bw(base_size = 16))
@@ -50,22 +51,26 @@ p <- periods |>
   annotate(geom = "text", x = 1, y = 5, label = "Incubation", color = "white")+
   annotate(geom = "text", x = 2, y = 8, label = "Latent", color = "white")+
   annotate(geom = "text", x = 3, y = 20, label = "Infectious", color = "white")+
-  annotate(geom = "text", x = 1, y = 10.5, label = "Visible symptoms", angle = 90, size = 2)+
-  annotate(geom = "text", x = 2, y = 15.5, label = "Start reproduction", angle = 90, size =2)+
-  annotate(geom = "text", x = 3, y = 25.5, label = "End reproduction", angle = 90, size =2)+
-  scale_fill_manual(values = c("darkgreen",  "brown", "darkorange"))
-  
+  annotate(geom = "text", x = 1, y = 10.5, label = "Visible symptoms", angle = 90, size = 1.7)+
+  annotate(geom = "text", x = 2, y = 15.5, label = "Reproduction starts", angle = 90, size =1.7)+
+  annotate(geom = "text", x = 3, y = 25.5, label = "Reproduction ends", angle = 90, size =1.7)+
+  scale_fill_manual(values = c("darkgreen",  "brown", "darkorange"))+
+  geom_segment(mapping=aes(x=0.6, y=0, xend=0.6, yend=10), arrow=arrow(ends='both'), size=1, color = "black")+ 
+  geom_segment(mapping=aes(x=1.6, y=0, xend=1.6, yend=15), arrow=arrow(ends='both'), size=1, color = "black")  +
+   geom_segment(mapping=aes(x=2.6, y=15, xend=2.6, yend=25), arrow=arrow(ends='both'), size=1, color = "black") 
+
+
   library(png)
   library(cowplot)
-  incubation <- readPNG("imgs/incubation.png", native = TRUE)
-  latent <- readPNG("imgs/latent.png", native = TRUE)
+  incubation <- readPNG("imgs/incubation3.png", native = TRUE)
+  latent <- readPNG("imgs/latent3.png", native = TRUE)
   p2 <- p + draw_image(incubation , x = 0.5, y = 13, scale = 5)+
     draw_image(latent , x = 1.5, y = 20, scale = 5)
   ggsave("imgs/periods.png", width =6, height =2, bg = "white")  
     
 ```
 
-![Time-related epidemiological periods: ](imgs/periods.png){#fig-periods fig-align="center"}
+![Three time-related epidemiological periods and their relations with stages of the disease cycle including colonization (symptoms) and reproduction (sporulation in the case of fungi). Drawings of apple scab symptoms and signs adapted from Agrios (2005)](imgs/periods.png){#fig-periods fig-align="center"}
 
 ## Disease curves
 
