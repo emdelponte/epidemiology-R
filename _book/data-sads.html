@@ -333,7 +333,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <ul>
   <li><a href="#definitions" id="toc-definitions" class="nav-link active" data-scroll-target="#definitions"><span class="toc-section-number">5.1</span>  Definitions</a></li>
   <li><a href="#best-practices-for-sad-development" id="toc-best-practices-for-sad-development" class="nav-link" data-scroll-target="#best-practices-for-sad-development"><span class="toc-section-number">5.2</span>  Best practices for SAD development</a></li>
-  <li><a href="#design-of-diagrams-in-r" id="toc-design-of-diagrams-in-r" class="nav-link" data-scroll-target="#design-of-diagrams-in-r"><span class="toc-section-number">5.3</span>  Design of diagrams in R</a></li>
+  <li><a href="#designing-sads-in-r" id="toc-designing-sads-in-r" class="nav-link" data-scroll-target="#designing-sads-in-r"><span class="toc-section-number">5.3</span>  Designing SADs in R</a></li>
   <li><a href="#analysis-of-sads-validation-data" id="toc-analysis-of-sads-validation-data" class="nav-link" data-scroll-target="#analysis-of-sads-validation-data"><span class="toc-section-number">5.4</span>  Analysis of SADs validation data</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-sads.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -407,8 +407,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <li><p>Both pre- and posttest experiment conditions should be the same to avoid any impact of distraction on accuracy of estimates during the tests.</p></li>
 </ul>
 </section>
-<section id="design-of-diagrams-in-r" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="design-of-diagrams-in-r"><span class="header-section-number">5.3</span> Design of diagrams in R</h2>
+<section id="designing-sads-in-r" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="designing-sads-in-r"><span class="header-section-number">5.3</span> Designing SADs in R</h2>
 <p>The diagrams used in the set have been designed using several methods and technology, ranging from hand drawing to actual photos <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>. There is an increasing tendency to use actual photos that are analysed digitally, using standard image analysis software, to determine the percent area affected. In this approach, a large set of images is analyzed and some images are chosen to represent the severities of the SAD.</p>
 <p>In R, we the pliman package has a function called <a href="https://tiagoolivoto.github.io/pliman/reference/sad.html"><code>sad()</code></a> which allows producing a SADs with a pre-defined number of diagrams. Firstly, as shown in the <a href="data-actual-severity.html">previous chapter</a>, the set of images to be selected for the SADs needs to be analysed using the <code>measure_disease()</code> function. The leaves with the smallest and highest severity will always be in the SAD. The other severities are sampled sequentially to achieve the <code>n</code> images after severity has been ordered in an ascending order. For example, if there are 30 leaves and n is set to 3, the leaves sampled will be the 1st, 15th, and 30th with the smallest severity values.</p>
 <p>Let’s use the same set of 10 soybean leaves depicting the rust symptoms and create the <code>sbr</code> object.</p>
@@ -428,52 +428,23 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_original =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_background =</span> <span class="st">"white"</span> <span class="co"># set background of the img to white</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img11 |====                                     | 10% 00:00:00 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img35 |========                                 | 20% 00:00:03 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img37 |============                             | 30% 00:00:04 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img38 |================                         | 40% 00:00:06 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img46 |====================                     | 50% 00:00:07 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img5 |=========================                 | 60% 00:00:10 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img63 |=============================            | 70% 00:00:13 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img67 |=================================        | 80% 00:00:16 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img70 |=====================================    | 90% 00:00:18 </code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img75 |=========================================| 100% 00:00:20 </code></pre>
-</div>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_background =</span> <span class="st">"white"</span>, </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can use the <code>sad()</code> function to create an SADs with five diagrams side by side.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sad</span>(sbr, <span class="dv">5</span>, <span class="at">ncol =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sad</span>(sbr, <span class="dv">5</span>, <span class="at">ncol =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-sads_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    img  healthy symptomatic rank
-8 img67 99.88751   0.1124857    1
-5 img46 93.37805   6.6219501    3
-4 img38 78.53148  21.4685186    5
-3 img37 67.20719  32.7928134    7
-6  img5 17.63036  82.3696351   10</code></pre>
+8 img67 99.86496   0.1350391    1
+5 img46 93.10976   6.8902361    3
+4 img38 85.90906  14.0909355    5
+3 img37 61.26903  38.7309666    7
+6  img5 26.03359  73.9664068   10</code></pre>
 </div>
 </div>
 </section>
