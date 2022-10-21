@@ -20,14 +20,14 @@ The SADs, also known as diagrammatic scales, are a set of diagrams which have lo
 
 More SADs can be found in the SADBank, a curated collection of articles on SAD development and validation. Click on the image below to get access to the database.
 
-[![SADBank, a curated collection of articles](imgs/sadbank.png){#fig-sadbank width="595" height="362"}](https://emdelponte.github.io/sadbank/)
+[![SADBank, a curated collection of articles](imgs/sadbank.png){#fig-sadbank fig-align="center" width="85%"}](https://emdelponte.github.io/sadbank/)
 
 ## Best practices for SAD development
 
 A systematic review of the literature on SADs highlighted the most important aspects related with the development and validation of the tool [@delponte2017]. A list of best practices was proposed in the review to guide future research in the area. Follows the most important aspects to be noted:
 
-::: callout-important
-## Best practies on SADs development
+::: callout-tip
+## Best practices on SADs development
 
 -   Sample a minimum number (e.g., n = 100) of specimens from natural epidemics representing the range of disease severity and typical symptoms observed.
 
@@ -89,7 +89,8 @@ sad(sbr, 5, ncol = 5)
 
 To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods ([see chapter](data-accuracy.html)), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature.
 
-Inferential methods should be used for testing hypotheses related to gain in accuracy and reliability. If parametric tests are used (paired t-test for example), make sure to check that the assumptions are not violated. Alternatively, nonparametric tests (Kolmogorov-Smirnov for paired data) or nonparametric bootstrapping should be used when the conditions for parametric tests are not met. Reliability (intrarater or interrater) analysis should also be performed using concordance or intraclass correlation methods.
+Inferential methods should be used for testing hypotheses related to gain in accuracy. If parametric tests are used (paired t-test for example), make sure to check that the assumptions are not violated. Alternatively, nonparametric tests (Kolmogorov-Smirnov for paired data) or nonparametric bootstrapping should be used when the conditions for parametric tests are not met. More recently, a (parametric) mixed modelling framework has been used to analyse SADs validation data where raters are taknen as a random effects in the model.
+
 
 ### Boostrapping differences of means
 
@@ -188,3 +189,48 @@ wilcox.test(sbr$aided, sbr$unaided, paired = TRUE)
 ```
 
 As shown above, the two assumptions were violated, so we could rely more confidently on the non-parametric test.
+
+### Mixed modeling 
+
+Mixed models are a form of linear modeling used for hierarchical data when the response variable has a normal distribution and the predictor variables are a mix of fixed and random effects. These models are also good when data points might not be fully independent of each other, which is the case in our example.
+
+Here we treat raters as random effects. We expect them to be samples from a larger population about which we are trying to draw conclusions. We can sample more individuals who would be different from the ones we have and we can infer something about the whole population from the sampled in our analyses. The random effects capture variation that exists but isn't relevant to the question, like variation between subjects for which we have repeated measures.
+
+Let's start reshaping our data to the long format and assign it to a new dataframe.
+
+```{r}
+
+sbr2 <- sbr |> 
+  pivot_longer(2:3, names_to = "condition", values_to = "estimate")
+
+
+```
+
+Now we fit the mixed model using the `lmer` function of the lme4 package. We will fit the model to the logit of the estimate because they should be bounded between zero and one. Preliminary analysis using non-transformed or log-transformed data resulted in lack of normality of residuals and heterocedasticity (not shown).
+
+
+```{r}
+#| warning: false
+#| message: false
+library(lme4) 
+library(car) # for logit function
+mix <- lmer(logit(estimate) ~ condition + (1 | rater), data = sbr2)
+
+# Check model performance
+library(performance)
+check_model(mix)
+check_normality(mix)
+check_heteroscedasticity(mix)
+
+# Check effect of condition
+car::Anova(mix)
+
+# Estimate the means for each group
+library(emmeans)
+em <- emmeans(mix, ~ condition, transform = "response")
+multcomp::cld(em)
+plot(em) +
+  coord_flip()+
+  xlim(0.7,1)
+
+```
