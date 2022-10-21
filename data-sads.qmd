@@ -1,5 +1,7 @@
 ---
 title: "Standard area diagrams"
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ::: {.callout-note appearance="simple"}
@@ -8,11 +10,9 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 ## Definitions
 
-According to a glossary on phytopathometry [@bock2021], standard area diagram (SAD) is define as:
+According to a glossary on phytopathometry [@bock2021], standard area diagram (SAD) can be defined as "*a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen".*
 
-> *a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen.*
-
-The SADs, also known as diagrammatic scales, are a set of diagrams which have long use in plant pathology. The tool dates back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severities of rust pustules on wheat leaves. SADs have been designed in various color types (black or white, two-color or true-color) and and incremental scales (approximated linear or logarithmic) [@delponte2017]. Follows examples of SADs in black and white and true-color:
+The SADs, also known as diagrammatic scales, are a set of diagrams which have long use in plant pathology. The tool dates back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severity values of rust pustules on wheat leaves. SADs have been designed in various color types (black or white, two-color or true-color) and and incremental scales (approximated linear or logarithmic) [@delponte2017]. Follows examples of SADs in black and white and true-color:
 
 ![Actual photos of symptoms of loquat scab on fruit (left) and a SADs with eight diagrams (right). Each number represents severity as the percent area affected [@gonzález-domínguez2014]](imgs/sad-loquat.png){#fig-sad-loquat fig-align="center" width="625"}
 
@@ -20,7 +20,7 @@ The SADs, also known as diagrammatic scales, are a set of diagrams which have lo
 
 More SADs can be found in the SADBank, a curated collection of articles on SAD development and validation. Click on the image below to get access to the database.
 
-[![SADBank, a curated collection of articles](imgs/sadbank.png){#fig-sadbank width="645"}](https://emdelponte.github.io/sadbank/)
+[![SADBank, a curated collection of articles](imgs/sadbank.png){#fig-sadbank width="595" height="362"}](https://emdelponte.github.io/sadbank/)
 
 ## Best practices for SAD development
 
@@ -83,4 +83,81 @@ sad(sbr, 5, ncol = 5)
 
 ## Analysis of SADs validation data
 
-To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods ([see specific chapter](data-accuracy.html)), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature. Inferential methods should be used for testing hypotheses related to gain in accuracy and reliability. If parametric tests are used, make sure to check that the assumptions are not violated. Alternatively, nonparametric bootstrapping should be used when the conditions for parametric tests are not met. Reliability (intrarater or interrater) analysis should also be performed using concordance or intraclass correlation methods.
+To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods ([see chapter](data-accuracy.html)), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature.
+
+Inferential methods should be used for testing hypotheses related to gain in accuracy and reliability. If parametric tests are used, make sure to check that the assumptions are not violated. Alternatively, nonparametric bootstrapping should be used when the conditions for parametric tests are not met. Reliability (intrarater or interrater) analysis should also be performed using concordance or intraclass correlation methods.
+
+### Boostrapping differences of means
+
+A bootstrap-based equivalence test procedure was first proposed as complementary to parametric (t-test) or non-parametric (KS-test) to analyze severity estimation data in a study on the development and validation of a SADs for pecan scab [@yadav2012]. The equivalence test was used to calculate 95% confidence intervals (CIs) for each statistic by bootstrapping using the percentile method (with an equivalence test, the null hypothesis is the converse of H0, i.e. the null hypothesis is non-equivalence). In that study, the test was used to compare means of the CCC statistics across raters under two conditions: 1) without versus with the SAD; and 2) experienced versus inexperienced raters.
+
+Let's work with the CCC data for a sample of 20 raters who estimated severity of soybean rust SAD first without and then with the aid. The CCC was calculated as shown [here](data-accuracy.html#concordance-correlation-coefficient).
+
+```{r}
+sbr <- tibble::tribble(
+  ~rater, ~aided, ~unaided,
+      1L,   0.97,     0.85,
+      2L,   0.97,     0.85,
+      3L,   0.95,     0.82,
+      4L,   0.93,     0.69,
+      5L,   0.97,     0.84,
+      6L,   0.96,     0.86,
+      7L,   0.98,     0.78,
+      8L,   0.93,     0.72,
+      9L,   0.94,     0.67,
+     10L,   0.95,     0.53,
+     11L,   0.94,     0.78,
+     12L,   0.98,     0.89,
+     13L,   0.96,      0.8,
+     14L,   0.98,     0.87,
+     15L,   0.98,      0.9,
+     16L,   0.98,     0.87,
+     17L,   0.98,     0.84,
+     18L,   0.97,     0.86,
+     19L,   0.98,     0.89,
+     20L,   0.98,     0.78
+  )
+```
+
+Let's visualize the data using boxplots. Each point in the plot represents a rater.
+
+```{r}
+#| warning: false
+
+library(tidyverse)
+theme_set(theme_bw(base_size = 16))
+sbr |> 
+  pivot_longer(2:3, names_to = "condition", values_to ="estimate") |> 
+  ggplot(aes(condition, estimate))+
+  geom_boxplot(outlier.colour = NA)+
+  geom_jitter(width = 0.05)+
+  ylim(0.2,1)
+```
+
+We now need to create a variable for the difference of the means of the estimates (aided minus unaided) prior to bootstrapping this difference using two specialized packages. If the 95% CI does not include zero, this means that there was a significant improvement in the statistics.
+
+```{r}
+#| warning: false
+
+
+# diff of means
+sbr$diff <- sbr$aided - sbr$unaided
+
+
+## Using the simpleboot and boot packages
+library(simpleboot)
+b.mean <- one.boot(sbr$diff, mean, 999)
+boot::boot.ci(b.mean)
+hist(b.mean)
+
+# Using bootstrap package
+library(bootstrap)
+b <- bootstrap(sbr$diff, 999, mean)
+quantile(b$thetastar, c(.025,.975))
+
+```
+
+```{r}
+
+
+```

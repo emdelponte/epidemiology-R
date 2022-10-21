@@ -334,7 +334,10 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#definitions" id="toc-definitions" class="nav-link active" data-scroll-target="#definitions"><span class="toc-section-number">5.1</span>  Definitions</a></li>
   <li><a href="#best-practices-for-sad-development" id="toc-best-practices-for-sad-development" class="nav-link" data-scroll-target="#best-practices-for-sad-development"><span class="toc-section-number">5.2</span>  Best practices for SAD development</a></li>
   <li><a href="#designing-sads-in-r" id="toc-designing-sads-in-r" class="nav-link" data-scroll-target="#designing-sads-in-r"><span class="toc-section-number">5.3</span>  Designing SADs in R</a></li>
-  <li><a href="#analysis-of-sads-validation-data" id="toc-analysis-of-sads-validation-data" class="nav-link" data-scroll-target="#analysis-of-sads-validation-data"><span class="toc-section-number">5.4</span>  Analysis of SADs validation data</a></li>
+  <li><a href="#analysis-of-sads-validation-data" id="toc-analysis-of-sads-validation-data" class="nav-link" data-scroll-target="#analysis-of-sads-validation-data"><span class="toc-section-number">5.4</span>  Analysis of SADs validation data</a>
+  <ul>
+  <li><a href="#boostrapping-differences-of-means" id="toc-boostrapping-differences-of-means" class="nav-link" data-scroll-target="#boostrapping-differences-of-means"><span class="toc-section-number">5.4.1</span>  Boostrapping differences of means</a></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-sads.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -370,11 +373,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <section id="definitions" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="definitions"><span class="header-section-number">5.1</span> Definitions</h2>
-<p>According to a glossary on phytopathometry <span class="citation" data-cites="bock2021">(<a href="references.html#ref-bock2021" role="doc-biblioref">Bock et al. 2021</a>)</span>, standard area diagram (SAD) is define as:</p>
-<blockquote class="blockquote">
-<p><em>a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen.</em></p>
-</blockquote>
-<p>The SADs, also known as diagrammatic scales, are a set of diagrams which have long use in plant pathology. The tool dates back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severities of rust pustules on wheat leaves. SADs have been designed in various color types (black or white, two-color or true-color) and and incremental scales (approximated linear or logarithmic) <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>. Follows examples of SADs in black and white and true-color:</p>
+<p>According to a glossary on phytopathometry <span class="citation" data-cites="bock2021">(<a href="references.html#ref-bock2021" role="doc-biblioref">Bock et al. 2021</a>)</span>, standard area diagram (SAD) can be defined as “<em>a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen”.</em></p>
+<p>The SADs, also known as diagrammatic scales, are a set of diagrams which have long use in plant pathology. The tool dates back to the late 1800s, when the Cobb scale was developed with five diagrams illustrating a range of severity values of rust pustules on wheat leaves. SADs have been designed in various color types (black or white, two-color or true-color) and and incremental scales (approximated linear or logarithmic) <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>. Follows examples of SADs in black and white and true-color:</p>
 <div id="fig-sad-loquat" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/sad-loquat.png" class="img-fluid figure-img" width="625"></p>
@@ -390,7 +390,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>More SADs can be found in the SADBank, a curated collection of articles on SAD development and validation. Click on the image below to get access to the database.</p>
 <div id="fig-sadbank" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><a href="https://emdelponte.github.io/sadbank/"><img src="imgs/sadbank.png" class="img-fluid figure-img" width="645"></a></p>
+<p><a href="https://emdelponte.github.io/sadbank/"><img src="imgs/sadbank.png" width="595" height="362" class="figure-img"></a></p>
 <p></p><figcaption class="figure-caption">Figure&nbsp;5.3: SADBank, a curated collection of articles</figcaption><p></p>
 </figure>
 </div>
@@ -443,17 +443,102 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    img  healthy symptomatic rank
-8 img67 99.81324   0.1867622    1
-5 img46 92.97249   7.0275080    3
-4 img38 84.85635  15.1436461    5
-3 img37 60.39923  39.6007677    7
-6  img5 21.81334  78.1866583   10</code></pre>
+8 img67 99.88450   0.1155042    1
+5 img46 93.22204   6.7779614    3
+4 img38 80.37831  19.6216853    5
+3 img37 58.87484  41.1251609    7
+6  img5 19.16171  80.8382907   10</code></pre>
 </div>
 </div>
 </section>
 <section id="analysis-of-sads-validation-data" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="analysis-of-sads-validation-data"><span class="header-section-number">5.4</span> Analysis of SADs validation data</h2>
-<p>To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods (<a href="data-accuracy.html">see specific chapter</a>), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature. Inferential methods should be used for testing hypotheses related to gain in accuracy and reliability. If parametric tests are used, make sure to check that the assumptions are not violated. Alternatively, nonparametric bootstrapping should be used when the conditions for parametric tests are not met. Reliability (intrarater or interrater) analysis should also be performed using concordance or intraclass correlation methods.</p>
+<p>To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods (<a href="data-accuracy.html">see chapter</a>), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature.</p>
+<p>Inferential methods should be used for testing hypotheses related to gain in accuracy and reliability. If parametric tests are used, make sure to check that the assumptions are not violated. Alternatively, nonparametric bootstrapping should be used when the conditions for parametric tests are not met. Reliability (intrarater or interrater) analysis should also be performed using concordance or intraclass correlation methods.</p>
+<section id="boostrapping-differences-of-means" class="level3" data-number="5.4.1">
+<h3 data-number="5.4.1" class="anchored" data-anchor-id="boostrapping-differences-of-means"><span class="header-section-number">5.4.1</span> Boostrapping differences of means</h3>
+<p>A bootstrap-based equivalence test procedure was first proposed as complementary to parametric (t-test) or non-parametric (KS-test) to analyze severity estimation data in a study on the development and validation of a SADs for pecan scab <span class="citation" data-cites="yadav2012">(<a href="references.html#ref-yadav2012" role="doc-biblioref">Yadav et al. 2012</a>)</span>. The equivalence test was used to calculate 95% confidence intervals (CIs) for each statistic by bootstrapping using the percentile method (with an equivalence test, the null hypothesis is the converse of H0, i.e.&nbsp;the null hypothesis is non-equivalence). In that study, the test was used to compare means of the CCC statistics across raters under two conditions: 1) without versus with the SAD; and 2) experienced versus inexperienced raters.</p>
+<p>Let’s work with the CCC data for a sample of 20 raters who estimated severity of soybean rust SAD first without and then with the aid. The CCC was calculated as shown <a href="data-accuracy.html#concordance-correlation-coefficient">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>rater, <span class="sc">~</span>aided, <span class="sc">~</span>unaided,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>      1L,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>      2L,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      3L,   <span class="fl">0.95</span>,     <span class="fl">0.82</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      4L,   <span class="fl">0.93</span>,     <span class="fl">0.69</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      5L,   <span class="fl">0.97</span>,     <span class="fl">0.84</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      6L,   <span class="fl">0.96</span>,     <span class="fl">0.86</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      7L,   <span class="fl">0.98</span>,     <span class="fl">0.78</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      8L,   <span class="fl">0.93</span>,     <span class="fl">0.72</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      9L,   <span class="fl">0.94</span>,     <span class="fl">0.67</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>     10L,   <span class="fl">0.95</span>,     <span class="fl">0.53</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>     11L,   <span class="fl">0.94</span>,     <span class="fl">0.78</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>     12L,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>     13L,   <span class="fl">0.96</span>,      <span class="fl">0.8</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>     14L,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     15L,   <span class="fl">0.98</span>,      <span class="fl">0.9</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>     16L,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>     17L,   <span class="fl">0.98</span>,     <span class="fl">0.84</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>     18L,   <span class="fl">0.97</span>,     <span class="fl">0.86</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>     19L,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>     20L,   <span class="fl">0.98</span>,     <span class="fl">0.78</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s visualize the data using boxplots. Each point in the plot represents a rater.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>sbr <span class="sc">|&gt;</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"condition"</span>, <span class="at">values_to =</span><span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, estimate))<span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.05</span>)<span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fl">0.2</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-sads_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We now need to create a variable for the difference of the means of the estimates (aided minus unaided) prior to bootstrapping this difference using two specialized packages. If the 95% CI does not include zero, this means that there was a significant improvement in the statistics.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># diff of means</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sbr<span class="sc">$</span>diff <span class="ot">&lt;-</span> sbr<span class="sc">$</span>aided <span class="sc">-</span> sbr<span class="sc">$</span>unaided</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">## Using the simpleboot and boot packages</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(simpleboot)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>b.mean <span class="ot">&lt;-</span> <span class="fu">one.boot</span>(sbr<span class="sc">$</span>diff, mean, <span class="dv">999</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>boot<span class="sc">::</span><span class="fu">boot.ci</span>(b.mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 999 bootstrap replicates
+
+CALL : 
+boot::boot.ci(boot.out = b.mean)
+
+Intervals : 
+Level      Normal              Basic         
+95%   ( 0.1246,  0.1942 )   ( 0.1225,  0.1905 )  
+
+Level     Percentile            BCa          
+95%   ( 0.1285,  0.1965 )   ( 0.1310,  0.2016 )  
+Calculations and Intervals on Original Scale</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(b.mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-sads_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using bootstrap package</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(bootstrap)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">bootstrap</span>(sbr<span class="sc">$</span>diff, <span class="dv">999</span>, mean)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(b<span class="sc">$</span>thetastar, <span class="fu">c</span>(.<span class="dv">025</span>,.<span class="dv">975</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    2.5%    97.5% 
+0.129000 0.195025 </code></pre>
+</div>
+</div>
+<div class="cell">
+
+</div>
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
@@ -469,7 +554,11 @@ Franceschi, V. T., Alves, K. S., Mazaro, S. M., Godoy, C. V., Duarte, H. S. S., 
 <div id="ref-gonzález-domínguez2014" class="csl-entry" role="doc-biblioentry">
 González-Domínguez, E., Martins, R. B., Del Ponte, E. M., Michereff, S. J., García-Jiménez, J., and Armengol, J. 2014. Development and validation of a standard area diagram set to aid assessment of severity of loquat scab on fruit. European Journal of Plant Pathology. Available at: <a href="http://dx.doi.org/10.1007/s10658-014-0400-2">http://dx.doi.org/10.1007/s10658-014-0400-2</a>.
 </div>
+<div id="ref-yadav2012" class="csl-entry" role="doc-biblioentry">
+Yadav, N. V. S., Vos, S. M. de, Bock, C. H., and Wood, B. W. 2012. Development and validation of standard area diagrams to aid assessment of pecan scab symptoms on fruit. Plant Pathology. 62:325–335 Available at: <a href="http://dx.doi.org/10.1111/j.1365-3059.2012.02641.x">http://dx.doi.org/10.1111/j.1365-3059.2012.02641.x</a>.
 </div>
+</div>
+</section>
 </section>
 
 </main> <!-- /main -->
