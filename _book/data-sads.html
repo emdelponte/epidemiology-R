@@ -467,19 +467,19 @@ Best practices on SADs development
 <p><img src="data-sads_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>    img  healthy symptomatic rank
-8 img67 99.79830   0.2016965    1
-5 img46 93.34974   6.6502650    3
-4 img38 85.64651  14.3534873    5
-3 img37 55.57313  44.4268703    7
-6  img5 16.15837  83.8416340   10</code></pre>
+<pre><code>     img  healthy symptomatic rank
+8  img67 99.85175   0.1482492    1
+10 img75 93.27097   6.7290325    3
+4  img38 82.42025  17.5797537    5
+3  img37 60.80829  39.1917101    7
+6   img5 21.87085  78.1291521   10</code></pre>
 </div>
 </div>
 </section>
 <section id="analysis-of-sads-validation-data" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="analysis-of-sads-validation-data"><span class="header-section-number">5.4</span> Analysis of SADs validation data</h2>
 <p>To evaluate the effect of SAD on accuracy components, analyze the data, preferably using concordance analysis methods (<a href="data-accuracy.html">see chapter</a>), to fully explore which component is affected and to gain insight into the ramification of errors. Linear regression should not be used as the sole method but it could be complementary for comparison with previous literature.</p>
-<p>Inferential methods should be used for testing hypotheses related to gain in accuracy. If parametric tests are used (paired t-test for example), make sure to check that the assumptions are not violated. Alternatively, nonparametric tests (Kolmogorov-Smirnov for paired data) or nonparametric bootstrapping should be used when the conditions for parametric tests are not met. More recently, a (parametric) mixed modelling framework has been used to analyse SADs validation data where raters are taknen as a random effects in the model.</p>
+<p>Inferential methods should be used for testing hypotheses related to gain in accuracy. If parametric tests are used (paired t-test for example), make sure to check that the assumptions are not violated. Alternatively, nonparametric tests (Wilcoxon signed rank) or nonparametric bootstrapping should be used when the conditions for parametric tests are not met. More recently, a (parametric) mixed modelling framework has been used to analyse SADs validation data where raters are taken as a random effects in the model <span class="citation" data-cites="gonzález-domínguez2014 franceschi2020 pereira2020">(<a href="references.html#ref-gonzález-domínguez2014" role="doc-biblioref">González-Domínguez et al. 2014</a>; <a href="references.html#ref-franceschi2020" role="doc-biblioref">Franceschi et al. 2020</a>; <a href="references.html#ref-pereira2020" role="doc-biblioref">Pereira et al. 2020</a>)</span>.</p>
 <section id="boostrapping-differences-of-means" class="level3" data-number="5.4.1">
 <h3 data-number="5.4.1" class="anchored" data-anchor-id="boostrapping-differences-of-means"><span class="header-section-number">5.4.1</span> Boostrapping differences of means</h3>
 <p>A bootstrap-based equivalence test procedure was first proposed as complementary to parametric (paired t-test) or non-parametric (Wilcoxon) to analyze severity estimation data in a study on the development and validation of a SADs for pecan scab <span class="citation" data-cites="yadav2012">(<a href="references.html#ref-yadav2012" role="doc-biblioref">Yadav et al. 2012</a>)</span>. The equivalence test was used to calculate 95% confidence intervals (CIs) for each statistic by bootstrapping using the percentile method (with an equivalence test, the null hypothesis is the converse of H0, i.e.&nbsp;the null hypothesis is non-equivalence). In that study, the test was used to compare means of the CCC statistics across raters under two conditions: 1) without versus with the SAD; and 2) experienced versus inexperienced raters.</p>
@@ -542,10 +542,10 @@ boot::boot.ci(boot.out = b.mean)
 
 Intervals : 
 Level      Normal              Basic         
-95%   ( 0.1251,  0.1943 )   ( 0.1225,  0.1900 )  
+95%   ( 0.1239,  0.1933 )   ( 0.1220,  0.1900 )  
 
 Level     Percentile            BCa          
-95%   ( 0.1290,  0.1965 )   ( 0.1306,  0.1974 )  
+95%   ( 0.1290,  0.1970 )   ( 0.1275,  0.1955 )  
 Calculations and Intervals on Original Scale</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(b.mean<span class="sc">$</span>data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -562,20 +562,20 @@ Calculations and Intervals on Original Scale</code></pre>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">quantile</span>(b<span class="sc">$</span>thetastar, <span class="fu">c</span>(.<span class="dv">025</span>,.<span class="dv">975</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    2.5%    97.5% 
-0.127975 0.195500 </code></pre>
+0.127975 0.199025 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(b<span class="sc">$</span>thetastar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.1589905</code></pre>
+<pre><code>[1] 0.1600085</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(b<span class="sc">$</span>thetastar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.01763156</code></pre>
+<pre><code>[1] 0.01773288</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="fu">sqrt</span>(<span class="fu">var</span>(x)<span class="sc">/</span><span class="fu">length</span>(x))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">se</span>(b<span class="sc">$</span>thetastar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.0005578379</code></pre>
+<pre><code>[1] 0.0005610435</code></pre>
 </div>
 </div>
 </section>
@@ -736,6 +736,9 @@ González-Domínguez, E., Martins, R. B., Del Ponte, E. M., Michereff, S. J., Ga
 </div>
 <div id="ref-moreira2018" class="csl-entry" role="doc-biblioentry">
 Moreira, R. R., Silva Silveira Duarte, H. da, and De Mio, L. L. M. 2018. Improving accuracy, precision and reliability of severity estimates of Glomerella leaf spot on apple leaves using a new standard area diagram set. European Journal of Plant Pathology. 153:975–982 Available at: <a href="http://dx.doi.org/10.1007/s10658-018-01610-0">http://dx.doi.org/10.1007/s10658-018-01610-0</a>.
+</div>
+<div id="ref-pereira2020" class="csl-entry" role="doc-biblioentry">
+Pereira, W. E. L., Andrade, S. M. P. de, Del Ponte, E. M., Esteves, M. B., Canale, M. C., Takita, M. A., et al. 2020. Severity assessment in the Nicotiana tabacum-Xylella fastidiosa subsp. pauca pathosystem: design and interlaboratory validation of a standard area diagram set. Tropical Plant Pathology. 45:710–722 Available at: <a href="http://dx.doi.org/10.1007/s40858-020-00401-5">http://dx.doi.org/10.1007/s40858-020-00401-5</a>.
 </div>
 <div id="ref-yadav2012" class="csl-entry" role="doc-biblioentry">
 Yadav, N. V. S., Vos, S. M. de, Bock, C. H., and Wood, B. W. 2012. Development and validation of standard area diagrams to aid assessment of pecan scab symptoms on fruit. Plant Pathology. 62:325–335 Available at: <a href="http://dx.doi.org/10.1111/j.1365-3059.2012.02641.x">http://dx.doi.org/10.1111/j.1365-3059.2012.02641.x</a>.
