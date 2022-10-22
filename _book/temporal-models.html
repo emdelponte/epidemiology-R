@@ -392,18 +392,18 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>The integral for the exponential model is given by</p>
 <p><span class="math inline">\(y = y_0 e^{r_Et}\)</span>,</p>
 <p>where <span class="math inline">\(y0\)</span> is and <span class="math inline">\(r\)</span> are obtained via estimation. Let’s simulate two curves by varying <span class="math inline">\(r\)</span> while fixing <span class="math inline">\(y0\)</span> and varying the latter while fixing <span class="math inline">\(r_E\)</span>. We produce the two plots in <em>ggplot</em> and add the predicted curve using the `stat_function`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g.&nbsp;doubling infection rate, reducing initial inoculum by half, etc.).</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/unnamed-chunk-1_67e7b45f09ce24901a585be08b7d7a9a">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># essential packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/unnamed-chunk-2_ec01fc135d25bf76ad6860849436bdd2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y0 <span class="ot">&lt;-</span> <span class="fl">0.001</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fl">0.06</span> </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tmax <span class="ot">&lt;-</span> <span class="dv">60</span> <span class="co"># maximum duration t of the epidemics</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>tmax), <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">1</span>)) <span class="co"># define the axes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In the plot below, note that the infection rate in one curve was doubled (<span class="math inline">\(r\)</span> = 0.12)</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-exp1_b219fc85bbad4ccd2fe24c80ea2da2af">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(t) y0 <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> t), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
@@ -420,7 +420,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now the inoculum was increased five times while using the same doubled rate.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-exp2_1c78eac2b448cd8fef81de5062b813ae">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(t) y0 <span class="sc">*</span> <span class="fu">exp</span>(r <span class="sc">*</span> <span class="dv">2</span> <span class="sc">*</span> t), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
@@ -446,7 +446,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(\frac{dy}{dt} = 1 - (1-y)e^{-r_Mt}\)</span></p>
 <p>This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics do not contribute new infections. Therefore, different from the exponential model, disease intensity <span class="math inline">\(y\)</span> does not affect the epidemics and so the absolute rate is proportional to <span class="math inline">\((1-y)\)</span>.</p>
 <p>Let’s simulate two monomolecular curve with different rate parameters where one is one third of the other.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-mono1_de401666a51d2e9eacccaa662e7eeaae">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> ((<span class="dv">1</span> <span class="sc">-</span> y0) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>r <span class="sc">*</span> t))) <span class="sc">+</span></span>
@@ -464,7 +464,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now inoculum was increased 100 times with the reduced rate.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-mono2_d0f0fa1a5b4690b1d3bf23317ba2dcf2">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(t) <span class="dv">1</span> <span class="sc">-</span> ((<span class="dv">1</span> <span class="sc">-</span> y0) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>r <span class="sc">/</span> <span class="dv">2</span> <span class="sc">*</span> t))) <span class="sc">+</span></span>
@@ -492,7 +492,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(y = \frac{1}{1 + (1-y_0).e^{-r.t}}\)</span>,</p>
 <p>where <span class="math inline">\(r_L\)</span> is the apparent infection rate of the logistic model and <span class="math inline">\(y0\)</span> is the disease intensity at <span class="math inline">\(t=0\)</span>. This model provides a good fit to polycyclic epidemics.</p>
 <p>Let’s check two curves where in one the infection rate is double while keeping the same initial inoculum.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-log1_d2d0a87159d8d064de18575909c4e864">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(</span>
@@ -513,7 +513,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now the inoculum is reduced 10 times for a same infection rate.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-log2_d5903d38de6b828ba7ebc49312c0ce05">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(</span>
@@ -542,7 +542,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(y = e^{(ln(y0)).{e^{-r_G.t)}}}\)</span>,</p>
 <p>where <span class="math inline">\(r_G\)</span> is the apparent infection rate for the Gompertz models and <span class="math inline">\(y_0\)</span> is the disease intensity at <span class="math inline">\(t = 0\)</span>.</p>
 <p>Let’s check curves for two rates.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-gomp1_81b9b61267826de0781d0fdac7c2b092">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(</span>
@@ -563,7 +563,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>And those when inoculum was reduced one thousand times.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-models_cache/html/fig-gomp2_bd2ec2192253572c08c2e23e154d8e80">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(</span>

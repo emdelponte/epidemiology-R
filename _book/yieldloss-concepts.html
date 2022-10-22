@@ -389,7 +389,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <li><strong>Actual</strong> yield is generally less than or equal to attainable yield, and is obtained under the effect of <em>reducing factors</em> such as those caused by pest (disease, insects, weeds) injuries - defined as measurable symptom caused by a harmful organism. It is the crop yield actually harvested in a farmer’s field.</li>
 </ul>
 <p><strong>Yield loss</strong> (expressed in absolute or relative terms) is the difference between the attainable and the actual yield. Yield loss studies are only possible when reliable field data are collected in sufficient number to allow the development of statistical (empirical) models as well as the validation of mechanistic simulation yield loss models.</p>
-<div class="cell">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-yield_b51454140352ccde8394f6fedf574b29">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -438,7 +438,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>In experiments, the researcher rely on different treatments that will result in different epidemics - assuming that the disease affects yield. These treatments include mainly the use of inoculations of varying inoculum levels (when disease is expected to be low) and application of fungicides at varying rate, number or timing (when disease is expected to be high) Alternatively, one can use different host genotypes (preferably isolines or near isolines) with varying susceptibility or manipulate the environment (e.g.&nbsp;irrigation).</p>
 <p>Whatever the case, the relationship between a measure of yield (in absolute or relative terms) and disease variable can be appraised using scatter plots that depict a “damage curve” <span class="citation" data-cites="chapter2017a">(<a href="references.html#ref-chapter2017a" role="doc-biblioref">Madden et al. 2017</a>)</span>. The disease variable most commonly represent the assessment of disease at a single time (critical point). Sometimes, the data obtained from multiple assessments during the epidemics is used to calculate the area under the disease progress curve that is used to represent disease variable.</p>
 <p>Let’s work with actual data on the incidence of white mold disease and yield of soybean determined across different locations and years in Brazil <span class="citation" data-cites="lehner2016">(<a href="references.html#ref-lehner2016" role="doc-biblioref">Lehner et al. 2016</a>)</span>. The variation in disease and yield was obtained by applying different fungicides that varied in efficacy, thus resulting in variable final disease incidence. The data was made freely available in this <a href="https://github.com/emdelponte/paper-white-mold-meta-analysis" title="link">repository</a>.</p>
-<div class="cell">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/unnamed-chunk-2_93cd244746ff50017bd2f1f11651ef10">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>wm <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/emdelponte/paper-white-mold-meta-analysis/gh-pages/dat-white-mold-br.csv"</span>)</span>
@@ -466,7 +466,7 @@ $ yld             &lt;dbl&gt; 3729, 3739, 3863, 3904, 4471, 4313, 4177, 4001, 40
 </div>
 </div>
 <p>As seen above using <code>glimpse()</code> function, the full data set has 17 variables. Let’s reduce the data set to a few variables (study, inc and yld) and the trials number 1 and 2.</p>
-<div class="cell">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/unnamed-chunk-3_eb6d64835fedf68c5f5d80b5cac7816b">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wm2 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(study, inc, yld) <span class="sc">|&gt;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(study <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)) </span>
@@ -489,7 +489,7 @@ $ yld             &lt;dbl&gt; 3729, 3739, 3863, 3904, 4471, 4313, 4177, 4001, 40
 </div>
 </div>
 <p>We can now produce the damage curves for each study. As it can be seen, the relationship can be adequately described by a straight line.</p>
-<div class="cell">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve1_de6b364b2ce7f3e7db76a93e6f7d3aca">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wm2 <span class="sc">|&gt;</span> </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">group =</span> study, </span>
@@ -512,7 +512,7 @@ $ yld             &lt;dbl&gt; 3729, 3739, 3863, 3904, 4471, 4313, 4177, 4001, 40
 </div>
 </div>
 <p>We can plot the relationships for all studies combined, which will resemble a “spaghetti” plot after adding the individual regression lines.</p>
-<div class="cell">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve2_dbd87ecfc3a8d3bf024f2c4186cfc85c">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, <span class="at">group =</span> study))<span class="sc">+</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>

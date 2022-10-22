@@ -398,18 +398,18 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <h4 data-number="14.1.1.1" class="anchored" data-anchor-id="runs-test"><span class="header-section-number">14.1.1.1</span> Runs test</h4>
 <p>A run is defined as a succession of one or more diseased or healthy plants, which are followed and preceded by a plant of the other disease status or no plant at all. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.</p>
 <p>Let’s create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 20 plants and assign it to <code>y</code>. For plotting purposes, we make a dataframe for more complete information.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-1_eb5c40d4f8dda2785c548c2a842b4cbb">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-2_67aabc95eea09add96dd952544cbf971">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>) <span class="co"># position of each plant</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>z1 <span class="ot">&lt;-</span> <span class="dv">1</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>row1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x1, y1, z1) <span class="co"># create a dataframe</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-runs_0eca293db0be6efd524736e9ae647151">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>row1 <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x1, z1, <span class="at">label =</span> x1, <span class="at">color =</span> <span class="fu">factor</span>(y1))) <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">15</span>, <span class="at">size =</span> <span class="dv">7</span>) <span class="sc">+</span></span>
@@ -431,7 +431,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>We can write a code in R and create a function named <code>oruns.test()</code> for the ordinary runs test.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-4_e9cae2a14e25e75db7e00c6ba88652f9">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>oruns.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> x </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  U <span class="ot">=</span> <span class="fu">max</span>(<span class="fu">cumsum</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="fu">diff</span>(S) <span class="sc">!=</span> <span class="dv">0</span>))) </span>
@@ -458,14 +458,14 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now run the test for the example series above.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-5_d01dbc14932787e0bf8b3bacbd3cc3de">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(row1<span class="sc">$</span>y1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 7 runs. The number of expected runs is 10.6 . P-value: 0.084166 . Alternative hypothesis: non-randomness"</code></pre>
 </div>
 </div>
 <p>There are built-in functions in R packages that allow for running the ordinary runs test. Let’s load the packages and run the test. Note that the results of the <code>RunsTest()</code> of the <em>DescTools</em> package is the same as the one produced by our custom function.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-6_2aeb9933521a708222459285e14e95d5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DescTools)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">RunsTest</span>(row1<span class="sc">$</span>y1)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -483,7 +483,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <h4 data-number="14.1.1.2" class="anchored" data-anchor-id="doublets"><span class="header-section-number">14.1.1.2</span> Doublets</h4>
 <p>Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the yard. If the observed number is greater than the expected number, contagion within the field is suspected.</p>
 <p>Let’s manually produce a code to execute the doublets test. To facilitate, we can create a function and name it <code>doublets.test()</code>. The only argument needed is the vector of binary data.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-7_0d4d435d14db1b1497fcb8b1ff466f05">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>doublets.test <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  S <span class="ot">&lt;-</span> x</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  matrix <span class="ot">&lt;-</span> <span class="fu">cbind</span>(S[<span class="sc">-</span><span class="fu">length</span>(S)], S[<span class="sc">-</span><span class="dv">1</span>])</span>
@@ -513,7 +513,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can run the doublets test for the same sequence.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-8_a241c13cb60102709becc5f53517a2dd">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">doublets.test</span>(row1<span class="sc">$</span>y1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 4 doublets. The number of expected doublets is 2.8 . P-value: 0.4497 . Alternative hypothesis: non-randomness"</code></pre>
@@ -524,7 +524,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <h4 data-number="14.1.1.3" class="anchored" data-anchor-id="join-count"><span class="header-section-number">14.1.1.3</span> Join count</h4>
 <p>In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified in the test. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.</p>
 <p>In R, we can use the <code>join.count()</code> function of the <em>spdep</em> package to perform a joint count test. First, we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-9_10fca2339caa1be3fedbc96a5cfd54fb">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
@@ -532,7 +532,7 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Visualize the two-dimensional array:</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-joincount1_01be2dc878c3054ac8995646c406a149">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">matrix</span>(S2, <span class="dv">5</span> , <span class="dv">5</span>))</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame</span></span>
@@ -554,14 +554,14 @@ alternative hypothesis: true number of runs is not equal the expected number</co
 </div>
 </div>
 <p>After loading the library, we need to generate a list of neighbors (nb) for a grid of cells. This is performed with the <code>cell2nb()</code> function by informing the number of rows and columns. The argument <code>rook</code> means shared edge, but it could be the <code>queen</code>, for shared edge or vertex. We can use the default.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-11_d3f4509d138c9a3d3f808cde82e439c1">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">5</span>,</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">ncol =</span> <span class="dv">5</span>,</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">type =</span> <span class="st">"rook"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>joincount.test()</code> function runs the BB join count test for spatial autocorrelation. The method uses a spatial weights matrix in weights list form for testing whether same-status joins occur more frequently than would be expected if the zones were labelled in a spatially random way. We need to inform the sequence as factor and the <code>nb</code> object we created previously.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-12_e06aca01f550868ffe81f196899157d1">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">joincount.test</span>(<span class="fu">factor</span>(S2), </span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                <span class="fu">nb2listw</span>(nb))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -592,7 +592,7 @@ Same colour statistic           Expectation              Variance
 </div>
 <p>The function returns a list with a class for each of the status (in this case 0 and 1) with several components. We should look at the <em>P-value</em>. The alternative hypothesis (greater) is that the same status joins occur more frequently than expected if they were labelled in a spatial random way. In this case, we do not reject the null hypothesis of randomness.</p>
 <p>We can run the ordinary runs and doublets tests, which only considers the adjacent neighbor, for the same series and compare the results.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-13_55b226eb863a6132ab1371c78d678c97">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">oruns.test</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "There are 17 runs. The number of expected runs is 13.5 . P-value: 0.149673 . Alternative hypothesis: non-randomness"</code></pre>
@@ -603,7 +603,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>Let’s repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence to reject the null hypothesis, indicating aggregation of plants.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-14_caab9f66475edfd9a13e2bf1b1f7c14d">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
@@ -643,7 +643,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>We can apply these tests for a real example epidemic data provided by the <a href="https://chgigot.github.io/epiphy/">epiphy</a> R package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. Let’s work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset <code>tomato_tswv</code> to a new dataframe called <code>tswv_1929</code>.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-15_09b7b0821523fca7b189f2f8c8ecee31">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="ot">&lt;-</span> tomato_tswv<span class="sc">$</span>field_1929</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span>  <span class="fu">head</span>(<span class="dv">10</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -662,7 +662,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let’s visualize these data for each sampling time.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-tsw_f1f9153435d8f4709cc44e67b3a56931">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i))) <span class="sc">+</span></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -681,7 +681,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-17_cd7aa9b8e90268ad79a2a5e245275585">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(x, y) <span class="sc">|&gt;</span> </span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -696,7 +696,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>There are 60 rows and 24 columns.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-18_eb9ed25080aa87fe81207cfb604ab155">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Neighbor grid</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>nb1 <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="at">nrow =</span> <span class="dv">60</span>,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">ncol =</span> <span class="dv">24</span>,</span>
@@ -736,7 +736,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-19_9c80cea60d2cd9478a393795ea47a38e">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 1</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span></span>
@@ -811,7 +811,7 @@ Same colour statistic           Expectation              Variance
 <h4 data-number="14.1.2.1" class="anchored" data-anchor-id="autocorrelation"><span class="header-section-number">14.1.2.1</span> Autocorrelation</h4>
 <p>Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>.</p>
 <p>We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>, which was extracted from table 11.3 of <span class="citation" data-cites="Campbell1990">Campbell and Madden. L. (<a href="references.html#ref-Campbell1990" role="doc-biblioref">1990</a>)</span>. The data represent a single transect with the number of <em>Macrophomia phaseolina</em> propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-20_0a44a58daf2e35dd8c6e3ab150ca52b3">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>mp <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">i =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">16</span>),</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">41</span>, <span class="dv">60</span>, <span class="dv">81</span>, <span class="dv">22</span>, <span class="dv">8</span>, <span class="dv">20</span>, <span class="dv">28</span>, <span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">8</span>, <span class="dv">0</span>, <span class="dv">43</span>, <span class="dv">61</span>, <span class="dv">50</span>)</span>
@@ -838,7 +838,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>We can produce a plot to visualize the number of propagules across the transect.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-macrophomina_a74db61428becca54ae190b27c4d3c65">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span></span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, y)) <span class="sc">+</span></span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -857,7 +857,7 @@ Same colour statistic           Expectation              Variance
 </div>
 </div>
 <p>To calculate the autocorrelation coefficient in R, we can use the <code>ac()</code> function of the <em>tseries</em> package.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-22_4e6b75b7bd5af6a9c349335fce0d9166">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tseries)</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>ac_mp <span class="ot">&lt;-</span> <span class="fu">acf</span>(mp<span class="sc">$</span>y, <span class="at">lag =</span> <span class="dv">5</span>, <span class="at">pl =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>ac_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -870,7 +870,7 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 </div>
 <p>Let’s store the results in a data frame to facilitate visualization.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-23_bff48949cdf89ba61c1f073f88c49c8a">
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">index =</span> ac_mp<span class="sc">$</span>lag, ac_mp<span class="sc">$</span>acf)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>ac_mp_dat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -884,7 +884,7 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 </div>
 <p>And now the plot known as autocorrelogram.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel_88fc8ac7593fdab33f1d7a18f8ef13b0">
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span></span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(index, ac_mp.acf, <span class="at">label =</span> <span class="fu">round</span>(ac_mp.acf, <span class="dv">3</span>))) <span class="sc">+</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -903,7 +903,7 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 <p>The values we obtained here are not the same but quite close to the values reported in <span class="citation" data-cites="madden2017">Madden et al. (<a href="references.html#ref-madden2017" role="doc-biblioref">2017b</a>)</span>. For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.</p>
 <p>The method above is usually referred to Moran’s I <span class="citation" data-cites="Moran1950">(<a href="references.html#ref-Moran1950" role="doc-biblioref">Moran 1950</a>)</span>. Let’s use another example dataset from the book to calculate the Moran’s I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of <span class="citation" data-cites="xu2004">Xu and Madden (<a href="references.html#ref-xu2004" role="doc-biblioref">2004</a>)</span>. The data is stored in a CSV file.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-25_e747c89610a1be0d4ddc3598e7667353">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>epi <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/xu-madden-simulated.csv"</span>)</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>epi1 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>,</span>
@@ -912,20 +912,20 @@ Autocorrelations of series 'mp$y', by lag
 <span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Using <code>moran()</code> function of the <em>spdep</em> R package.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-26_c75d7a9d5845ed968850dd67513bcb28">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(spdep)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>cell2nb()</code> function creates the neighbor list with 12 rows and 12 columns, which is how the 144 quadrats are arranged.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-27_24cc0444191764081e1df47533ecbff9">
 <div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">cell2nb</span>(<span class="dv">12</span>, <span class="dv">12</span>, <span class="at">type =</span> <span class="st">"queen"</span>, <span class="at">torus =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>nb2listw()</code> function supplements a neighbors list with spatial weights for the chosen coding scheme. We use the default W, which is the row standardized (sums over all links to n). We then create the <code>col.W</code> neighbor list.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-28_3d20b8c6d53b5cdea0a21ff4501ffcf5">
 <div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>col.W <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nb, <span class="at">style =</span> <span class="st">"W"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The Moran’s I statistic is given by the <code>moran()</code> function</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-29_ab588a66c111e76e3d6be7da8d17628e">
 <div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran</span>(<span class="at">x =</span> epi1, <span class="co"># numeric vector</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">listw =</span> col.W, <span class="co"># the nb list</span></span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">n =</span> <span class="dv">12</span>, <span class="co"># number of zones</span></span>
@@ -939,7 +939,7 @@ $K
 </div>
 </div>
 <p>The Moran’s test for spatial autocorrelation uses spatial weights matrix in weights list form.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-30_96a33636c971dbb066649d8f398ecbc7">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">moran.test</span>(<span class="at">x =</span> epi1, </span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>           <span class="at">listw =</span> col.W)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -956,14 +956,14 @@ Moran I statistic       Expectation          Variance
       0.698231416      -0.006993007       0.001962596 </code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-31_bc693b58e735275eb242dec2c590484b">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>correl_I <span class="ot">&lt;-</span> <span class="fu">sp.correlogram</span>(nb, epi1, </span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>                           <span class="at">order =</span> <span class="dv">10</span>,</span>
 <span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">method =</span> <span class="st">"I"</span>,  </span>
 <span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can generate a correlogram using the output of the <code>sp.correlogram()</code> function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden et al. 2017a</a>)</span>. Let’s store the results in a dataframe.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-32_964649b3f3d605601f2c02b320d3bc0d">
 <div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(correl_I<span class="sc">$</span>res) <span class="sc">|&gt;</span> </span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">lag =</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>))</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -974,7 +974,7 @@ Moran I statistic       Expectation          Variance
 </div>
 </div>
 <p>Then, we can generate the plot using <em>ggplot</em>.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel2_5182cf7aca25d2cac2cac76c4ca99865">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(lag, X1)) <span class="sc">+</span></span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -996,7 +996,7 @@ Moran I statistic       Expectation          Variance
 <p>The semi-variance at a distance d = 0 will be zero, because there are no differences between points that are compared to themselves. However, as points are compared to increasingly distant points, the semi-variance increases. At some distance, called the <em>Range</em>, the semi-variance will become approximately equal to the variance of the whole surface itself. This is the greatest distance over which the value at a point on the surface is related to the value at another point. In fact, when the distance between two sampling units is small, the sampling units are close together and, usually, variability is low. As the distance increases, so (usually) does the variability.</p>
 <p>Results of semi-variance analysis are normally presented as a graphical plot of semi-variance against distance, which is referred to as a semi-variogram. The main characteristics of the semi-variogram of interest are the nugget, the range and the sill, and their estimations are usually based on an appropriate (non-linear) model fitted to the data points representing the semi-variogram.</p>
 <p>For the semi-variance, we will use the <code>variog()</code> function of the <em>geoR</em> package. We need the data in the long format (x, y and z). Let’s reshape the data to the long format and store it in <code>epi2</code> dataframe.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-34_30d2378463c97f2d685dd97a914fd5c4">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span> epi <span class="sc">|&gt;</span></span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">13</span>,</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">"y"</span>,</span>
@@ -1016,7 +1016,7 @@ Moran I statistic       Expectation          Variance
 6     1     6     0</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-35_aba3a9a1e947ead06332750ac3da5b2a">
 <div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(geoR)</span>
 <span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the coordinates are x and y and the data is the n</span></span>
 <span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">variog</span>(<span class="at">coords =</span> epi2[,<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>], <span class="at">data =</span> epi2[,<span class="dv">3</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1024,7 +1024,7 @@ Moran I statistic       Expectation          Variance
 <pre><code>variog: computing omnidirectional variogram</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-semivariance_a2e448d34ba51aa62fc02ffa1871face">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">variofit</span>(v1, <span class="at">ini.cov.pars =</span> <span class="fu">c</span>(<span class="dv">1200</span>, <span class="dv">12</span>), </span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">cov.model =</span> <span class="st">"exponential"</span>, </span>
 <span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">fix.nugget =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1053,7 +1053,7 @@ variofit: minimisation function used: optim </code></pre>
 <p>The null hypothesis to test is that the observed pattern is random. SADIE calculates an index of aggregation (<em>Ia</em>). When this is equal to 1, the pattern is random. If this is greater than 1, the pattern is aggregated. Hypothesis testing is based on the randomization procedure. The null hypothesis of randomness, with an alternative hypothesis of aggregation.</p>
 <p>An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.</p>
 <p>In R, we can use the <code>sadie()</code> function of the <em>epiphy</em> package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>. We can map the original data as follows:</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-mapgrouped_6177b0a67a8fa85fd7217d2edf28f5d8">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> n, <span class="at">fill =</span> n)) <span class="sc">+</span></span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -1070,7 +1070,7 @@ variofit: minimisation function used: optim </code></pre>
 </div>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-38_e4f855f844aa596527d8508bd24674a7">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>sadie_epi2 <span class="ot">&lt;-</span> <span class="fu">sadie</span>(epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1087,7 +1087,7 @@ Ia: 2.4622 (Pa = &lt; 2.22e-16)</code></pre>
 </div>
 </div>
 <p>The simple output shows the <em>Ia</em> value and associated <em>P</em>-value. As suggested by the low value of the <em>P</em>-value, the pattern is highly aggregated. The <code>summary()</code> function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the <code>summary()</code> function.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-39_007b6a7ced659cdca300f523ddb098f8">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
@@ -1116,7 +1116,7 @@ Number of permutations: 100</code></pre>
 </div>
 </div>
 <p>The <code>plot()</code> function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie1_1bba131d3cd3ec4bc304c3a06b71aa03">
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-sadie1" class="quarto-figure quarto-figure-center anchored">
@@ -1128,7 +1128,7 @@ Number of permutations: 100</code></pre>
 </div>
 </div>
 <p>A isocline plot can be obtained by setting the <code>isocline</code> argument as <code>TRUE</code>.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie2_2eb466704424d43df8a24bc9ff2bdad4">
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2, <span class="at">isoclines =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-sadie2" class="quarto-figure quarto-figure-center anchored">
@@ -1152,13 +1152,13 @@ Number of permutations: 100</code></pre>
 <p>Two statistical distributions can be adopted as reference for the description of random or aggregated patterns of disease data in the form of counts of infection within sampling units. Take the count of lesions on a leaf, or the count of diseased plants on a quadrat, as an example. If the presence of a lesion/diseased plant does not increase or decrease the chance that other lesions/diseased plants will occur, the <em>Poisson</em> distribution describes the distribution of lesions on the leaf. Otherwise, the <em>negative binomial</em> provides a better description.</p>
 <p>Let’s work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won’t consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of infected units per sampling unit.</p>
 <p>The <em>epiphy</em> package provides a function called <code>fit_two_distr()</code>, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the <code>count()</code> function where the number of infection units is designated as <code>i</code>. It won’t work with a single vector of numbers. We create the dataframe using:</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-42_1a310c3e3f01e278d849b3bc8256ad98">
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>data_count <span class="ot">&lt;-</span> epi2 <span class="sc">|&gt;</span> </span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> n) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
 <span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">count</span>()   <span class="co"># create the map object of count class</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now run the function that will look fo the the vector <code>i</code>. The function returns a list of four components including the outputs of the fitting process for both distribution and the result of the log-likelihood ratio test, the <code>llr</code>.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-43_a266dccdb2575ee7f9612f9fc34b9d91">
 <div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>fit_data_count <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(data_count)</span>
 <span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_data_count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1181,7 +1181,7 @@ prob  0.0222118  0.0033463  6.6378 3.184e-11 ***
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-44_878a44b339b9892e662925e79de0bb48">
 <div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>fit_data_count<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
@@ -1194,7 +1194,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>The very low value of the <em>P</em>-value of the LLR test suggest that the negative binomial provides a better fit to the data. The <code>plot()</code> function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-freq_586a2cf0b967cc740c20a38c835a3938">
 <div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_data_count, <span class="at">breaks =</span> <span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-freq" class="quarto-figure quarto-figure-center anchored">
@@ -1206,7 +1206,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using <em>ggplot</em>. Clearly, the negative binomial is a better description for the observed count data.</p>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-freq1_6fc233a72ce6a09e7b0d9df787fc268d">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span></span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="st">"pattern"</span>, <span class="st">"value"</span>)</span>
 <span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1227,7 +1227,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </section>
 <section id="indices-of-aggregation" class="level4" data-number="14.2.1.2">
 <h4 data-number="14.2.1.2" class="anchored" data-anchor-id="indices-of-aggregation"><span class="header-section-number">14.2.1.2</span> Indices of aggregation</h4>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-47_d612e554a4cfcda9a9f3c197d425fd4f">
 <div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a>idx <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(data_count, <span class="at">method =</span> <span class="st">"fisher"</span>)</span>
 <span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>idx</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1294,7 +1294,7 @@ alternative hypothesis: two.sided</code></pre>
 </section>
 <section id="incidence-data" class="level3" data-number="14.2.2">
 <h3 data-number="14.2.2" class="anchored" data-anchor-id="incidence-data"><span class="header-section-number">14.2.2</span> Incidence data</h3>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-48_64b89348f438a07e94ce46a340767199">
 <div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>fhb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/fhb.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 4009 Columns: 4
@@ -1334,7 +1334,7 @@ The following objects are masked from 'package:tidyr':
   Conditional ICC: 0.600</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-49_75af775e14b26ee083feff71b4744128">
 <div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
 <span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
 <span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
@@ -1458,7 +1458,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 <p><img src="spatial-tests_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-50_33c913745d00360c116cfc5090add2ed">
 <div class="sourceCode cell-code" id="cb115"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb115-1"><a href="#cb115-1" aria-hidden="true" tabindex="-1"></a>tas <span class="sc">|&gt;</span></span>
 <span id="cb115-2"><a href="#cb115-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(count)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1554,7 +1554,7 @@ data:  t
 z = 7.9886, p-value = 1.365e-15</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-51_fbb276044c8231150fd236f570220b98">
 <div class="sourceCode cell-code" id="cb128"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb128-1"><a href="#cb128-1" aria-hidden="true" tabindex="-1"></a>dw <span class="ot">&lt;-</span> dogwood_anthracnose <span class="sc">|&gt;</span> </span>
 <span id="cb128-2"><a href="#cb128-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="dv">1990</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb128-3"><a href="#cb128-3" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>

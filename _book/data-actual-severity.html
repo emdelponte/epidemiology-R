@@ -398,14 +398,14 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </figure>
 </div>
 <p>Now that we have the image palettes, we need to import them into the environment, using <code>image_import()</code> function for further analysis. Let’s create an image object for each palette named h (healthy), s (symptoms) and b (background).</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-1_b598b97d359cac503ca53b51504aa206">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pliman)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_h.png"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_s.png"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_b.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can visualize the imported image palettes using the <code>image_combine()</code> function.</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/fig-palettes_d4183d2ef6b41ac34c7060309e0ecdb0">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(h, s, b, <span class="at">ncol =</span><span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-palettes" class="quarto-figure quarto-figure-center anchored">
@@ -435,7 +435,7 @@ Tip
 <p>The collection of images used in this chapter can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs/originals">here</a>.</p>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/fig-img_e87c623f9a26c3acce6b42891c64591b">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img46.png"</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -448,7 +448,7 @@ Tip
 </div>
 </div>
 <p>Now the fun begins with the <code>measure_disease()</code> function. Four arguments are needed when using the reference image palettes, the one representing the target image and each of the three images of the color palettes. As the author of the package says “pliman will take care of all details!”. The severity is the value shown under symptomatic in the output.</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-4_afa4ea29c8bf7dc2a61276ebd3fbe2cf">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> img,</span>
@@ -481,7 +481,7 @@ attr(,"class")
 <p>Measuring severity in single images is fun, but usually we don’t have a single image to process but several. It would take a longer time to process each one using the above procedure, thus becoming tedious.</p>
 <p>To automate the process, <em>pliman</em> offers a batch processing approach. For such, instead of using <code>img</code> argument, one can use <code>pattern</code> and define the prefix of names of the images. In addition, we also need to define the folder where the original files are located.</p>
 <p>If the users wants to save the processed masks, the <code>save_image</code> argument needs to be set to TRUE and the directory where the images will be saved also should be informed. Check below how to process 10 images of soybean rust symptoms. The outcome is a <code>list</code> object with the measures of the percent healthy and percent symptomatic area for each leaf in the <code>severity</code> object.</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-5_33ccfc7dbe31f5a8bd65fd3b744fe358">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pliman <span class="ot">&lt;-</span> <span class="fu">measure_disease</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"img"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_original =</span> <span class="st">"imgs/originals"</span> ,</span>
@@ -511,7 +511,7 @@ attr(,"class")
 <pre><code>Processing image img5 |=========================                 | 60% 00:00:06 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img63 |=============================            | 70% 00:00:07 </code></pre>
+<pre><code>Processing image img63 |=============================            | 70% 00:00:08 </code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing image img67 |=================================        | 80% 00:00:09 </code></pre>
@@ -557,7 +557,7 @@ attr(,"class")
 <section id="how-good-are-these-measurements" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="how-good-are-these-measurements"><span class="header-section-number">4.4</span> How good are these measurements?</h2>
 <p>These 10 images were previously processed in QUANT software for measuring severity which is also based on image threshold. Let’s create a tibble for the image code and respective “actual” severity - assuming QUANT measures as reference.</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-6_c48e27f95b2b90a50c2c17cd92cdfca1">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>quant <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>img, <span class="sc">~</span>actual,</span>
@@ -574,7 +574,7 @@ attr(,"class")
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now combine the two dataframes and produce a scatter plot relating the two measures.</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/fig-scatter_b65bbd2056d15b3f82b69ee9e8cf26f8">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">left_join</span>(severity, quant)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining, by = "img"</code></pre>
@@ -598,7 +598,7 @@ attr(,"class")
 </div>
 </div>
 <p>The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the <em>pliman</em> measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!</p>
-<div class="cell">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-8_ae361bd07a4c75acc60a044b3c0658de">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ccc <span class="ot">&lt;-</span> <span class="fu">epi.ccc</span>(dat<span class="sc">$</span>actual, dat<span class="sc">$</span>symptomatic)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>ccc<span class="sc">$</span>rho.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

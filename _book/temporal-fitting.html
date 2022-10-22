@@ -388,11 +388,11 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </section>
 <section id="entering-data" class="level3" data-number="9.0.2">
 <h3 data-number="9.0.2" class="anchored" data-anchor-id="entering-data"><span class="header-section-number">9.0.2</span> Entering data</h3>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-1_fae07568b7d4339547349f5aa391423e">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># essential packages </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-2_b3cddc5b2f6a36817622917a43c2e623">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pepper <span class="ot">&lt;-</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span><span class="st">`</span><span class="at">1</span><span class="st">`</span>,  <span class="sc">~</span><span class="st">`</span><span class="at">2</span><span class="st">`</span>,  <span class="sc">~</span><span class="st">`</span><span class="at">3</span><span class="st">`</span>,</span>
@@ -411,7 +411,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <h3 data-number="9.0.3" class="anchored" data-anchor-id="visualize-the-dpcs"><span class="header-section-number">9.0.3</span> Visualize the DPCs</h3>
 <p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation" data-cites="chapter2017b">Madden et al. (<a href="references.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
 <p>Because the data was entered in the wide format (each DPC is in a different column) we need to reshape it to the long format. The <code>pivot_longer()</code> function will do the job of reshaping from wide to long format so we can finally use the <code>ggplot()</code> function to produce the plot.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-dpcs_f4797c09ca825dee30885a8c028e113f">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pepper <span class="sc">|&gt;</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">names_to =</span><span class="st">"treat"</span>, <span class="at">values_to =</span> <span class="st">"inc"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span> (<span class="fu">aes</span>(t, inc, </span>
@@ -441,7 +441,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <h3 data-number="9.0.4" class="anchored" data-anchor-id="fitting-single-epidemics"><span class="header-section-number">9.0.4</span> Fitting: single epidemics</h3>
 <p>Among the several options offered by <em>epifitter</em> we start with the simplest one, which is fit a model to a single epidemics using the linear regression approach. For such, the <code>fit_lin()</code> requires two arguments: time (<code>time</code>) and disease intensity (<code>y</code>) each one as a vector stored or not in a dataframe.</p>
 <p>Since we have three epidemics, <code>fit_lin()</code> will be use three times. The function produces a list object with six elements. Let’s first look at the <code>Stats</code> dataframe of each of the three lists named <code>epi1</code> to <code>epi3</code>.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-4_cfe3e2c9811008b84f1cd5d80983661b">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epifitter)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>epi1 <span class="ot">&lt;-</span> <span class="fu">fit_lin</span>(<span class="at">time =</span> pepper<span class="sc">$</span>t,  </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">y =</span> pepper<span class="sc">$</span><span class="st">`</span><span class="at">1</span><span class="st">`</span> )</span>
@@ -454,7 +454,7 @@ Logistic      0.9782    0.9572 0.8236
 Exponential   0.7839    0.6447 0.6705</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-5_130edc2918512262a7f9479e46aff776">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="ot">&lt;-</span> <span class="fu">fit_lin</span>(<span class="at">time =</span> pepper<span class="sc">$</span>t,  </span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> pepper<span class="sc">$</span><span class="st">`</span><span class="at">2</span><span class="st">`</span> )</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>epi2<span class="sc">$</span>Stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -466,7 +466,7 @@ Monomolecular 0.9248    0.8601 1.0684
 Exponential   0.8971    0.8134 1.2016</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-6_afd991fc50918ff31db34b320e628408">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>epi3 <span class="ot">&lt;-</span> <span class="fu">fit_lin</span>(<span class="at">time =</span> pepper<span class="sc">$</span>t,  </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> pepper<span class="sc">$</span><span class="st">`</span><span class="at">3</span><span class="st">`</span> )</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>epi3<span class="sc">$</span>Stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -484,12 +484,12 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <h3 data-number="9.0.5" class="anchored" data-anchor-id="fitting-multiple-epidemics"><span class="header-section-number">9.0.5</span> Fitting: multiple epidemics</h3>
 <p>Before looking at the prediction, let’s use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from <code>fit_lin()</code>, <code>fit_multi()</code> requires the data to be structured in the long format where there is a column specifying each of the epidemics.</p>
 <p>Let’s then create a new data set called <code>pepper2</code> using the data transposing functions of the <em>tidyr</em> package.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-7_d584a78ba939b3f133f308b97220626b">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pepper2 <span class="ot">&lt;-</span> pepper <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">names_to =</span><span class="st">"treat"</span>, <span class="at">values_to =</span> <span class="st">"inc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in <code>strata_cols</code> argument.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-8_1cad66a4f93398b160d2d90a5d7b852b">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>epi_all <span class="ot">&lt;-</span> <span class="fu">fit_multi</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_col =</span> <span class="st">"t"</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">intensity_col =</span> <span class="st">"inc"</span>,</span>
@@ -499,7 +499,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now let’s select the statistics of model fitting. Again, <em>Epifitter</em> ranks the models based on the CCC (the higher the better) but it is important to check the RSE as well - the lower the better. In fact, the RSE is more important when the goal is prediction.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-9_3752f19dd64022a9beb02873370295d3">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>epi_all<span class="sc">$</span>Parameters <span class="sc">|&gt;</span> </span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(treat, model, best_model, RSE, CCC)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -519,7 +519,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>To be more certain about our decision, let’s advance to the final step which is to produce the plots with the observed and predicted values for each assessment time by calling the <code>Data</code> dataframe of the `<code>epi_all</code> list.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-fitted_c32cccde66a4a2d9b7129ba9c78e3221">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>epi_all<span class="sc">$</span>Data <span class="sc">|&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">filter</span>(model <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Gompertz"</span>, <span class="st">"Logistic"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, predicted, <span class="at">shape =</span> treat)) <span class="sc">+</span></span>
@@ -541,7 +541,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>Overall, the logistic model seems a better fit for all the curves. Let’s produce a plot with the prediction error versus time.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-error_92d09462584f6c15a6aab9292f6f2d7d">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>epi_all<span class="sc">$</span>Data <span class="sc">|&gt;</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">filter</span>(model <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Gompertz"</span>, <span class="st">"Logistic"</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, predicted <span class="sc">-</span>y, <span class="at">shape =</span> treat)) <span class="sc">+</span></span>
@@ -564,7 +564,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-12_26c540b0480bcdf610a24e35d38c38aa">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>  epi_all<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Logistic"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(treat, y0, y0_ci_lwr, y0_ci_upr, r, r_ci_lwr, r_ci_upr </span>
@@ -577,7 +577,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>We can produce a plot for visual inference on the differences in the parameters.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-params_3d24a0d7f1b9e25af81972982ac66061">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> epi_all<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Logistic"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treat, r)) <span class="sc">+</span></span>
@@ -622,11 +622,11 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden et al. 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
 <section id="loading-data" class="level4" data-number="9.0.6.1">
 <h4 data-number="9.0.6.1" class="anchored" data-anchor-id="loading-data"><span class="header-section-number">9.0.6.1</span> Loading data</h4>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-14_c0759a45a9d5cfe00d0077e0c49d36bd">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>budblight <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/bud-blight-soybean.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s have a look at the first six rows of the dataset and check the data type for each column. There is an additional column representing the replicates, called block.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-15_a8916c8d392987dbecaf0c65376a94ce">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>budblight</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 64 × 4
@@ -649,7 +649,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <section id="visualizing-the-dpcs" class="level4" data-number="9.0.6.2">
 <h4 data-number="9.0.6.2" class="anchored" data-anchor-id="visualizing-the-dpcs"><span class="header-section-number">9.0.6.2</span> Visualizing the DPCs</h4>
 <p>Let’s have a look at the curves and produce a combo plot figure similar to Fig. 4.17 of the book, but without the line of the predicted values.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-bud1_1a17259c2e2b5264c56927feb57d8ab5">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> budblight <span class="sc">|&gt;</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    time, y,</span>
@@ -692,7 +692,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <section id="linear-regression" class="level5" data-number="9.0.6.3.1">
 <h5 data-number="9.0.6.3.1" class="anchored" data-anchor-id="linear-regression"><span class="header-section-number">9.0.6.3.1</span> Linear regression</h5>
 <p>For convenience, we use the <code>fit_multi()</code> to handle multiple epidemics. The function returns a list object where a series of statistics are provided to aid in model selection and parameter estimation. We need to provide the names of columns (arguments): assessment time (<code>time_col</code>), disease incidence (<code>intensity_col</code>), and treatment (<code>strata_cols</code>).</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-17_4d13f88e162e56b8e19465aca051c1eb">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>lin1 <span class="ot">&lt;-</span> <span class="fu">fit_multi</span>(</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_col =</span> <span class="st">"time"</span>,</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">intensity_col =</span> <span class="st">"y"</span>,</span>
@@ -702,7 +702,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s look at how well the four models fitted the data. Epifitter suggests the best fitted model (1 to 4, where 1 is best) for each treatment. Let’s have a look at the statistics of model fitting.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-18_aaea8487c36e6b7c427ef2a3923fe212">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>lin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span> </span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(treat, best_model, model, CCC, RSE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -726,7 +726,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>And now we extract values for each parameter estimated from the fit of the monomolecular model.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-19_a82950cfc1471bed94d46f0c44748ec4">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>lin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Monomolecular"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(treat, y0, r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -739,7 +739,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>Now we visualize the fit of the monomolecular model (using <code>filter</code> function - see below) to the data together with the observed data and then reproduce the right plots in Fig. 4.17 from the book.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-bud2_cbc8757a3e4d113f2c5cbabfd054f0af">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>lin1<span class="sc">$</span>Data <span class="sc">|&gt;</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Monomolecular"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(time, predicted)) <span class="sc">+</span></span>
@@ -761,7 +761,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>Now we can plot the means and respective 95% confidence interval of the apparent infection rate (<span class="math inline">\(r\)</span>) and initial inoculum (<span class="math inline">\(y_0\)</span>) for visual inference.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-bud3_a2d8e07bc63b56f5ca575bb23074431f">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> lin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Monomolecular"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treat, r)) <span class="sc">+</span></span>
@@ -801,7 +801,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <section id="non-linear-regression" class="level5" data-number="9.0.6.3.2">
 <h5 data-number="9.0.6.3.2" class="anchored" data-anchor-id="non-linear-regression"><span class="header-section-number">9.0.6.3.2</span> Non-linear regression</h5>
 <p>To estimate the parameters using the non-linear approach, we repeat the same arguments in the <code>fit_multi</code> function, but include an additional argument <code>nlin</code> set to <code>TRUE</code>.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-22_3a3bcd6d0dde5fd3bb745d7b17cbd93d">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nlin1 <span class="ot">&lt;-</span> <span class="fu">fit_multi</span>(</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">time_col =</span> <span class="st">"time"</span>,</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">intensity_col =</span> <span class="st">"y"</span>,</span>
@@ -811,7 +811,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s check statistics of model fit.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-23_59b5ee2129f07399f63746f1ed3c58b8">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nlin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(treat, model, CCC, RSE, best_model)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -835,7 +835,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 </div>
 <p>And now we obtain the two parameters of interest. Note that the values are not the sames as those estimated using linear regression, but they are similar and highly correlated.</p>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-24_964e85075397bdb51a42cc92f36708c7">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>nlin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Monomolecular"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">select</span>(treat, y0, r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -847,7 +847,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 4   PD4 -0.3501234 0.01094368</code></pre>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="temporal-fitting_cache/html/fig-bud4_f03604323c363e74ababb6529835dd83">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>p7 <span class="ot">&lt;-</span> nlin1<span class="sc">$</span>Parameters <span class="sc">|&gt;</span></span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(model <span class="sc">==</span> <span class="st">"Monomolecular"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treat, r)) <span class="sc">+</span></span>
