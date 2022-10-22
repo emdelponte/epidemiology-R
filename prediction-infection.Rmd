@@ -103,13 +103,13 @@ validation <- data.frame(t, HW, dis)
 ```{r}
 library(ggplot2)
 library(geomtextpath)
-ggplot(validation, aes(HW, t, z = dis)) + 
+ggplot(validation, aes(t, HW, z = dis)) + 
   geom_contour_filled(bins = 8, alpha = 0.7) + 
   geom_textcontour(bins = 8, size = 2.5, padding = unit(0.05, "in")) + 
   theme_minimal() +
   theme(legend.position = "none")+
-  xlim(10, 40)+
-  labs(x = "Head wetness (hours)", y = "Temperature (Celcius)")
+  ylim(0, 40)+
+  labs(y = "Wetness duration (hours)", x = "Temperature (Celcius)")
 ```
 
 ```{r}
@@ -121,6 +121,14 @@ plot_ly(validation, x = ~t, y = ~HW, z = ~dis, type = 'scatter3d',
         )
 ```
 
+```{r}
+library(plotly)
+plot_ly(validation, x = ~t, y = ~HW, z = ~dis, type = 'contour',
+#    autocontour = T,
+#    contours = list(showlabels = TRUE)
+     contours = list(start = 0,  end = 3,  size = 0.5)) %>% 
+  layout( xaxis = list(range = list(11, 40)))
+```
 
 
 
