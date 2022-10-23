@@ -146,8 +146,8 @@ sbr |>
   pivot_longer(2:3, names_to = "condition", values_to ="estimate") |> 
   ggplot(aes(condition, estimate))+
   geom_boxplot(outlier.colour = NA)+
-  geom_jitter(width = 0.05)+
-  ylim(0.2,1)
+  geom_jitter(width = 0.05, size = 2, alpha = 0.5)+
+  ylim(0.4,1)
 ```
 
 We now need to create a variable for the difference of the means of the estimates (aided minus unaided) prior to bootstrapping this difference using two specialized packages. If the 95% CI does not include zero, this means that there was a significant improvement in the statistics.
@@ -159,15 +159,23 @@ We now need to create a variable for the difference of the means of the estimate
 # diff of means
 sbr$diff <- sbr$aided - sbr$unaided
 
+sbr$diff
 
-## Using the simpleboot and boot packages
+```
+
+Using the simpleboot and boot packages
+
+```{r}
 library(simpleboot)
 b.mean <- one.boot(sbr$diff, mean, 999)
 boot::boot.ci(b.mean)
 mean(b.mean$data)
 hist(b.mean)
+```
 
-# Using the bootstrap package
+Using the bootstrap package
+
+```{r}
 library(bootstrap)
 b <- bootstrap(sbr$diff, 999, mean)
 quantile(b$thetastar, c(.025,.975))
@@ -175,14 +183,15 @@ mean(b$thetastar)
 sd(b$thetastar)
 se <- function(x) sqrt(var(x)/length(x))
 se(b$thetastar)
-
 ```
+
+The both procedures shown above led to similar results. The 95% CIs of the differences did not include zero, so a significant improve could be inferred.
 
 ### Parametric and non-parametric paired sample tests
 
 In the case that two estimates are obtained by the same rater at different times, the data are not independent. For this situation, a **paired sample t-test** can be used for testing whether the mean difference between two sets of observations is zero. In this test, each subject (the leaf in our case) is measured or estimated twice, resulting in *pairs* of observations. If the assumptions of the test are violated (e.g. lack of normality), an equivalent non-parametric test can be used, such as the Wilcoxon, also known as **Wilcoxon signed-rank test**. It is used when your data are not normally distributed.
 
-Let's apply these two tests for our data and compare the results. First, we need to check whether the data are normally distributed. Then, we can also check whether the variances are equal.
+Let's apply these two tests for our data and compare the results. We need to check whether the data are normally distributed. Then, we can also check whether the variances are equal.
 
 ```{r}
 # normality test
@@ -201,13 +210,13 @@ wilcox.test(sbr$aided, sbr$unaided, paired = TRUE)
 
 As shown above, the two assumptions were violated, so we could rely more confidently on the non-parametric test.
 
-### Mixed modeling
+### Mixed effects modeling
 
-Mixed models are a form of linear modeling used for hierarchical data when the response variable has a normal distribution and the predictor variables are a mix of fixed and random effects. These models are also good when data points might not be fully independent of each other, which is the case in our example.
+Mixed models are a form of linear modeling used for hierarchical data when the response variable has a normal distribution and the predictor variables are a mix of fixed and random effects. These models are also good when data points might not be fully independent of each other, which is the case in our example [@brown2021].
 
-Here we treat raters as random effects. We expect them to be samples from a larger population about which we are trying to draw conclusions. We can sample more individuals who would be different from the ones we have and we can infer something about the whole population from the sampled in our analyses. The random effects capture variation that exists but isn't relevant to the question, like variation between subjects for which we have repeated measures.
+Here we treat raters as random effects. We expect them to be samples from a larger population about which we are trying to draw conclusions. We can sample more raters who would be different from the ones we have and we can infer something about the whole population from the sampled in our analyses. The random effects capture variation that exists but isn't relevant to the question, like variation between subjects for which we have repeated measures.
 
-Let's start reshaping our data to the long format and assign it to a new dataframe.
+Let's start reshaping our data to the long format and assign them to a new data frame.
 
 ```{r}
 
@@ -217,7 +226,7 @@ sbr2 <- sbr |>
 
 ```
 
-Now we fit the mixed model using the `lmer` function of the lme4 package. We will fit the model to the logit of the estimate because they should be bounded between zero and one. Preliminary analysis using non-transformed or log-transformed data resulted in lack of normality of residuals and heterocedasticity (not shown).
+Now we fit the mixed model using the `lmer` function of the *lme4* package. We will fit the model to the logit of the estimate because they should be bounded between zero and one. Preliminary analysis using non-transformed or log-transformed data resulted in lack of normality of residuals and heterocedasticity (not shown).
 
 ```{r}
 #| warning: false
@@ -249,3 +258,5 @@ plot(em) +
   xlim(0.7,1)
 
 ```
+
+As shown above, we can reject the null hypothesis that the means are the same between the two groups.

@@ -100,41 +100,7 @@ ggsave("imgs/spatial.png", width = 10, height = 4)
 
 ```
 
-We can create an animation showing the three patterns using *gganimate* package
 
-```{r}
-#| label: fig-anima
-#| fig-cap: "The spatial patterns of plant disease epidemcs: random, aggreated and regular"
-#| warning: false
-#| message: false
-#| eval: false
-rand <- dat |> 
-  mutate(i = "random")
-
-agg <- dat2 |> 
-  mutate(i = "aggregated")
-
-reg <- dat3 |> 
-  mutate(i = "regular")
-
-patterns <- rbind(agg, rand, reg)
-
-library(gganimate)
-
-patterns |> 
-ggplot(aes(x, y, color = factor(i)))+
-  geom_point(size = 4, color = "darkred")+
-  coord_fixed()+
-  ylim(0,25)+
-  xlim(0,25)+
-  transition_states(i)+
-  theme_few()+
-  ggtitle('Pattern: {closest_state}')
-anim_save("imgs/patterns.gif")
-
-```
-
-![](imgs/patterns.gif)
 
 ## Spatiotemporal
 
@@ -161,27 +127,3 @@ tswv_1928 |>
   facet_wrap(~ t, nrow =1)
 ```
 
-We can use the *gganimate* package to visualize the spatiotemporal dynamics of the epidemics.
-
-```{r}
-#| warning: false
-#| message: false
-#| eval: false
-library(gganimate)
-tswv_1928 |>
-  filter(variety == "Burwood-Prize"&
-         irrigation == "trenches") |> 
-  ggplot(aes(y, x, color = factor(i)))+
-  geom_point(aes(group = seq_along(factor(t))), size =5)+
-  scale_color_manual(values = c("gray70", "darkred"))+
-  labs(color = "Status", title = "")+
-  theme_void()+
-  coord_fixed()+
-  transition_states(t,
-                  transition_length = 1,
-                    state_length = 1)+
-   ggtitle('Assessment time: {closest_state}')
-anim_save("imgs/spatiotemporal.gif")
-```
-
-![Spatial patterns for the incidence of spotted wilt virus assessed during six times during the epidemics](imgs/spatiotemporal.gif){#fig-spatiotemporal2 width="685"}
