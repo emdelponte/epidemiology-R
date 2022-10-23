@@ -103,11 +103,13 @@ To evaluate the effect of SAD on accuracy components, analyze the data, preferab
 
 Inferential methods should be used for testing hypotheses related to gain in accuracy. If parametric tests are used (paired t-test for example), make sure to check that the assumptions are not violated. Alternatively, nonparametric tests (Wilcoxon signed rank) or nonparametric bootstrapping should be used when the conditions for parametric tests are not met. More recently, a (parametric) mixed modelling framework has been used to analyse SADs validation data where raters are taken as a random effects in the model [@gonzález-domínguez2014; @franceschi2020; @pereira2020].
 
-### Boostrapping differences of means
+### Non parametric boostrapping of differences
+
+Bootstrap is a resampling method where large numbers of samples of the same size are repeatedly drawn, ***with replacement***, from a single original sample. It is commonly used when thedistribution of a statistic is unknown or complicated and the sample size is too small to draw a valid inference.
 
 A bootstrap-based equivalence test procedure was first proposed as complementary to parametric (paired t-test) or non-parametric (Wilcoxon) to analyze severity estimation data in a study on the development and validation of a SADs for pecan scab [@yadav2012]. The equivalence test was used to calculate 95% confidence intervals (CIs) for each statistic by bootstrapping using the percentile method (with an equivalence test, the null hypothesis is the converse of H0, i.e. the null hypothesis is non-equivalence). In that study, the test was used to compare means of the CCC statistics across raters under two conditions: 1) without versus with the SAD; and 2) experienced versus inexperienced raters.
 
-Let's work with the CCC data for a sample of 20 raters who estimated severity of soybean rust SAD first without and then with the aid. The CCC was calculated as shown [here](data-accuracy.html#concordance-correlation-coefficient).
+To apply the bootstrap-based equivalence test, let's work with the CCC data for a sample of 20 raters who estimated severity of soybean rust SAD first without and then with the aid. The CCC was calculated as shown [here](data-accuracy.html#concordance-correlation-coefficient).
 
 ```{r}
 sbr <- tibble::tribble(
@@ -161,9 +163,11 @@ sbr$diff <- sbr$aided - sbr$unaided
 
 sbr$diff
 
+hist(sbr$diff)
+
 ```
 
-Using the simpleboot and boot packages
+Using the simpleboot and boot packages:
 
 ```{r}
 library(simpleboot)
@@ -173,7 +177,7 @@ mean(b.mean$data)
 hist(b.mean)
 ```
 
-Using the bootstrap package
+Using the bootstrap package:
 
 ```{r}
 library(bootstrap)
@@ -185,7 +189,7 @@ se <- function(x) sqrt(var(x)/length(x))
 se(b$thetastar)
 ```
 
-The both procedures shown above led to similar results. The 95% CIs of the differences did not include zero, so a significant improve could be inferred.
+Both procedures shown above led to similar results. The 95% CIs of the differences did not include zero, so a significant improvement in accuracy can be inferred.
 
 ### Parametric and non-parametric paired sample tests
 
