@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.197">
+<meta name="generator" content="quarto-1.2.253">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -381,10 +381,10 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now we will fit models to multiple actual disease progress curves (DPCs) data obtained from the literature again using the <em>epifitter</em> package. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.</p>
-<p>To illustrate, I will use two datasets available in Chapter 3 from the book, <em>Study of Plant Disease Epidemics</em> <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden et al. 2017</a>)</span>. In the book, SAS codes are presented to perform a few analysis. We provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.</p>
+<p>To illustrate, I will use two datasets available in Chapter 3 from the book, <em>Study of Plant Disease Epidemics</em> <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. In the book, SAS codes are presented to perform a few analysis. We provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.</p>
 <section id="non-replicated-epidemics" class="level3" data-number="9.0.1">
 <h3 data-number="9.0.1" class="anchored" data-anchor-id="non-replicated-epidemics"><span class="header-section-number">9.0.1</span> Non-replicated epidemics</h3>
-<p>We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days. The data are available in chapter 4 (page 93) <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden et al. 2017</a>)</span>. Let’s input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.</p>
+<p>We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days. The data are available in chapter 4 (page 93) <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. Let’s input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.</p>
 </section>
 <section id="entering-data" class="level3" data-number="9.0.2">
 <h3 data-number="9.0.2" class="anchored" data-anchor-id="entering-data"><span class="header-section-number">9.0.2</span> Entering data</h3>
@@ -409,7 +409,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </section>
 <section id="visualize-the-dpcs" class="level3" data-number="9.0.3">
 <h3 data-number="9.0.3" class="anchored" data-anchor-id="visualize-the-dpcs"><span class="header-section-number">9.0.3</span> Visualize the DPCs</h3>
-<p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation" data-cites="chapter2017b">Madden et al. (<a href="references.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
+<p>Before proceeding with model selection and fitting, let’s visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (<span class="citation" data-cites="chapter2017b">Madden, Hughes, and van den Bosch (<a href="references.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span> page 94). The appraisal of the curves might give us a hint on which models are the best candidates.</p>
 <p>Because the data was entered in the wide format (each DPC is in a different column) we need to reshape it to the long format. The <code>pivot_longer()</code> function will do the job of reshaping from wide to long format so we can finally use the <code>ggplot()</code> function to produce the plot.</p>
 <div class="cell" data-hash="temporal-fitting_cache/html/fig-dpcs_f4797c09ca825dee30885a8c028e113f">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pepper <span class="sc">|&gt;</span> </span>
@@ -430,7 +430,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <div id="fig-dpcs" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="temporal-fitting_files/figure-html/fig-dpcs-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;9.1: Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from <span class="citation" data-cites="chapter2017b">Madden et al. (<a href="references.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span> page 94</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;9.1: Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from <span class="citation" data-cites="chapter2017b">Madden, Hughes, and van den Bosch (<a href="references.html#ref-chapter2017b" role="doc-biblioref">2017</a>)</span> page 94</figcaption><p></p>
 </figure>
 </div>
 </div>
@@ -619,7 +619,7 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 <section id="designed-experiments" class="level3" data-number="9.0.6">
 <h3 data-number="9.0.6" class="anchored" data-anchor-id="designed-experiments"><span class="header-section-number">9.0.6</span> Designed experiments</h3>
 <p>In this next section, we will work with disease data collected over time in the same plot unit (also called repeated measures) from a designed experiment for evaluating and comparing treatment effects.</p>
-<p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden et al. 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
+<p>Again, we will use a dataset of progress curves shown in page 98 <span class="citation" data-cites="chapter2017b">(<a href="references.html#ref-chapter2017b" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017</a>)</span>. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using <code>read_csv()</code> function and stored as dataframe called <code>budblight</code>.</p>
 <section id="loading-data" class="level4" data-number="9.0.6.1">
 <h4 data-number="9.0.6.1" class="anchored" data-anchor-id="loading-data"><span class="header-section-number">9.0.6.1</span> Loading data</h4>
 <div class="cell" data-hash="temporal-fitting_cache/html/unnamed-chunk-14_c0759a45a9d5cfe00d0077e0c49d36bd">
@@ -886,9 +886,9 @@ Monomolecular 0.8592    0.7531 0.2534</code></pre>
 </div>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
 <div id="ref-chapter2017b" class="csl-entry" role="doc-biblioentry">
-Madden, L. V., Hughes, G., and van den Bosch, F. 2017. Temporal analysis i: Quantifying and comparing epidemics. In The American Phytopathological Society, p. 63–116. Available at: <a href="http://dx.doi.org/10.1094/9780890545058.004">http://dx.doi.org/10.1094/9780890545058.004</a>.
+Madden, Laurence V., Gareth Hughes, and Frank van den Bosch. 2017. <span>“Temporal Analysis i: Quantifying and Comparing Epidemics.”</span> In, 63–116. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058.004">https://doi.org/10.1094/9780890545058.004</a>.
 </div>
 </div>
 </section>
