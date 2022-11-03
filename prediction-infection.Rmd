@@ -100,6 +100,7 @@ dis <- (b1*(t - b2 )^b4)*((b3 - t)^b5) * (c + (d-c)*(1-exp(-HW/e)))
 validation <- data.frame(t, HW, dis)
 ```
 
+
 ```{r}
 library(ggplot2)
 library(geomtextpath)
@@ -112,23 +113,34 @@ ggplot(validation, aes(t, HW, z = dis)) +
   labs(y = "Wetness duration (hours)", x = "Temperature (Celcius)")
 ```
 
-```{r}
-library(plotly)
-plot_ly(validation, x = ~t, y = ~HW, z = ~dis, type = 'scatter3d', 
-        mode = 'line',
-        opacity = 7, 
-        line = list(width = 3,  reverscale = TRUE)
-        )
-```
 
 ```{r}
-library(plotly)
-plot_ly(validation, x = ~t, y = ~HW, z = ~dis, type = 'contour',
-#    autocontour = T,
-#    contours = list(showlabels = TRUE)
-     contours = list(start = 0,  end = 3,  size = 0.5)) %>% 
-  layout( xaxis = list(range = list(11, 40)))
+
+t <- rep(5:30,30)
+W <- rep(5:30, each = 30)
+dis2 <- -1.70961637 + 0.02886124*t + 0.04943329*W + 0.00868240*t*W - 0.00236213*W^2 - 0.00023788*(t^2)*W 
+dis2 <- 10^dis2  
+validation2 <- data.frame(t, W, dis2)
+
+  
+
 ```
 
 
+```{r}
+library(ggplot2)
+library(geomtextpath)
+ggplot(validation2, aes(t, W, z = dis2)) + 
+  geom_contour_filled(bins = 8, alpha = 0.7) + 
+  geom_textcontour(bins = 8, size = 2.5, padding = unit(0.05, "in")) + 
+  theme_minimal() +
+  theme(legend.position = "none")+
+  ylim(0, 30)+
+  labs(y = "Wetness duration (hours)", x = "Temperature (Celcius)")
+```
+
+```{r}
+
+# https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0193813
+```
 
