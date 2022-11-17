@@ -585,6 +585,7 @@ df |>
 #### Indices of aggregation
 
 ```{r}
+#| warning: false
 idx <- agg_index(data_count, method = "fisher")
 idx
 chisq.test(idx)
@@ -607,7 +608,14 @@ mor
 
 ### Incidence data
 
+#### Intraclass correlation coefficient
+
+
+
 ```{r}
+#| warning: false
+#| message: false
+
 fhb <- read_csv("data/fhb.csv")
 
 fhb2 <- fhb %>%
@@ -617,13 +625,17 @@ glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb2)
 performance::icc(glm1)
 ```
 
+#### Fit to distributions
+
 ```{r}
+#| warning: false
+#| message: false
 tas <-
   read.csv(
     "https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt",
     sep = ""
   )
-tas
+head(tas,10)
 
 # Create incidence object for epiphy
 dat_tas <- tas |>
@@ -638,43 +650,44 @@ fit_tas$llr
 plot(fit_tas)
 ```
 
+#### Dispersion index
+
 ```{r}
-tas |>
-  dplyr::count(count)
+#| warning: false
+#| message: false
 binom.tas = glm(cbind(count, group_size - count) ~ 1,
                 family = binomial,
                 data = tas)
+summary(binom.tas)
+library(performance)
+check_overdispersion(binom.tas)
 
 library(aod)
 bbinom.tas <-
   betabin(cbind(count, group_size - count) ~ 1, ~ 1, data = tas)
 summary(bbinom.tas)
-summary(binom.tas)
-library(performance)
-check_overdispersion(binom.tas)
+```
 
 
+
+```{r}
+#| warning: false
+#| message: false
 library(epiphy)
-
 tas2 <- tas |>
   mutate(i = count,
          n = group_size) |>  # create i vector
   epiphy::incidence()
 
 t <- agg_index(tas2, flavor = "incidence")
+```
+
+#### C-alpha test
+
+```{r}
 calpha.test(t)
 ```
 
-```{r}
-dw <- dogwood_anthracnose |> 
-  filter(t == 1990) |> 
-  epiphy::incidence()
 
-f <- fit_two_distr(dw)
-plot(f)
-summary(f)
-f$llr
 
-ag <- agg_index(dw)
-calpha.test(ag)
-```
+
