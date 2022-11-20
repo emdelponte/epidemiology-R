@@ -1,7 +1,7 @@
 ---
 title: "Tests for patterns"
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ::: {.callout-note appearance="simple"}
@@ -634,20 +634,21 @@ fhb1 <- fhb %>%
 library(lme4)
 glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb1)
 performance::icc(glm1)
-check_singularity(glm1)
+```
 
-library(broom.mixed)
+We can fit the model for each of the 20 fields using `group_map` function. Then, we can extract several statistics, including the ICC, with the `modelsummary` function of the *modelsummary* package.
+
+```{r}
 glm2 <- fhb %>%
   group_by(campo) %>%
   group_map(~glmer(status ~ q + (1 | q), family = "binomial", data= .x))
 
 library(modelsummary)
 modelsummary(glm2)
-
-library(ICCbin)
-iccbin(cid = q, y = status, data = fhb1)
-
 ```
+
+We note that for some fields the ICC could not be estimated because of the zero variance.
+
 
 #### Fit to distributions
 

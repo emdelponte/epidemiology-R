@@ -1318,7 +1318,7 @@ alternative hypothesis: two.sided</code></pre>
 </div>
 </div>
 <p>Now let’s filter data for the field number 1 and fit a generalized linear model with the binomial family and obtain the icc using the <code>icc</code> function of the <em>performance</em> package.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-49_a4d21edd3831dbe2d4dd1d68e624d18c">
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-49_c42b43de0750794649e582c9246b9aa1">
 <div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>fhb1 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
 <span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(campo <span class="sc">==</span> <span class="dv">1</span>) </span>
 <span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
@@ -1330,17 +1330,25 @@ alternative hypothesis: two.sided</code></pre>
     Adjusted ICC: 0.641
   Unadjusted ICC: 0.600</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">check_singularity</span>(glm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] FALSE</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
-<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a>glm2 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
-<span id="cb97-3"><a href="#cb97-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(campo) <span class="sc">%&gt;%</span></span>
-<span id="cb97-4"><a href="#cb97-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data=</span> .x))</span>
-<span id="cb97-5"><a href="#cb97-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb97-6"><a href="#cb97-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span>
-<span id="cb97-7"><a href="#cb97-7" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(glm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can fit the model for each of the 20 fields using <code>group_map</code> function. Then, we can extract several statistics, including the ICC, with the <code>modelsummary</code> function of the <em>modelsummary</em> package.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-50_b2575a011d1fb708bdc12e4932e62607">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>glm2 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(campo) <span class="sc">%&gt;%</span></span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data=</span> .x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')
+boundary (singular) fit: see help('isSingular')</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(glm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -1650,64 +1658,18 @@ alternative hypothesis: two.sided</code></pre>
 </table>
 
 </div>
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ICCbin)</span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">iccbin</span>(<span class="at">cid =</span> q, <span class="at">y =</span> status, <span class="at">data =</span> fhb1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>$estimates
-                                                                                         Methods
-1                                                                                 ANOVA Estimate
-2                                                                        Modified ANOVA Estimate
-3                                                             Moment Estimate with Equal Weights
-4                                      Moment Estimate with Weights Proportional to Cluster Size
-5                                                    Modified Moment Estimate with Equal Weights
-6                             Modified Moment Estimate with Weights Proportional to Cluster Size
-7                                                                     Stabilized Moment Estimate
-8                                              Moment Estimate from Unbiased Estimating Equation
-9                                                              Fleiss-Cuzick Kappa Type Estimate
-10                                                             Mak's Unweighted Average Estimate
-11                          Correlation Estimate with Equal Weight to Every Pair of Observations
-12                   Correlation Estimate with Equal Weight to Each Cluster Irrespective of Size
-13 Correlation Estimate with Weighting Each Pair According to Number of Pairs individuals Appear
-14                                                                           Resampling Estimate
-15                                                         First-order Model Linearized Estimate
-16                                                               Monte Carlo Simulation Estimate
-         ICC
-1  0.5647638
-2  0.5511111
-3  0.8789474
-4  0.8789474
-5  0.8266667
-6  0.8266667
-7  0.6359649
-8  0.5647638
-9  0.5511111
-10 0.5647638
-11 0.5511111
-12 0.5511111
-13 0.5511111
-14 0.5824795
-15 0.6337200
-16 0.5114275
-
-$ci
-                                                Type   LowerCI   UpperCI
-1           Smith's Large Sample Confidence Interval 0.3877486 0.7417789
-2 Zou and Donner's Modified Wald Confidence Interval 0.0000000 1.0000000
-3                  Fleiss-Cuzick Confidence Interval 0.3287770 0.7734452
-4       Pearson Correlation Type Confidence Interval 0.3287770 0.7734452
-5               Resampling Based Confidence Interval 0.3745682 0.7903909</code></pre>
 </div>
-</div>
+<p>We note that for some fields the ICC could not be estimated because of the zero variance.</p>
 </section>
 <section id="fit-to-distributions-1" class="level4" data-number="14.2.2.2">
 <h4 data-number="14.2.2.2" class="anchored" data-anchor-id="fit-to-distributions-1"><span class="header-section-number">14.2.2.2</span> Fit to distributions</h4>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-50_5b41824b5e3dcd8be4a8e3a88e1ecfce">
-<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
-<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
-<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
-<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">""</span></span>
-<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tas,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-51_41835d441a7494f37fee83d1577ce69a">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">""</span></span>
+<span id="cb98-5"><a href="#cb98-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb98-6"><a href="#cb98-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tas,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   quad group_size count
 1     1          6     4
@@ -1721,14 +1683,14 @@ $ci
 9     9          6     4
 10   10          6     6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
-<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
-<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span></span>
-<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
-<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
-<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>fit_tas <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dat_tas)</span>
-<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
+<span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span></span>
+<span id="cb100-4"><a href="#cb100-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
+<span id="cb100-5"><a href="#cb100-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb100-6"><a href="#cb100-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
+<span id="cb100-7"><a href="#cb100-7" aria-hidden="true" tabindex="-1"></a>fit_tas <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dat_tas)</span>
+<span id="cb100-8"><a href="#cb100-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fitting of two distributions by maximum likelihood
 for 'incidence' data.
@@ -1750,7 +1712,7 @@ theta 0.475101 0.209789  2.2647  0.023534 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
@@ -1760,19 +1722,19 @@ aggregated : -57.430  1 35.263   2.88e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="spatial-tests_files/figure-html/unnamed-chunk-50-1.png" class="img-fluid" width="672"></p>
+<p><img src="spatial-tests_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
 <section id="dispersion-index" class="level4" data-number="14.2.2.3">
 <h4 data-number="14.2.2.3" class="anchored" data-anchor-id="dispersion-index"><span class="header-section-number">14.2.2.3</span> Dispersion index</h4>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-51_0be66e5de4226aac670b0352df3b2cae">
-<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
-<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> tas)</span>
-<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-52_69238b913e586c7916a50ee068ddc31b">
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
+<span id="cb105-3"><a href="#cb105-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> tas)</span>
+<span id="cb105-4"><a href="#cb105-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1797,8 +1759,8 @@ AIC: 152.12
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
-<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_overdispersion</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_overdispersion</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Overdispersion test
 
@@ -1806,10 +1768,10 @@ Number of Fisher Scoring iterations: 5</code></pre>
   Pearson's Chi-Squared = 143.206
                 p-value = &lt; 0.001</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aod)</span>
-<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>bbinom.tas <span class="ot">&lt;-</span></span>
-<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">betabin</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> tas)</span>
-<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bbinom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb109"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb109-1"><a href="#cb109-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(aod)</span>
+<span id="cb109-2"><a href="#cb109-2" aria-hidden="true" tabindex="-1"></a>bbinom.tas <span class="ot">&lt;-</span></span>
+<span id="cb109-3"><a href="#cb109-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">betabin</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>, <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> tas)</span>
+<span id="cb109-4"><a href="#cb109-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bbinom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Beta-binomial model
 -------------------
@@ -1831,20 +1793,20 @@ Log-likelihood statistics
 -5.743e+01          2         60   8.25e+01  1.189e+02  1.191e+02 </code></pre>
 </div>
 </div>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-52_a9d83649726f4945e747e3b6becdac18">
-<div class="sourceCode cell-code" id="cb113"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb113-1"><a href="#cb113-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
-<span id="cb113-2"><a href="#cb113-2" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
-<span id="cb113-3"><a href="#cb113-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
-<span id="cb113-4"><a href="#cb113-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> group_size) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
-<span id="cb113-5"><a href="#cb113-5" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
-<span id="cb113-6"><a href="#cb113-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb113-7"><a href="#cb113-7" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-53_c0c2aaf32fcb120f6c9d49029ea20983">
+<div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<span id="cb111-2"><a href="#cb111-2" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
+<span id="cb111-3"><a href="#cb111-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
+<span id="cb111-4"><a href="#cb111-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> group_size) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
+<span id="cb111-5"><a href="#cb111-5" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
+<span id="cb111-6"><a href="#cb111-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb111-7"><a href="#cb111-7" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="c-alpha-test" class="level4" data-number="14.2.2.4">
 <h4 data-number="14.2.2.4" class="anchored" data-anchor-id="c-alpha-test"><span class="header-section-number">14.2.2.4</span> C-alpha test</h4>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-53_998371decd3942bec7b027b584de5f46">
-<div class="sourceCode cell-code" id="cb114"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb114-1"><a href="#cb114-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-54_4f0acbb234be79ad985d9fb3ef289347">
+<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     C(alpha) test
