@@ -614,7 +614,7 @@ mor
 
 When analyzing cluster (or quadrat-based) sampling data, aggregation is the tendency for elements in a sampling unit to have the same status more frequently than expected on the basis of spatial randomness, which can formally be assessed in terms of the intraclass correlation coefficient - ICC [@chapter2017]. In cluster or quadrat sampling, an ICC of zero indicates that the disease status of any plant in a quadrat is unnaffected by the status of other plants in the same quadrat. The closer to one, the higher the tendency for plants in the same quadrat to have the same status.
 
-We will work with a dataset of Fusarium head blight in wheat. On each field, 20 quadrats were randomly defined, each composed of 10 spikes. The data is in the long format with each wheat spike denoted as zero or 1. Let's load the data and inspect the first 10 rows
+We will work with a data set of Fusarium head blight in wheat. On each field, 20 quadrats were randomly defined, each composed of 10 spikes. The data is in the long format with each wheat spike denoted as zero or 1. Let's load the data and inspect the first 10 rows
 
 ```{r}
 #| warning: false
@@ -622,6 +622,10 @@ We will work with a dataset of Fusarium head blight in wheat. On each field, 20 
 
 fhb <- read_csv("data/fhb.csv")
 head(fhb, 10)
+fhb2 <- fhb |> 
+  group_by(campo, q) |> 
+  summarize(total_heads = max(espiga),
+            diseased_heads = sum(status))
 ```
 
 Now let's filter data for the field number 1 and fit a generalized linear model with the binomial family and obtain the icc using the `icc` function of the *performance* package.
@@ -634,6 +638,7 @@ fhb1 <- fhb %>%
 library(lme4)
 glm1 <-glmer(status ~ q + (1 | q), family = "binomial", data = fhb1)
 performance::icc(glm1)
+
 ```
 
 We can fit the model for each of the 20 fields using `group_map` function. Then, we can extract several statistics, including the ICC, with the `modelsummary` function of the *modelsummary* package.
@@ -648,7 +653,6 @@ modelsummary(glm2)
 ```
 
 We note that for some fields the ICC could not be estimated because of the zero variance.
-
 
 #### Fit to distributions
 
@@ -677,6 +681,8 @@ plot(fit_tas)
 
 #### Dispersion index
 
+##### glm model
+
 ```{r}
 #| warning: false
 #| message: false
@@ -687,11 +693,9 @@ summary(binom.tas)
 library(performance)
 check_overdispersion(binom.tas)
 
-library(aod)
-bbinom.tas <-
-  betabin(cbind(count, group_size - count) ~ 1, ~ 1, data = tas)
-summary(bbinom.tas)
 ```
+
+##### epiphy(c-alpha test)
 
 ```{r}
 #| warning: false
@@ -703,9 +707,9 @@ tas2 <- tas |>
   epiphy::incidence()
 
 t <- agg_index(tas2, flavor = "incidence")
+t
 ```
 
-#### C-alpha test
 
 ```{r}
 calpha.test(t)
