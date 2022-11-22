@@ -154,9 +154,6 @@ gtag('js', new Date());
 gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </script>
 
-<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
-<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
-
 
 </head>
 
@@ -361,9 +358,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#incidence-data" id="toc-incidence-data" class="nav-link" data-scroll-target="#incidence-data"><span class="toc-section-number">14.2.2</span>  Incidence data</a>
   <ul>
-  <li><a href="#intraclass-correlation-coefficient" id="toc-intraclass-correlation-coefficient" class="nav-link" data-scroll-target="#intraclass-correlation-coefficient"><span class="toc-section-number">14.2.2.1</span>  Intraclass correlation coefficient</a></li>
-  <li><a href="#fit-to-distributions-1" id="toc-fit-to-distributions-1" class="nav-link" data-scroll-target="#fit-to-distributions-1"><span class="toc-section-number">14.2.2.2</span>  Fit to distributions</a></li>
-  <li><a href="#dispersion-index" id="toc-dispersion-index" class="nav-link" data-scroll-target="#dispersion-index"><span class="toc-section-number">14.2.2.3</span>  Dispersion index</a></li>
+  <li><a href="#fit-to-distributions-1" id="toc-fit-to-distributions-1" class="nav-link" data-scroll-target="#fit-to-distributions-1"><span class="toc-section-number">14.2.2.1</span>  Fit to distributions</a></li>
+  <li><a href="#dispersion-index" id="toc-dispersion-index" class="nav-link" data-scroll-target="#dispersion-index"><span class="toc-section-number">14.2.2.2</span>  Dispersion index</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -1293,386 +1289,15 @@ alternative hypothesis: two.sided</code></pre>
 </section>
 <section id="incidence-data" class="level3" data-number="14.2.2">
 <h3 data-number="14.2.2" class="anchored" data-anchor-id="incidence-data"><span class="header-section-number">14.2.2</span> Incidence data</h3>
-<section id="intraclass-correlation-coefficient" class="level4" data-number="14.2.2.1">
-<h4 data-number="14.2.2.1" class="anchored" data-anchor-id="intraclass-correlation-coefficient"><span class="header-section-number">14.2.2.1</span> Intraclass correlation coefficient</h4>
-<p>When analyzing cluster (or quadrat-based) sampling data, aggregation is the tendency for elements in a sampling unit to have the same status more frequently than expected on the basis of spatial randomness, which can formally be assessed in terms of the intraclass correlation coefficient - ICC <span class="citation" data-cites="chapter2017">(<a href="references.html#ref-chapter2017" role="doc-biblioref">Madden, Hughes, and van den Bosch 2017a</a>)</span>. In cluster or quadrat sampling, an ICC of zero indicates that the disease status of any plant in a quadrat is unnaffected by the status of other plants in the same quadrat. The closer to one, the higher the tendency for plants in the same quadrat to have the same status.</p>
-<p>We will work with a data set of Fusarium head blight in wheat. On each field, 20 quadrats were randomly defined, each composed of 10 spikes. The data is in the long format with each wheat spike denoted as zero or 1. Let’s load the data and inspect the first 10 rows</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-48_040d63f85056653131e502a953e77ffb">
-<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>fhb <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/fhb.csv"</span>)</span>
-<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(fhb, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 10 × 4
-   campo     q espiga status
-   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
- 1     1     1      1      1
- 2     1     1      2      1
- 3     1     1      3      0
- 4     1     1      4      0
- 5     1     1      5      0
- 6     1     1      6      0
- 7     1     1      7      0
- 8     1     1      8      0
- 9     1     1      9      0
-10     1     1     10      0</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a>fhb2 <span class="ot">&lt;-</span> fhb <span class="sc">|&gt;</span> </span>
-<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(campo, q) <span class="sc">|&gt;</span> </span>
-<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">total_heads =</span> <span class="fu">max</span>(espiga),</span>
-<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">diseased_heads =</span> <span class="fu">sum</span>(status))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now let’s filter data for the field number 1 and fit a generalized linear model with the binomial family and obtain the icc using the <code>icc</code> function of the <em>performance</em> package.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-49_912091dd741d0c9813e52271731221c6">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>fhb1 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(campo <span class="sc">==</span> <span class="dv">1</span>) </span>
-<span id="cb94-3"><a href="#cb94-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4)</span>
-<span id="cb94-4"><a href="#cb94-4" aria-hidden="true" tabindex="-1"></a>glm1 <span class="ot">&lt;-</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data =</span> fhb1)</span>
-<span id="cb94-5"><a href="#cb94-5" aria-hidden="true" tabindex="-1"></a>performance<span class="sc">::</span><span class="fu">icc</span>(glm1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># Intraclass Correlation Coefficient
-
-    Adjusted ICC: 0.641
-  Unadjusted ICC: 0.600</code></pre>
-</div>
-</div>
-<p>We can fit the model for each of the 20 fields using <code>group_map</code> function. Then, we can extract several statistics, including the ICC, with the <code>modelsummary</code> function of the <em>modelsummary</em> package.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-50_b2575a011d1fb708bdc12e4932e62607">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>glm2 <span class="ot">&lt;-</span> fhb <span class="sc">%&gt;%</span></span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(campo) <span class="sc">%&gt;%</span></span>
-<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_map</span>(<span class="sc">~</span><span class="fu">glmer</span>(status <span class="sc">~</span> q <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> q), <span class="at">family =</span> <span class="st">"binomial"</span>, <span class="at">data=</span> .x))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')
-boundary (singular) fit: see help('isSingular')</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelsummary)</span>
-<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a><span class="fu">modelsummary</span>(glm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-
-<table class="table" style="width: auto !important; margin-left: auto; margin-right: auto;">
- <thead>
-  <tr>
-   <th style="text-align:left;">   </th>
-   <th style="text-align:center;"> Model 1 </th>
-   <th style="text-align:center;"> Model 2 </th>
-   <th style="text-align:center;"> Model 3 </th>
-   <th style="text-align:center;"> Model 4 </th>
-   <th style="text-align:center;"> Model 5 </th>
-   <th style="text-align:center;"> Model 6 </th>
-   <th style="text-align:center;"> Model 7 </th>
-   <th style="text-align:center;"> Model 8 </th>
-   <th style="text-align:center;"> Model 9 </th>
-   <th style="text-align:center;"> Model 10 </th>
-   <th style="text-align:center;"> Model 11 </th>
-   <th style="text-align:center;"> Model 12 </th>
-   <th style="text-align:center;"> Model 13 </th>
-   <th style="text-align:center;"> Model 14 </th>
-   <th style="text-align:center;"> Model 15 </th>
-   <th style="text-align:center;"> Model 16 </th>
-   <th style="text-align:center;"> Model 17 </th>
-   <th style="text-align:center;"> Model 18 </th>
-   <th style="text-align:center;"> Model 19 </th>
-   <th style="text-align:center;"> Model 20 </th>
-  </tr>
- </thead>
-<tbody>
-  <tr>
-   <td style="text-align:left;"> (Intercept) </td>
-   <td style="text-align:center;"> −1.322 </td>
-   <td style="text-align:center;"> 0.620 </td>
-   <td style="text-align:center;"> −0.522 </td>
-   <td style="text-align:center;"> −0.110 </td>
-   <td style="text-align:center;"> −0.330 </td>
-   <td style="text-align:center;"> −0.691 </td>
-   <td style="text-align:center;"> −0.090 </td>
-   <td style="text-align:center;"> −0.329 </td>
-   <td style="text-align:center;"> 0.396 </td>
-   <td style="text-align:center;"> −0.095 </td>
-   <td style="text-align:center;"> −1.283 </td>
-   <td style="text-align:center;"> −0.511 </td>
-   <td style="text-align:center;"> 1.791 </td>
-   <td style="text-align:center;"> −0.371 </td>
-   <td style="text-align:center;"> 1.117 </td>
-   <td style="text-align:center;"> 0.148 </td>
-   <td style="text-align:center;"> −1.222 </td>
-   <td style="text-align:center;"> 0.576 </td>
-   <td style="text-align:center;"> 0.479 </td>
-   <td style="text-align:center;"> 0.375 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (1.210) </td>
-   <td style="text-align:center;"> (0.458) </td>
-   <td style="text-align:center;"> (0.346) </td>
-   <td style="text-align:center;"> (0.296) </td>
-   <td style="text-align:center;"> (0.303) </td>
-   <td style="text-align:center;"> (0.465) </td>
-   <td style="text-align:center;"> (0.307) </td>
-   <td style="text-align:center;"> (0.340) </td>
-   <td style="text-align:center;"> (0.298) </td>
-   <td style="text-align:center;"> (0.296) </td>
-   <td style="text-align:center;"> (0.359) </td>
-   <td style="text-align:center;"> (0.317) </td>
-   <td style="text-align:center;"> (0.409) </td>
-   <td style="text-align:center;"> (0.297) </td>
-   <td style="text-align:center;"> (0.540) </td>
-   <td style="text-align:center;"> (0.294) </td>
-   <td style="text-align:center;"> (0.376) </td>
-   <td style="text-align:center;"> (0.317) </td>
-   <td style="text-align:center;"> (0.291) </td>
-   <td style="text-align:center;"> (0.297) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> q </td>
-   <td style="text-align:center;"> 0.138 </td>
-   <td style="text-align:center;"> −0.043 </td>
-   <td style="text-align:center;"> −0.033 </td>
-   <td style="text-align:center;"> −0.020 </td>
-   <td style="text-align:center;"> −0.028 </td>
-   <td style="text-align:center;"> 0.007 </td>
-   <td style="text-align:center;"> −0.068 </td>
-   <td style="text-align:center;"> 0.033 </td>
-   <td style="text-align:center;"> −0.015 </td>
-   <td style="text-align:center;"> −0.018 </td>
-   <td style="text-align:center;"> 0.014 </td>
-   <td style="text-align:center;"> 0.025 </td>
-   <td style="text-align:center;"> −0.082 </td>
-   <td style="text-align:center;"> 0.055 </td>
-   <td style="text-align:center;"> 0.138 </td>
-   <td style="text-align:center;"> −0.005 </td>
-   <td style="text-align:center;"> 0.081 </td>
-   <td style="text-align:center;"> −0.030 </td>
-   <td style="text-align:center;"> −0.028 </td>
-   <td style="text-align:center;"> −0.024 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;">  </td>
-   <td style="text-align:center;"> (0.102) </td>
-   <td style="text-align:center;"> (0.038) </td>
-   <td style="text-align:center;"> (0.030) </td>
-   <td style="text-align:center;"> (0.025) </td>
-   <td style="text-align:center;"> (0.026) </td>
-   <td style="text-align:center;"> (0.039) </td>
-   <td style="text-align:center;"> (0.027) </td>
-   <td style="text-align:center;"> (0.028) </td>
-   <td style="text-align:center;"> (0.025) </td>
-   <td style="text-align:center;"> (0.025) </td>
-   <td style="text-align:center;"> (0.029) </td>
-   <td style="text-align:center;"> (0.026) </td>
-   <td style="text-align:center;"> (0.032) </td>
-   <td style="text-align:center;"> (0.025) </td>
-   <td style="text-align:center;"> (0.059) </td>
-   <td style="text-align:center;"> (0.025) </td>
-   <td style="text-align:center;"> (0.031) </td>
-   <td style="text-align:center;"> (0.026) </td>
-   <td style="text-align:center;"> (0.023) </td>
-   <td style="text-align:center;"> (0.025) </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;box-shadow: 0px 1px"> SD (Intercept q) </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 2.426 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.700 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.296 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.714 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.340 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.0000001 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.154 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.212 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.315 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.627 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.0000002 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.392 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.196 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-   <td style="text-align:center;box-shadow: 0px 1px"> 0.000 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> Num.Obs. </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 199 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 200 </td>
-   <td style="text-align:center;"> 210 </td>
-   <td style="text-align:center;"> 200 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> R2 Marg. </td>
-   <td style="text-align:center;"> 0.065 </td>
-   <td style="text-align:center;"> 0.016 </td>
-   <td style="text-align:center;"> 0.011 </td>
-   <td style="text-align:center;"> 0.004 </td>
-   <td style="text-align:center;"> 0.008 </td>
-   <td style="text-align:center;"> 0.0004 </td>
-   <td style="text-align:center;"> 0.045 </td>
-   <td style="text-align:center;"> 0.011 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> 0.003 </td>
-   <td style="text-align:center;"> 0.002 </td>
-   <td style="text-align:center;"> 0.006 </td>
-   <td style="text-align:center;"> 0.062 </td>
-   <td style="text-align:center;"> 0.030 </td>
-   <td style="text-align:center;"> 0.148 </td>
-   <td style="text-align:center;"> 0.0002 </td>
-   <td style="text-align:center;"> 0.059 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> 0.006 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> R2 Cond. </td>
-   <td style="text-align:center;"> 0.665 </td>
-   <td style="text-align:center;"> 0.144 </td>
-   <td style="text-align:center;"> 0.037 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.134 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.044 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.009 </td>
-   <td style="text-align:center;"> 0.020 </td>
-   <td style="text-align:center;"> 0.089 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.239 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.101 </td>
-   <td style="text-align:center;"> 0.020 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> AIC </td>
-   <td style="text-align:center;"> 192.8 </td>
-   <td style="text-align:center;"> 273.7 </td>
-   <td style="text-align:center;"> 248.6 </td>
-   <td style="text-align:center;"> 277.4 </td>
-   <td style="text-align:center;"> 263.8 </td>
-   <td style="text-align:center;"> 262.5 </td>
-   <td style="text-align:center;"> 248.8 </td>
-   <td style="text-align:center;"> 280.9 </td>
-   <td style="text-align:center;"> 280.0 </td>
-   <td style="text-align:center;"> 278.8 </td>
-   <td style="text-align:center;"> 228.4 </td>
-   <td style="text-align:center;"> 279.2 </td>
-   <td style="text-align:center;"> 240.1 </td>
-   <td style="text-align:center;"> 276.4 </td>
-   <td style="text-align:center;"> 126.7 </td>
-   <td style="text-align:center;"> 282.7 </td>
-   <td style="text-align:center;"> 267.1 </td>
-   <td style="text-align:center;"> 278.4 </td>
-   <td style="text-align:center;"> 294.1 </td>
-   <td style="text-align:center;"> 281.6 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> BIC </td>
-   <td style="text-align:center;"> 202.7 </td>
-   <td style="text-align:center;"> 283.6 </td>
-   <td style="text-align:center;"> 258.5 </td>
-   <td style="text-align:center;"> 287.3 </td>
-   <td style="text-align:center;"> 273.7 </td>
-   <td style="text-align:center;"> 272.4 </td>
-   <td style="text-align:center;"> 258.7 </td>
-   <td style="text-align:center;"> 290.8 </td>
-   <td style="text-align:center;"> 289.9 </td>
-   <td style="text-align:center;"> 288.7 </td>
-   <td style="text-align:center;"> 238.3 </td>
-   <td style="text-align:center;"> 289.1 </td>
-   <td style="text-align:center;"> 250.0 </td>
-   <td style="text-align:center;"> 286.3 </td>
-   <td style="text-align:center;"> 136.6 </td>
-   <td style="text-align:center;"> 292.6 </td>
-   <td style="text-align:center;"> 277.0 </td>
-   <td style="text-align:center;"> 288.3 </td>
-   <td style="text-align:center;"> 304.1 </td>
-   <td style="text-align:center;"> 291.5 </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> ICC </td>
-   <td style="text-align:center;"> 0.6 </td>
-   <td style="text-align:center;"> 0.1 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.1 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.007 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;"> 0.03 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.1 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;"> 0.04 </td>
-   <td style="text-align:center;"> 0.01 </td>
-   <td style="text-align:center;">  </td>
-   <td style="text-align:center;">  </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> RMSE </td>
-   <td style="text-align:center;"> 0.32 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.45 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.48 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.46 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.43 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.44 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.29 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.47 </td>
-   <td style="text-align:center;"> 0.49 </td>
-   <td style="text-align:center;"> 0.50 </td>
-   <td style="text-align:center;"> 0.50 </td>
-  </tr>
-</tbody>
-</table>
-
-</div>
-</div>
-<p>We note that for some fields the ICC could not be estimated because of the zero variance.</p>
-</section>
-<section id="fit-to-distributions-1" class="level4" data-number="14.2.2.2">
-<h4 data-number="14.2.2.2" class="anchored" data-anchor-id="fit-to-distributions-1"><span class="header-section-number">14.2.2.2</span> Fit to distributions</h4>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-51_41835d441a7494f37fee83d1577ce69a">
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
-<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
-<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">""</span></span>
-<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tas,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="fit-to-distributions-1" class="level4" data-number="14.2.2.1">
+<h4 data-number="14.2.2.1" class="anchored" data-anchor-id="fit-to-distributions-1"><span class="header-section-number">14.2.2.1</span> Fit to distributions</h4>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-48_f07bce9b77cd540c8f4b22790ef4d49c">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>tas <span class="ot">&lt;-</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read.csv</span>(</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/SpatialAnalysis/Documents/tasmania_test_1.txt"</span>,</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">sep =</span> <span class="st">""</span></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(tas,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   quad group_size count
 1     1          6     4
@@ -1686,14 +1311,14 @@ boundary (singular) fit: see help('isSingular')</code></pre>
 9     9          6     4
 10   10          6     6</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
-<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
-<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span></span>
-<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
-<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
-<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a>fit_tas <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dat_tas)</span>
-<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create incidence object for epiphy</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>dat_tas <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n =</span> group_size, <span class="at">i =</span> count) <span class="sc">|&gt;</span></span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit to two distributions</span></span>
+<span id="cb93-7"><a href="#cb93-7" aria-hidden="true" tabindex="-1"></a>fit_tas <span class="ot">&lt;-</span> <span class="fu">fit_two_distr</span>(dat_tas)</span>
+<span id="cb93-8"><a href="#cb93-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fitting of two distributions by maximum likelihood
 for 'incidence' data.
@@ -1715,7 +1340,7 @@ theta 0.475101 0.209789  2.2647  0.023534 *
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>fit_tas<span class="sc">$</span>llr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Likelihood ratio test
 
@@ -1725,20 +1350,20 @@ aggregated : -57.430  1 35.263   2.88e-09 ***
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="spatial-tests_files/figure-html/unnamed-chunk-51-1.png" class="img-fluid" width="672"></p>
+<p><img src="spatial-tests_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
-<section id="dispersion-index" class="level4" data-number="14.2.2.3">
-<h4 data-number="14.2.2.3" class="anchored" data-anchor-id="dispersion-index"><span class="header-section-number">14.2.2.3</span> Dispersion index</h4>
+<section id="dispersion-index" class="level4" data-number="14.2.2.2">
+<h4 data-number="14.2.2.2" class="anchored" data-anchor-id="dispersion-index"><span class="header-section-number">14.2.2.2</span> Dispersion index</h4>
 <p>glm model</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-52_4233858f7d2c64014f049cbb44217c6e">
-<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>,</span>
-<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
-<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> tas)</span>
-<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-49_7347506e29481503409e54e9eeec2b3a">
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>binom.tas <span class="ot">=</span> <span class="fu">glm</span>(<span class="fu">cbind</span>(count, group_size <span class="sc">-</span> count) <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">family =</span> binomial,</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a>                <span class="at">data =</span> tas)</span>
+<span id="cb98-4"><a href="#cb98-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
 Call:
@@ -1763,8 +1388,8 @@ AIC: 152.12
 
 Number of Fisher Scoring iterations: 5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
-<span id="cb108-2"><a href="#cb108-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_overdispersion</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span>
+<span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a><span class="fu">check_overdispersion</span>(binom.tas)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Overdispersion test
 
@@ -1774,23 +1399,23 @@ Number of Fisher Scoring iterations: 5</code></pre>
 </div>
 </div>
 <p>epiphy(c-alpha test)</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-53_d259afbba9ffe6d8a0dd2ef3a8534f57">
-<div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
-<span id="cb110-2"><a href="#cb110-2" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
-<span id="cb110-3"><a href="#cb110-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
-<span id="cb110-4"><a href="#cb110-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> group_size) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
-<span id="cb110-5"><a href="#cb110-5" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
-<span id="cb110-6"><a href="#cb110-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb110-7"><a href="#cb110-7" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span>
-<span id="cb110-8"><a href="#cb110-8" aria-hidden="true" tabindex="-1"></a>t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-50_b7ce9553c20ea5edf9e0829ee00df77e">
+<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
+<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>tas2 <span class="ot">&lt;-</span> tas <span class="sc">|&gt;</span></span>
+<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">i =</span> count,</span>
+<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">n =</span> group_size) <span class="sc">|&gt;</span>  <span class="co"># create i vector</span></span>
+<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  epiphy<span class="sc">::</span><span class="fu">incidence</span>()</span>
+<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">agg_index</span>(tas2, <span class="at">flavor =</span> <span class="st">"incidence"</span>)</span>
+<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>t</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Fisher's index of dispersion:
 (Version for incidence data)
 2.348</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-54_4f0acbb234be79ad985d9fb3ef289347">
-<div class="sourceCode cell-code" id="cb112"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb112-1"><a href="#cb112-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-51_5318393840378ec24a7d844fd45d0e89">
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calpha.test</span>(t)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>
     C(alpha) test
