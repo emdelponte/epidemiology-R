@@ -8,7 +8,7 @@ editor_options:
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following @madden2017, two major groups can be formed. The intensively mapped (binary or grouped data) data or the sparsely sampled (incidence or count data) data.
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following @madden2017, two major groups can be formed. The intensively mapped (binary, point pattern or grouped data) data or the sparsely sampled (incidence or count data) data.
 
 ## Intensively mapped
 
@@ -284,6 +284,105 @@ S3 <- tswv_1929 |>
 
 joincount.test(factor(S3), 
                 nb2listw(nb1))
+```
+
+### Point pattern data
+
+Point pattern analysis is the study of the spatial arrangements of points in a 2-D space. The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatterplot but with the provision that the axes are equally scaled.
+
+Let's work with a real epidemic data where the presence of banana plants displaying the symptoms of Fusarium wilt was determined in fields across several regions in Brazil [@heck2021]. On each field, the location of each symptomatic plant was geolocated using a GPS together with the coordinates of the four corners of the field. Let's load the data from the web and assign them to the `fw` data frame:
+
+```{r}
+#| warning: false
+#| message: false
+fw <- read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/fusarium_banana.csv")
+
+head(fw)
+
+```
+
+As shown above, the dataframe has four variables. The two first are the location of each plant. The marker indicates weather the point is a plant or one of the four limits of the polygon. The last one is the number of the field in the study.
+
+```{r}
+#| warning: false
+#| message: false
+fw %>% 
+  ggplot(aes(lat, lon, color = marker))+
+  geom_polygon(data = fw, aes(lat, lon, group = marker), fill = "white",  color="grey")+
+  geom_point()+
+  scale_color_manual(values = c("black", NA))+
+  coord_map()+
+  coord_flip()+
+  theme_void()+
+  theme(legend.position = "none")+
+  labs (title = "Fusarium wilt incidence map", 
+        subtitle = "Field 11", 
+        x = "Latitude",
+        y = "Longitude",
+        caption = "Source: Heck et al. (2021)")
+```
+
+#### Quadrat based
+
+Quadrat count analysis
+
+```{r}
+#| warning: false
+#| message: false
+#| 
+library(spatstat)
+### Create window 
+window_fw <- ripras(fw$lon, fw$lat)
+
+# create the point pattern object
+ppp_fw <- ppp(fw$lon, fw$lat, window_fw)
+plot(ppp_fw)
+
+## Quadrat count 10 x 10
+qq <- quadratcount(ppp_fw,6,6, keepempty=TRUE) 
+
+# plot the quadrat count
+plot(qq)
+
+# Quadrat test
+qt <- quadrat.test(qq, alternative="clustered", method="M")
+qt
+
+
+```
+
+#### Spatial KS test
+
+```{r}
+#| warning: false
+#| message: false
+fun <- function(x,y){2* x + y}
+ks <- cdf.test(ppp_fw, test="ks", fun)
+plot(ks)
+```
+
+#### Distance based
+
+```{r}
+#| warning: false
+#| message: false
+fisher <- function(x) {
+  asin(sqrt(x))
+}
+
+Gest(ppp_fw)
+plot(Gest(ppp_fw))
+plot(Gest(ppp_fw), fisher(.) ~ fisher(theo))
+
+#  Pairwise distances
+Kest(ppp_fw)
+plot(Kest(ppp_fw))
+
+# L-function 
+Lest(ppp_fw)
+plot(Lest(ppp_fw))
+
+
 ```
 
 ### Grouped data
@@ -584,7 +683,7 @@ df |>
   theme(legend.position = "top")
 ```
 
-#### Indices of aggregation
+#### Aggregation indices
 
 ```{r}
 #| warning: false
@@ -609,7 +708,6 @@ mor
 ```
 
 ### Incidence data
-
 
 #### Fit to distributions
 
@@ -636,9 +734,9 @@ fit_tas$llr
 plot(fit_tas)
 ```
 
-#### Dispersion index
+#### Aggregation indices
 
- glm model
+glm model
 
 ```{r}
 #| warning: false
@@ -666,7 +764,6 @@ tas2 <- tas |>
 t <- agg_index(tas2, flavor = "incidence")
 t
 ```
-
 
 ```{r}
 calpha.test(t)
