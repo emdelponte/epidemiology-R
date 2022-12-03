@@ -8,7 +8,11 @@ editor_options:
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
-A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected. The several statistical tests can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following @madden2017, two major groups can be formed. The intensively mapped (binary, point pattern or grouped data) data or the sparsely sampled (incidence or count data) data.
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the question, the nature of the data and scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected.
+
+The several exploratory or inferential methods can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following @madden2017, two major groups can be formed. The first group uses intensively mapped data for which the location \[x,y\] of the sampling unit is known. Examples of data include binary data (plant is infected or not infected) in planting row, point pattern (spatial arrangements of points in a 2-D space) and quadrat data (grids are superimposed on point pattern data). The second group is the sparsely sampled data in the form of count or proportion (incidence) data for which the location is not known or, if known, not taken into account in the analysis.
+
+![Classification of spatial data and methods used to study spatial patterns of plant disease based on knowledge of the location of the sampling units and nature of the data.](imgs/spatial_methods.png){#fig-spatialmethods}
 
 ## Intensively mapped
 
@@ -18,7 +22,11 @@ In this situation the individual plants are mapped, meaning that their relative 
 
 #### Runs test
 
-A run is defined as a succession of one or more diseased or healthy plants, which are followed and preceded by a plant of the other disease status or no plant at all. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
+A **run** is defined as a succession of *one or more* diseased (D) or healthy (H) plants, which are followed and preceded by a plant of the other disease status or no plant at all. In the example below, we can count 13 runs.
+
+![Example for the computation of the number of ordinary runs in a sequence of binary data](imgs/runs.png){#fig-runs1}
+
+There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
 
 Let's create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 20 plants and assign it to `y`. For plotting purposes, we make a dataframe for more complete information.
 
@@ -102,7 +110,9 @@ r
 
 #### Doublets
 
-Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the yard. If the observed number is greater than the expected number, contagion within the field is suspected.
+Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the field. If the observed number is greater than the expected number, contagion within the field is suspected.
+
+![Example for the computation of the number of doublets (DD) in a sequence of binary data](imgs/doublets.png){#fig-doublet1}
 
 Let's manually produce a code to execute the doublets test. To facilitate, we can create a function and name it `doublets.test()`. The only argument needed is the vector of binary data.
 
@@ -286,39 +296,39 @@ joincount.test(factor(S3),
                 nb2listw(nb1))
 ```
 
-### Point pattern data
+### Point pattern analysis
 
 Point pattern analysis is the study of the spatial arrangements of points in a 2-D space. The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatterplot but with the provision that the axes are equally scaled.
 
-Let's work with a real epidemic data where the presence of banana plants displaying the symptoms of Fusarium wilt was determined in fields across several regions in Brazil [@heck2021]. On each field, the location of each symptomatic plant was geolocated using a GPS together with the coordinates of the four corners of the field. Let's load the data from the web and assign them to the `fw` data frame:
+Let's work with a real epidemic data where the presence of banana plants displaying the symptoms of Fusarium wilt was determined in fields across several regions in Brazil [@heck2021]. On each field, the location of each symptomatic plant was geolocated using a GPS together with the coordinates of the four corners of the field. Let's load the data from the web and assign them to a data frame called `fw` (Fusarium wilt).
 
 ```{r}
 #| warning: false
 #| message: false
 fw <- read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/fusarium_banana.csv")
-
-head(fw)
-fw2 <- fw |> 
-  select (lon, lat) |> 
-  as.data.frame()
-
-# Convert to meters 
-coordinates(fw2) <- c("lon", "lat")
-proj4string(fw2) <- CRS("+proj=longlat +datum=WGS84")
-fw22 <- spTransform(fw2, CRS("+proj=utm +zone=30 ellps=WGS84"))
-fw22 <- as.data.frame(fw22)
-fw22$marker <- fw$marker
-
 ```
 
-As shown above, the dataframe has four variables. The two first are the location of each plant. The marker indicates weather the point is a plant or one of the four limits of the polygon. The last one is the number of the field in the study.
+Because we using a coordinate system, we need to convert the data to meters.
+
+```{r}
+#|warning: false
+
+# Convert to meters 
+library(sp)
+coordinates(fw) <- c("lon", "lat")
+proj4string(fw) <- CRS("+proj=longlat +datum=WGS84")
+fw <- spTransform(fw, CRS("+proj=utm +zone=30 ellps=WGS84"))
+fw <- data.frame(fw)
+```
+
+As shown above, the `fw` dataframe has five variables. The marker indicates weather the point is a plant or one of the four limits of the polygon. The field variable is the number of the field. Let's produce 2-D map.
 
 ```{r}
 #| warning: false
 #| message: false
-fw22 %>% 
+fw %>% 
   ggplot(aes(lat, lon, color = marker))+
-  geom_polygon(data = fw22, aes(lat, lon, group = marker), fill = "white",  color="grey")+
+  geom_polygon(data = fw, aes(lat, lon, group = marker), fill = "white",  color="grey")+
   geom_point()+
   scale_color_manual(values = c("black", NA))+
   coord_map()+
@@ -342,14 +352,14 @@ Quadrat count analysis
 #| 
 library(spatstat)
 ### Create window 
-window_fw <- ripras(fw22$lon, fw22$lat)
+window_fw <- ripras(fw$lon, fw$lat)
 
 # create the point pattern object
-ppp_fw <- ppp(fw22$lon, fw22$lat, window_fw)
+ppp_fw <- ppp(fw$lon, fw$lat, window_fw)
 plot(ppp_fw)
 
 ## Quadrat count 10 x 10
-qq <- quadratcount(ppp_fw,6,6, keepempty=TRUE) 
+qq <- quadratcount(ppp_fw,8,8, keepempty=TRUE) 
 
 # plot the quadrat count
 plot(qq)
@@ -363,19 +373,38 @@ qt
 
 #### Spatial KS test
 
+Performs a test of goodness-of-fit test of the uniform Poisson point process (Complete Spatial Randomness, CSR) for the dataset.The test is performed by comparing the observed distribution of the values of a spatial covariate at the data points, and the predicted distribution of the same covariate under the model, using a classical goodness-of-fit test @baddeley2005. Thus, we must nominate a spatial covariate for this test. In the case below we nominate x, y or x and y as covariate.
+
 ```{r}
 #| warning: false
 #| message: false
+
+# y as covariate
+ks_y <- cdf.test(ppp_fw, test="ks", "y", jitter=FALSE)
+ks_y
+plot(ks_y)
+
+# x as covariate
+ks_x <- cdf.test(ppp_fw, test="ks", "x", jitter=FALSE)
+ks_x
+plot(ks_x)
+
+
+# x and y as covariates
 fun <- function(x,y){2* x + y}
-ks <- cdf.test(ppp_fw, test="ks", fun)
-plot(ks)
+ks_xy <- cdf.test(ppp_fw, test="ks", fun, jitter=FALSE)
+ks_xy
+plot(ks_xy)
+
 ```
+
+As shown above, we do not have sufficient evidence to reject the null hypothesis of complete spatial randomness.
 
 #### Distance based
 
-The K function, a.k.a. Ripley's K-function, of a stationary point process *X* is defined so that the *lambda* *K(r*) equals the expected number of additional random points within a distance *r* of a typical random point of *X*. *Lambda* is the intensity of the process, or the expected number of point of *X* per unit area.
+A spatial point process is a set of irregularly distributed locations within a defined region which are assumed to have been generated by some form of stochastic mechanism.
 
-A spatial point process is a set of irregularly distributed locations within a defined region which are assumed to have been generated by some form of stochastic mechanism. Ripley's K checks the density of diseased units in each area by the variance as a function of radial distances (*r*) from the diseased unit, hence *K(r)*. If the spatial localization of a diseased unit is independent, the process is random in space.
+The K function, a.k.a. Ripley's K-function, of a stationary point process *X* is defined so that the *lambda* *K(r*) equals the expected number of additional random points within a distance *r* of a typical random point of *X*. *Lambda* is the intensity of the process, or the expected number of point of *X* per unit area. Ripley's K checks the density of diseased units in each area by the variance as a function of radial distances (*r*) from the diseased unit, hence *K(r)*. If the spatial localization of a diseased unit is independent, the process is random in space.
 
 Let's use the `Kest` function of the spatstat package to obtain *K(r)*.
 
@@ -388,7 +417,7 @@ plot(k)
 
 ```
 
-The `envelope` function performs simulations and computes envelopes of a summary statistic based on the simulations. The envelopes can be used to assess the goodness-of-fit of a point process model to point pattern data [@baddeley2014]. Let's simulate the envelope and plot the values using ggplot. Because observed *K(r)* (solid line) lied outside the simulation envelope, aggregation was detected.
+The `envelope` function performs simulations and computes envelopes of a summary statistic based on the simulations. The envelope can be used to assess the goodness-of-fit of a point process model to point pattern data [@baddeley2014]. Let's simulate the envelope and plot the values using ggplot. Because observed *K(r)* (solid line) lied outside the simulation envelope, aggregation was detected.
 
 ```{r}
 ke <- envelope(ppp_fw, fun = Kest)
@@ -398,24 +427,18 @@ data.frame(ke) |>
   geom_line(aes(r, obs))+
   geom_ribbon(aes(ymin = lo, ymax = hi),
               fill = "steelblue", alpha = 0.5)+
-  labs(y = "K(r)", x = "r")
+  labs(y = "K(r)", x = "r")+
+  theme_bw(base_size = 16)
 ```
 
-`mad.test` performs the \'global\' or \'Maximum Absolute Deviation\' test described by Ripley (1977, 1981). See [@baddeley2014]. This performs hypothesis tests for goodness-of-fit of a point pattern dataset to a point process model, based on Monte Carlo simulation from the model.
+`mad.test` performs the 'global' or 'Maximum Absolute Deviation' test described by Ripley (1977, 1981). See [@baddeley2014]. This performs hypothesis tests for goodness-of-fit of a point pattern dataset to a point process model, based on Monte Carlo simulation from the model.
 
 ```{r}
 # Maximum absolute deviation test
 mad.test(ppp_fw, Kest)
 ```
 
-### Mean neighbor distance
 
-```{r}
-d <- nndist(ppp_fw)
-mean(d)
-hist(d)
-
-```
 
 ### Grouped data
 
