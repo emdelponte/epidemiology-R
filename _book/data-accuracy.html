@@ -356,11 +356,12 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#incidence-data" id="toc-incidence-data" class="nav-link" data-scroll-target="#incidence-data"><span class="toc-section-number">8</span>  Incidence data</a>
   <ul>
-  <li><a href="#metrics" id="toc-metrics" class="nav-link" data-scroll-target="#metrics"><span class="toc-section-number">8.1</span>  Metrics</a>
+  <li><a href="#accuracy-1" id="toc-accuracy-1" class="nav-link" data-scroll-target="#accuracy-1"><span class="toc-section-number">8.1</span>  Accuracy</a>
   <ul>
   <li><a href="#caret-package" id="toc-caret-package" class="nav-link" data-scroll-target="#caret-package"><span class="toc-section-number">8.1.1</span>  caret package</a></li>
   <li><a href="#mixturemissing-package" id="toc-mixturemissing-package" class="nav-link" data-scroll-target="#mixturemissing-package"><span class="toc-section-number">8.1.2</span>  MixtureMissing package</a></li>
   </ul></li>
+  <li><a href="#reliability" id="toc-reliability" class="nav-link" data-scroll-target="#reliability"><span class="toc-section-number">8.2</span>  Reliability</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-accuracy.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -1030,46 +1031,45 @@ Overall accuracy      0.8125</code></pre>
 </section>
 <section id="incidence-data" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Incidence data</h1>
-<section id="metrics" class="level2" data-number="8.1">
-<h2 data-number="8.1" class="anchored" data-anchor-id="metrics"><span class="header-section-number">8.1</span> Metrics</h2>
+<section id="accuracy-1" class="level2" data-number="8.1">
+<h2 data-number="8.1" class="anchored" data-anchor-id="accuracy-1"><span class="header-section-number">8.1</span> Accuracy</h2>
 <p>Incidence data are binary at the individual level; an individual is diseased or not. We can simulate two series of binary data and assign them to estimate and true values.</p>
 <section id="caret-package" class="level3" data-number="8.1.1">
 <h3 data-number="8.1.1" class="anchored" data-anchor-id="caret-package"><span class="header-section-number">8.1.1</span> caret package</h3>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-18_5a7851b8dbec6c1982e9425ee8773af1">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>estimate <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.1</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.1</span>)</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="fu">as.factor</span>(estimate),<span class="fu">as.factor</span>(actual))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-18_b71149ced76ad1910d938f85ff8263bb">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>estimate <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.6</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.6</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="fu">as.factor</span>(estimate),<span class="fu">as.factor</span>(actual))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
           Reference
 Prediction  0  1
-         0 88  6
-         1  6  0
-                                          
-               Accuracy : 0.88            
-                 95% CI : (0.7998, 0.9364)
-    No Information Rate : 0.94            
-    P-Value [Acc &gt; NIR] : 0.9931          
-                                          
-                  Kappa : -0.0638         
-                                          
- Mcnemar's Test P-Value : 1.0000          
-                                          
-            Sensitivity : 0.9362          
-            Specificity : 0.0000          
-         Pos Pred Value : 0.9362          
-         Neg Pred Value : 0.0000          
-             Prevalence : 0.9400          
-         Detection Rate : 0.8800          
-   Detection Prevalence : 0.9400          
-      Balanced Accuracy : 0.4681          
-                                          
-       'Positive' Class : 0               
-                                          </code></pre>
+         0 11 28
+         1 21 40
+                                         
+               Accuracy : 0.51           
+                 95% CI : (0.408, 0.6114)
+    No Information Rate : 0.68           
+    P-Value [Acc &gt; NIR] : 0.9999         
+                                         
+                  Kappa : -0.0643        
+                                         
+ Mcnemar's Test P-Value : 0.3914         
+                                         
+            Sensitivity : 0.3438         
+            Specificity : 0.5882         
+         Pos Pred Value : 0.2821         
+         Neg Pred Value : 0.6557         
+             Prevalence : 0.3200         
+         Detection Rate : 0.1100         
+   Detection Prevalence : 0.3900         
+      Balanced Accuracy : 0.4660         
+                                         
+       'Positive' Class : 0              
+                                         </code></pre>
 </div>
 </div>
 </section>
@@ -1121,6 +1121,18 @@ $FDR
 [1] 1</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="reliability" class="level2" data-number="8.2">
+<h2 data-number="8.2" class="anchored" data-anchor-id="reliability"><span class="header-section-number">8.2</span> Reliability</h2>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-20_7d9a3fbe99a1221a2f3a4dd3fef3726b">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(estimate, actual)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">phi</span>(tab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -0.07</code></pre>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography" style="display: none">
@@ -1134,7 +1146,6 @@ Lin, Lawrence I-Kuei. 1989. <span>“A Concordance Correlation Coefficient to Ev
 Shrout, Patrick E., and Joseph L. Fleiss. 1979. <span>“Intraclass Correlations: Uses in Assessing Rater Reliability.”</span> <em>Psychological Bulletin</em> 86 (2): 420–28. <a href="https://doi.org/10.1037/0033-2909.86.2.420">https://doi.org/10.1037/0033-2909.86.2.420</a>.
 </div>
 </div>
-</section>
 </section>
 </section>
 

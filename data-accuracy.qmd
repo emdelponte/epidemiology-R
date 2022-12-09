@@ -450,7 +450,7 @@ kable(res)
 
 # Incidence data
 
-## Metrics
+## Accuracy
 
 Incidence data are binary at the individual level; an individual is diseased or not. We can simulate two series of binary data and assign them to estimate and true values. 
 
@@ -458,9 +458,9 @@ Incidence data are binary at the individual level; an individual is diseased or 
 
 ```{r}
 #| warning: false
-set.seed(12)
-estimate <- rbinom(100, size = 1, prob = 0.1)
-actual <- rbinom(100, size = 1, prob = 0.1)
+
+estimate <- rbinom(100, size = 1, prob = 0.6)
+actual <- rbinom(100, size = 1, prob = 0.6)
 
 library(caret)
 confusionMatrix(as.factor(estimate),as.factor(actual))
@@ -476,4 +476,12 @@ library(MixtureMissing)
 evaluation_metrics(estimate, actual)
 ```
 
+## Reliability
+
+```{r}
+
+library(psych)
+tab <- table(estimate, actual)
+phi(tab)
+```
 
