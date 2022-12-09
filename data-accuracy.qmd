@@ -6,6 +6,8 @@ title: "Reliability and accuracy"
 This is a work in progress that is currently undergoing heavy technical editing and copy-editing
 :::
 
+# Severity data
+
 ## Terminology
 
 Disease severity, mainly when expressed in percent area diseased assessed visually, is acknowledged as a more difficult and less time- and cost-effective plant disease variable to obtain. However, errors may occur even when assessing a more objective measure such as incidence. This is the case when an incorrect assignment or confusion of symptoms occur. In either case, the quality of the assessment of any disease variable is very important and should be gauged in the studies. Several terms can be used when evaluating the quality of disease assessments, including reliability, precision, accuracy or agreement.
@@ -445,3 +447,33 @@ Value <- c(rho, Cb, r, ss, ls)
 res <- data.frame(Metrics, Value)
 kable(res)
 ```
+
+# Incidence data
+
+## Metrics
+
+Incidence data are binary at the individual level; an individual is diseased or not. We can simulate two series of binary data and assign them to estimate and true values. 
+
+### caret package
+
+```{r}
+#| warning: false
+set.seed(12)
+estimate <- rbinom(100, size = 1, prob = 0.1)
+actual <- rbinom(100, size = 1, prob = 0.1)
+
+library(caret)
+confusionMatrix(as.factor(estimate),as.factor(actual))
+
+```
+
+
+### MixtureMissing package
+
+```{r}
+#| warning: false
+library(MixtureMissing)
+evaluation_metrics(estimate, actual)
+```
+
+
