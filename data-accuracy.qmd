@@ -228,7 +228,6 @@ sbr2 |>
        color = "Rater")
 ```
 
-
 Another interesting visualization is the correlation matrix of the estimates between all possible pair of raters. The `ggpairs` function of the *GGally* package is handy for this task.
 
 ```{r}
@@ -452,36 +451,85 @@ kable(res)
 
 ## Accuracy
 
-Incidence data are binary at the individual level; an individual is diseased or not. We can simulate two series of binary data and assign them to estimate and true values. 
-
-### caret package
+Incidence data are binary at the individual level; an individual is diseased or not. Here, different from severity that is estimated, the specimen is classified. Let's create two series of binary data, each being a hypothetical scenario of assignment of 12 plant specimens into two classes: healthy (0) or diseased (1).
 
 ```{r}
 #| warning: false
 
-estimate <- rbinom(100, size = 1, prob = 0.6)
-actual <- rbinom(100, size = 1, prob = 0.6)
+order <- c(1:12)
+actual <- c(1,1,1,1,1,1,1,1,0,0,0,0)
+class <- c(0,0,1,1,1,1,1,1,1,0,0,0)
 
-library(caret)
-confusionMatrix(as.factor(estimate),as.factor(actual))
-
+dat_inc <- data.frame(order, actual, class)
+dat_inc 
 ```
 
+In the example above, the rater makes 9 accurate classification and misses 3: 2 diseased plants classified as being disease-free (sample 1 and 2), and 1 healthy plant that is wrongly classified as diseased (sample 9).
 
-### MixtureMissing package
+Notice that there are four outcomes:
+
+TP = true positive, a positive sample correctly classified\
+TN = true negative, a negative sample correctly classified\
+FP = false positive, a negative sample classified as positive\
+FN = false negative, a positive sample classified as positive.
+
+There are several metrics that can be calculated with the help of a confusion matrix, also known as error matrix. Considering the above outcomes, here is a how a confusion matrix looks like.
+
+Suppose a 2x2 table with notation
+
+|                      | Actual value |         |
+|---------------------:|:------------:|:-------:|
+| Classification value |   Diseased   | Healthy |
+|             Diseased |      TP      |   FP    |
+|              Healthy |      FN      |   TN    |
+
+Let's create this matrix using a function of the caret package.
+
+```{r}
+#| warning: false
+#| message: false
+library(caret)
+attach(dat_inc)
+cm <- confusionMatrix(factor(class), reference = factor(actual))
+cm
+```
+
+The function returns the confusion matrix and several statistics such as accuracy = (TP + TN) / (TP + TN + FP + FN). Let's manually calculate the accuracy and compare the results:
+
+```{r}
+TP = 3
+FP = 2
+FN = 1
+TN = 6
+accuracy = (TP+TN)/(TP+TN+FP+FN)
+accuracy
+```
+
+Two other important metrics are sensitivity and specificity.
+
+```{r}
+sensitivity = TP/(TP+FN)
+sensitivity
+specificity = TN/(FP+TN)
+specificity
+```
+
+```{r}
+```
+
+We can calculate some metrics using the *MixtureMissing* package.
 
 ```{r}
 #| warning: false
 library(MixtureMissing)
-evaluation_metrics(estimate, actual)
+evaluation_metrics(actual, class)
 ```
 
 ## Reliability
 
 ```{r}
-
+#| warning: false
 library(psych)
-tab <- table(estimate, actual)
+tab <- table(class, actual)
 phi(tab)
 ```
-

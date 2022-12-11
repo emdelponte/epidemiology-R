@@ -356,11 +356,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   </ul></li>
   <li><a href="#incidence-data" id="toc-incidence-data" class="nav-link" data-scroll-target="#incidence-data"><span class="toc-section-number">8</span>  Incidence data</a>
   <ul>
-  <li><a href="#accuracy-1" id="toc-accuracy-1" class="nav-link" data-scroll-target="#accuracy-1"><span class="toc-section-number">8.1</span>  Accuracy</a>
-  <ul>
-  <li><a href="#caret-package" id="toc-caret-package" class="nav-link" data-scroll-target="#caret-package"><span class="toc-section-number">8.1.1</span>  caret package</a></li>
-  <li><a href="#mixturemissing-package" id="toc-mixturemissing-package" class="nav-link" data-scroll-target="#mixturemissing-package"><span class="toc-section-number">8.1.2</span>  MixtureMissing package</a></li>
-  </ul></li>
+  <li><a href="#accuracy-1" id="toc-accuracy-1" class="nav-link" data-scroll-target="#accuracy-1"><span class="toc-section-number">8.1</span>  Accuracy</a></li>
   <li><a href="#reliability" id="toc-reliability" class="nav-link" data-scroll-target="#reliability"><span class="toc-section-number">8.2</span>  Reliability</a></li>
   </ul></li>
   </ul>
@@ -1033,104 +1029,184 @@ Overall accuracy      0.8125</code></pre>
 <h1 data-number="8"><span class="header-section-number">8</span> Incidence data</h1>
 <section id="accuracy-1" class="level2" data-number="8.1">
 <h2 data-number="8.1" class="anchored" data-anchor-id="accuracy-1"><span class="header-section-number">8.1</span> Accuracy</h2>
-<p>Incidence data are binary at the individual level; an individual is diseased or not. We can simulate two series of binary data and assign them to estimate and true values.</p>
-<section id="caret-package" class="level3" data-number="8.1.1">
-<h3 data-number="8.1.1" class="anchored" data-anchor-id="caret-package"><span class="header-section-number">8.1.1</span> caret package</h3>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-18_b71149ced76ad1910d938f85ff8263bb">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>estimate <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.6</span>)</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(<span class="dv">100</span>, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> <span class="fl">0.6</span>)</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="fu">as.factor</span>(estimate),<span class="fu">as.factor</span>(actual))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Incidence data are binary at the individual level; an individual is diseased or not. Here, different from severity that is estimated, the specimen is classified. Let’s create two series of binary data, each being a hypothetical scenario of assignment of 12 plant specimens into two classes: healthy (0) or diseased (1).</p>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-18_abd40392e44fc2e966b8e01fa8130a90">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>order <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>actual <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>class <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>dat_inc <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(order, actual, class)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>dat_inc </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   order actual class
+1      1      1     0
+2      2      1     0
+3      3      1     1
+4      4      1     1
+5      5      1     1
+6      6      1     1
+7      7      1     1
+8      8      1     1
+9      9      0     1
+10    10      0     0
+11    11      0     0
+12    12      0     0</code></pre>
+</div>
+</div>
+<p>In the example above, the rater makes 9 accurate classification and misses 3: 2 diseased plants classified as being disease-free (sample 1 and 2), and 1 healthy plant that is wrongly classified as diseased (sample 9).</p>
+<p>Notice that there are four outcomes:</p>
+<p>TP = true positive, a positive sample correctly classified<br>
+TN = true negative, a negative sample correctly classified<br>
+FP = false positive, a negative sample classified as positive<br>
+FN = false negative, a positive sample classified as positive.</p>
+<p>There are several metrics that can be calculated with the help of a confusion matrix, also known as error matrix. Considering the above outcomes, here is a how a confusion matrix looks like.</p>
+<p>Suppose a 2x2 table with notation</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: right;"></th>
+<th style="text-align: center;">Actual value</th>
+<th style="text-align: center;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">Classification value</td>
+<td style="text-align: center;">Diseased</td>
+<td style="text-align: center;">Healthy</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">Diseased</td>
+<td style="text-align: center;">TP</td>
+<td style="text-align: center;">FP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">Healthy</td>
+<td style="text-align: center;">FN</td>
+<td style="text-align: center;">TN</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s create this matrix using a function of the caret package.</p>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-19_f90aba93ad7e5b1cc35f41811c2e6146">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">attach</span>(dat_inc)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>cm <span class="ot">&lt;-</span> <span class="fu">confusionMatrix</span>(<span class="fu">factor</span>(class), <span class="at">reference =</span> <span class="fu">factor</span>(actual))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>cm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
           Reference
-Prediction  0  1
-         0 11 28
-         1 21 40
-                                         
-               Accuracy : 0.51           
-                 95% CI : (0.408, 0.6114)
-    No Information Rate : 0.68           
-    P-Value [Acc &gt; NIR] : 0.9999         
-                                         
-                  Kappa : -0.0643        
-                                         
- Mcnemar's Test P-Value : 0.3914         
-                                         
-            Sensitivity : 0.3438         
-            Specificity : 0.5882         
-         Pos Pred Value : 0.2821         
-         Neg Pred Value : 0.6557         
-             Prevalence : 0.3200         
-         Detection Rate : 0.1100         
-   Detection Prevalence : 0.3900         
-      Balanced Accuracy : 0.4660         
-                                         
-       'Positive' Class : 0              
-                                         </code></pre>
+Prediction 0 1
+         0 3 2
+         1 1 6
+                                          
+               Accuracy : 0.75            
+                 95% CI : (0.4281, 0.9451)
+    No Information Rate : 0.6667          
+    P-Value [Acc &gt; NIR] : 0.3931          
+                                          
+                  Kappa : 0.4706          
+                                          
+ Mcnemar's Test P-Value : 1.0000          
+                                          
+            Sensitivity : 0.7500          
+            Specificity : 0.7500          
+         Pos Pred Value : 0.6000          
+         Neg Pred Value : 0.8571          
+             Prevalence : 0.3333          
+         Detection Rate : 0.2500          
+   Detection Prevalence : 0.4167          
+      Balanced Accuracy : 0.7500          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
 </div>
 </div>
-</section>
-<section id="mixturemissing-package" class="level3" data-number="8.1.2">
-<h3 data-number="8.1.2" class="anchored" data-anchor-id="mixturemissing-package"><span class="header-section-number">8.1.2</span> MixtureMissing package</h3>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-19_4955dde215d2d3fa7876606af4c1127f">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MixtureMissing)</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">evaluation_metrics</span>(estimate, actual)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The function returns the confusion matrix and several statistics such as accuracy = (TP + TN) / (TP + TN + FP + FN). Let’s manually calculate the accuracy and compare the results:</p>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-20_f54d2d6b756994a1d14c9acf1771d3e0">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>TP <span class="ot">=</span> <span class="dv">3</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>FP <span class="ot">=</span> <span class="dv">2</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>FN <span class="ot">=</span> <span class="dv">1</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>TN <span class="ot">=</span> <span class="dv">6</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">=</span> (TP<span class="sc">+</span>TN)<span class="sc">/</span>(TP<span class="sc">+</span>TN<span class="sc">+</span>FP<span class="sc">+</span>FN)</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.75</code></pre>
+</div>
+</div>
+<p>Two other important metrics are sensitivity and specificity.</p>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-21_8d524118a4a307c2c682690a0cc5d74f">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>sensitivity <span class="ot">=</span> TP<span class="sc">/</span>(TP<span class="sc">+</span>FN)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>sensitivity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.75</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>specificity <span class="ot">=</span> TN<span class="sc">/</span>(FP<span class="sc">+</span>TN)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>specificity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.75</code></pre>
+</div>
+</div>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-22_463edefecfd91b7912a76a26ab6f00ab">
+
+</div>
+<p>We can calculate some metrics using the <em>MixtureMissing</em> package.</p>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-23_1ab55d2190a7c09445d46c35e8790314">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(MixtureMissing)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">evaluation_metrics</span>(actual, class)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$matr
        pred_0 pred_1
-true_0     88      6
-true_1      6      0
+true_0      3      1
+true_1      2      6
 
 $TN
-[1] 88
+[1] 3
 
 $FP
-[1] 6
-
-$FN
-[1] 6
-
-$TP
-[1] 0
-
-$TPR
-[1] 0
-
-$FPR
-[1] 0.06382979
-
-$TNR
-[1] 0.9361702
-
-$FNR
 [1] 1
 
+$FN
+[1] 2
+
+$TP
+[1] 6
+
+$TPR
+[1] 0.75
+
+$FPR
+[1] 0.25
+
+$TNR
+[1] 0.75
+
+$FNR
+[1] 0.25
+
 $precision
-[1] 0
+[1] 0.8571429
 
 $accuracy
-[1] 0.88
+[1] 0.75
 
 $error_rate
-[1] 0.12
+[1] 0.25
 
 $FDR
-[1] 1</code></pre>
+[1] 0.1428571</code></pre>
 </div>
 </div>
-</section>
 </section>
 <section id="reliability" class="level2" data-number="8.2">
 <h2 data-number="8.2" class="anchored" data-anchor-id="reliability"><span class="header-section-number">8.2</span> Reliability</h2>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-20_7d9a3fbe99a1221a2f3a4dd3fef3726b">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(estimate, actual)</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="fu">phi</span>(tab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-24_8e76039ea1aab968f5b14bb0edcf4454">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>tab <span class="ot">&lt;-</span> <span class="fu">table</span>(class, actual)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="fu">phi</span>(tab)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] -0.07</code></pre>
+<pre><code>[1] 0.48</code></pre>
 </div>
 </div>
 
