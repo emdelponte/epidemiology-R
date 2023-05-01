@@ -26,14 +26,19 @@ dat3 <- tibble::tribble(
 # beta generalizada
 # Y=B1((X-B2)^B4)((B3-X)^B5)
 library(minpack.lm)
+# fit a non-linear model to the data
 fit <- nlsLM(y ~ b1*((t - b2 )^b4)*((b3 - t)^b5),
+# set the starting values for the parameters
              start = list(b1 = 0,
                           b2 = 10, 
                           b3 = 40, 
                           b4 = 1.5, 
                           b5 = 1),
+# use the port algorithm to fit the model
              algorithm = "port",
+# use the data in the data frame dat3
              data = dat3)
+
 fit$m$getAllPars()
 
 
