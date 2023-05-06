@@ -69,29 +69,27 @@ We can write a code in R and create a function named `oruns.test()` for the ordi
 
 ```{r}
 oruns.test <- function(x) {
-  S <- x 
-  U = max(cumsum(c(1, diff(S) != 0))) 
-  m = sum(S) 
-  N = length(S) 
-  EU = 1 + (2 * m * (N - m) / N) 
-  sU = sqrt(2 * m * (N - m) * (2 * m * (N - m) - N) / (N ^ 2 * (N - 1))) 
-  Z = (U - EU) / sU 
-  pvalue <- (2 * pnorm(abs(Z), lower.tail = FALSE))
-  result <- ifelse(Z < 1.64,
-                   c("clustering"),
-                   c("randomness"))
-  print(
-    paste(
-      "There are",
-      U,
-      "runs. The number of expected runs is",
-      round(EU, 1),
-      ". P-value:",
-      round(pvalue, 6),
-      ". Alternative hypothesis: non-randomness"
-    )
-  )
+  runs <- rle(x)
+  U <- length(runs$lengths)
+  N <- length(x)
+  m <- sum(x)
+  
+  EU <- 1 + (2 * m * (N - m) / N)
+  sU <- sqrt((2 * m * (N - m) * (2 * m * (N - m) - N)) / (N ^ 2 * (N - 1)))
+  Z <- (U - EU) / sU
+  
+  pvalue <- 2 * pnorm(abs(Z), lower.tail = FALSE)
+  
+  cat(sprintf(
+    "There are %d runs. The number of expected runs is %.1f.\n",
+    U, EU
+  ))
+  cat(sprintf(
+    "P-value: %.6f. Alternative hypothesis: non-randomness\n",
+    pvalue
+  ))
 }
+
 ```
 
 We can now run the test for the example series above.
@@ -118,32 +116,26 @@ Let's manually produce a code to execute the doublets test. To facilitate, we ca
 
 ```{r}
 doublets.test <- function(x) {
-  S <- x
-  matrix <- cbind(S[-length(S)], S[-1])
-  pairs <- table(data.frame(matrix))
-  Db <- pairs[2, 2]
-  N <- length(S)
-  m = sum(S)
-  EDb = m * ((m - 1) / N)
-  SDb = sqrt(EDb * (1 - (2 / N)))
-  ZDb = (Db - EDb) / SDb
-  pvalue <- (2 * pnorm(abs(ZDb), lower.tail = FALSE))
-  result <- ifelse(abs(ZDb) >= 1.64,
-                   c("aggregation or clustering"),
-                   c("randomness"))
-  print(
-    paste(
-      "There are",
-      Db,
-      "doublets. The number of expected doublets is",
-      EDb,
-      ".",
-      "P-value:",
-      round(pvalue, 4),
-      ". Alternative hypothesis: non-randomness"
-    )
-  )
+  doublets <- sum(x[-1] * x[-length(x)] == 1)
+  N <- length(x)
+  m <- sum(x)
+  
+  EDb <- m * ((m - 1) / N)
+  SDb <- sqrt(EDb * (1 - (2 / N)))
+  ZDb <- (doublets - EDb) / SDb
+  
+  pvalue <- 2 * pnorm(abs(ZDb), lower.tail = FALSE)
+  
+  cat(sprintf(
+    "There are %d doublets. The number of expected doublets is %.1f.\n",
+    doublets, EDb
+  ))
+  cat(sprintf(
+    "P-value: %.4f. Alternative hypothesis: non-randomness\n",
+    pvalue
+  ))
 }
+
 ```
 
 Now we can run the doublets test for the same sequence.
