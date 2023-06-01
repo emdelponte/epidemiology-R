@@ -426,7 +426,7 @@ The `epi.ccc` function of the *epiR* package allows to obtain the Lin's CCC stat
 
 ```{r}
 #| label: tbl-ccc
-#| tbl-cap: "Statitics of the concordance correlation coefficient summarizing accuracy and precision of visual severity estimates of soybean rust for four raters"
+#| tbl-cap: "Statitics of the concordance correlation coefficient summarizing accuracy and precision of visual severity estimates of soybean rust for a single rater"
 
 library(epiR)
 # Only rater 2
@@ -446,6 +446,35 @@ Metrics <- c("Agreement", "Bias coefficient", "Precision", "scale-shift", "locat
 Value <- c(rho, Cb, r, ss, ls)
 res <- data.frame(Metrics, Value)
 kable(res)
+```
+
+Now let's create a function that will allow us to estimate the CCC for all raters in the data frame in the wide format. The function assumes that the first two columns are the actual and estimates and the rest of the columns are the raters, which is the case for our `sbr` dataframe . Let's name this function `ccc_byrater`. 
+
+```{r}
+#| warning: false
+#| message: false
+ccc_byrater <- function(data) {
+  long_data <- pivot_longer(data, cols = -c(leaf, actual),
+                            names_to = "rater", values_to = "measurement")
+  ccc_results <- long_data %>%
+    group_by(rater) %>%
+    summarise(Agreement = as.numeric(epi.ccc(measurement, actual)$rho.c[1]),
+              `Bias coefficient` = epi.ccc(measurement, actual)$C.b,
+              Precision = Agreement * `Bias coefficient`,
+              scale_shift = epi.ccc(measurement, actual)$s.shift,
+              location_shift = epi.ccc(measurement, actual)$l.shift)
+  
+  return(ccc_results)
+}
+```
+
+Then, we use the `ccc_byrater` function with the original `sbr` dataset - or any other dataset in the wide format of similar structure. The output is a dataframe with all CCC statistics.
+
+```{r}
+#| warning: false
+#| message: false
+results <- ccc_byrater(sbr)
+knitr::kable(results)
 ```
 
 # Incidence data
