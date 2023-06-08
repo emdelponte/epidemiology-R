@@ -144,6 +144,194 @@ Now we can run the doublets test for the same sequence.
 doublets.test(row1$y1)
 ```
 
+#### Foci structure and dynamics
+
+The Analysis of Foci Structure and Dynamics (AFSD), introduced by [@nelson1996simple] and further expanded by [@laranjeira1998dinamica], was used in several studies on citrus diseases in Brazil. In this analysis, the data come from incidence maps where both the diseased and no-diseased trees are mapped in the 2D plane [@jesusjunior2004; @laranjeira2004].
+
+Here is an example of an incidence map with four foci (adapted from [@laranjeira1998dinamica]). The data is organized in the wide format where the first column x is the index for the row and each column is the position of the plant within the row. The 0 and 1 represent the non-diseased and diseased plant, respectively.
+
+```{r}
+foci <- tibble::tribble(
+           ~x, ~`1`, ~`2`, ~`3`, ~`4`, ~`5`, ~`6`, ~`7`, ~`8`, ~`9`,
+           1,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           2,   1,   1,   1,   0,   0,   0,   0,   1,   0,
+           3,   1,   1,   1,   0,   0,   0,   1,   1,   1,
+           4,   0,   1,   1,   0,   0,   0,   0,   1,   0,
+           5,   0,   1,   1,   0,   0,   0,   0,   0,   0,
+           6,   0,   0,   0,   1,   0,   0,   0,   0,   0,
+           7,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           8,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           9,   0,   0,   0,   0,   0,   1,   0,   1,   0,
+          10,   0,   0,   0,   0,   0,   0,   1,   0,   0,
+          11,   0,   1,   0,   0,   0,   1,   0,   1,   0,
+          12,   0,   0,   0,   0,   0,   0,   0,   0,   0
+          )
+
+```
+
+Since the data frame is in the wide format, we need to reshape it to the long format using `pivot_longer` function of the *tidyr* package before plotting using *ggplot2* package.
+
+```{r}
+library(tidyr)
+
+foci2 <- foci |> 
+  pivot_longer(2:10, names_to = "y", values_to = "i")
+DT::datatable(foci2)
+
+```
+
+Now we can make the plot.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-foci1
+#| fig-cap: "Examples of foci of plant diseases - see text for description"
+library(ggplot2)
+foci2 |> 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile(color = "black")+
+  scale_fill_manual(values = c("grey96", "grey20"))+
+  theme_void()+
+  coord_fixed()+
+  theme(legend.position = "none")
+```
+
+In the above plot, the upper left focus is composed of four diseased plants with a pattern of vertical and horizontal proximity to the central unit (or the Rook's case). The upper right focus, also with four diseased plants denotes a pattern of longitudinal proximity to the central unit (or the Bishop's case). The lower left focus is composed of 11 diseased plants with 4 rows and 6 columns occupied by the focus; the shape index of the focus (SIF) is 1.25 and the compactness index of the focus (CIF) is 0.55. The lower right is a single-unit focus.
+
+In this analysis, several statistics can be summarized, both at the single focus and averaging across all foci in the area, including:
+
+-   Number of foci (NF) and number of single focus (NSF)
+
+-   NF and NSF can be normalized to 1000 plants as NF1000 and NSF1000
+
+-   Number of plants in each focus i (NPFi)
+
+-   Maximum number of rows of the focus i (rfi) and maximum number of columns of the focus i (cfi)
+
+-   Mean shape index of foci (meanSIF = \[∑(fri / cfi)\]/NF), where SIF values equal to 1.0 indicate isodiametrical foci; values greater than 1.0 indicate foci with greater length in the direction between the planting rows and values less than 1 indicate foci with greater length in the direction of the planting row.
+
+-   Mean compactness index of foci (meanCIF = \[∑(NPFi/rfi\*cfi)\]/NF), where CIF values close to 1.0 indicate a more compact foci, that is, greater aggregation and proximity among all the plants belonging to the focus
+
+We can obtain these foci statistics using the `AFSD` function of the *r4pde* package. Let's calculate for the foci2 dataset already loaded, but first we need to check whether all variables are numeric or integer.
+
+```{r}
+if (!"r4pde" %in% rownames(installed.packages())) {
+  if (!require("devtools")) {
+    install.packages("devtools")
+  }
+  devtools::install_github("emdelponte/r4pde")  # Replace 'username' with the GitHub username
+}
+
+library(r4pde)
+
+
+str(foci2) # y was not numeric
+foci2$y <- as.integer(foci2$y) # transform to numeric
+
+result_foci <- AFSD(foci2)
+  
+```
+
+The AFSD function returns a list of three data frames. The first is a summary statistics for the data frame in analysis.
+
+```{r}
+knitr::kable(result_foci[[1]])
+```
+
+The second object in the list is a data frame with statistics at the focus level, including the number of rows and columns occupied by the focus and the two indices for each focus: shape and compactness.
+
+```{r}
+knitr::kable(result_foci[[2]])
+```
+
+The third object is the original data frame amended with the id for each focus which can be plotted using the `plot_AFSD()` function.
+
+```{r}
+foci_data <- result_foci[[3]]
+DT::datatable(foci_data)
+```
+
+The plot shows the ID for each focus.
+
+```{r}
+plot_AFSD(foci_data)+
+  theme_bw()
+  
+```
+
+We will now analyse a real data set from the *epiphy* package. The data is the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the dataset. We will work with the data from 1928 when 6 assessments were made in time. We will first work with time 1.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(epiphy)
+tswv_1928 <- tomato_tswv$field_1928
+df1 <- tswv_1928 |>
+  filter(t == 1) |> 
+  select(x, y, i)
+```
+
+Follows the incidence map of the area at time 1.
+
+```{r}
+df1 |> 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile(color = "black")+
+  theme_void()+
+  scale_fill_grey(start = 0.8, end = 0.2)+
+  coord_fixed()+
+  theme(legend.position = "none")
+```
+
+Now we can run the AFSD function and obtain the statistics.
+
+```{r}
+result_df1 <- AFSD(df1)
+
+knitr::kable(result_df1[[1]])
+```
+
+This analysis is usually applied to multiple maps and the statistics are visually related to the incidence in the area in a scatter plot. Let's calculate the statistics for all five times of the data frame where we will keep now the time variable in the dataframe and split it by time before applying the function. We can do it using the `map` function of the *purrr* package.
+
+```{r}
+library(purrr)
+
+df_all <- tomato_tswv$field_1928
+
+# Split the dataframe by 'time'
+df_split <- split(df_all, df_all$t)
+
+# Apply the AFSD function to each split dataframe
+results <- map(df_split, AFSD)
+
+
+```
+
+We can check the summary results for time 2 and time 3.
+
+```{r}
+time2 <- data.frame(results[[2]][1])
+knitr::kable(time2)
+
+time3 <- data.frame(results[[3]][1])
+knitr::kable(time3)
+
+# Plot the results to see the two foci in time 1
+plot_AFSD(results[[1]][[3]])+
+  theme_void()+
+  coord_fixed()
+
+# Plot time 2
+plot_AFSD(results[[2]][[3]])+
+  theme_void()+
+  coord_fixed()
+
+
+
+```
+
 #### Join count
 
 In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified in the test. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
@@ -429,8 +617,6 @@ data.frame(ke) |>
 # Maximum absolute deviation test
 mad.test(ppp_fw, Kest)
 ```
-
-
 
 ### Grouped data
 
@@ -756,8 +942,7 @@ mor
 
 #### Power law
 
-When we have a collection of count data sets at the sampling unit scale the Taylor’s power law (TPL) can be used to assess the overall degree of heterogeneity. 
-
+When we have a collection of count data sets at the sampling unit scale the Taylor's power law (TPL) can be used to assess the overall degree of heterogeneity.
 
 ### Incidence data
 
@@ -824,5 +1009,3 @@ calpha.test(t)
 #### Binary power law
 
 When we have a collection of incidence data sets at the sampling unit scale the binary form of the power law can be used to assess the overall degree of heterogeneity. This spatial analysis method describes the relationship between the observed variance of diseased individuals within a data set and the corresponding variance under the assumption that the data have a random distribution distribution (i.e., Binomial for proportion data).
-
-
