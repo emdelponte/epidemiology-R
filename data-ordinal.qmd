@@ -140,7 +140,7 @@ chiang |>
 In the qualitative ordinal scale, each class provides a description of the symptoms. An example is the ordinal 0-3 scale for rating eyespot of wheat developed by [@scott1974].
 
 | Class | Description                                                                                                 |
-|--------------------|----------------------------------------------------|
+|---------------------|---------------------------------------------------|
 | 0     | uninfected                                                                                                  |
 | 1     | slight eyespot (or or more small lesion occupying in total less than half of the circumference of the stem) |
 | 2     | moderate eyespot (one or more lesions occupying at least half the circumference of the stem)                |
@@ -154,18 +154,7 @@ Usually, when quantitative or qualitative ordinal scales are used, the scores ar
 
 $DSI = \frac{∑(class \ freq. \ ✕ \ score \  of \ class)} {total \ n \ ✕ \ maximal \ class} ✕ 100$
 
-Let's create a function named `DSI()` to automate the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores.
-
-```{r}
-DSI <- function(unit, class, max) {
-df <- data.frame(unit, class)
-tab <- aggregate(df$class, list(num=class), length)
-tab$weight = tab$num * tab$x
-(sum(as.numeric(tab$weight)))/(nrow(df)*max)*100
-}
-```
-
-The function requires three arguments:
+The `DSI()` is part of the *r4pde* package. It allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores. The function requires three arguments:
 
 -   unit = the vector of the number of each unit
 
@@ -186,6 +175,7 @@ knitr::kable(ratings)
 The ordinal score used in this example has 6 as the maximum score. The function returns the DSI value.
 
 ```{r}
+library(r4pde)
 DSI(ratings$unit, ratings$class, 6)
 
 ```
