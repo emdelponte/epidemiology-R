@@ -116,7 +116,7 @@ library(tidyr)
 
 foci2 <- foci |> 
   pivot_longer(2:10, names_to = "y", values_to = "i")
-DT::datatable(foci2)
+foci2
 
 ```
 
@@ -143,7 +143,7 @@ In this analysis, several statistics can be summarized, both at the single focus
 
 -   Number of foci (NF) and number of single focus (NSF)
 
--   NF and NSF can be normalized to 1000 plants as NF1000 and NSF1000
+-   To compare maps with different number of plants, NF and NSF can be normalized to 1000 plants as NF1000 and NSF1000
 
 -   Number of plants in each focus i (NPFi)
 
@@ -153,39 +153,31 @@ In this analysis, several statistics can be summarized, both at the single focus
 
 -   Mean compactness index of foci (meanCIF = \[∑(NPFi/rfi\*cfi)\]/NF), where CIF values close to 1.0 indicate a more compact foci, that is, greater aggregation and proximity among all the plants belonging to the focus
 
-We can obtain these foci statistics using the `AFSD` function of the *r4pde* package. Let's calculate for the foci2 dataset already loaded, but first we need to check whether all variables are numeric or integer.
+We can obtain the above-mentioned foci statistics using the `AFSD` function of the *r4pde* package. Let's calculate for the foci2 dataset already loaded, but first we need to check whether all variables are numeric or integer.
 
 ```{r}
-if (!"r4pde" %in% rownames(installed.packages())) {
-  if (!require("devtools")) {
-    install.packages("devtools")
-  }
-  devtools::install_github("emdelponte/r4pde")  # Replace 'username' with the GitHub username
-}
-
-library(r4pde)
-
 
 str(foci2) # y was not numeric
 foci2$y <- as.integer(foci2$y) # transform to numeric
 
+library(r4pde)
 result_foci <- AFSD(foci2)
   
 ```
 
-The AFSD function returns a list of three data frames. The first is a summary statistics for the data frame in analysis.
+The AFSD function returns a list of three data frames. The first is a summary statistics of this analysis, together with the disease incidence (DIS_INC), for the data frame in analysis.
 
 ```{r}
 knitr::kable(result_foci[[1]])
 ```
 
-The second object in the list is a data frame with statistics at the focus level, including the number of rows and columns occupied by the focus and the two indices for each focus: shape and compactness.
+The second object in the list is a data frame with statistics at the focus level, including the number of rows and columns occupied by each focus as well as the two indices for each focus: shape and compactness.
 
 ```{r}
 knitr::kable(result_foci[[2]])
 ```
 
-The third object is the original data frame amended with the id for each focus which can be plotted using the `plot_AFSD()` function.
+The third object is the original data frame amended with the id for each focus which can be plotted and labelled (the focus ID) using the `plot_AFSD()` function.
 
 ```{r}
 foci_data <- result_foci[[3]]
@@ -200,7 +192,7 @@ plot_AFSD(foci_data)+
   
 ```
 
-We will now analyse a real data set from the *epiphy* package. The data is the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the dataset. We will work with the data from 1928 when 6 assessments were made in time. We will first work with time 1.
+We will now analyse an actual data set from the *epiphy* package. The data describe the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the dataset. We will work with the data from 1928 when 6 assessments were made in time. We will first work with time 1 by using `filter()` function of the *dplyr* package.
 
 ```{r}
 #| warning: false
@@ -209,8 +201,8 @@ We will now analyse a real data set from the *epiphy* package. The data is the i
 library(epiphy)
 tswv_1928 <- tomato_tswv$field_1928
 df1 <- tswv_1928 |>
-  filter(t == 1) |> 
-  select(x, y, i)
+  filter(t == 1) |> # filter time 1
+  select(x, y, i) # select only three variables
 ```
 
 Follows the incidence map of the area at time 1.
