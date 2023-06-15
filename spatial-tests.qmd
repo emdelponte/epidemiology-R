@@ -410,54 +410,82 @@ joincount.test(factor(S3),
 
 ### Point pattern analysis
 
-Point pattern analysis is the study of the spatial arrangements of points in a 2-D space. The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatterplot but with the provision that the axes are equally scaled.
+Point pattern analysis involve the study of the spatial arrangement of points in a two-dimensional space. In its simplest form, one can visualize this as a scatterplot on a map, where each point represents an event, object, or entity in space. For example, the points might represent the locations of diseased plants in a population.
 
-Let's work with a real epidemic data where the presence of banana plants displaying the symptoms of Fusarium wilt was determined in fields across several regions in Brazil [@heck2021]. On each field, the location of each symptomatic plant was geolocated using a GPS together with the coordinates of the four corners of the field. Let's load the data from the web and assign them to a data frame called `fw` (Fusarium wilt).
+The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatterplot but with the provision that the axes are equally scaled. However, while the visualization can provide a basic understanding of the spatial distribution, the real power of point pattern analysis lies in the quantitative methods that allow one to analyze the distribution in a more detailed and systematic way. These methods help to identify whether the points are randomly distributed, clustered (points are closer together than expected by chance), or regularly spaced (points are more evenly spaced than expected by chance). This analysis can provide insights into underlying processes that might explain the observed patterns.
 
-```{r}
-#| warning: false
-#| message: false
-
-fw <- read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/main/data/fusarium_banana.csv")
-```
-
-Because we using a coordinate system, we need to convert the data to meters.
-
-```{r}
-#|warning: false
-
-# Convert to meters 
-library(sp)
-coordinates(fw) <- c("lon", "lat")
-proj4string(fw) <- CRS("+proj=longlat +datum=WGS84")
-fw <- spTransform(fw, CRS("+proj=utm +zone=22 ellps=WGS84"))
-fw <- data.frame(fw)
-```
-
-As shown above, the `fw` dataframe has five variables. The marker indicates weather the point is a plant or one of the four limits of the polygon. The field variable is the number of the field. Let's produce 2-D map.
+Let's work with two simulated datasets that were originally generated to produced a random or an aggregated (clustered) pattern.
 
 ```{r}
 #| warning: false
 #| message: false
-fw %>% 
-  ggplot(aes(lat, lon, color = marker))+
-  geom_polygon(data = fw, aes(lat, lon, group = marker), fill = "white",  color="grey")+
+
+library(r4pde)
+rand <- SpatialRandom
+aggr <- SpatialAggregated
+```
+
+In order to create a polygon with the most extreme points, we can use the `chull()` function to find the convex hull, which will give us the indices of the points that form the smallest convex polygon that contains all the points in our dataset.
+
+```{r}
+hull_indices_rand <- chull(rand)
+# Add these indices as a new column to the data frame
+rand$hull <- FALSE
+rand$hull[hull_indices_rand] <- TRUE
+
+hull_indices_aggr <- chull(aggr)
+# Add these indices as a new column to the data frame
+aggr$hull <- FALSE
+aggr$hull[hull_indices_aggr] <- TRUE
+
+
+```
+
+
+```{r}
+```
+
+
+The two dataframes has two variables each.  Let's produce 2-D map.
+
+```{r}
+#| warning: false
+#| message: false
+prand <- rand |> 
+  ggplot(aes(x, y))+
+  geom_polygon(data = rand[hull_indices_rand, ], aes(x, y), fill = NA, color = 'black') +
   geom_point()+
   scale_color_manual(values = c("black", NA))+
   coord_map()+
   coord_flip()+
   theme_void()+
   theme(legend.position = "none")+
-  labs (title = "Fusarium wilt incidence map", 
-        subtitle = "Field 11", 
+  labs (title = "Random spatial pattern", 
         x = "Latitude",
         y = "Longitude",
-        caption = "Source: Heck et al. (2021)")
+        caption = "Source: r4pd R package")
+
+paggr <- aggr |> 
+  ggplot(aes(x, y))+
+  geom_polygon(data = aggr[hull_indices_aggr, ], aes(x, y), fill = NA, color = 'black') +
+  geom_point()+
+  scale_color_manual(values = c("black", NA))+
+  coord_map()+
+  coord_flip()+
+  theme_void()+
+  theme(legend.position = "none")+
+  labs (title = "Aggregated spatial pattern", 
+        x = "Latitude",
+        y = "Longitude",
+        caption = "Source: r4pd R package")
+
+library(patchwork)
+prand | paggr
 ```
 
 #### Quadrat based
 
-Quadrat count analysis
+Quadrat count analysis for random data
 
 ```{r}
 #| warning: false
@@ -465,14 +493,14 @@ Quadrat count analysis
 #| 
 library(spatstat)
 ### Create window 
-window_fw <- ripras(fw$lon, fw$lat)
+window_rand <- ripras(rand$x, rand$y)
 
 # create the point pattern object
-ppp_fw <- ppp(fw$lon, fw$lat, window_fw)
-plot(ppp_fw)
+ppp_rand <- ppp(rand$x, rand$y, window_rand)
+plot(ppp_rand)
 
 ## Quadrat count 10 x 10
-qq <- quadratcount(ppp_fw,8,8, keepempty=TRUE) 
+qq <- quadratcount(ppp_rand,8,8, keepempty=TRUE) 
 
 # plot the quadrat count
 plot(qq)
@@ -484,34 +512,65 @@ qt
 
 ```
 
+Quadrat count analysis for aggregated data 
+
+
+```{r}
+#| warning: false
+#| message: false
+#| 
+
+### Create window 
+window_aggr <- ripras(aggr$x, aggr$y)
+
+# create the point pattern object
+ppp_aggr <- ppp(aggr$x, aggr$y, window_aggr)
+plot(ppp_aggr)
+
+## Quadrat count 10 x 10
+qq_aggr <- quadratcount(ppp_aggr,8,8, keepempty=TRUE) 
+
+# plot the quadrat count
+plot(qq_aggr)
+
+# Quadrat test
+qt_aggr <- quadrat.test(qq, alternative="clustered", method="M")
+qt_aggr
+
+
+```
+
+
 #### Spatial KS test
 
-Performs a test of goodness-of-fit test of the uniform Poisson point process (Complete Spatial Randomness, CSR) for the data set.The test is performed by comparing the observed distribution of the values of a spatial covariate at the data points, and the predicted distribution of the same covariate under the model, using a classical goodness-of-fit test @baddeley2005. Thus, we must nominate a spatial covariate for this test. In the case below we nominate x, y or x and y as covariate.
+Performs a test of goodness-of-fit test of the uniform Poisson point process (Complete Spatial Randomness, CSR) for the data set. The test is performed by comparing the observed distribution of the values of a spatial covariate at the data points, and the predicted distribution of the same covariate under the model, using a classical goodness-of-fit test @baddeley2005. Thus, we must nominate a spatial covariate for this test. In the case below we nominate x, y or x and y as covariate.
+
+Let's test for the aggregated data.
 
 ```{r}
 #| warning: false
 #| message: false
 
 # y as covariate
-ks_y <- cdf.test(ppp_fw, test="ks", "y", jitter=FALSE)
+ks_y <- cdf.test(ppp_aggr, test="ks", "y", jitter=FALSE)
 ks_y
 plot(ks_y)
 
 # x as covariate
-ks_x <- cdf.test(ppp_fw, test="ks", "x", jitter=FALSE)
+ks_x <- cdf.test(ppp_aggr, test="ks", "x", jitter=FALSE)
 ks_x
 plot(ks_x)
 
 
 # x and y as covariates
 fun <- function(x,y){2* x + y}
-ks_xy <- cdf.test(ppp_fw, test="ks", fun, jitter=FALSE)
+ks_xy <- cdf.test(ppp_aggr, test="ks", fun, jitter=FALSE)
 ks_xy
 plot(ks_xy)
 
 ```
 
-As shown above, we do not have sufficient evidence to reject the null hypothesis of complete spatial randomness.
+As shown above, we have sufficient evidence to reject the null hypothesis of complete spatial randomness.
 
 #### Distance based
 
@@ -537,15 +596,19 @@ Let's use the `Kest` function of the spatstat package to obtain *K(r)*.
 #| warning: false
 #| message: false
 
-k <- Kest(ppp_fw)
-plot(k)
+
+k_rand <- Kest(ppp_rand)
+plot(k_rand)
+
+k_aggr <- Kest(ppp_aggr)
+plot(k_aggr)
 
 ```
 
 The `envelope` function performs simulations and computes envelopes of a summary statistic based on the simulations. The envelope can be used to assess the goodness-of-fit of a point process model to point pattern data [@baddeley2014]. Let's simulate the envelope and plot the values using ggplot. Because observed *K(r)* (solid line) lied outside the simulation envelope, aggregation was detected.
 
 ```{r}
-ke <- envelope(ppp_fw, fun = Kest)
+ke <- envelope(ppp_aggr, fun = Kest)
 data.frame(ke) |> 
   ggplot(aes(r, theo))+
   geom_line(linetype =2)+
@@ -560,7 +623,9 @@ data.frame(ke) |>
 
 ```{r}
 # Maximum absolute deviation test
-mad.test(ppp_fw, Kest)
+mad.test(ppp_aggr, Kest)
+mad.test(ppp_rand, Kest)
+
 ```
 
 Another statistics that can be used is the **O-ring** statitics which are used in spatial analysis to quantify and test the degree of interaction between two types of spatial points [@wiegand2004]. The name derives from the method of placing a series of concentric circles (O-rings) around each point of type 1 and counting how many points of type 2 fall within each ring. The plot generated by O-ring statistics is called an O-ring plot or an O-function plot. It plots the radius of the rings on the x-axis and the estimated intensity of points of type 2 around points of type 1 on the y-axis.
@@ -588,14 +653,16 @@ In R, we can use the `estimate_o_ring()` function of the *onpoint* package. We w
 #| message: false
 
 library(onpoint)
-plot(estimate_o_ring(ppp_fw))
+plot(estimate_o_ring(ppp_rand))
+plot(estimate_o_ring(ppp_aggr))
+
 
 ```
 
-The function can be used in combination with `spatstat`\'s `envelope()` function.
+The function can be used in combination with `spatstat`'s `envelope()` function.
 
 ```{r}
-oring_envelope <- envelope(ppp_fw, fun = estimate_o_ring, nsim = 199, verbose = FALSE)
+oring_envelope <- envelope(ppp_aggr, fun = estimate_o_ring, nsim = 199, verbose = FALSE)
 plot(oring_envelope)
 ```
 
@@ -605,12 +672,6 @@ To plot simulation envelopes using quantum plots [@esser2014], just pass an `env
 plot_quantums(oring_envelope, ylab = "O-ring")
 ```
 
-Finally, the 'Maximum Absolute Deviation' test can be used in combination with the function.
-
-```{r}
-mad.test(ppp_fw, fun = estimate_o_ring)
-
-```
 
 ### Grouped data
 
