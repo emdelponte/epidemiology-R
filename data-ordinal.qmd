@@ -140,7 +140,7 @@ chiang |>
 In the qualitative ordinal scale, each class provides a description of the symptoms. An example is the ordinal 0-3 scale for rating eyespot of wheat developed by [@scott1974].
 
 | Class | Description                                                                                                 |
-|---------------------|---------------------------------------------------|
+|----------------------|--------------------------------------------------|
 | 0     | uninfected                                                                                                  |
 | 1     | slight eyespot (or or more small lesion occupying in total less than half of the circumference of the stem) |
 | 2     | moderate eyespot (one or more lesions occupying at least half the circumference of the stem)                |
@@ -154,7 +154,9 @@ Usually, when quantitative or qualitative ordinal scales are used, the scores ar
 
 $DSI = \frac{∑(class \ freq. \ ✕ \ score \  of \ class)} {total \ n \ ✕ \ maximal \ class} ✕ 100$
 
-The `DSI()` is part of the *r4pde* package. It allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores. The function requires three arguments:
+The `DSI()` and `DSI2()` are part of the *r4pde* package. Let's see how each function works.
+
+The `DSI()` allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores. The function requires three arguments:
 
 -   unit = the vector of the number of each unit
 
@@ -162,7 +164,7 @@ The `DSI()` is part of the *r4pde* package. It allows to automate the calculatio
 
 -   max = the maximum value of the scale
 
-Let's use a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named scores.
+Let's create a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named scores.
 
 ```{r}
 unit <- c(1:12)
@@ -209,3 +211,30 @@ And here we have the results of the DSI for each replicate.
 ```{r}
 knitr::kable(res, align = "c")
 ```
+
+Now our data set is organized as the frequency of each class as follows:
+
+```{r}
+
+ratings2 <- ratings |> 
+  dplyr::count(class)
+
+ratings2
+
+```
+
+Now we can apply the `DSI2()` function. The function requires three arguments:
+
+-   class = the number of the respective class
+-   freq = the frequency of the class
+-   max = the maximum value of the scale
+
+
+```{r}
+library(r4pde)
+DSI2(ratings2$class, ratings2$n, 6)
+
+```
+
+
+

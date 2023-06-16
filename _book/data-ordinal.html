@@ -691,8 +691,8 @@ Controversy of the H-B scale
 <table class="table">
 <caption>Ordinal scale for rating eyespot of wheat <span class="citation" data-cites="scott1974">(<a href="references.html#ref-scott1974" role="doc-biblioref">Scott and Hollins 1974</a>)</span></caption>
 <colgroup>
-<col style="width: 29%">
-<col style="width: 70%">
+<col style="width: 30%">
+<col style="width: 69%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -725,13 +725,14 @@ Controversy of the H-B scale
 <h2 data-number="3.2" class="anchored" data-anchor-id="disease-severity-index-dsi"><span class="header-section-number">3.2</span> Disease severity index (DSI)</h2>
 <p>Usually, when quantitative or qualitative ordinal scales are used, the scores are transformed into an index on a percentage basis, such as the disease severity index (DSI) which are used in data analysis. The DSI is a single number that summarizes a large amount of information on disease severity <span class="citation" data-cites="chester1950">(<a href="references.html#ref-chester1950" role="doc-biblioref">Chester 1950</a>)</span>. The formula for a DSI (%) can be written as follows:</p>
 <p><span class="math inline">\(DSI = \frac{∑(class \ freq. \ ✕ \ score \  of \ class)} {total \ n \ ✕ \ maximal \ class} ✕ 100\)</span></p>
-<p>The <code>DSI()</code> is part of the <em>r4pde</em> package. It allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g.&nbsp;leaves) that are further classified according to ordinal scores. The function requires three arguments:</p>
+<p>The <code>DSI()</code> and <code>DSI2()</code> are part of the <em>r4pde</em> package. Let’s see how each function works.</p>
+<p>The <code>DSI()</code> allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g.&nbsp;leaves) that are further classified according to ordinal scores. The function requires three arguments:</p>
 <ul>
 <li><p>unit = the vector of the number of each unit</p></li>
 <li><p>class = the vector of the scores for the units</p></li>
 <li><p>max = the maximum value of the scale</p></li>
 </ul>
-<p>Let’s use a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named scores.</p>
+<p>Let’s create a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named scores.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-5_64f51ffa76877429555f4886fec34ad2">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>unit <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>class <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">0</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
@@ -957,6 +958,35 @@ Controversy of the H-B scale
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<p>Now our data set is organized as the frequency of each class as follows:</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-10_d5b8641baa40e12adb8e028ea6cb0803">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>ratings2 <span class="ot">&lt;-</span> ratings <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">count</span>(class)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ratings2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  class n
+1     0 1
+2     1 3
+3     2 3
+4     3 2
+5     4 1
+6     5 2</code></pre>
+</div>
+</div>
+<p>Now we can apply the <code>DSI2()</code> function. The function requires three arguments:</p>
+<ul>
+<li>class = the number of the respective class</li>
+<li>freq = the frequency of the class</li>
+<li>max = the maximum value of the scale</li>
+</ul>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-11_13f958b1d778f4e02b72de16b39d813f">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">DSI2</span>(ratings2<span class="sc">$</span>class, ratings2<span class="sc">$</span>n, <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40.27778</code></pre>
 </div>
 </div>
 
