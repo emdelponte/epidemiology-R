@@ -6,9 +6,15 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 ## Introduction
 
-The assessment of disease in space, in terms of changes in the intensity as it spreads over distance, is called **disease gradient**. In reality, it is the dispersal (migration) of the pathogen by various means (e.g. wind, vectors, rain, movement of infected material or human mediation) that promotes the spread of plant diseases within a field or across continents and generates the disease gradients. There are two kinds of gradients, the inoculum gradient where host availability is not necessarily required and the disease gradient where the three elements of the disease triangle are required. Let's see examples of actual disease gradients measured in the field with quite distinct patterns.
+The assessment of disease in terms of its spatial distribution, particularly considering changes in its intensity as it spreads over distance, is defined as the "disease gradient." It's the dispersal, or migration, of the pathogen through various means---such as wind, vectors, rain, movement of infected material, or even human mediation---that encourages the spread of plant diseases within a field or across continents, thereby creating these disease gradients.
 
-In the first example [@mundt1999], the objective of the authors was to measure the dispersal potential of the pathogenic bacteria *Xanthomonas oryzae* pv. *oryzae* that causes leaf blight on rice using experimental plots in the Philippines, during the wet seasons of 1994 and 1995. The data were made available [in this tutorial](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryDiseaseGradientsofBacteria.aspx). We enter the data manually and then produce two plots, one for each year.
+There exist two distinct types of gradients: the inoculum gradient, in which the availability of a host is not necessarily a prerequisite, and the disease gradient, where all three elements of the disease triangle are essential.
+
+In the ensuing chapters, we shall explore examples of actual disease gradients measured in the field, each exhibiting its own unique pattern.
+
+Our first example, from Mundt's 1999 study [@mundt1999], sought to measure the dispersal potential of the pathogenic bacteria, *Xanthomonas oryzae* pv. *oryzae*, which is responsible for leaf blight in rice. This study was conducted using experimental plots in the Philippines during the wet seasons of 1994 and 1995.
+
+The data were made available [in this tutorial](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryDiseaseGradientsofBacteria.aspx). We enter the data manually and then produce two plots, one for each year.
 
 ```{r}
 #| warning: false
@@ -32,7 +38,7 @@ g1 <- xo |>
   geom_point()+
   geom_line()+
   ylim(0,8)+
-  labs(y = "Numer of new lesions",
+  labs(y = "Number of new lesions",
        x = "Distance (m)",
        title = "1994 wet season")
 
@@ -41,7 +47,7 @@ g2 <- xo |>
   geom_point()+
   geom_line()+
   ylim(0,8)+
-  labs(y = "Numer of new lesions",
+  labs(y = "Number of new lesions",
        x = "Distance (m)",
        title = "1995 wet season")
 
@@ -51,7 +57,9 @@ library(patchwork)
   
 ```
 
-The second gradient is of stripe rust, caused by *Puccinia striiformis* f. sp. *tritici,* on wheat collected in a field experiment at Hermiston in 2002 [@Sackett2005] and whose data was made freely available [@mikaberidze2015]. Let's enter data manually as a tibble format. There are five columns. The first and second are distances in feet and meters, respectively, from the source of infection. The other three columns are measures of stripe rust severity on replicated plots.
+The second example of a disease gradient pertains to stripe rust, caused by *Puccinia striiformis* f. sp. *tritici*, on wheat. This data was collected during a field experiment conducted at Hermiston in 2002, as reported in Sackett's 2005 study [@Sackett2005]. Later, the data was made publicly available in 2015, courtesy of Mikaberidze [@mikaberidze2015]. For our discussion, we'll manually input the data in a tibble format.
+
+This tibble contains five columns. The first and second columns represent distances from the source of infection, denoted in feet and meters, respectively. The remaining three columns consist of measures of stripe rust severity, each from a separate replicated plot. These measurements offer us a quantifiable view of the disease gradient of stripe rust in the field, thereby shedding light on the infection's spatial distribution and intensity.
 
 ```{r}
 hermiston <- 
@@ -99,9 +107,13 @@ hermiston |>
        caption = "source: Sackett et al. (2005)")
 ```
 
-As it is clear in the above examples, in disease gradients, assuming that there is only a single source of inoculum, the intensity of the disease decreases more steeply within short distances of the source, and less steeply at greater distances until they reach zero or a low background level of occasional diseased plants. The shapes of the gradients are defined by mechanisms associated with the dispersal of the inoculum which depends on the biology of the pathogen but strongly to environmental factors that affect pathogen dispersal.
+As evidenced by the examples presented above, disease gradients, assuming a single source of inoculum, typically display a pattern wherein the disease's intensity diminishes more steeply within shorter proximities to the source. Conversely, the decrease is less steep at greater distances, eventually reaching a point of either zero or a low background level with only occasional diseased plants.
 
-The resulting gradients can be classified in two types: primary or secondary. The **primary** gradient originates only from the initial focus, while the **secondary** gradient originates from the movement of inoculum produced at previously infected (due to primary gradients) plants to other plants at increasing distances from the source. It is expected that a mix of both kinds of gradients exists as the disease increases over time.
+The unique shapes of these gradients are largely influenced by mechanisms associated with the dispersal of the inoculum, which are contingent not only on the pathogen's biological characteristics but also heavily upon environmental factors that can impact the pathogen's dispersion.
+
+From this, we can categorize the resulting gradients into two types: primary and secondary. The primary gradient is generated solely from the initial source of the infection. On the other hand, the secondary gradient arises from the movement of inoculum that has been produced by plants previously infected due to the primary gradient. These secondary infections then spread to other plants situated at increasing distances from the initial source.
+
+As the disease proliferates over time, it's expected that a combination of both primary and secondary gradients will manifest. This interplay between the two gradient types contributes to the overall spread and severity of the disease within a given population and environment.
 
 As an example of primary and secondary gradients, let's visualize the gradients of Septoria leaf spot, caused by *Septoria lycopersici*, on tomato [@parker1997]. The gradients were measured during two times, thus enabling a comparison of primary and secondary dispersal/disease gradients. More details of the study and experimental approach were provided in [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/PrimaryandSecondaryGradients.aspx) The data is entered below as a tribble and the plot produced using g*gplot2*.
 
