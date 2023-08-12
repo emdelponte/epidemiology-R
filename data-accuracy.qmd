@@ -32,13 +32,13 @@ library(ggplot2)
 target <- 
   ggplot(data.frame(c(1:10),c(1:10)))+
   geom_point(aes(x = 5, y = 5), size = 71.5, color = "black")+
-  geom_point(aes(x = 5, y = 5), size = 70, color = "orange")+
+  geom_point(aes(x = 5, y = 5), size = 70, color = "#99cc66")+
   geom_point(aes(x = 5, y = 5), size = 60, color = "white")+
-  geom_point(aes(x = 5, y = 5), size = 50, color = "orange")+
+  geom_point(aes(x = 5, y = 5), size = 50, color = "#99cc66")+
   geom_point(aes(x = 5, y = 5), size = 40, color = "white")+
-  geom_point(aes(x = 5, y = 5), size = 30, color = "orange")+
+  geom_point(aes(x = 5, y = 5), size = 30, color = "#99cc66")+
   geom_point(aes(x = 5, y = 5), size = 20, color = "white")+
-  geom_point(aes(x = 5, y = 5), size = 10, color = "orange")+
+  geom_point(aes(x = 5, y = 5), size = 10, color = "#99cc66")+
   geom_point(aes(x = 5, y = 5), size = 4, color = "white")+
   ylim(0,10)+
   xlim(0,10)+
@@ -99,7 +99,7 @@ Another way to visualize accuracy and precision is via scatter plots for the rel
 #| code-fold: true
 
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_grey())
 dat <- 
 tibble::tribble(
   ~actual,   ~ap,   ~ip,   ~ai,   ~ii,
@@ -209,7 +209,7 @@ Let's explore the data using various approaches. First, we can visualize how the
 #| label: fig-raters1
 #| fig-cap: "Visual estimates of soybean rust severity for each leaf by each of four raters"
 # set the global theme
-theme_set(theme_bw())
+
 library(ggthemes)
 
 # transform from wide to long format
@@ -238,7 +238,7 @@ Another interesting visualization is the correlation matrix of the estimates bet
 #| fig-cap: "Correlation plots relating severity estimates for all pairs of raters"
 
 library(GGally)
-theme_set(theme_light())
+
 
 # create a new dataframe with only raters
 raters <- sbr |> 
@@ -378,6 +378,7 @@ sbr2 |>
   ylim(0,45)+
   xlim(0,45)+
   geom_abline(intercept = 0, slope =1)+
+  theme_gray()+
   labs(x = "Actual severity (%)",
        y = "Estimate severity (%)")
 ```
@@ -417,6 +418,7 @@ sbr2 |>
   geom_point(size = 3, alpha = 0.7)+
   facet_wrap(~rater)+
   geom_hline(yintercept = 0)+
+  theme_gray()+
   labs(x = "Actual severity (%)",
        y = "Error (Estimate - Actual)")
 ```
