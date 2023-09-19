@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.268">
+<meta name="generator" content="quarto-1.3.433">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -110,7 +110,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5T7SZYQV79"></script>
@@ -141,7 +142,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
       <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./temporal-dpc.html">Temporal analysis</a></li><li class="breadcrumb-item"><a href="./temporal-dpc.html"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Disease progress curves</span></a></li></ol></nav>
       <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
       </a>
-      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
@@ -155,7 +156,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
     <div class="sidebar-title mb-0 py-0">
       <a href="./">R4PDE</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/emdelponte/epidemiology-R" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="https://github.com/emdelponte/epidemiology-R" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
 </div>
     </div>
       </div>
@@ -396,7 +397,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   C --&gt; E 
 </pre>
 </div>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.1: Five main processes of the disease cycle</figcaption><p></p>
+<figcaption class="figure-caption">Figure&nbsp;8.1: Five main processes of the disease cycle</figcaption>
 </figure>
 </div>
 </div>
@@ -442,8 +443,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <div id="fig-periods" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
-<p><img src="imgs/periods.png" class="quarto-discovered-preview-image img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.2: Three time-related epidemiological periods and their relations with stages of the disease cycle including colonization (symptoms) and reproduction (sporulation in the case of fungi). Drawings of apple scab symptoms and signs adapted from Agrios (2005)</figcaption><p></p>
+<p><img src="imgs/periods.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;8.2: Three time-related epidemiological periods and their relations with stages of the disease cycle including colonization (symptoms) and reproduction (sporulation in the case of fungi). Drawings of apple scab symptoms and signs adapted from Agrios (2005)</figcaption>
 </figure>
 </div>
 </section>
@@ -457,26 +458,27 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_gray</span>(<span class="at">base_size =</span> <span class="dv">16</span>)) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are several ways to create a data frame in R. I like to use the <code>tribble</code> function as below. The entered data will be assigned to a dataframe called <code>dpc</code>.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-4_0994e73b0650c82754c6492bece731c9">
+<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-4_f3858ab82cd587e295e2bc9e50078945">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="ot">&lt;-</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span>y, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="dv">0</span>,  <span class="dv">8</span>, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">7</span>,  <span class="dv">13</span>, </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>,  <span class="dv">78</span>, </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">21</span>,  <span class="dv">92</span>, </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">28</span>,  <span class="dv">99</span>, </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">35</span>, <span class="fl">99.5</span>, </span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">42</span>, <span class="fl">99.9</span>, </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>   <span class="dv">0</span>,  <span class="fl">0.1</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>   <span class="dv">7</span>,  <span class="dv">1</span>, </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>,  <span class="dv">9</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">21</span>,  <span class="dv">25</span>, </span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">28</span>,  <span class="dv">80</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">35</span>, <span class="dv">98</span>, </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">42</span>, <span class="dv">99</span>, </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">49</span>, <span class="fl">99.9</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now the plot</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-5_668cc5720a279cad1440a33cdd7cb3e4">
+<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-5_a5be2eb85dcbd768f8fc1bd7c3a3231d">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dpc1 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_gray</span>()<span class="sc">+</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">4</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Disease intensity (%)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -488,7 +490,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <div id="fig-dpc1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/dpc1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.3: A typical disease progress curve for an epidemic that reaches the maximum value</figcaption><p></p>
+<figcaption class="figure-caption">Figure&nbsp;8.3: A typical disease progress curve for an epidemic that reaches the maximum value</figcaption>
 </figure>
 </div>
 </section>
@@ -538,7 +540,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <div id="fig-cycles" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/cycles.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.4: Hypothetical curves for monocyclic (left) and polycyclic (right) epidemics. Each circle represents a single infection cycle.</figcaption><p></p>
+<figcaption class="figure-caption">Figure&nbsp;8.4: Hypothetical curves for monocyclic (left) and polycyclic (right) epidemics. Each circle represents a single infection cycle.</figcaption>
 </figure>
 </div>
 </section>
@@ -568,11 +570,11 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <div id="fig-audpc2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/dpc2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.5: Representation of the area under the disease progress curve</figcaption><p></p>
+<figcaption class="figure-caption">Figure&nbsp;8.5: Representation of the area under the disease progress curve</figcaption>
 </figure>
 </div>
 <p>The AUDPC summarizes the “total measure of disease stress” and is largely used to compare epidemics <span class="citation" data-cites="jeger2001">(<a href="references.html#ref-jeger2001" role="doc-biblioref">Jeger and Viljanen-Rollinson 2001</a>)</span>. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let’s extend the plot code to show those rectangles using the <code>annotate</code> function.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-8_d2eec95aa2730556e7194fd64036e66b">
+<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-8_be6e3fbc0b78749579e3015528a68980">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dpc3 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
@@ -598,18 +600,21 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>   <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">6</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">7</span>], </span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">6</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">7</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"darkorange"</span>)<span class="sc">+</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">26.5</span>, <span class="at">y =</span> <span class="dv">50</span>,</span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"AUDPC = 3048.5"</span>, <span class="at">size =</span> <span class="dv">6</span>)<span class="sc">+</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>, <span class="dv">35</span>, <span class="dv">42</span>))</span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"imgs/dpc3.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"rect"</span>, <span class="at">xmin =</span> dpc<span class="sc">$</span>t[<span class="dv">7</span>], <span class="at">xmax =</span> dpc<span class="sc">$</span>t[<span class="dv">8</span>], </span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>            <span class="at">ymin =</span> <span class="dv">0</span>, <span class="at">ymax =</span> (dpc<span class="sc">$</span>y[<span class="dv">7</span>]<span class="sc">+</span> dpc<span class="sc">$</span>y[<span class="dv">8</span>])<span class="sc">/</span><span class="dv">2</span>, </span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> <span class="st">"darkgreen"</span>, <span class="at">fill =</span> <span class="st">"darkorange"</span>)<span class="sc">+</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size =</span> <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fl">36.5</span>, <span class="at">y =</span> <span class="dv">50</span>,</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>           <span class="at">label =</span> <span class="st">"AUDPC = 2534"</span> , <span class="at">size =</span> <span class="dv">4</span>)<span class="sc">+</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>, <span class="dv">35</span>, <span class="dv">42</span>, <span class="dv">49</span>))</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"imgs/dpc3.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div id="fig-dpc3" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/dpc3.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;8.6: Representation of the area under the disease progress curve calculated using the trapezoidal method</figcaption><p></p>
+<figcaption class="figure-caption">Figure&nbsp;8.6: Representation of the area under the disease progress curve calculated using the trapezoidal method</figcaption>
 </figure>
 </div>
 <p>In R, we can obtain the AUDPC for the DPC we created earlier using the <code>AUDPC</code> function offered by the <em>epifitter</em> package. Because we are using the percent data, we need to set the argument <code>y_proportion = FALSE</code>. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument <code>type</code> should be set to <code>"relative"</code>. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) <span class="citation" data-cites="simko2012">(<a href="references.html#ref-simko2012" role="doc-biblioref">Simko and Piepho 2012</a>)</span>.</p>

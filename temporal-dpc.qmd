@@ -95,13 +95,14 @@ There are several ways to create a data frame in R. I like to use the `tribble` 
 dpc <- 
   tribble(
    ~t,  ~y, 
-   0,  8, 
-   7,  13, 
-  14,  78, 
-  21,  92, 
-  28,  99, 
-  35, 99.5, 
-  42, 99.9, 
+   0,  0.1, 
+   7,  1, 
+  14,  9, 
+  21,  25, 
+  28,  80, 
+  35, 98, 
+  42, 99, 
+  49, 99.9
   )
 ```
 
@@ -113,7 +114,7 @@ dpc1 <- dpc |>
   ggplot(aes(t, y)) +
   theme_gray()+
   geom_line(size = 1)+
-  geom_point(size = 4, shape = 16)+
+  geom_point(size = 3, shape = 16)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")
 
@@ -230,11 +231,14 @@ dpc3 <- dpc |>
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
             ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
             color = "darkgreen", fill = "darkorange")+
+  annotate("rect", xmin = dpc$t[7], xmax = dpc$t[8], 
+            ymin = 0, ymax = (dpc$y[7]+ dpc$y[8])/2, 
+            color = "darkgreen", fill = "darkorange")+
   geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
-  annotate(geom = "text", x = 26.5, y = 50,
-           label = "AUDPC = 3048.5", size = 6)+
-  scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
+  annotate(geom = "text", x = 36.5, y = 50,
+           label = "AUDPC = 2534" , size = 4)+
+  scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42, 49))
 ggsave("imgs/dpc3.png")
 
   

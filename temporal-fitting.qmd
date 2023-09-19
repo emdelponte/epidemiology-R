@@ -2,13 +2,144 @@
 title: "Model fitting"
 ---
 
-Now we will fit the population dynamics models seen in the previous chapters to actual disease progress curves (DPCs) data obtained from the literature using R functions but also using the [*epifitter* package](https://alvesks.github.io/epifitter/) [@alves2021a]. With *epifitter*, a few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
+In model fitting for epidemiology, the objective is to determine which previously-reviewed epidemiological models best fit the data from actual epidemics. Doing so allows us to obtain two key parameters: the initial inoculum and the apparent infection rate.
 
-To illustrate, I will use two datasets available in Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
+There are essentially two methods for achieving this: linear regression and non-linear regression modeling. We'll begin with linear regression, which is computationally simpler. I'll illustrate the procedure using both built-in R functions and custom functions from the epifitter package [@alves2021a]. Epifitter offers a set of user-friendly functions that can fit and rank the best models for a given epidemic.
 
-## Non-replicated epidemics
+To exemplify, we'll continue examining a previously shown curve that represents the incidence of the tobacco etch virus, a disease affecting peppers, over time. This dataset is featured in Chapter 3 of the book, "Study of Plant Disease Epidemics" [@chapter2017b]. While the book presents SAS code for certain analyses, we offer an alternative code that accomplishes similar analyses, even if it doesn't replicate the book's results exactly.
 
-We will compare three DPCs of the incidence of tobacco etch, a virus disease, in peppers. Evaluations of incidence were evaluated at a 7-day interval up to 49 days. The data are available in chapter 4 (page 93) [@chapter2017b]. Let's input the data manually and create a data frame. First column is the assessment time and the other columns correspond to the treatments, called groups in the book, from 1 to 3.
+## Linear regression: single epidemics
+
+```{r}
+dpc <- 
+  tribble(
+   ~t,  ~y, 
+   0,  0.1, 
+   7,  1, 
+  14,  9, 
+  21,  25, 
+  28,  80, 
+  35, 98, 
+  42, 99, 
+  49, 99.9
+  )
+```
+
+To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package.
+
+```{r}
+dpc1 <- dpc |> 
+  mutate(y = y/100) |> # transform to proportion
+  mutate(exponential = log(y),
+         monomolecular = log(1 / (1 - y)),
+         logistic = log(y / (1 - y)),
+         gompertz = -log(-log(y)))
+dpc1 
+```
+
+Now we can plot the curves using the transformed values regressed against time. The curve that appears most linear, closely coinciding with the regression fit line, is a strong candidate for the best-fitting model. To accomplish this, we'll first reshape the dataframe into long format, and then generate plots for each of the four models.
+
+```{r}
+dpc2 <- dpc1 |> 
+  pivot_longer(3:6, names_to = "model", values_to = "y2") 
+
+
+dpc2 |> 
+  ggplot(aes(t, y2, color = model))+
+  geom_point()+
+  geom_smooth(method = "lm", se = F)+
+  facet_wrap(~ model)
+
+```
+
+For this particular curve, it's readily apparent that the logistic model offers the best fit to the data, as evidenced by the data points being closely aligned with the regression line, compared to the other models. However, to make a more nuanced decision between the logistic and Gompertz models---which are both typically used for sigmoid curves---we can rely on additional statistical measures.
+
+Specifically, we can fit a regression model for each and examine key metrics such as the R-squared value and the residual standard error. To further validate the model's accuracy, we can use Lin's Concordance Correlation Coefficient to assess how closely the model's predictions match the actual (transformed) data points.
+
+For this exercise, let's focus on the logistic and Gompertz models. We'll start by fitting the logistic model and then move on to analyzing the summary of the regression model.
+
+```{r}
+#| warning: false
+#| message: false
+
+logistic <- dpc2 |> 
+  filter(model == "logistic")
+
+m_logistic <- lm(y2 ~ t, data = logistic)
+
+
+# R-squared
+summary(m_logistic)$r.squared
+
+# RSE 
+summary(m_logistic)$sigma
+
+# calculate the Lin's CCC
+library(epiR)
+ccc_logistic <- epi.ccc(logistic$y2, predict(m_logistic))
+ccc_logistic$rho.c[1]
+
+```
+
+We repeat the procedure for the Gompertz model.
+
+```{r}
+gompertz <- dpc2 |> 
+  filter(model == "gompertz")
+
+m_gompertz <- lm(y2 ~ t, data = gompertz)
+
+
+# R-squared
+summary(m_gompertz)$r.squared
+
+# RSE 
+summary(m_gompertz)$sigma
+
+# calculate the Lin's CCC
+library(epiR)
+ccc_gompertz <- epi.ccc(gompertz$y2, predict(m_gompertz))
+ccc_gompertz$rho.c[1]
+
+```
+
+Next, let's extract the two parameters of interest from each fitted model and incorporate them into the integral form of the respective models. To do this, we'll need to back-transform the intercept, which represents the initial inoculum. This can be accomplished using specific equations, which we'll outline next.
+
+| Model         | transformation   | Backtranformation |
+|---------------|------------------|-------------------|
+| Exponential   | log(y)           | exp(y)            |
+| Monomolecular | log(1 / (1 - y)) | 1 - exp(-y)       |
+| Logistic      | log(y / (1 - y)) | 1 / (1 + exp(-y)) |
+| Gompertz      | -log(-log(y))    | exp(-exp(-y))     |
+
+```{r}
+
+rL <- m_logistic$coefficients[2]
+rL
+y02 <- m_logistic$coefficients[1]
+y0L = 1 / (1 + exp(-y02))
+y0L
+```
+
+Now the plot:
+
+```{r}
+logistic |>
+  ggplot(aes(t, y)) +
+  geom_point()+
+  stat_function(
+    linetype = 2,
+    fun = function(t) 1 / (1 + ((1 - y0L) / y0L) * exp(-rL * t)))
+
+```
+
+In this case, it's clear that the logistic model emerges as the best fit based on our statistical evaluation. The approach for model selection outlined here is straightforward and manageable when dealing with a single epidemic and comparing only two models. However, real-world scenarios often require analyzing multiple curves and fitting various models to each, making manual comparison impractical for selecting a single best-fitting model. To streamline this task, it's advisable to automate the process using custom functions designed to simplify the coding work involved.
+
+That's where the epifitter package comes into play! This package offers a range of custom functions designed to automate the model fitting and selection process, making it much more efficient to analyze multiple curves across different epidemics. By using epifitter, one can expedite the statistical evaluation needed to identify the best-fitting models.
+
+## epifitter - multiple epidemics
+
+We will now examine three Disease Progress Curves (DPCs) representing the incidence of the tobacco etch virus, a disease affecting peppers. Incidence evaluations were conducted at 7-day intervals up to 49 days. The relevant data can be found in Chapter 4, page 93, of the book "Study of Plant Disease Epidemics" [@chapter2017b]. To get started, let's input the data manually and create a data frame. The first column will represent the assessment time, while the remaining columns will correspond to the treatments, referred to as 'groups' in the book, ranging from 1 to 3.
 
 ## Entering data
 
@@ -63,7 +194,7 @@ pepper |>
 
 Most of the three curves show a sigmoid shape with the exception of group 3 that resembles an exponential growth, not reaching the maximum value, and thus suggesting an incomplete epidemic. We can easily eliminate the monomolecular and exponential models and decide on the other two non-flexible models: logistic or Gompertz. To do that, let's proceed to model fitting and evaluate the statistics for supporting a final decision. There are two modeling approaches for model fitting in epifitter: the **linear** or **nonlinear** parameter-estimation methods.
 
-## Fitting: single epidemics
+### epifitter: linear regression
 
 Among the several options offered by *epifitter* we start with the simplest one, which is to fit a model to a single epidemics using the linear regression approach. For such, the `fit_lin()` requires two arguments: time (`time`) and disease intensity (`y`) each one as a vector stored or not in a dataframe.
 
@@ -89,23 +220,54 @@ epi3$Stats
 
 ```
 
-The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is a slight between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves. For such, we can use the `plot_fit()` function from *epifitter* to explore visually the fit of the four models to each curve:
+The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is a slight between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves. For such, we can use the `plot_fit()` function from *epifitter* to explore visually the fit of the four models to each curve.
 
 ```{r}
 #| warning: false
 
 plot_fit(epi1)+
   ylim(0,1)
+epi1$stats_all
 
 plot_fit(epi2)+
   ylim(0,1)
+epi2$stats_all
 
 plot_fit(epi3)+
   ylim(0,1)
+epi3$stats_all
 
 ```
 
-## Fitting: multiple epidemics
+### epifitter: non linear regression
+
+```{r}
+epi11 <- fit_nlin(time = pepper$t,  
+                y = pepper$`1` )
+epi11$Stats
+
+epi22 <- fit_nlin(time = pepper$t,  
+                y = pepper$`2` )
+epi22$Stats
+
+epi33 <- fit_nlin(time = pepper$t,  
+                y = pepper$`3` )
+epi33$Stats
+```
+
+And now we can produce the plot of the fitted curves together with the original incidence dat. The `stats_all` dataframe shows everything we need regarding the statistics and the values of the parameteres.
+
+```{r}
+plot_fit(epi11)
+epi11$stats_all
+
+plot_fit(epi22)
+epi22$stats_all
+
+
+plot_fit(epi33)
+epi33$stats_all
+```
 
 For multiple epidemics, we can use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
 
@@ -117,7 +279,7 @@ pepper2 <- pepper |>
 
 ```
 
-Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in `strata_cols` argument.
+Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in `strata_cols` argument. To use the nonlinear regression approach we set `nlin` argument to `TRUE`.
 
 ```{r}
 epi_all <- fit_multi(
@@ -273,13 +435,13 @@ print(paste("p-value:", round(p_value, 4)))
 
 The `pt()` function in R gives the cumulative distribution function of the t-distribution. The `2 * (1 - pt(abs(t_statistic), df))` line calculates the two-tailed p-value. This will tell us if the slopes are significantly different at your chosen alpha level (commonly 0.05).
 
-
-
 ## Designed experiments
 
-In this next section, we will work with disease data collected over time in the same plot unit (also called repeated measures) from a designed experiment for evaluating and comparing treatment effects.
+In the following section, we'll focus on disease data collected over time from the same plot unit, also known as repeated measures. This data comes from a designed experiment aimed at evaluating and comparing the effects of different treatments.
 
-Again, we will use a dataset of progress curves shown in page 98 [@chapter2017b]. The curves represent the incidence of soybean plants symptomatic for bud blight caused by tobacco streak virus. Four treatments (different planting dates) were evaluated in randomized complete block design with four replicates. There are four assessment in time for each curve. The data was stored as a csv file and will be loaded using `read_csv()` function and stored as dataframe called `budblight`.
+Specifically, we'll use a dataset of progress curves found on page 98 of "Study of Plant Disease Epidemics" [@chapter2017b]. These curves depict the incidence of soybean plants showing symptoms of bud blight, which is caused by the tobacco streak virus. Four different treatments, corresponding to different planting dates, were evaluated using a randomized complete block design with four replicates. Each curve has four time-based assessments.
+
+The data for this study is stored in a CSV file, which we'll load into our environment using the read_csv() function. Once loaded, we'll store the data in a dataframe named budblight.
 
 ### Loading data
 
