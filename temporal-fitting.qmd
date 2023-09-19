@@ -2,7 +2,7 @@
 title: "Model fitting"
 ---
 
-In model fitting for epidemiology, the objective is to determine which previously-reviewed epidemiological models best fit the data from actual epidemics. Doing so allows us to obtain two key parameters: the initial inoculum and the apparent infection rate.
+In model fitting for temporal analysis, the objective is to determine which previously-reviewed epidemiological models best fit the data from actual epidemics. Doing so allows us to obtain two key parameters: the initial inoculum and the apparent infection rate.
 
 There are essentially two methods for achieving this: linear regression and non-linear regression modeling. We'll begin with linear regression, which is computationally simpler. I'll illustrate the procedure using both built-in R functions and custom functions from the epifitter package [@alves2021a]. Epifitter offers a set of user-friendly functions that can fit and rank the best models for a given epidemic.
 
@@ -11,6 +11,11 @@ To exemplify, we'll continue examining a previously shown curve that represents 
 ## Linear regression: single epidemics
 
 ```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+theme_set(theme_gray())
 dpc <- 
   tribble(
    ~t,  ~y, 
@@ -25,6 +30,17 @@ dpc <-
   )
 ```
 
+```{r}
+#| label: fig-dpc1
+#| fig-cap: "Disease progress curves for one tobacco etch epidemics in pepper. Reproduced from @chapter2017b page 94"
+
+dpc |> 
+  ggplot(aes(t, y))+
+  geom_point(size =3)+
+  geom_line()+
+  labs(x = "Time", y = "Disease intensity (%)")
+```
+
 To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package.
 
 ```{r}
@@ -34,12 +50,16 @@ dpc1 <- dpc |>
          monomolecular = log(1 / (1 - y)),
          logistic = log(y / (1 - y)),
          gompertz = -log(-log(y)))
-dpc1 
+knitr::kable(dpc1) 
 ```
 
 Now we can plot the curves using the transformed values regressed against time. The curve that appears most linear, closely coinciding with the regression fit line, is a strong candidate for the best-fitting model. To accomplish this, we'll first reshape the dataframe into long format, and then generate plots for each of the four models.
 
 ```{r}
+#| label: fig-models
+#| fig-cap: "Curves of the transformed data for each epidemiological against time. The goal is to check which of the models provides the best fit based on the straight line"
+
+ 
 dpc2 <- dpc1 |> 
   pivot_longer(3:6, names_to = "model", values_to = "y2") 
 
@@ -105,7 +125,7 @@ ccc_gompertz$rho.c[1]
 
 Next, let's extract the two parameters of interest from each fitted model and incorporate them into the integral form of the respective models. To do this, we'll need to back-transform the intercept, which represents the initial inoculum. This can be accomplished using specific equations, which we'll outline next.
 
-| Model         | transformation   | Backtranformation |
+| Model         | Transformation   | Backtranformation |
 |---------------|------------------|-------------------|
 | Exponential   | log(y)           | exp(y)            |
 | Monomolecular | log(1 / (1 - y)) | 1 - exp(-y)       |
@@ -119,27 +139,67 @@ rL
 y02 <- m_logistic$coefficients[1]
 y0L = 1 / (1 + exp(-y02))
 y0L
+
+rG <-m_gompertz$coefficients[2]
+rG
+y03 <- m_gompertz$coefficients[1]
+y0G <- exp(-exp(-y03))
+y0G
 ```
 
 Now the plot:
 
 ```{r}
+#| label: fig-logistic-gompertz
+#| fig-cap: "Disease progress curve and the fit of the logistic (dashed line) and the Gompertz (solid line) based on parameters estimated using linear regression"
+
 logistic |>
   ggplot(aes(t, y)) +
   geom_point()+
   stat_function(
     linetype = 2,
-    fun = function(t) 1 / (1 + ((1 - y0L) / y0L) * exp(-rL * t)))
-
+    fun = function(t) 1 / (1 + ((1 - y0L) / y0L) * exp(-rL * t)))+
+stat_function(
+    linetype = 1,
+    fun = function(t) exp(log(y0G) * exp(-rG * t))
+  )
 ```
 
-In this case, it's clear that the logistic model emerges as the best fit based on our statistical evaluation. The approach for model selection outlined here is straightforward and manageable when dealing with a single epidemic and comparing only two models. However, real-world scenarios often require analyzing multiple curves and fitting various models to each, making manual comparison impractical for selecting a single best-fitting model. To streamline this task, it's advisable to automate the process using custom functions designed to simplify the coding work involved.
+In this case, it's clear that the logistic model (the solid line above) emerges as the best fit based on our statistical evaluation. The approach for model selection outlined here is straightforward and manageable when dealing with a single epidemic and comparing only two models. However, real-world scenarios often require analyzing multiple curves and fitting various models to each, making manual comparison impractical for selecting a single best-fitting model. To streamline this task, it's advisable to automate the process using custom functions designed to simplify the coding work involved.
 
 That's where the epifitter package comes into play! This package offers a range of custom functions designed to automate the model fitting and selection process, making it much more efficient to analyze multiple curves across different epidemics. By using epifitter, one can expedite the statistical evaluation needed to identify the best-fitting models.
 
+## Non linear regression
+
+Alternatively, one can fit a nonlinear model to the data for each combination of curve and model using the nlsLM function in R of the *minpack.lm* package. 
+
+```{r}
+#| warning: false
+#| message: false
+
+library(minpack.lm)
+fit_logistic <- nlsLM(y/100 ~ 1 / (1+(1/y0-1)*exp(-r*t)), 
+           start = list(y0 = 0.01, r = 0.3), 
+           data = dpc)
+
+summary(fit_logistic)
+
+fit_gompertz <- nlsLM(y/100 ~ exp(log(y0/1)*exp(-r*t)), 
+                    start = list(y0 = 0.01, r = 0.1), 
+                    data = dpc)
+summary(fit_gompertz)
+
+
+```
+
+We can see that the model coefficients are not the same as those estimated using linear regression. Among other reasons, `nls()` often uses iterative techniques to estimate parameters, such as the Levenberg-Marquardt algorithm, which may provide different estimates than algebraic methods used in linear regression. While both methods aim to fit a model to data, they do so in ways that have distinct assumptions, strengths, and weaknesses, and this can result in different estimated parameters. Both approaches—nonlinear least squares and linear regression on transformed data—have their own merits and limitations. The choice between the two often depends on various factors like the nature of the data, the underlying assumptions, and the specific requirements of the analysis. For an epidemiologist, the choice might come down to preference, familiarity with the techniques, or specific aims of the analysis. In summary, both methods are valid tools in the toolkit of an epidemiologist or any researcher working on curve fitting and model selection. Understanding the nuances of each can help in making an informed choice tailored to the needs of a particular study.
+
+
+
+
 ## epifitter - multiple epidemics
 
-We will now examine three Disease Progress Curves (DPCs) representing the incidence of the tobacco etch virus, a disease affecting peppers. Incidence evaluations were conducted at 7-day intervals up to 49 days. The relevant data can be found in Chapter 4, page 93, of the book "Study of Plant Disease Epidemics" [@chapter2017b]. To get started, let's input the data manually and create a data frame. The first column will represent the assessment time, while the remaining columns will correspond to the treatments, referred to as 'groups' in the book, ranging from 1 to 3.
+We will now examine three disease progress curves (DPCs) representing the incidence of the tobacco etch virus, a disease affecting peppers. Incidence evaluations were conducted at 7-day intervals up to 49 days. The relevant data can be found in Chapter 4, page 93, of the book "Study of Plant Disease Epidemics" [@chapter2017b]. To get started, let's input the data manually and create a data frame. The first column will represent the assessment time, while the remaining columns will correspond to the treatments, referred to as 'groups' in the book, ranging from 1 to 3.
 
 ## Entering data
 
@@ -204,19 +264,19 @@ Since we have three epidemics, `fit_lin()` will be use three times. The function
 library(epifitter)
 epi1 <- fit_lin(time = pepper$t,  
                 y = pepper$`1` )
-epi1$Stats
+knitr::kable(epi1$Stats)
 ```
 
 ```{r}
 epi2 <- fit_lin(time = pepper$t,  
   y = pepper$`2` )
-epi2$Stats
+knitr::kable(epi2$Stats)
 ```
 
 ```{r}
 epi3 <- fit_lin(time = pepper$t,  
   y = pepper$`3` )
-epi3$Stats
+knitr::kable(epi3$Stats)
 
 ```
 
@@ -227,46 +287,49 @@ The statistics of the model fit confirms our initial guess that the predictions 
 
 plot_fit(epi1)+
   ylim(0,1)
-epi1$stats_all
+knitr::kable(epi1$stats_all)
 
 plot_fit(epi2)+
   ylim(0,1)
-epi2$stats_all
+knitr::kable(epi2$stats_all)
 
 plot_fit(epi3)+
   ylim(0,1)
-epi3$stats_all
+knitr::kable(epi3$stats_all)
 
 ```
 
 ### epifitter: non linear regression
 
 ```{r}
+#| warning: false
+#| message: false
+
 epi11 <- fit_nlin(time = pepper$t,  
                 y = pepper$`1` )
-epi11$Stats
+knitr::kable(epi11$Stats)
 
 epi22 <- fit_nlin(time = pepper$t,  
                 y = pepper$`2` )
-epi22$Stats
+knitr::kable(epi22$Stats)
 
 epi33 <- fit_nlin(time = pepper$t,  
                 y = pepper$`3` )
-epi33$Stats
+knitr::kable(epi33$Stats)
 ```
 
 And now we can produce the plot of the fitted curves together with the original incidence dat. The `stats_all` dataframe shows everything we need regarding the statistics and the values of the parameteres.
 
 ```{r}
 plot_fit(epi11)
-epi11$stats_all
+knitr::kable(epi11$stats_all)
 
 plot_fit(epi22)
-epi22$stats_all
+knitr::kable(epi22$stats_all)
 
 
 plot_fit(epi33)
-epi33$stats_all
+knitr::kable(epi33$stats_all)
 ```
 
 For multiple epidemics, we can use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
