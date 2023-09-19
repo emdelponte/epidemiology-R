@@ -2,11 +2,7 @@
 title: "Model fitting"
 ---
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
-
-Now we will fit models to multiple actual disease progress curves (DPCs) data obtained from the literature again using the *epifitter* package. A few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
+Now we will fit the population dynamics models seen in the previous chapters to actual disease progress curves (DPCs) data obtained from the literature using R functions but also using the [*epifitter* package](https://alvesks.github.io/epifitter/) [@alves2021a]. With *epifitter*, a few user friendly functions will help us decide which model to choose to obtain the parameters of interest and further compare the epidemics.
 
 To illustrate, I will use two datasets available in Chapter 3 from the book, *Study of Plant Disease Epidemics* [@chapter2017b]. In the book, SAS codes are presented to perform a few analysis. We provide an alternative code for performing similar analysis, although not perfectly reproducing the results from the book.
 
@@ -69,7 +65,7 @@ Most of the three curves show a sigmoid shape with the exception of group 3 that
 
 ## Fitting: single epidemics
 
-Among the several options offered by *epifitter* we start with the simplest one, which is fit a model to a single epidemics using the linear regression approach. For such, the `fit_lin()` requires two arguments: time (`time`) and disease intensity (`y`) each one as a vector stored or not in a dataframe.
+Among the several options offered by *epifitter* we start with the simplest one, which is to fit a model to a single epidemics using the linear regression approach. For such, the `fit_lin()` requires two arguments: time (`time`) and disease intensity (`y`) each one as a vector stored or not in a dataframe.
 
 Since we have three epidemics, `fit_lin()` will be use three times. The function produces a list object with six elements. Let's first look at the `Stats` dataframe of each of the three lists named `epi1` to `epi3`.
 
@@ -93,11 +89,25 @@ epi3$Stats
 
 ```
 
-The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is no much difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves.
+The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is a slight between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves. For such, we can use the `plot_fit()` function from *epifitter* to explore visually the fit of the four models to each curve:
+
+```{r}
+#| warning: false
+
+plot_fit(epi1)+
+  ylim(0,1)
+
+plot_fit(epi2)+
+  ylim(0,1)
+
+plot_fit(epi3)+
+  ylim(0,1)
+
+```
 
 ## Fitting: multiple epidemics
 
-Before looking at the prediction, let's use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
+For multiple epidemics, we can use another handy function that allows us to simultaneously fit the models to multiple DPC data. Different from `fit_lin()`, `fit_multi()` requires the data to be structured in the long format where there is a column specifying each of the epidemics.
 
 Let's then create a new data set called `pepper2` using the data transposing functions of the *tidyr* package.
 
@@ -124,7 +134,23 @@ Now let's select the statistics of model fitting. Again, *Epifitter* ranks the m
 ```{r}
 epi_all$Parameters |> 
   select(treat, model, best_model, RSE, CCC)
+
 ```
+
+The code below calculates the frequency that each model was the best. This would facilitate in the case of many epidemics to analyse.
+
+```{r}
+freq_best <- epi_all$Parameters %>% 
+    filter(best_model == 1) %>% 
+    group_by(treat, model) %>% 
+    summarise(first = n()) %>%
+  ungroup() |> 
+  count(model) 
+freq_best 
+
+```
+
+We can see that the Logistic model was the best model in two out of three epidemics.
 
 To be more certain about our decision, let's advance to the final step which is to produce the plots with the observed and predicted values for each assessment time by calling the `Data` dataframe of the \``epi_all` list.
 
@@ -159,11 +185,14 @@ epi_all$Data |>
  coord_cartesian(ylim = c(-0.4, 0.4)) + # set the max to 0.6
   labs(
     y = "Prediction error",
-    x = "Time (days after emergence)"
+    x = "Time (days after emergence)",
+    shape = "Epidemic"
   )
 ```
 
 The plots above confirms the logistic model as good fit overall because the errors for all epidemics combined are more scattered around the non-error line.
+
+We can then now extract the parameters of interest of the chosen model. These data are stored in the `Parameters` data frame of the `epi_all` list. Let's filter the Logistic model and apply a selection of the parameters of interest.
 
 ```{r}
   epi_all$Parameters |>
@@ -207,6 +236,44 @@ library(patchwork)
 p1 | p2
 
 ```
+
+We can compare the rate parameter (slopes) from two separate linear regression models using a t-test. This is sometimes referred to as a "test of parallelism" in the context of comparing slopes. The t-statistic for comparing two slopes with their respective standard errors can be calculated as:
+
+$t = \frac{\beta_1 - \beta_2}{\sqrt{SE_{\beta_1}^2 + SE_{\beta_2}^2}}$
+
+This t-statistic follows a t-distribution with ( df = n_1 + n_2 - 4 ) degrees of freedom, where ( n_1 ) and ( n_2 ) are the sample sizes of the two groups. In our case, ( n_1 = n_2 = 8 ), so ( df = 8 + 8 - 4 = 12 ).
+
+Here's how to perform the t-test for comparing curve 1 and 2.
+
+```{r}
+# Given slopes and standard errors from curve 1 and 2
+beta1 <- 0.2104	
+beta2 <- 0.2784	
+SE_beta1 <- 0.01815 
+SE_beta2 <- 0.00997
+
+# Sample sizes for both treatments (n1 and n2)
+n1 <- 8
+n2 <- 8
+
+# Calculate the t-statistic
+t_statistic <- abs(beta1 - beta2) / sqrt(SE_beta1^2 + SE_beta2^2)
+
+# Degrees of freedom
+df <- n1 + n2 - 4
+
+# Calculate the p-value
+p_value <- 2 * (1 - pt(abs(t_statistic), df))
+
+# Print the results
+print(paste("t-statistic:", round(t_statistic, 4)))
+print(paste("Degrees of freedom:", df))
+print(paste("p-value:", round(p_value, 4)))
+```
+
+The `pt()` function in R gives the cumulative distribution function of the t-distribution. The `2 * (1 - pt(abs(t_statistic), df))` line calculates the two-tailed p-value. This will tell us if the slopes are significantly different at your chosen alpha level (commonly 0.05).
+
+
 
 ## Designed experiments
 
