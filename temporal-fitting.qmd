@@ -15,7 +15,7 @@ To exemplify, we'll continue examining a previously shown curve that represents 
 #| message: false
 
 library(tidyverse)
-theme_set(theme_bw())
+theme_set(theme_gray(base_size = 16))
 dpc <- 
   tribble(
    ~t,  ~y, 
@@ -41,7 +41,7 @@ dpc |>
   labs(x = "Time", y = "Disease intensity (%)")
 ```
 
-To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package.
+To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package. The transformed y will be referred to as y* (or y2 in the code) followed by the letter E, M, L or G, for each model (exponential, monomolecular, etc) respectively.
 
 ```{r}
 dpc1 <- dpc |> 
@@ -50,12 +50,14 @@ dpc1 <- dpc |>
          monomolecular = log(1 / (1 - y)),
          logistic = log(y / (1 - y)),
          gompertz = -log(-log(y)))
-knitr::kable(dpc1) 
+knitr::kable(round(dpc1, 4)) 
 ```
 
 Now we can plot the curves using the transformed values regressed against time. The curve that appears most linear, closely coinciding with the regression fit line, is a strong candidate for the best-fitting model. To accomplish this, we'll first reshape the dataframe into long format, and then generate plots for each of the four models.
 
 ```{r}
+#| warning: false
+#| message: false
 #| label: fig-models
 #| fig-cap: "Curves of the transformed data for each epidemiological against time. The goal is to check which of the models provides the best fit based on the straight line"
 
@@ -65,10 +67,13 @@ dpc2 <- dpc1 |>
 
 
 dpc2 |> 
-  ggplot(aes(t, y2, color = model))+
+  ggplot(aes(t, y2))+
   geom_point()+
-  geom_smooth(method = "lm", se = F)+
-  facet_wrap(~ model)
+  geom_smooth(method = "lm", color = "black", se = F)+
+  facet_wrap(~ model)+
+  labs(x = "Time", y = "Transformed value (y*)",
+       color = "Model")+
+  theme(legend.position = "none")
 
 ```
 
@@ -109,7 +114,6 @@ gompertz <- dpc2 |>
 
 m_gompertz <- lm(y2 ~ t, data = gompertz)
 
-
 # R-squared
 summary(m_gompertz)$r.squared
 
@@ -127,10 +131,10 @@ Next, let's extract the two parameters of interest from each fitted model and in
 
 | Model         | Transformation   | Back-transformation |
 |---------------|------------------|-------------------|
-| Exponential   | log(y)           | exp(y)            |
-| Monomolecular | log(1 / (1 - y)) | 1 - exp(-y)       |
-| Logistic      | log(y / (1 - y)) | 1 / (1 + exp(-y)) |
-| Gompertz      | -log(-log(y))    | exp(-exp(-y))     |
+| Exponential   | log(y)           | exp(y*E)            |
+| Monomolecular | log(1 / (1 - y)) | 1 - exp(-y*M)       |
+| Logistic      | log(y / (1 - y)) | 1 / (1 + exp(-y*L)) |
+| Gompertz      | -log(-log(y))    | exp(-exp(-y*G))     |
 
 ```{r}
 
@@ -155,14 +159,15 @@ Now the plot:
 
 logistic |>
   ggplot(aes(t, y)) +
-  geom_point()+
+  geom_point(size = 2)+
   stat_function(
     linetype = 2,
     fun = function(t) 1 / (1 + ((1 - y0L) / y0L) * exp(-rL * t)))+
 stat_function(
     linetype = 1,
     fun = function(t) exp(log(y0G) * exp(-rG * t))
-  )
+  )+
+  labs(x = "Time", y = "Disease intensity")
 ```
 
 In this case, it's clear that the logistic model (the solid line above) emerges as the best fit based on our statistical evaluation. The approach for model selection outlined here is straightforward and manageable when dealing with a single epidemic and comparing only two models. However, real-world scenarios often require analyzing multiple curves and fitting various models to each, making manual comparison impractical for selecting a single best-fitting model. To streamline this task, it's advisable to automate the process using custom functions designed to simplify the coding work involved.
@@ -192,9 +197,11 @@ summary(fit_gompertz)
 
 ```
 
-We can see that the model coefficients are not the same as those estimated using linear regression. Among other reasons, `nls()` often uses iterative techniques to estimate parameters, such as the Levenberg-Marquardt algorithm, which may provide different estimates than algebraic methods used in linear regression. While both methods aim to fit a model to data, they do so in ways that have distinct assumptions, strengths, and weaknesses, and this can result in different estimated parameters. Both approaches—nonlinear least squares and linear regression on transformed data—have their own merits and limitations. The choice between the two often depends on various factors like the nature of the data, the underlying assumptions, and the specific requirements of the analysis. For an epidemiologist, the choice might come down to preference, familiarity with the techniques, or specific aims of the analysis. In summary, both methods are valid tools in the toolkit of an epidemiologist or any researcher working on curve fitting and model selection. Understanding the nuances of each can help in making an informed choice tailored to the needs of a particular study.
+We can see that the model coefficients are not the same as those estimated using linear regression. Among other reasons, `nls()` often uses iterative techniques to estimate parameters, such as the Levenberg-Marquardt algorithm, which may provide different estimates than algebraic methods used in linear regression. While both methods aim to fit a model to data, they do so in ways that have distinct assumptions, strengths, and weaknesses, and this can result in different estimated parameters. 
 
+Both approaches—nonlinear least squares and linear regression on transformed data—have their own merits and limitations. The choice between the two often depends on various factors like the nature of the data, the underlying assumptions, and the specific requirements of the analysis. For an epidemiologist, the choice might come down to preference, familiarity with the techniques, or specific aims of the analysis. 
 
+In summary, both methods are valid tools in the toolkit of an epidemiologist or any researcher working on curve fitting and model selection. Understanding the nuances of each can help in making an informed choice tailored to the needs of a particular study.
 
 
 ## epifitter - multiple epidemics
@@ -233,6 +240,7 @@ Because the data was entered in the wide format (each DPC is in a different colu
 
 ```{r}
 #| echo: true
+#| warning: false
 #| label: fig-dpcs
 #| fig-cap: "Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from @chapter2017b page 94"
 pepper |> 
@@ -241,7 +249,7 @@ pepper |>
               linetype = treat, 
               shape = treat, 
               group = treat))+
-  geom_line(size = 1)+
+  geom_line(linewidth = 1)+
   geom_point(size =3, shape = 16)+
   annotate(geom = "text", x = 15, y = 0.84, label = "1")+
   annotate(geom = "text", x = 23, y = 0.6, label = "2")+
@@ -280,21 +288,27 @@ knitr::kable(epi3$Stats)
 
 ```
 
-The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is a slight between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves. For such, we can use the `plot_fit()` function from *epifitter* to explore visually the fit of the four models to each curve.
+The statistics of the model fit confirms our initial guess that the predictions by the logistic or the Gompertz are closer to the observations than predictions by the other models. There is a slight difference between them based on these statistics. However, to pick one of the models, it is important to inspect the curves with the observed and predicted values to check which model is best for all curves. For such, we can use the `plot_fit()` function from *epifitter* to explore visually the fit of the four models to each curve.
 
 ```{r}
 #| warning: false
 
 plot_fit(epi1)+
-  ylim(0,1)
+  ylim(0,1)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi1$stats_all)
 
 plot_fit(epi2)+
-  ylim(0,1)
+  ylim(0,1)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi2$stats_all)
 
 plot_fit(epi3)+
-  ylim(0,1)
+  ylim(0,1)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi3$stats_all)
 
 ```
@@ -321,14 +335,19 @@ knitr::kable(epi33$Stats)
 And now we can produce the plot of the fitted curves together with the original incidence dat. The `stats_all` dataframe shows everything we need regarding the statistics and the values of the parameteres.
 
 ```{r}
-plot_fit(epi11)
+plot_fit(epi11)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi11$stats_all)
 
-plot_fit(epi22)
+plot_fit(epi22)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi22$stats_all)
 
-
-plot_fit(epi33)
+plot_fit(epi33)+
+  scale_color_grey()+
+  theme(legend.position = "none")
 knitr::kable(epi33$stats_all)
 ```
 
@@ -339,7 +358,6 @@ Let's then create a new data set called `pepper2` using the data transposing fun
 ```{r}
 pepper2 <- pepper |> 
   pivot_longer(2:4, names_to ="treat", values_to = "inc")
-
 ```
 
 Now we fit the models to all DPCs. Note that the name of the variable indicating the DPC code needs to be informed in `strata_cols` argument. To use the nonlinear regression approach we set `nlin` argument to `TRUE`.
@@ -359,7 +377,6 @@ Now let's select the statistics of model fitting. Again, *Epifitter* ranks the m
 ```{r}
 epi_all$Parameters |> 
   select(treat, model, best_model, RSE, CCC)
-
 ```
 
 The code below calculates the frequency that each model was the best. This would facilitate in the case of many epidemics to analyse.
@@ -372,7 +389,6 @@ freq_best <- epi_all$Parameters %>%
   ungroup() |> 
   count(model) 
 freq_best 
-
 ```
 
 We can see that the Logistic model was the best model in two out of three epidemics.
@@ -388,8 +404,10 @@ epi_all$Data |>
   geom_point(aes(time, y)) +
   geom_line() +
   facet_wrap(~ model) +
+  theme(legend.position = "bottom")+
  coord_cartesian(ylim = c(0, 1)) + # set the max to 0.6
   labs(
+    shape = "Epidemic",
     y = "Disease incidence",
     x = "Time (days after emergence)"
   )
@@ -553,7 +571,7 @@ p4 <- budblight |>
   facet_wrap(~treat, ncol = 1) +
   theme(legend.position = "none")+
   labs(y = "Transformed incidence", x = "Time (days after emergence)")
-
+library(patchwork)
 p3 | p4
 ```
 
