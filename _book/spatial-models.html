@@ -361,9 +361,9 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(y = a . e^{-b.x}\)</span> ,</p>
 <p>where <span class="math inline">\(a\)</span> is the disease intensity at the distance zero and <span class="math inline">\(b\)</span> is the rate of decline, in this case negative because disease intensity decreases with the increase of the distance from inoculum source. Let’s make a plot for two disease gradients of varying parameters for this model.</p>
 <p>First we need to load essential packages for programming, customizing the outputs and defining a global ggplot theme.</p>
-<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-1_d80c6dfb0d548d6bca7d89179c2fd74c">
+<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-1_27f339c127cc783c6d78a15d92a1240d">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_bw</span>(<span class="at">base_size =</span> <span class="dv">16</span>)) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">16</span>)) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Set the parameters for the exponential model with two rates and the same inoculum level at the source:</p>
 <div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-2_c4e6ed9476a5588071fba793dfd2ab49">
@@ -376,16 +376,17 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>max1), <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span><span class="sc">:</span>a1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The following code allows to visualize the model predictions.</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-exp1_e0b930d5e3bad0224e9000f2e6d7dd08">
+<div class="cell" data-hash="spatial-models_cache/html/fig-exp1_b64133ec7407b073166cbf9243a26e03">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a1 <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>b1 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a2 <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>b2 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, a1) <span class="sc">+</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.04</span>, <span class="at">label =</span> <span class="st">"b = 0.1"</span>) <span class="sc">+</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"b = 0.05"</span>) <span class="sc">+</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance (m)"</span>, <span class="at">y =</span> <span class="st">"Disease incidence (proportion)"</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a1 <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>b1 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a2 <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span>b2 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, a1) <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.04</span>, <span class="at">label =</span> <span class="st">"b = 0.1"</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.10</span>, <span class="at">label =</span> <span class="st">"b = 0.05"</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance (m)"</span>, <span class="at">y =</span> <span class="st">"Disease incidence (proportion)"</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-exp1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -415,15 +416,16 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>max2 <span class="ot">&lt;-</span> <span class="dv">80</span> <span class="co"># maximum distance for gradient 2</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>max1), <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span><span class="sc">:</span>a1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="spatial-models_cache/html/fig-power1_229885d0c1254eba173dfb80290c409e">
+<div class="cell" data-hash="spatial-models_cache/html/fig-power1_35efe1bbd98a48989ac1ccf03d0b5ef7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a1 <span class="sc">*</span> ((x <span class="sc">+</span> C)<span class="sc">^-</span>b1), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a2 <span class="sc">*</span> ((x <span class="sc">+</span> C)<span class="sc">^-</span>b2), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, a1 <span class="sc">-</span> <span class="fl">0.02</span>) <span class="sc">+</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.03</span>, <span class="at">label =</span> <span class="st">"b = 0.1"</span>) <span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.06</span>, <span class="at">label =</span> <span class="st">"b = 0.05"</span>) <span class="sc">+</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance (m)"</span>, <span class="at">y =</span> <span class="st">"Disease incidence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a1 <span class="sc">*</span> ((x <span class="sc">+</span> C)<span class="sc">^-</span>b1), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) a2 <span class="sc">*</span> ((x <span class="sc">+</span> C)<span class="sc">^-</span>b2), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, a1 <span class="sc">-</span> <span class="fl">0.02</span>) <span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.03</span>, <span class="at">label =</span> <span class="st">"b = 0.1"</span>) <span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>, <span class="at">x =</span> <span class="dv">20</span>, <span class="at">y =</span> <span class="fl">0.06</span>, <span class="at">label =</span> <span class="st">"b = 0.05"</span>) <span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Distance (m)"</span>, <span class="at">y =</span> <span class="st">"Disease incidence"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-power1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -450,7 +452,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="plot-for-the-linearized-form-of-models" class="level3" data-number="12.3.2">
 <h3 data-number="12.3.2" class="anchored" data-anchor-id="plot-for-the-linearized-form-of-models"><span class="header-section-number">12.3.2</span> Plot for the linearized form of models</h3>
 <p>Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was <span class="math inline">\(ln(y)\)</span>.</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-exp2_57ecf62aebfe21549dfe16162394a2cb">
+<div class="cell" data-hash="spatial-models_cache/html/fig-exp2_4365985aa738c346bc85431187b6394c">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 2</span></span>
@@ -462,10 +464,11 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a1) <span class="sc">-</span> (b1 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a2) <span class="sc">-</span> (b2 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"log of distance (m)"</span>, <span class="at">y =</span> <span class="st">"log of disease incidence"</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a1) <span class="sc">-</span> (b1 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a2) <span class="sc">-</span> (b2 <span class="sc">*</span> x), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"log of distance (m)"</span>, <span class="at">y =</span> <span class="st">"log of disease incidence"</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-exp2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -476,7 +479,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Follows the linearization of the modified power law model. Note that the transformation used was <span class="math inline">\(ln(y)\)</span> and <span class="math inline">\(ln(x+C)\)</span> .</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-power2_33e785b2f76cff3f6665db65a06da587">
+<div class="cell" data-hash="spatial-models_cache/html/fig-power2_4f54b02f6b8bd2386fde938647621e7a">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 2</span></span>
@@ -488,14 +491,15 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a1) <span class="sc">-</span> (b1 <span class="sc">*</span> <span class="fu">log</span>(x <span class="sc">+</span> C)), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a2) <span class="sc">-</span> (b2 <span class="sc">*</span> <span class="fu">log</span>(x <span class="sc">+</span> C)), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Modified Power Law"</span>,</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">""</span>,</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"log of distance (m)"</span>,</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"log of disease incidence"</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_grey</span>(<span class="at">base_size =</span> <span class="dv">16</span>)<span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a1) <span class="sc">-</span> (b1 <span class="sc">*</span> <span class="fu">log</span>(x <span class="sc">+</span> C)), <span class="at">linetype =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_function</span>(<span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">log</span>(a2) <span class="sc">-</span> (b2 <span class="sc">*</span> <span class="fu">log</span>(x <span class="sc">+</span> C)), <span class="at">linetype =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Modified Power Law"</span>,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">""</span>,</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"log of distance (m)"</span>,</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"log of disease incidence"</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-power2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
