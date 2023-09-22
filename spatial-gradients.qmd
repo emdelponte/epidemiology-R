@@ -1,8 +1,6 @@
 # Spatial gradients
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
+
 
 ## Introduction
 
@@ -35,7 +33,8 @@ tibble::tribble(
 
 g1 <- xo |> 
   ggplot(aes(d, y4))+
-  geom_point()+
+  theme_gray(base_size = 16)+
+  geom_point(size = 2)+
   geom_line()+
   ylim(0,8)+
   labs(y = "Number of new lesions",
@@ -44,7 +43,8 @@ g1 <- xo |>
 
 g2 <- xo |> 
   ggplot(aes(d, y5))+
-  geom_point()+
+  theme_gray(base_size = 16)+
+  geom_point(size = 2)+
   geom_line()+
   ylim(0,8)+
   labs(y = "Number of new lesions",
@@ -98,9 +98,11 @@ library(ggthemes)
 hermiston |> 
   pivot_longer(3:5, names_to = "replicate", values_to = "severity") |> 
   ggplot(aes(dist_m, severity, color = replicate))+
+  theme_gray(base_size = 16)+
+  theme(legend.position = "bottom")+
   geom_point(size = 2)+
   geom_line(size = 1)+
-  scale_color_colorblind()+
+  scale_color_grey()+
   labs(x = "Distance from the source (m)",
        y = "Stripe rust severity (%)",
        color = "Replicate",
@@ -140,9 +142,10 @@ septoria |>
   pivot_longer(2:3, names_to = "date", 
                values_to = "defoliation") |> 
   ggplot(aes(d, defoliation, color = date))+
+  theme_gray(base_size = 16)+
   geom_point()+
   geom_line()+
-  scale_color_colorblind()+
+  scale_color_grey()+
   annotate(geom = "text", x = 200, y = 12, 
            label = "Primary gradient", hjust = "left")+
   annotate(geom = "text", x = 200, y = 72, 
@@ -164,7 +167,7 @@ library(ggplot2)
 
 line <- ggplot(data.frame(c(1:10),c(1:10)))+
   annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 10, fill = "gray92")+
-  annotate("rect", xmin = 0, xmax = 10, ymin = 9.7, ymax = 10, color = "black", fill = "orange")+
+  annotate("rect", xmin = 0, xmax = 10, ymin = 9.7, ymax = 10, color = "black", fill = "#339966")+
   annotate("segment", size = 2, x = 1, xend = 1, y = 9.5, yend = 2, arrow = arrow())+
   annotate("segment", size = 2, x = 3, xend = 3, y = 9.5, yend = 2, arrow = arrow())+
   annotate("segment", size = 2, x = 5, xend = 5, y = 9.5, yend = 2, arrow = arrow())+
@@ -178,7 +181,7 @@ line <- ggplot(data.frame(c(1:10),c(1:10)))+
 
 area <- ggplot(data.frame(c(1:10),c(1:10)))+
   annotate("rect", xmin = 0, xmax = 10, ymin = 0, ymax = 10, fill = "gray92")+
-  annotate("rect", xmin = 0, xmax = 10, ymin = 8.2, ymax = 10, color = "black", fill = "orange")+
+  annotate("rect", xmin = 0, xmax = 10, ymin = 8.2, ymax = 10, color = "black", fill = "#339966")+
   annotate("segment", size = 2, x = 1, xend = 1, y = 8, yend = 2, arrow = arrow())+
   annotate("segment", size = 2, x = 3, xend = 3, y = 8, yend = 2, arrow = arrow())+
   annotate("segment", size = 2, x = 5, xend = 5, y = 8, yend = 2, arrow = arrow())+
@@ -200,7 +203,7 @@ point_central <- ggplot(data.frame(c(1:10),c(1:10)))+
   annotate("segment", size = 2, x = 5, xend = 0, y = 5, yend = 10, arrow = arrow())+
   annotate("segment", size = 2, x = 5, xend = 5, y = 5, yend = 10, arrow = arrow())+
   annotate("segment", size = 2, x = 5, xend = 5, y = 5, yend = 0, arrow = arrow())+
-   annotate("rect", xmin = 5.5, xmax = 4.5, ymin = 4.5, ymax = 5.5, color = "black", fill = "orange" )+
+   annotate("rect", xmin = 5.5, xmax = 4.5, ymin = 4.5, ymax = 5.5, color = "black", fill = "#339966" )+
   ylim(0,10)+
   xlim(0,10)+
   coord_fixed()+
@@ -216,7 +219,7 @@ point_corner <- ggplot(data.frame(c(1:10),c(1:10)))+
   annotate("segment", size = 2, x = 0, xend = 10, y = 10, yend = 3.3, arrow = arrow())+
   annotate("segment", size = 2, x = 0, xend = 10, y = 10, yend = 6.6, arrow = arrow())+
   annotate("segment", size = 2, x = 0, xend = 10, y = 10, yend = 10, arrow = arrow())+
-  annotate("rect", xmin = 0, xmax = 1, ymin = 9, ymax = 10, color = "black", fill = "orange")+
+  annotate("rect", xmin = 0, xmax = 1, ymin = 9, ymax = 10, color = "black", fill = "#339966")+
   ylim(0,10)+
   xlim(0,10)+
   coord_fixed()+
