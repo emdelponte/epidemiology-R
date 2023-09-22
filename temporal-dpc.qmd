@@ -6,9 +6,6 @@ editor_options:
 
 # Disease progress curves
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
 
 ## How epidemics occur
 
@@ -112,7 +109,7 @@ Now the plot
 #| message: false
 dpc1 <- dpc |>
   ggplot(aes(t, y)) +
-  theme_gray()+
+  theme_gray(base_size = 16)+
   geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
   labs(x = "Assessment time (days)",
@@ -148,7 +145,7 @@ p <- polyc |>
   geom_point(aes(time, y), size =19, shape =1)+
   geom_line()+
   ylim(0,1)+
-  theme_gray()+
+  theme_gray(base_size = 16)+
   labs(x = "Time", y = "Disease intensity")
 
 
@@ -161,7 +158,7 @@ m <- monoc |>
   ggplot(aes(time, y))+
   geom_point(aes(x = 25, y = 0.5), size =90, shape = 1)+
    geom_line()+
-  theme_gray()+
+  theme_gray(base_size = 16)+
   ylim(0,1)+
   labs(x = "Time", y = "Disease intensity")
 
@@ -192,9 +189,9 @@ dpc2 <- dpc |>
   ggplot(aes(t, y)) +
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
-    geom_area(fill = "darkorange")+
-    geom_line(size = 1)+
-  theme_gray()+
+    geom_area(fill = "#339966")+
+    geom_line(linewidth = 1)+
+  theme_gray(base_size = 16)+
   geom_point(size = 3, shape = 16)+
   scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
 ggsave("imgs/dpc2.png")
@@ -210,31 +207,31 @@ The AUDPC summarizes the "total measure of disease stress" and is largely used t
 #| code-fold: true
 dpc3 <- dpc |>
   ggplot(aes(t, y)) +
-  theme_gray()+
+  theme_gray(base_size = 16)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 
            ymin = 0, ymax = (dpc$y[1]+ dpc$y[2])/2, 
-           color = "darkgreen", fill = "darkorange")+
+           color = "white", fill = "#339966")+
    annotate("rect", xmin = dpc$t[2], xmax = dpc$t[3], 
             ymin = 0, ymax = (dpc$y[2]+ dpc$y[3])/2, 
-            color = "darkgreen", fill = "darkorange")+
+            color = "white", fill = "#339966")+
    annotate("rect", xmin = dpc$t[3], xmax = dpc$t[4], 
             ymin = 0, ymax = (dpc$y[3]+ dpc$y[4])/2,
-            color = "darkgreen", fill = "darkorange")+
+            color = "white", fill = "#339966")+
    annotate("rect", xmin = dpc$t[4], xmax = dpc$t[5], 
             ymin = 0, ymax = (dpc$y[4]+ dpc$y[5])/2, 
-            color = "darkgreen", fill = "darkorange")+
+            color = "white", fill = "#339966")+
    annotate("rect", xmin = dpc$t[5], xmax = dpc$t[6], 
             ymin = 0, ymax = (dpc$y[5]+ dpc$y[6])/2, 
-            color = "darkgreen",fill = "darkorange")+
+            color = "white",fill = "#339966")+
    annotate("rect", xmin = dpc$t[6], xmax = dpc$t[7], 
             ymin = 0, ymax = (dpc$y[6]+ dpc$y[7])/2, 
-            color = "darkgreen", fill = "darkorange")+
+            color = "white", fill = "#339966")+
   annotate("rect", xmin = dpc$t[7], xmax = dpc$t[8], 
             ymin = 0, ymax = (dpc$y[7]+ dpc$y[8])/2, 
-            color = "darkgreen", fill = "darkorange")+
-  geom_line(size = 1)+
+            color = "white", fill = "#339966")+
+  geom_line(linewidth = 1)+
   geom_point(size = 3, shape = 16)+
   annotate(geom = "text", x = 36.5, y = 50,
            label = "AUDPC = 2534" , size = 4)+
