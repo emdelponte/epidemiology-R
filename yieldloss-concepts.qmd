@@ -12,7 +12,7 @@ This is a work in progress that is currently undergoing heavy technical editing 
 
 Plant disease epidemics significantly impact agricultural production, particularly affecting crop yield - the measurable produce such as seed, fruit, leaves, roots or tubers - and quality, which includes factors such as blemishes on fruit and toxins in grain. Studying these impacts is crucial to understanding the overall repercussions of plant diseases on agriculture.
 
-The yield of some crops can be severely diminished if they host a pathogen for a prolonged period of time. The plant's physiology is dynamically and negatively affected as the crop grows, leading to an increase in biomass and advancement through phenological stages. For some diseases that primarily infect the end product, like grains, yield is directly impacted with a reduction in size and weight of the affected plant part. 
+The yield of some crops can be severely diminished if they host a pathogen for a prolonged period of time. The plant's physiology is dynamically and negatively affected as the crop grows, leading to an increase in biomass and advancement through phenological stages. For some diseases that primarily infect the end product, like grains, yield is directly impacted with a reduction in size and weight of the affected plant part.
 
 Certain plant diseases cause visual damage to the product, such as fruit or tubers, which may not result in a reduction in yield, but the presence of the symptoms can adversely affect sales due to decreased marketability. Furthermore, the presence of toxins in the product caused by some diseases can significantly downgrade its value, posing both health risks and economic losses.
 
@@ -55,8 +55,8 @@ yl <- tibble::tribble(
 yl |> 
   ggplot(aes(reorder(yield,-value), value, fill = class))+
   geom_col(width = 0.5)+
-  theme_minimal(base_size = 16)+
-  ggthemes::scale_fill_gradient_tableau()+
+  theme_grey(base_size = 16)+
+  ggthemes::scale_fill_gradient_tableau(palette = "Green")+
   geom_hline(yintercept = 25, linetype = 2, color = "gray60")+
   geom_hline(yintercept = 20, linetype = 2, color = "gray60")+
   geom_hline(yintercept = 15, linetype = 2, color = "gray60")+
@@ -92,7 +92,6 @@ Let's work with actual data on the incidence of white mold disease and yield of 
 #| message: false
 #| warning: false
 library(tidyverse)
-theme_set(theme_bw(base_size = 16))
 library(r4pde)
 wm <- WhiteMoldSoybean
 
@@ -121,6 +120,7 @@ wm2 |>
              group = study, 
              color = factor(study)))+
   geom_point(size = 2)+
+   theme_grey(base_size = 16)+
   ggthemes::scale_color_colorblind()+
   geom_smooth(method = "lm", se = F, color = "black", fullrange = T)+
   ylim(1800, 3500)+
@@ -139,6 +139,7 @@ We can plot the relationships for all studies combined, which will resemble a "s
 #| fig-cap: "Relationship between soybean yield and incidence of white mold across trials. Observed (left) and fitted regression lines (right)"
 p1 <- wm |> 
   ggplot(aes(inc, yld, group = study))+
+  theme_grey(base_size = 16)+
   geom_point(size = 2, alpha = 0.5)+
   ylim(0, 5000)+
   labs(x = "White mold incidence (%)",
@@ -146,6 +147,7 @@ p1 <- wm |>
 
 p2 <- wm |> 
   ggplot(aes(inc, yld, group = study))+
+  theme_grey(base_size = 16)+
   geom_smooth(method = "lm", se = F, fullrange = T, color = "black")+
   ylim(0, 5000)+
   labs(x = "White mold incidence (%)",
