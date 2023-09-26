@@ -249,7 +249,7 @@ ggpairs(raters)
 
 #### Coefficient of determination
 
-We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson's R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `correlation` function of the *performance* package.
+We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson's R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the `cor` function,
 
 ```{r}
 #| warning: false
@@ -257,20 +257,26 @@ We noticed earlier that the correlation coefficients varied across all pairs of 
 #| label: tbl-correl
 #| tbl-cap: "Pearson correlation coefficients for all pairs of raters"
 
-library(correlation)
-raters_cor <- correlation(raters)
-library(knitr)
-kable(raters_cor[1:3]) # only first 3 variables
+
+knitr::kable(cor(raters))
+
+
+
 ```
 
 The means of coefficient of determination can be easily obtained as follows.
 
 ```{r}
 # All pairwise R2
-round(raters_cor$r^2,2)
+
+raters_cor <- reshape2::melt(cor(raters))
+
+raters2 <- raters_cor |> 
+  filter(value != 1) 
 
 # means of R2
-round(mean(raters_cor$r^2), 2)
+raters2$value
+round(mean(raters2$value^2), 3)
 
 ```
 
@@ -293,7 +299,7 @@ The ICC can be computed using the `ICC()` or the `icc()` functions of the *psych
 #| message: false
 library(psych)
 ic <- ICC(raters)
-kable(ic$results[1:2]) # only selected columns
+knitr::kable(ic$results[1:2]) # only selected columns
 # call ic list for full results
 
 ```
@@ -389,9 +395,9 @@ The Pearson's r for the relationship, or the precision of the estimates by each 
 precision <- sbr2 |> 
   select(-leaf) |> 
   group_by(rater) |> 
-  correlation() 
+  correlation::correlation() 
 
-kable(precision[1:4])
+knitr::kable(precision[1:4])
 ```
 
 The mean precision can then be obtained.
@@ -450,7 +456,7 @@ ls <- ccc$l.shift
 Metrics <- c("Agreement", "Bias coefficient", "Precision", "scale-shift", "location-shift")
 Value <- c(rho, Cb, r, ss, ls)
 res <- data.frame(Metrics, Value)
-kable(res)
+knitr::kable(res)
 ```
 
 Now let's create a function that will allow us to estimate the CCC for all raters in the data frame in the wide format. The function assumes that the first two columns are the actual and estimates and the rest of the columns are the raters, which is the case for our `sbr` dataframe . Let's name this function `ccc_byrater`. 

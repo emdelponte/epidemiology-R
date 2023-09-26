@@ -641,53 +641,50 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 <section id="coefficient-of-determination" class="level4" data-number="6.2.1.1">
 <h4 data-number="6.2.1.1" class="anchored" data-anchor-id="coefficient-of-determination"><span class="header-section-number">6.2.1.1</span> Coefficient of determination</h4>
-<p>We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson’s R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the <code>correlation</code> function of the <em>performance</em> package.</p>
-<div class="cell" data-hash="data-accuracy_cache/html/tbl-correl_59a8d82af2efaf4fd1738ce6323dd305">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(correlation)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>raters_cor <span class="ot">&lt;-</span> <span class="fu">correlation</span>(raters)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(raters_cor[<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>]) <span class="co"># only first 3 variables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We noticed earlier that the correlation coefficients varied across all pairs of rater. Sometimes, the means of squared Pearson’s R values (R<sup>2</sup>), or the coefficient of determination is used as a measure of inter-rater reliability. We can further examine the pair-wise correlations in more details using the <code>cor</code> function,</p>
+<div class="cell" data-hash="data-accuracy_cache/html/tbl-correl_938dd78ff73822223bb6bbdd824d019c">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">cor</span>(raters))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-correl" class="anchored">
 <table class="table table-sm table-striped small">
 <caption>Table&nbsp;6.1: Pearson correlation coefficients for all pairs of raters</caption>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Parameter1</th>
-<th style="text-align: left;">Parameter2</th>
-<th style="text-align: right;">r</th>
+<th style="text-align: left;"></th>
+<th style="text-align: right;">R1</th>
+<th style="text-align: right;">R2</th>
+<th style="text-align: right;">R3</th>
+<th style="text-align: right;">R4</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">R1</td>
-<td style="text-align: left;">R2</td>
+<td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">0.6325037</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">R1</td>
-<td style="text-align: left;">R3</td>
 <td style="text-align: right;">0.6825936</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">R1</td>
-<td style="text-align: left;">R4</td>
 <td style="text-align: right;">0.6756986</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">R2</td>
-<td style="text-align: left;">R3</td>
+<td style="text-align: right;">0.6325037</td>
+<td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">0.8413333</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">R2</td>
-<td style="text-align: left;">R4</td>
 <td style="text-align: right;">0.8922181</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">R3</td>
-<td style="text-align: left;">R4</td>
+<td style="text-align: right;">0.6825936</td>
+<td style="text-align: right;">0.8413333</td>
+<td style="text-align: right;">1.0000000</td>
 <td style="text-align: right;">0.8615470</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R4</td>
+<td style="text-align: right;">0.6756986</td>
+<td style="text-align: right;">0.8922181</td>
+<td style="text-align: right;">0.8615470</td>
+<td style="text-align: right;">1.0000000</td>
 </tr>
 </tbody>
 </table>
@@ -695,16 +692,23 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>The means of coefficient of determination can be easily obtained as follows.</p>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-7_66412a463e85d98bcd30fca1f0d1428d">
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-7_ed328c82234c15777440732b6cfd38ca">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># All pairwise R2</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(raters_cor<span class="sc">$</span>r<span class="sc">^</span><span class="dv">2</span>,<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>raters_cor <span class="ot">&lt;-</span> reshape2<span class="sc">::</span><span class="fu">melt</span>(<span class="fu">cor</span>(raters))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>raters2 <span class="ot">&lt;-</span> raters_cor <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(value <span class="sc">!=</span> <span class="dv">1</span>) </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># means of R2</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>raters2<span class="sc">$</span>value</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.40 0.47 0.46 0.71 0.80 0.74</code></pre>
+<pre><code> [1] 0.6325037 0.6825936 0.6756986 0.6325037 0.8413333 0.8922181 0.6825936
+ [8] 0.8413333 0.8615470 0.6756986 0.8922181 0.8615470</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># means of R2</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(raters_cor<span class="sc">$</span>r<span class="sc">^</span><span class="dv">2</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">mean</span>(raters2<span class="sc">$</span>value<span class="sc">^</span><span class="dv">2</span>), <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.59</code></pre>
+<pre><code>[1] 0.595</code></pre>
 </div>
 </div>
 </section>
@@ -718,10 +722,10 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </ul>
 <p>Additionally, the ICC may depend on whether the ratings are an average or not of several ratings. When an average is considered, these are called ICC(1,k), ICC(2,k) and ICC(3,k).</p>
 <p>The ICC can be computed using the <code>ICC()</code> or the <code>icc()</code> functions of the <em>psych</em> or <em>irr</em> packages, respectively. They both provide the coefficient, F value, and the upper and lower bounds of the 95% confidence interval.</p>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-8_9cef2beb814ba4bf3bef8f6dd35c2a6b">
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-8_c71efaf6ee396caf69e3c7ee98f38a2a">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ic <span class="ot">&lt;-</span> <span class="fu">ICC</span>(raters)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(ic<span class="sc">$</span>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]) <span class="co"># only selected columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(ic<span class="sc">$</span>results[<span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>]) <span class="co"># only selected columns</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <thead>
@@ -881,13 +885,13 @@ Overall accuracy      0.8125</code></pre>
 </div>
 </div>
 <p>The Pearson’s r for the relationship, or the precision of the estimates by each rater, can be obtained using the <code>correlation</code> function of the <em>correlation</em> package.</p>
-<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-13_afff3c2a084640e699bea1cbb3dfad16">
+<div class="cell" data-hash="data-accuracy_cache/html/unnamed-chunk-13_44bc8f012f22310dd47fc3125ce0da28">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>precision <span class="ot">&lt;-</span> sbr2 <span class="sc">|&gt;</span> </span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>leaf) <span class="sc">|&gt;</span> </span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(rater) <span class="sc">|&gt;</span> </span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">correlation</span>() </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  correlation<span class="sc">::</span><span class="fu">correlation</span>() </span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(precision[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(precision[<span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped small">
 <thead>
@@ -963,7 +967,7 @@ Overall accuracy      0.8125</code></pre>
 <h4 data-number="6.2.4.2" class="anchored" data-anchor-id="concordance-correlation-coefficient"><span class="header-section-number">6.2.4.2</span> Concordance correlation coefficient</h4>
 <p>Lin’s (1989, 2000) proposed the concordance correlation coefficient (CCC) for agreement on a continuous measure obtained by two methods. The CCC combines measures of both precision and accuracy to determine how far the observed data deviate from the line of perfect concordance. Lin’s CCC increases in value as a function of the nearness of the data reduced major axis to the line of perfect concordance (the accuracy of the data) and of the tightness of the data about its reduced major axis (the precision of the data).</p>
 <p>The <code>epi.ccc</code> function of the <em>epiR</em> package allows to obtain the Lin’s CCC statistics. Let’s filter only rater 2 and calculate the CCC statistics for this rater.</p>
-<div class="cell" data-hash="data-accuracy_cache/html/tbl-ccc_17bff9345c8e6a4abad215fe694f7cad">
+<div class="cell" data-hash="data-accuracy_cache/html/tbl-ccc_896be7c339ca1cddc83a8811ab3070f4">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Only rater 2</span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>sbr3 <span class="ot">&lt;-</span> sbr2 <span class="sc">|&gt;</span> <span class="fu">filter</span>(rater <span class="sc">==</span> <span class="st">"R2"</span>)</span>
@@ -981,7 +985,7 @@ Overall accuracy      0.8125</code></pre>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>Metrics <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Agreement"</span>, <span class="st">"Bias coefficient"</span>, <span class="st">"Precision"</span>, <span class="st">"scale-shift"</span>, <span class="st">"location-shift"</span>)</span>
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>Value <span class="ot">&lt;-</span> <span class="fu">c</span>(rho, Cb, r, ss, ls)</span>
 <span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Metrics, Value)</span>
-<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-ccc" class="anchored">
 <table class="table table-sm table-striped small">

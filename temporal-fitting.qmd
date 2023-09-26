@@ -6,7 +6,7 @@ In model fitting for temporal analysis, the objective is to determine which prev
 
 There are essentially two methods for achieving this: linear regression and non-linear regression modeling. We'll begin with linear regression, which is computationally simpler. I'll illustrate the procedure using both built-in R functions and custom functions from the epifitter package [@alves2021a]. Epifitter offers a set of user-friendly functions that can fit and rank the best models for a given epidemic.
 
-To exemplify, we'll continue examining a previously shown curve that represents the incidence of the tobacco etch virus, a disease affecting peppers, over time. This dataset is featured in Chapter 3 of the book, "Study of Plant Disease Epidemics" [@chapter2017b]. While the book presents SAS code for certain analyses, we offer an alternative code that accomplishes similar analyses, even if it doesn't replicate the book's results exactly.
+To exemplify, we'll continue examining a previously shown curve that represents the incidence of the tobacco etch virus, a disease affecting peppers, over time. This dataset is featured in Chapter 3 of the book, "Study of Plant Disease Epidemics" [@chapter2007b]. While the book presents SAS code for certain analyses, we offer an alternative code that accomplishes similar analyses, even if it doesn't replicate the book's results exactly.
 
 ## Linear regression: single epidemics
 
@@ -32,7 +32,7 @@ dpc <-
 
 ```{r}
 #| label: fig-dpc1
-#| fig-cap: "Disease progress curves for one tobacco etch epidemics in pepper. Reproduced from @chapter2017b page 94"
+#| fig-cap: "Disease progress curves for one tobacco etch epidemics in pepper. Reproduced from @chapter2007b page 94"
 
 dpc |> 
   ggplot(aes(t, y))+
@@ -41,7 +41,7 @@ dpc |>
   labs(x = "Time", y = "Disease intensity (%)")
 ```
 
-To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package. The transformed y will be referred to as y* (or y2 in the code) followed by the letter E, M, L or G, for each model (exponential, monomolecular, etc) respectively.
+To start, we'll need to transform the disease intensity (in proportion scale) data according to each of the models we aim to fit. In this instance, we'll look at the four models discussed in the previous chapter: exponential, monomolecular, logistic, and Gompertz. We can use the `mutate()` function of *dplyr* package. The transformed y will be referred to as y\* (or y2 in the code) followed by the letter E, M, L or G, for each model (exponential, monomolecular, etc) respectively.
 
 ```{r}
 dpc1 <- dpc |> 
@@ -129,12 +129,12 @@ ccc_gompertz$rho.c[1]
 
 Next, let's extract the two parameters of interest from each fitted model and incorporate them into the integral form of the respective models. To do this, we'll need to back-transform the intercept, which represents the initial inoculum. This can be accomplished using specific equations, which we'll outline next.
 
-| Model         | Transformation   | Back-transformation |
-|---------------|------------------|-------------------|
-| Exponential   | log(y)           | exp(y*E)            |
-| Monomolecular | log(1 / (1 - y)) | 1 - exp(-y*M)       |
-| Logistic      | log(y / (1 - y)) | 1 / (1 + exp(-y*L)) |
-| Gompertz      | -log(-log(y))    | exp(-exp(-y*G))     |
+| Model         | Transformation   | Back-transformation  |
+|---------------|------------------|----------------------|
+| Exponential   | log(y)           | exp(y\*E)            |
+| Monomolecular | log(1 / (1 - y)) | 1 - exp(-y\*M)       |
+| Logistic      | log(y / (1 - y)) | 1 / (1 + exp(-y\*L)) |
+| Gompertz      | -log(-log(y))    | exp(-exp(-y\*G))     |
 
 ```{r}
 
@@ -176,7 +176,7 @@ That's where the epifitter package comes into play! This package offers a range 
 
 ## Non linear regression
 
-Alternatively, one can fit a nonlinear model to the data for each combination of curve and model using the nlsLM function in R of the *minpack.lm* package. 
+Alternatively, one can fit a nonlinear model to the data for each combination of curve and model using the nlsLM function in R of the *minpack.lm* package.
 
 ```{r}
 #| warning: false
@@ -197,16 +197,15 @@ summary(fit_gompertz)
 
 ```
 
-We can see that the model coefficients are not the same as those estimated using linear regression. Among other reasons, `nls()` often uses iterative techniques to estimate parameters, such as the Levenberg-Marquardt algorithm, which may provide different estimates than algebraic methods used in linear regression. While both methods aim to fit a model to data, they do so in ways that have distinct assumptions, strengths, and weaknesses, and this can result in different estimated parameters. 
+We can see that the model coefficients are not the same as those estimated using linear regression. Among other reasons, `nls()` often uses iterative techniques to estimate parameters, such as the Levenberg-Marquardt algorithm, which may provide different estimates than algebraic methods used in linear regression. While both methods aim to fit a model to data, they do so in ways that have distinct assumptions, strengths, and weaknesses, and this can result in different estimated parameters.
 
-Both approaches—nonlinear least squares and linear regression on transformed data—have their own merits and limitations. The choice between the two often depends on various factors like the nature of the data, the underlying assumptions, and the specific requirements of the analysis. For an epidemiologist, the choice might come down to preference, familiarity with the techniques, or specific aims of the analysis. 
+Both approaches---nonlinear least squares and linear regression on transformed data---have their own merits and limitations. The choice between the two often depends on various factors like the nature of the data, the underlying assumptions, and the specific requirements of the analysis. For an epidemiologist, the choice might come down to preference, familiarity with the techniques, or specific aims of the analysis.
 
 In summary, both methods are valid tools in the toolkit of an epidemiologist or any researcher working on curve fitting and model selection. Understanding the nuances of each can help in making an informed choice tailored to the needs of a particular study.
 
-
 ## epifitter - multiple epidemics
 
-We will now examine three disease progress curves (DPCs) representing the incidence of the tobacco etch virus, a disease affecting peppers. Incidence evaluations were conducted at 7-day intervals up to 49 days. The relevant data can be found in Chapter 4, page 93, of the book "Study of Plant Disease Epidemics" [@chapter2017b]. To get started, let's input the data manually and create a data frame. The first column will represent the assessment time, while the remaining columns will correspond to the treatments, referred to as 'groups' in the book, ranging from 1 to 3.
+We will now examine three disease progress curves (DPCs) representing the incidence of the tobacco etch virus, a disease affecting peppers. Incidence evaluations were conducted at 7-day intervals up to 49 days. The relevant data can be found in Chapter 4, page 93, of the book "Study of Plant Disease Epidemics" [@chapter2007b]. To get started, let's input the data manually and create a data frame. The first column will represent the assessment time, while the remaining columns will correspond to the treatments, referred to as 'groups' in the book, ranging from 1 to 3.
 
 ## Entering data
 
@@ -234,7 +233,7 @@ pepper <-
 
 ## Visualize the DPCs
 
-Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (@chapter2017b page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
+Before proceeding with model selection and fitting, let's visualize the three epidemics. The code below reproduces quite exactly the top plot of Fig. 4.15 (@chapter2007b page 94). The appraisal of the curves might give us a hint on which models are the best candidates.
 
 Because the data was entered in the wide format (each DPC is in a different column) we need to reshape it to the long format. The `pivot_longer()` function will do the job of reshaping from wide to long format so we can finally use the `ggplot()` function to produce the plot.
 
@@ -242,7 +241,7 @@ Because the data was entered in the wide format (each DPC is in a different colu
 #| echo: true
 #| warning: false
 #| label: fig-dpcs
-#| fig-cap: "Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from @chapter2017b page 94"
+#| fig-cap: "Disease progress curves for three tobacco etch epidemics in pepper. Reproduced from @chapter2007b page 94"
 pepper |> 
   pivot_longer(2:4, names_to ="treat", values_to = "inc") |> 
   ggplot (aes(t, inc, 
@@ -541,7 +540,7 @@ The `pt()` function in R gives the cumulative distribution function of the t-dis
 
 In the following section, we'll focus on disease data collected over time from the same plot unit, also known as repeated measures. This data comes from a designed experiment aimed at evaluating and comparing the effects of different treatments.
 
-Specifically, we'll use a dataset of progress curves found on page 98 of "Study of Plant Disease Epidemics" [@chapter2017b]. These curves depict the incidence of soybean plants showing symptoms of bud blight, which is caused by the tobacco streak virus. Four different treatments, corresponding to different planting dates, were evaluated using a randomized complete block design with four replicates. Each curve has four time-based assessments.
+Specifically, we'll use a dataset of progress curves found on page 98 of "Study of Plant Disease Epidemics" [@chapter2007b]. These curves depict the incidence of soybean plants showing symptoms of bud blight, which is caused by the tobacco streak virus. Four different treatments, corresponding to different planting dates, were evaluated using a randomized complete block design with four replicates. Each curve has four time-based assessments.
 
 The data for this study is stored in a CSV file, which we'll load into our environment using the read_csv() function. Once loaded, we'll store the data in a dataframe named budblight.
 

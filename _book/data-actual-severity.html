@@ -445,22 +445,21 @@ Tip
 </div>
 </div>
 <p>Now the engaging part starts with the <code>measure_disease()</code> function. Four arguments are required when using the reference image palettes: the image representing the target image and the three images of the color palettes. As the author of the package states, “pliman will take care of all the details!” The severity is the value displayed under ‘symptomatic’ in the output.</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-4_afa4ea29c8bf7dc2a61276ebd3fbe2cf">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-4_cc40258b7578c8dbed8eae720cd31967">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> img,</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">TRUE</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-actual-severity_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>$severity
    healthy symptomatic
-1 92.68302    7.316983
+1 92.68077    7.319234
 
 $shape
 NULL
@@ -478,7 +477,7 @@ attr(,"class")
 <p>Measuring severity in single images is indeed engaging, but we often deal with multiple images, not just one. Using the above procedure to process each image individually would be time-consuming and potentially tedious.</p>
 <p>To automate the process, <em>pliman</em> offers a batch processing approach. Instead of using the <code>img</code> argument, one can use the <code>pattern</code> argument and define the prefix of the image names. Moreover, we also need to specify the directory where the original files are located.</p>
 <p>If the user wants to save the processed masks, they should set the <code>save_image</code> argument to TRUE and also specify the directory where the images will be saved. Here’s an example of how to process 10 images of soybean rust symptoms. The output is a <code>list</code> object with the measures of the percent healthy and percent symptomatic area for each leaf in the <code>severity</code> object.</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-5_33ccfc7dbe31f5a8bd65fd3b744fe358">
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-5_e7ab2c8fa9316d4ba7fa50323bd56822">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pliman <span class="ot">&lt;-</span> <span class="fu">measure_disease</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"img"</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_original =</span> <span class="st">"imgs/originals"</span> ,</span>
@@ -486,56 +485,85 @@ attr(,"class")
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_image =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_image =</span> <span class="cn">FALSE</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Processing image img11 |====                                     | 10% 00:00:00 </code></pre>
 </div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Processing image img35 |========                                 | 20% 00:00:02 </code></pre>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img37 |============                             | 30% 00:00:03 </code></pre>
+<pre><code>Processing image img35 |========                                 | 20% 00:00:03 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img38 |================                         | 40% 00:00:03 </code></pre>
+<pre><code>Processing image img37 |============                             | 30% 00:00:04 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img46 |====================                     | 50% 00:00:04 </code></pre>
+<pre><code>Processing image img38 |================                         | 40% 00:00:05 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img5 |=========================                 | 60% 00:00:06 </code></pre>
+<pre><code>Processing image img46 |====================                     | 50% 00:00:06 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-5.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img63 |=============================            | 70% 00:00:08 </code></pre>
+<pre><code>Processing image img5 |=========================                 | 60% 00:00:08 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-6.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img67 |=================================        | 80% 00:00:09 </code></pre>
+<pre><code>Processing image img63 |=============================            | 70% 00:00:11 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-7.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img70 |=====================================    | 90% 00:00:11 </code></pre>
+<pre><code>Processing image img67 |=================================        | 80% 00:00:14 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-8.png" class="img-fluid" width="672"></p>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Processing image img75 |=========================================| 100% 00:00:12 </code></pre>
+<pre><code>Processing image img70 |=====================================    | 90% 00:00:16 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-9.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Processing image img75 |=========================================| 100% 00:00:17 </code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-5-10.png" class="img-fluid" width="672"></p>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>severity <span class="ot">&lt;-</span> pliman<span class="sc">$</span>severity</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     img  healthy symptomatic
-1  img11 70.80072  29.1992835
-2  img35 46.96430  53.0357002
-3  img37 60.49390  39.5060986
-4  img38 79.14737  20.8526306
-5  img46 93.15143   6.8485680
-6   img5 20.53977  79.4602312
-7  img63 97.15698   2.8430190
-8  img67 99.83723   0.1627709
-9  img70 35.58683  64.4131683
-10 img75 93.04517   6.9548329</code></pre>
+1  img11 70.79655  29.2034481
+2  img35 46.94177  53.0582346
+3  img37 60.47440  39.5256013
+4  img38 79.14060  20.8594011
+5  img46 93.14958   6.8504220
+6   img5 20.53175  79.4682534
+7  img63 97.15669   2.8433141
+8  img67 99.83720   0.1627959
+9  img70 35.56684  64.4331583
+10 img75 93.04453   6.9554686</code></pre>
 </div>
 </div>
-<p>Whem the argument <code>save_image</code> is set to TRUE, the images are all saved in the folder with the standard prefix “proc.”</p>
+<p>When the argument <code>save_image</code> is set to TRUE, the images are all saved in the folder with the standard prefix “proc.”</p>
 <div id="fig-pliman2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><a href="fig_folder"><img src="imgs/pliman2.png" class="img-fluid figure-img" style="margin: 15px"></a></p>
@@ -600,14 +628,14 @@ attr(,"class")
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>ccc<span class="sc">$</span>rho.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        est     lower     upper
-1 0.9940941 0.9774812 0.9984606</code></pre>
+1 0.9940835 0.9774587 0.9984566</code></pre>
 </div>
 </div>
 <p>In conclusion, as mentioned earlier, the most critical step is defining the reference image palettes. A few preliminary runs may be necessary for some images to ensure that the segmentation is being carried out correctly, based on visual judgment. This is not different from any other color-threshold based methods, where the choices made by the user impact the final result and contribute to variation among assessors. The drawbacks are the same as those encountered with direct competitors, namely, the need for images to be taken under uniform and controlled conditions, especially with a contrasting background.</p>
 </section>
 <section id="creating-palettes-interactively" class="level2" data-number="4.5">
 <h2 data-number="4.5" class="anchored" data-anchor-id="creating-palettes-interactively"><span class="header-section-number">4.5</span> Creating palettes interactively</h2>
-<p>Pliman offers another function <code>measure_disease_iter()</code> which allows the user to pick up samples in the image to create the color palettes for each required clss (background, healthy and symptoms). Check the video below.</p>
+<p>Pliman offers another function <code>measure_disease_iter()</code> which allows the user to pick up samples in the image to create the color palettes for each required class (background, healthy and symptoms). Check the video below.</p>
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/fI_Mm-GlPyw" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 
 
