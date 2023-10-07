@@ -84,7 +84,8 @@ sbr <- measure_disease(
   img_background = b,
   show_original = FALSE, # set to TRUE for showing the original.
   col_background = "white", 
-  verbose = FALSE
+  verbose = FALSE,
+  plot = FALSE
 )
 ```
 
@@ -112,6 +113,7 @@ To apply the bootstrap-based equivalence test, let's work with the CCC data for 
 #| warning: false
 
 library(tidyverse)
+library(r4pde)
 
 sbr <- tibble::tribble(
   ~rater, ~aided, ~unaided,
@@ -143,12 +145,13 @@ Let's visualize the data using boxplots. Each point in the plot represents a rat
 ```{r}
 #| warning: false
 
-theme_set(theme_gray(base_size = 16))
+theme_set(theme_r4pde())
 sbr |> 
   pivot_longer(2:3, names_to = "condition", values_to ="estimate") |> 
   ggplot(aes(condition, estimate))+
   geom_boxplot(outlier.colour = NA)+
   geom_jitter(width = 0.05, size = 2, alpha = 0.5)+
+  theme_r4pde()+
   ylim(0.4,1)
 ```
 
@@ -162,7 +165,7 @@ sbr$diff <- sbr$aided - sbr$unaided
 
 sbr |> 
   ggplot(aes(x= diff))+
-  theme_gray()+
+  theme_r4pde()+
   geom_histogram(bins = 10, color = "white")
 
 ```
@@ -263,7 +266,7 @@ pairs(em)
 plot(em) +
   coord_flip()+
   xlim(0.7,1)+
-  theme_gray()
+  theme_r4pde()
 
 ```
 

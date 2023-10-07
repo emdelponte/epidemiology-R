@@ -34,6 +34,7 @@ Epidemiologists are generally interested in determining the length of the incuba
 #| message: false
 #| code-fold: true
 library(tidyverse)
+library(r4pde)
 periods <- tibble::tribble(
   ~period, ~length, ~color, ~order,
   "Incubation", 10, 0, 1,
@@ -83,7 +84,7 @@ Firstly, let's load the essential R packages and set up the environment.
 #| warning: false
 #| message: false
 library(tidyverse) # essential packages 
-theme_set(theme_gray(base_size = 16)) # set global theme
+theme_set(theme_r4pde()) # set global theme
 ```
 
 There are several ways to create a data frame in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
@@ -109,7 +110,7 @@ Now the plot
 #| message: false
 dpc1 <- dpc |>
   ggplot(aes(t, y)) +
-  theme_gray(base_size = 16)+
+  theme_r4pde()+
   geom_line(size = 1)+
   geom_point(size = 3, shape = 16)+
   labs(x = "Assessment time (days)",
@@ -145,7 +146,7 @@ p <- polyc |>
   geom_point(aes(time, y), size =19, shape =1)+
   geom_line()+
   ylim(0,1)+
-  theme_gray(base_size = 16)+
+  theme_r4pde()+
   labs(x = "Time", y = "Disease intensity")
 
 
@@ -158,7 +159,7 @@ m <- monoc |>
   ggplot(aes(time, y))+
   geom_point(aes(x = 25, y = 0.5), size =90, shape = 1)+
    geom_line()+
-  theme_gray(base_size = 16)+
+ theme_r4pde()+
   ylim(0,1)+
   labs(x = "Time", y = "Disease intensity")
 
@@ -191,7 +192,7 @@ dpc2 <- dpc |>
        y = "Disease intensity (%)")+
     geom_area(fill = "#339966")+
     geom_line(linewidth = 1)+
-  theme_gray(base_size = 16)+
+  theme_r4pde()+
   geom_point(size = 3, shape = 16)+
   scale_x_continuous(breaks = c(0, 7, 14, 21, 28, 35, 42))
 ggsave("imgs/dpc2.png")
@@ -207,7 +208,7 @@ The AUDPC summarizes the "total measure of disease stress" and is largely used t
 #| code-fold: true
 dpc3 <- dpc |>
   ggplot(aes(t, y)) +
-  theme_gray(base_size = 16)+
+  theme_r4pde()+
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")+
   annotate("rect", xmin = dpc$t[1], xmax = dpc$t[2], 

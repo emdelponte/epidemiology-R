@@ -15,7 +15,8 @@ To exemplify, we'll continue examining a previously shown curve that represents 
 #| message: false
 
 library(tidyverse)
-theme_set(theme_gray(base_size = 16))
+library(r4pde)
+theme_set(theme_r4pde())
 dpc <- 
   tribble(
    ~t,  ~y, 
@@ -38,6 +39,7 @@ dpc |>
   ggplot(aes(t, y))+
   geom_point(size =3)+
   geom_line()+
+  theme_r4pde()+
   labs(x = "Time", y = "Disease intensity (%)")
 ```
 
@@ -71,6 +73,7 @@ dpc2 |>
   geom_point()+
   geom_smooth(method = "lm", color = "black", se = F)+
   facet_wrap(~ model)+
+  theme_r4pde()+
   labs(x = "Time", y = "Transformed value (y*)",
        color = "Model")+
   theme(legend.position = "none")
@@ -167,6 +170,7 @@ stat_function(
     linetype = 1,
     fun = function(t) exp(log(y0G) * exp(-rG * t))
   )+
+  theme_r4pde()+
   labs(x = "Time", y = "Disease intensity")
 ```
 
@@ -257,6 +261,7 @@ pepper |>
   annotate(geom = "text", x = 32, y = 0.33, label = "3")+
   labs(y = "Disease incidence (y)",
        x = "Time (days)")+
+  theme_r4pde()+
   theme(legend.position = "none")
 
 ```
@@ -297,7 +302,7 @@ The statistics of the model fit confirms our initial guess that the predictions 
 plot_fit(epi1)+
   ylim(0,1)+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi1$stats_all)
 
@@ -305,7 +310,7 @@ plot_fit(epi2)+
   ylim(0,1)+
   scale_color_grey()+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi2$stats_all)
 
@@ -313,7 +318,7 @@ plot_fit(epi3)+
   ylim(0,1)+
   scale_color_grey()+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi3$stats_all)
 
@@ -344,21 +349,21 @@ And now we can produce the plot of the fitted curves together with the original 
 plot_fit(epi11)+
   scale_color_grey()+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi11$stats_all)
 
 plot_fit(epi22)+
   scale_color_grey()+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi22$stats_all)
 
 plot_fit(epi33)+
   scale_color_grey()+
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")
 knitr::kable(epi33$stats_all)
 ```
@@ -417,7 +422,7 @@ epi_all$Data |>
   geom_line() +
   facet_wrap(~ model) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "bottom")+
  coord_cartesian(ylim = c(0, 1)) + # set the max to 0.6
   labs(
@@ -436,7 +441,7 @@ epi_all$Data |>
  filter(model %in% c("Gompertz", "Logistic")) |> 
   ggplot(aes(time, predicted -y, shape = treat)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point() +
   geom_line() +
   geom_hline(yintercept = 0, linetype =2)+
@@ -469,7 +474,7 @@ p1 <- epi_all$Parameters |>
   filter(model == "Logistic") |>
   ggplot(aes(treat, r)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
     width = 0,
@@ -484,7 +489,7 @@ p2 <- epi_all$Parameters |>
   filter(model == "Logistic") |>
   ggplot(aes(treat, 1 - exp(-y0))) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
     width = 0,
@@ -577,7 +582,7 @@ p3 <- budblight |>
   geom_point(size = 1.5) +
   ylim(0, 0.6) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")+
   facet_wrap(~treat, ncol =1)+
   labs(y = "Disease incidence",
@@ -592,7 +597,7 @@ p4 <- budblight |>
   geom_point(size = 2) +
   facet_wrap(~treat, ncol = 1) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   theme(legend.position = "none")+
   labs(y = "Transformed incidence", x = "Time (days after emergence)")
 library(patchwork)
@@ -644,7 +649,7 @@ lin1$Data |>
   filter(model == "Monomolecular") |>
   ggplot(aes(time, predicted)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(aes(time, y)) +
   geom_line(linewidth = 0.5) +
   facet_wrap(~treat) +
@@ -664,7 +669,7 @@ p5 <- lin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
     width = 0,
@@ -679,7 +684,7 @@ p6 <- lin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, y0)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
     width = 0,
@@ -731,7 +736,7 @@ p7 <- nlin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, r)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = r_ci_lwr, ymax = r_ci_upr),
     width = 0,
@@ -746,7 +751,7 @@ p8 <- nlin1$Parameters |>
   filter(model == "Monomolecular") |>
   ggplot(aes(treat, y0)) +
   scale_color_grey()+
-  theme_grey()+
+  theme_r4pde()+
   geom_point(size = 3) +
   geom_errorbar(aes(ymin = y0_ci_lwr, ymax = y0_ci_upr),
     width = 0,

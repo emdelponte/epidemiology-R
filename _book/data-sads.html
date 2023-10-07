@@ -437,7 +437,7 @@ Best practices on SADs development
 <p>The diagrams used in a set have been developed using various methods and technologies, ranging from hand-drawn diagrams to actual photographs <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>. There is an increasing trend towards using actual photos that are digitally analyzed using standard image analysis software to determine the percent area affected. With this approach, a large set of images is analyzed, and some images are chosen to represent the severities in the SAD according to the scale structure.</p>
 <p>In R, the pliman package has a function called <code>sad()</code> which allows the automatic generation of a SADs with a pre-defined number of diagrams. Firstly, as shown in the <a href="data-actual-severity.html">previous chapter</a>, the set of images to be selected needs to be analysed using the <code>measure_disease()</code> function. Then, a SADs is automatically generated. In the function, the specimens with the smallest and highest severity will be selected for the SAD. The intermediate diagrams are sampled sequentially to achieve the pre-defined number of images after the severity has been ordered from low to high. More details of the function <a href="https://tiagoolivoto.github.io/pliman/reference/sad.html">here</a>.</p>
 <p>Let’s use the <a href="data-actual-severity.html#multiple-images">same set</a> of 10 soybean leaves, as seen in the previous chapter, depicting the rust symptoms and create the <code>sbr</code> object.</p>
-<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-1_1700db9efb76d499f34491f9f4975e35">
+<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-1_0c5591e9b935a35944a8249dc1caf95b">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pliman)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_h.png"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/sbr_s.png"</span>)</span>
@@ -453,38 +453,9 @@ Best practices on SADs development
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_original =</span> <span class="cn">FALSE</span>, <span class="co"># set to TRUE for showing the original.</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_background =</span> <span class="st">"white"</span>, </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-2.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-3.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-4.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-5.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-6.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-7.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-8.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-9.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output-display">
-<p><img src="data-sads_files/figure-html/unnamed-chunk-1-10.png" class="img-fluid" width="672"></p>
-</div>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> <span class="cn">FALSE</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We are ready to run the <code>sad()</code> function to create a SADs with five diagrams side by side. The resulting SADs is in two-color as standard. Set the argument <code>show_original</code> to <code>TRUE</code> for showing the orignal image in the SADs.</p>
 <div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-2_fe66ce8e7eee82d0a2a1ffc7d734bdd1">
@@ -511,54 +482,56 @@ Best practices on SADs development
 <p>Bootstrap is a resampling method where large numbers of samples of the same size are repeatedly drawn, <strong><em>with replacement</em></strong>, from a single original sample. It is commonly used when the distribution of a statistic is unknown or complicated and the sample size is too small to draw a valid inference.</p>
 <p>A bootstrap-based equivalence test procedure was first proposed as complementary to parametric (paired t-test) or non-parametric (Wilcoxon) to analyze severity estimation data in a study on the development and validation of a SADs for pecan scab <span class="citation" data-cites="yadav2012">(<a href="references.html#ref-yadav2012" role="doc-biblioref">Yadav et al. 2012</a>)</span>. The equivalence test was used to calculate 95% confidence intervals for each statistic by bootstrapping using the percentile method (with an equivalence test, the null hypothesis is the converse of H0, i.e.&nbsp;the null hypothesis is non-equivalence). In that study, the test was used to compare means of the CCC statistics across raters under two conditions: 1) without versus with the SAD; and 2) experienced versus inexperienced raters.</p>
 <p>To apply the bootstrap-based equivalence test, let’s work with the CCC data for a sample of 20 raters who estimated severity of soybean rust SAD first without and then with the aid. The CCC was calculated as shown <a href="data-accuracy.html#concordance-correlation-coefficient">here</a>.</p>
-<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-3_52b04f5c1be8c25a858587f83c302ed2">
+<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-3_de338aef63e31a04f13971203a5f4734">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>rater, <span class="sc">~</span>aided, <span class="sc">~</span>unaided,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>      <span class="dv">1</span>,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="dv">2</span>,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dv">3</span>,   <span class="fl">0.95</span>,     <span class="fl">0.82</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="dv">4</span>,   <span class="fl">0.93</span>,     <span class="fl">0.69</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="dv">5</span>,   <span class="fl">0.97</span>,     <span class="fl">0.84</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="dv">6</span>,   <span class="fl">0.96</span>,     <span class="fl">0.86</span>,</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="dv">7</span>,   <span class="fl">0.98</span>,     <span class="fl">0.78</span>,</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="dv">8</span>,   <span class="fl">0.93</span>,     <span class="fl">0.72</span>,</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="dv">9</span>,   <span class="fl">0.94</span>,     <span class="fl">0.67</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>     <span class="dv">10</span>,   <span class="fl">0.95</span>,     <span class="fl">0.53</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>     <span class="dv">11</span>,   <span class="fl">0.94</span>,     <span class="fl">0.78</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>     <span class="dv">12</span>,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     <span class="dv">13</span>,   <span class="fl">0.96</span>,      <span class="fl">0.8</span>,</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>     <span class="dv">14</span>,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>     <span class="dv">15</span>,   <span class="fl">0.98</span>,      <span class="fl">0.9</span>,</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>     <span class="dv">16</span>,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>     <span class="dv">17</span>,   <span class="fl">0.98</span>,     <span class="fl">0.84</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>     <span class="dv">18</span>,   <span class="fl">0.97</span>,     <span class="fl">0.86</span>,</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>     <span class="dv">19</span>,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>     <span class="dv">20</span>,   <span class="fl">0.98</span>,     <span class="fl">0.78</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sbr <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>rater, <span class="sc">~</span>aided, <span class="sc">~</span>unaided,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="dv">1</span>,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dv">2</span>,   <span class="fl">0.97</span>,     <span class="fl">0.85</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="dv">3</span>,   <span class="fl">0.95</span>,     <span class="fl">0.82</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="dv">4</span>,   <span class="fl">0.93</span>,     <span class="fl">0.69</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="dv">5</span>,   <span class="fl">0.97</span>,     <span class="fl">0.84</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="dv">6</span>,   <span class="fl">0.96</span>,     <span class="fl">0.86</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="dv">7</span>,   <span class="fl">0.98</span>,     <span class="fl">0.78</span>,</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="dv">8</span>,   <span class="fl">0.93</span>,     <span class="fl">0.72</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="dv">9</span>,   <span class="fl">0.94</span>,     <span class="fl">0.67</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>     <span class="dv">10</span>,   <span class="fl">0.95</span>,     <span class="fl">0.53</span>,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>     <span class="dv">11</span>,   <span class="fl">0.94</span>,     <span class="fl">0.78</span>,</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     <span class="dv">12</span>,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>     <span class="dv">13</span>,   <span class="fl">0.96</span>,      <span class="fl">0.8</span>,</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>     <span class="dv">14</span>,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>     <span class="dv">15</span>,   <span class="fl">0.98</span>,      <span class="fl">0.9</span>,</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>     <span class="dv">16</span>,   <span class="fl">0.98</span>,     <span class="fl">0.87</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>     <span class="dv">17</span>,   <span class="fl">0.98</span>,     <span class="fl">0.84</span>,</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>     <span class="dv">18</span>,   <span class="fl">0.97</span>,     <span class="fl">0.86</span>,</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>     <span class="dv">19</span>,   <span class="fl">0.98</span>,     <span class="fl">0.89</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>     <span class="dv">20</span>,   <span class="fl">0.98</span>,     <span class="fl">0.78</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s visualize the data using boxplots. Each point in the plot represents a rater.</p>
-<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-4_388e3f39c1e04daa7a0f63cb979c5385">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_gray</span>(<span class="at">base_size =</span> <span class="dv">16</span>))</span>
+<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-4_93620dd107ab77148f61f8a6782faf6e">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_r4pde</span>())</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>sbr <span class="sc">|&gt;</span> </span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"condition"</span>, <span class="at">values_to =</span><span class="st">"estimate"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(condition, estimate))<span class="sc">+</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.05</span>, <span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fl">0.4</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fl">0.4</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-sads_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>To proceed with bootstrapping, we first create a new variable to hold the differences between the means of the estimates (aided minus unaided). If the 95% CI does not include zero, this means that there was a significant improvement in the statistics.</p>
-<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-5_425591dd3fa8a3e2f46879220e74abb7">
+<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-5_f4ea99c34bf89b82ccd7dc2ec591a1cd">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># diff of means</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sbr<span class="sc">$</span>diff <span class="ot">&lt;-</span> sbr<span class="sc">$</span>aided <span class="sc">-</span> sbr<span class="sc">$</span>unaided</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>sbr <span class="sc">|&gt;</span> </span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span> diff))<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_gray</span>()<span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">10</span>, <span class="at">color =</span> <span class="st">"white"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-sads_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
@@ -706,7 +679,7 @@ alternative hypothesis: true location shift is not equal to 0</code></pre>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">3</span>, <span class="at">names_to =</span> <span class="st">"condition"</span>, <span class="at">values_to =</span> <span class="st">"estimate"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we fit the mixed model using the <code>lmer</code> function of the <em>lme4</em> package. We will fit the model to the logit of the estimate because they should be bounded between zero and one. Preliminary analysis using non-transformed or log-transformed data resulted in lack of normality of residuals and heterocedasticity (not shown).</p>
-<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-10_0ff710ef76668e52cca0de243be94ca9">
+<div class="cell" data-hash="data-sads_cache/html/unnamed-chunk-10_38441a542cee2500d3b2eb2de77362e0">
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lme4) </span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car) <span class="co"># for logit function</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>mix <span class="ot">&lt;-</span> <span class="fu">lmer</span>(<span class="fu">logit</span>(estimate) <span class="sc">~</span> condition <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> rater), <span class="at">data =</span> sbr2)</span>
@@ -756,7 +729,7 @@ Degrees-of-freedom method: inherited from kenward-roger when re-gridding </code>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(em) <span class="sc">+</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>()<span class="sc">+</span></span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fl">0.7</span>,<span class="dv">1</span>)<span class="sc">+</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_gray</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-sads_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>

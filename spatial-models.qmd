@@ -22,7 +22,8 @@ First we need to load essential packages for programming, customizing the output
 #| warning: false
 #| message: false
 library(tidyverse)
-theme_set(theme_grey(base_size = 16)) # set global theme
+library(r4pde)
+theme_set(theme_r4pde()) # set global theme
 ```
 
 Set the parameters for the exponential model with two rates and the same inoculum level at the source:
@@ -44,7 +45,7 @@ The following code allows to visualize the model predictions.
 #| fig-cap: "Exponential curves describing plant disease gradients"
 dat |>
   ggplot(aes(x, y)) +
-  theme_grey(base_size = 16)+
+  theme_r4pde()+
   stat_function(fun = function(x) a1 * exp(-b1 * x), linetype = 1) +
   stat_function(fun = function(x) a2 * exp(-b2 * x), linetype = 2) +
   ylim(0, a1) +
@@ -86,7 +87,7 @@ dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
 #| fig-cap: "Power law (modified) curves describing plant disease gradients"
 dat2 |>
   ggplot(aes(x, y)) +
-  theme_grey(base_size = 16)+
+  theme_r4pde()+
   stat_function(fun = function(x) a1 * ((x + C)^-b1), linetype = 1) +
   stat_function(fun = function(x) a2 * ((x + C)^-b2), linetype = 2) +
   ylim(0, a1 - 0.02) +
@@ -133,7 +134,7 @@ dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
 
 dat2 |>
   ggplot(aes(x, y)) +
-  theme_grey(base_size = 16)+
+  theme_r4pde()+
   stat_function(fun = function(x) log(a1) - (b1 * x), linetype = 1) +
   stat_function(fun = function(x) log(a2) - (b2 * x), linetype = 2) +
   labs(x = "log of distance (m)", y = "log of disease incidence"
@@ -156,7 +157,7 @@ dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
 
 dat2 |>
   ggplot(aes(x, y)) +
-  theme_grey(base_size = 16)+
+  theme_r4pde()+
   stat_function(fun = function(x) log(a1) - (b1 * log(x + C)), linetype = 1) +
   stat_function(fun = function(x) log(a2) - (b2 * log(x + C)), linetype = 2) +
   labs(
@@ -171,4 +172,4 @@ dat2 |>
 
 A shiny app was developed to demonstrate these two models interactively. Click on the image below to get access to the app.
 
-[![Screenshot of the application to visualize the spatial disease gradient models by varying the model's parameters](imgs/shiny_gradients.png){#fig-models fig-align="center" width="533"}](https://delponte.shinyapps.io/gradients)
+[![Screenshot of the application to visualize the spatial disease gradient models by varying the model\'s parameters](imgs/shiny_gradients.png){#fig-models fig-align="center" width="533"}](https://delponte.shinyapps.io/gradients)

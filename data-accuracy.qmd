@@ -2,9 +2,6 @@
 title: "Reliability and accuracy"
 ---
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
 
 # Severity data
 
@@ -99,7 +96,8 @@ Another way to visualize accuracy and precision is via scatter plots for the rel
 #| code-fold: true
 
 library(tidyverse)
-theme_set(theme_grey())
+library(r4pde)
+theme_set(theme_r4pde())
 dat <- 
 tibble::tribble(
   ~actual,   ~ap,   ~ip,   ~ai,   ~ii,
@@ -117,44 +115,44 @@ ap <- dat |>
   geom_abline(intercept = 0, slope = 1, 
               linetype = 2, size = 1)+
     geom_smooth(method = "lm")+
-   geom_point(color = "orange", size = 3)+
+   geom_point(color = "#99cc66", size = 3)+
    ylim(0,70)+
   xlim(0,70)+
   labs(x = "Actual", y = "Estimate",
-       title = "High Acccuracy High Precision")
+       subtitle = "High Acccuracy High Precision")
 
 ip <- dat |> 
   ggplot(aes(actual, ip))+
   geom_abline(intercept = 0, slope = 1, 
               linetype = 2, size = 1)+
   geom_smooth(method = "lm", se = F)+
-  geom_point(color = "orange", size = 3)+
+  geom_point(color = "#99cc66", size = 3)+
   ylim(0,70)+
   xlim(0,70)+
   labs(x = "Actual", y = "Estimate",
-       title = "Low Acccuracy High Precision")
+       subtitle = "Low Acccuracy High Precision")
 
 ai <- dat |> 
   ggplot(aes(actual, ai))+
   geom_abline(intercept = 0, slope = 1, 
               linetype = 2, size = 1)+
   geom_smooth(method = "lm", se = F)+
-  geom_point(color = "orange", size = 3)+
+  geom_point(color = "#99cc66", size = 3)+
   ylim(0,70)+
   xlim(0,70)+
   labs(x = "Actual", y = "Estimate",
-       title = "High Acccuracy Low precision")
+       subtitle = "High Acccuracy Low precision")
 
 ii <- dat |> 
   ggplot(aes(actual, ii))+
   geom_abline(intercept = 0, slope = 1, 
               linetype = 2, size = 1)+
   geom_smooth(method = "lm", se = F)+
-  geom_point(color = "orange", size = 3)+
+  geom_point(color = "#99cc66", size = 3)+
   ylim(0,70)+
   xlim(0,70)+
   labs(x = "Actual", y = "Estimate",
-       title = "Low Acccuracy Low Precision")
+       subtitle = "Low Acccuracy Low Precision")
 
 library(patchwork)
 (ap | ip) / (ai | ii)
@@ -208,9 +206,7 @@ Let's explore the data using various approaches. First, we can visualize how the
 #| message: false
 #| label: fig-raters1
 #| fig-cap: "Visual estimates of soybean rust severity for each leaf by each of four raters"
-# set the global theme
 
-library(ggthemes)
 
 # transform from wide to long format
 sbr2 <- sbr |> 
@@ -244,7 +240,8 @@ library(GGally)
 raters <- sbr |> 
   select(2:5)
 
-ggpairs(raters)
+ggpairs(raters)+
+  theme_r4pde()
 ```
 
 #### Coefficient of determination
@@ -384,7 +381,7 @@ sbr2 |>
   ylim(0,45)+
   xlim(0,45)+
   geom_abline(intercept = 0, slope =1)+
-  theme_gray()+
+  theme_r4pde()+
   labs(x = "Actual severity (%)",
        y = "Estimate severity (%)")
 ```
@@ -424,7 +421,7 @@ sbr2 |>
   geom_point(size = 3, alpha = 0.7)+
   facet_wrap(~rater)+
   geom_hline(yintercept = 0)+
-  theme_gray()+
+  theme_r4pde()+
   labs(x = "Actual severity (%)",
        y = "Error (Estimate - Actual)")
 ```

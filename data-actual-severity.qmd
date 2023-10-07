@@ -92,7 +92,9 @@ pliman <- measure_disease(
   save_image = TRUE,
   img_healthy = h,
   img_symptoms = s,
-  img_background = b
+  img_background = b,
+  verbose = FALSE,
+  plot = FALSE
 )
 severity <- pliman$severity
 severity
@@ -112,6 +114,7 @@ These 10 images were previously processed in QUANT software for measuring severi
 
 ```{r, warning=FALSE, message=FALSE}
 library(tidyverse)
+library(r4pde)
 quant <- tribble(
   ~img, ~actual,
    "img5",     75,
@@ -144,8 +147,7 @@ dat %>%
   geom_abline(slope = 1, intercept = 0) +
   labs(x = "Quant",
        y = "pliman")+
-  cowplot::theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))
+  theme_r4pde()
 
 
 ```

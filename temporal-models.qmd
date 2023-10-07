@@ -38,7 +38,8 @@ where $y0$ is and $r$ are obtained via estimation. Let's simulate two curves by 
 
 library(tidyverse) # essential packages 
 library(cowplot)
-theme_set(theme_half_open(font_size = 16)) # set global theme
+library(r4pde)
+theme_set(theme_r4pde()) # set global theme
 
 ```
 
@@ -61,8 +62,7 @@ dat |>
   stat_function(fun = function(t) y0 * exp(r * t), linetype = 1) +
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 2) +
   ylim(0, 1) +
-  theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+  theme_r4pde()+
   labs(x = "Time")
 
 ```
@@ -78,8 +78,7 @@ dat |>
   stat_function(fun = function(t) y0 * exp(r * 2 * t), linetype = 1) +
   stat_function(fun = function(t) y0 * 5 * exp(r * 2 * t), linetype = 2) +
   ylim(0, 1) +
-  theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+  theme_r4pde()+
   labs(x = "Time")
 
 ```
@@ -109,8 +108,7 @@ dat |>
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r * t))) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-(r / 3) * t))) +
   labs(x = "Time") +
- theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+ theme_r4pde()+
   annotate(geom = "text", x = 35, y = 0.77, label = "r = 0.06") +
   annotate(geom = "text", x = 50, y = 0.55, label = "r = 0.02")
 ```
@@ -125,8 +123,7 @@ dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r / 2 * t))) +
   stat_function(fun = function(t) 1 - ((1 - (y0 * 100)) * exp(-r / 2 * t))) +
-  theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+  theme_r4pde()+
   labs(x = "Time") +
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.1") +
   annotate(geom = "text", x = 45, y = 0.65, label = "y0 = 0.001")
@@ -163,8 +160,7 @@ dat |>
   ) +
   stat_function(fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 4 * t))) +
   labs(x = "Time") +
-theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+theme_r4pde()+
   annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.18") +
   annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.024")
 ```
@@ -183,8 +179,7 @@ dat |>
   ) +
   stat_function(fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 3 * t))) +
   labs(x = "Time") +
- theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+ theme_r4pde()+
   annotate(geom = "text", x = 35, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 50, y = 0.10, label = "y0 = 0.0001")
 
@@ -217,8 +212,7 @@ dat |>
   ) +
   stat_function(fun = function(t) exp(log(y0) * exp(-r*2 * t))) +
   labs(x = "Time") +
- theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+ theme_r4pde()+
   annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.12") +
   annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.03")
 ```
@@ -237,8 +231,7 @@ dat |>
   ) +
   stat_function(fun = function(t) exp(log(y0/1000) * exp(-r*2 * t))) +
   labs(x = "Time") +
- theme_half_open() +
-  theme(panel.background = element_rect(fill = "gray96"))+
+ theme_r4pde()+
   annotate(geom = "text", x = 15, y = 0.77, label = "y0 = 0.001") +
   annotate(geom = "text", x = 25, y = 0.10, label = "y0 = 0.00001")
 
