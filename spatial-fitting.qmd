@@ -150,97 +150,13 @@ A notable feature is the addition of a constant (C) that can be adjusted in the 
 
 Here is how to use the function with our `grad1` dataset.
 
-```{r}
-fit_gradients <- function(data, C = 1) {
-  # Ensure column names are as expected
-  if (!all(c("x", "Y") %in% colnames(data))) {
-    stop("The dataframe should have columns named 'x' and 'Y'")
-  }
-
-  # Fit the models
-  exponential <- lm(log(Y) ~ x, data = data)
-  power <- lm(log(Y) ~ log(x), data = data)
-  modified_power <- lm(log(Y) ~ log(x + C), data = data)
-
-  # Extract parameters and R-squared
-  get_params <- function(model) {
-    s <- summary(model)
-    a <- coef(model)[1]
-    b <- coef(model)[2]
-    R2 <- s$r.squared
-    a_back_transformed <- exp(a)
-    return(list(a = a, a_back = a_back_transformed, b = b, R2 = R2))
-  }
-
-  exp_params <- get_params(exponential)
-  power_params <- get_params(power)
-  mod_power_params <- get_params(modified_power)
-
-  # Create the results table
-  results <- rbind(
-    Exponential = unlist(exp_params),
-    Power = unlist(power_params),
-    Modified_Power = unlist(mod_power_params)
-  )
-
-  # Rank the models by R-squared
-  results <- results[order(-results[, "R2"]), ]
-
-  # Create plots
-  plot_exponential <- ggplot(data, aes(x = x, y = log(Y))) +
-    geom_point() +
-    geom_smooth(method = "lm", se = FALSE, color = "black") +
-    ggtitle("Exponential Model")
-
-  plot_power <- ggplot(data, aes(x = log(x), y = log(Y))) +
-    geom_point() +
-    geom_smooth(method = "lm", se = FALSE, color = "black") +
-    ggtitle("Power Model")
-
-  data$mod_x <- log(data$x + C)
-  plot_modified_power <- ggplot(data, aes(x = mod_x, y = log(Y))) +
-    geom_point() +
-    geom_smooth(method = "lm", se = FALSE, color = "black") +
-    ggtitle("Modified Power Model")
-
-
-  # Create original plots with model fits
-  plot_exponential_original <- ggplot(data, aes(x = x, y = Y)) +
-    geom_point() +
-    stat_function(fun = function(x) exp_params$a_back * exp(exp_params$b * x), color = "black") +
-    ggtitle("Exponential Model (Original)")
-
-  plot_power_original <- ggplot(data, aes(x = x, y = Y)) +
-    geom_point() +
-    stat_function(fun = function(x) power_params$a_back * (x^power_params$b), color = "black") +
-    ggtitle("Power Model (Original)")
-
-  plot_modified_power_original <- ggplot(data, aes(x = x, y = Y)) +
-    geom_point() +
-    stat_function(fun = function(x) mod_power_params$a_back * ((x + C)^mod_power_params$b), color = "black") +
-    ggtitle("Modified Power Model (Original)")
-
-  return(list(data = data,
-              results_table = results,
-              plot_exponential = plot_exponential,
-              plot_power = plot_power,
-              plot_modified_power = plot_modified_power,
-              plot_exponential_original = plot_exponential_original,
-              plot_power_original = plot_power_original,
-              plot_modified_power_original = plot_modified_power_original))
-}
-
-
-```
-
-Apply the function to working data `grad1`.
 
 ```{r}
 #| warning: false
 #| message: false
-
 theme_set(theme_r4pde(font_size = 16))
-fit_gradients(grad1, C = 0.4)
+r4pde::fit_gradients(grad1, C = 0.4)
+
 ```
 
 
