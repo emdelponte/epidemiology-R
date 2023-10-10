@@ -148,16 +148,36 @@ The `fit_gradients()` function of the {r4pde} package is designed to take in a d
 
 A notable feature is the addition of a constant (C) that can be adjusted in the modified power model. This provides flexibility in tweaking the model to better fit the data if necessary. By providing a comparative analysis of three gradient models, it enables users to quickly identify which model best represents the spatial patterns in their data.
 
-Here is how to use the function with our `grad1` dataset.
+Here is how to use the function with our `grad1` dataset. Then we show the table and two plots as outputs.
 
 
 ```{r}
 #| warning: false
 #| message: false
+library(r4pde)
 theme_set(theme_r4pde(font_size = 16))
-r4pde::fit_gradients(grad1, C = 0.4)
+
+fit1 <- fit_gradients(grad1, C = 0.4)
+
+fit1$results_table # display the table with coefficients and stats
+
+library(patchwork) # to place plots side by side
+(fit1$plot_power  |
+  fit1$plot_power_original)+
+  labs(title = "")
 
 ```
+
+Each plot can be further customized for publication purposes.
+
+```{r}
+ fit1$plot_power_original +
+  labs(x = "Distance from the focus (m)",
+       y = "Lesion count",
+       title = "")
+
+```
+
 
 
 
