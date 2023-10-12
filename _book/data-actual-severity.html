@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.3.450">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -342,8 +342,14 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#image-palettes" id="toc-image-palettes" class="nav-link" data-scroll-target="#image-palettes"><span class="header-section-number">4.2</span> Image palettes</a></li>
   <li><a href="#measuring-severity" id="toc-measuring-severity" class="nav-link" data-scroll-target="#measuring-severity"><span class="header-section-number">4.3</span> Measuring severity</a>
   <ul>
-  <li><a href="#single-image" id="toc-single-image" class="nav-link" data-scroll-target="#single-image"><span class="header-section-number">4.3.1</span> Single image</a></li>
-  <li><a href="#multiple-images" id="toc-multiple-images" class="nav-link" data-scroll-target="#multiple-images"><span class="header-section-number">4.3.2</span> Multiple images</a></li>
+  <li><a href="#single-image" id="toc-single-image" class="nav-link" data-scroll-target="#single-image"><span class="header-section-number">4.3.1</span> Single image</a>
+  <ul>
+  <li><a href="#using-color-palettes" id="toc-using-color-palettes" class="nav-link" data-scroll-target="#using-color-palettes"><span class="header-section-number">4.3.1.1</span> Using color palettes</a></li>
+  </ul></li>
+  <li><a href="#multiple-images" id="toc-multiple-images" class="nav-link" data-scroll-target="#multiple-images"><span class="header-section-number">4.3.2</span> Multiple images</a>
+  <ul>
+  <li><a href="#more-than-a-target-per-image" id="toc-more-than-a-target-per-image" class="nav-link" data-scroll-target="#more-than-a-target-per-image"><span class="header-section-number">4.3.2.1</span> More than a target per image</a></li>
+  </ul></li>
   </ul></li>
   <li><a href="#how-good-are-these-measurements" id="toc-how-good-are-these-measurements" class="nav-link" data-scroll-target="#how-good-are-these-measurements"><span class="header-section-number">4.4</span> How good are these measurements?</a></li>
   <li><a href="#creating-palettes-interactively" id="toc-creating-palettes-interactively" class="nav-link" data-scroll-target="#creating-palettes-interactively"><span class="header-section-number">4.5</span> Creating palettes interactively</a></li>
@@ -372,21 +378,21 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 
 <section id="the-actual-severity-measure" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="the-actual-severity-measure"><span class="header-section-number">4.1</span> The actual severity measure</h2>
-<p>Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (as discussed in the previous chapter), one requires the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters <span class="citation" data-cites="delponte2017">(<a href="#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
+<p>Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (as discussed in the previous chapter), we require the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
 <p>The actual severity values are typically approximated using image analysis, wherein the image is segmented, and each pixel is categorized into one of three classes:</p>
 <ol type="1">
 <li>Diseased (or symptomatic)</li>
 <li>Non-diseased (or healthy)</li>
 <li>Background (the non-plant portion of the image)</li>
 </ol>
-<p>The ratio of the diseased area to the total area of the unit (e.g., the entire plant organ or section of the image) yields the proportion of the diseased area, or the percent area affected (when multiplied by 100). Researchers have employed various proprietary or open-source software to determine the actual severity, as documented in a review on Standard Area Diagrams <span class="citation" data-cites="delponte2017">(<a href="#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
-<p>In this section, we will utilize the <code>measure_disease()</code> function from the <em>pliman</em> (Plant IMage ANalysis) R package <span class="citation" data-cites="olivoto2022a">(<a href="#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span> to measure the percent area affected. The package was compared with other software for determining plant disease severity across five different plant diseases and was shown to produce accurate results in most cases <span class="citation" data-cites="olivoto2022">(<a href="#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>.</p>
-<p>There are essentially two methods to measure severity. The first is predicated on image palettes that define each class of the image. The second relies on RGB-based indices <span class="citation" data-cites="alves2021">(<a href="#ref-alves2021" role="doc-biblioref">Alves et al. 2021</a>)</span>. Let’s explore the first method, as well as an interactive approach to setting color palettes.</p>
+<p>The ratio of the diseased area to the total area of the unit (e.g., the entire plant organ or section of the image) yields the proportion of the diseased area, or the percent area affected (when multiplied by 100). Researchers have employed various proprietary or open-source software to determine the actual severity, as documented in a review on Standard Area Diagrams <span class="citation" data-cites="delponte2017">(<a href="references.html#ref-delponte2017" role="doc-biblioref">Del Ponte et al. 2017</a>)</span>.</p>
+<p>In this section, we will utilize the <code>measure_disease()</code> function from the {pliman} (Plant IMage ANalysis) R package <span class="citation" data-cites="olivoto2022a">(<a href="references.html#ref-olivoto2022a" role="doc-biblioref">Olivoto 2022</a>)</span>, and its variations, to measure the percent area affected. The package was compared with other software for determining plant disease severity across five different plant diseases and was shown to produce accurate results in most cases <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>.</p>
+<p>There are essentially two methods to measure severity. The first is predicated on image palettes that define each class of the image. The second relies on RGB-based indices <span class="citation" data-cites="alves2021">(<a href="references.html#ref-alves2021" role="doc-biblioref">Alves et al. 2021</a>)</span>. Let’s explore the first method, as well as an interactive approach to setting color palettes.</p>
 </section>
 <section id="image-palettes" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="image-palettes"><span class="header-section-number">4.2</span> Image palettes</h2>
-<p>he most crucial step is the initial one, where the user needs to correctly define the color palettes for each class. In pliman, the palettes are separate images representing each of the three classes: background (b), symptomatic (s), and healthy (h).</p>
-<p>The reference image palettes can be constructed by manually sampling small areas of the image and creating a composite image. Naturally, the results may vary depending on how these areas are selected. A study that validated pliman for determining disease severity demonstrated the effect of different palettes prepared independently by three researchers <span class="citation" data-cites="olivoto2022">(<a href="#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. During the calibration of the palettes, examining the processed masks is crucial to create reference palettes that are the most representative of the respective class.</p>
+<p>The most crucial step is the initial one, where the user needs to correctly define the color palettes for each class. In pliman, the palettes can be separate images representing each of the three classes: background (b), symptomatic (s), and healthy (h).</p>
+<p>The reference image palettes can be constructed by manually sampling small areas of the image and creating a composite image. As expected, the results may vary depending on how these areas are selected. A study that validated pliman for determining disease severity demonstrated the effect of different palettes prepared independently by three researchers, in which the composite palette (combining the three users) was superior <span class="citation" data-cites="olivoto2022">(<a href="references.html#ref-olivoto2022" role="doc-biblioref">Olivoto et al. 2022</a>)</span>. During the calibration of the palettes, examining the processed masks is crucial to create reference palettes that are the most representative of the respective class.</p>
 <p>In this example, I manually selected and pasted several sections of images representing each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate PNG image file (JPG also works). These files were named: sbr_b.png, sbr_h.png, and sbr_s.png. They can be found <a href="https://github.com/emdelponte/epidemiology-R/tree/main/imgs">here in this folder</a> for downloading.</p>
 <div id="fig-pliman1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -413,11 +419,46 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
+<p>An alternative way to set the palettes is to use the <code>pick_palette()</code> function. It allows to manually pick the colors for each class by clicking on top of the imported image. We can use one of the original images or a composite images with portions of several leaves. Let’s use here one of the original images and pick the background colors and assigned to <code>b</code> vector.</p>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-3_da7c5f47dcd419d7154b760d636c98e3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img5.png"</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">pick_palette</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The original image is displayed and the user needs to click on the background colors to select the pixels. A message will be displayed as follows:</p>
+<blockquote class="blockquote">
+<p>Use the first mouse button to pick up points in the plot. Press Esc to exit.</p>
+</blockquote>
+<div id="fig_pick_palette" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/sbr_pick_palette.png" class="img-fluid figure-img" width="339"></p>
+<figcaption class="figure-caption">Soybean rust leaf with small red dots at the upper leaf portion that indicate which colors were selected for the background</figcaption>
+</figure>
+</div>
+<p>After pressing ESC, the image palette for the background is constructed and can be displayed.</p>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-4_43a3c91ae83616a6c8cc287f48ee4de4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(b)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="fig_background_colors_picked" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/b_picked.png" class="img-fluid figure-img" width="372"></p>
+<figcaption class="figure-caption">Image generating after picking the palette colors for the background of the leaf</figcaption>
+</figure>
+</div>
+<p>Now, we can proceed and pick the colors for the other categories following the same logic.</p>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-5_32641b81df3bc981eec640c2d0e5c981">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Symptoms</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">pick_palette</span>(img)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># healthy</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">pick_palette</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="measuring-severity" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="measuring-severity"><span class="header-section-number">4.3</span> Measuring severity</h2>
 <section id="single-image" class="level3" data-number="4.3.1">
 <h3 data-number="4.3.1" class="anchored" data-anchor-id="single-image"><span class="header-section-number">4.3.1</span> Single image</h3>
+<section id="using-color-palettes" class="level4" data-number="4.3.1.1">
+<h4 data-number="4.3.1.1" class="anchored" data-anchor-id="using-color-palettes"><span class="header-section-number">4.3.1.1</span> Using color palettes</h4>
 <p>To determine severity in a single image (e.g.&nbsp;img46.png), the image file needs to be loaded and assigned to an object using the same <code>image_import()</code> function used to load the palettes. We can then visualize the image, again using <code>image_combine()</code>.</p>
 <div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -433,8 +474,8 @@ Tip
 </div>
 </div>
 <div class="cell" data-hash="data-actual-severity_cache/html/fig-img_e87c623f9a26c3acce6b42891c64591b">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img46.png"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>img <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/originals/img46.png"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-img" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -445,52 +486,60 @@ Tip
 </div>
 </div>
 <p>Now the engaging part starts with the <code>measure_disease()</code> function. Four arguments are required when using the reference image palettes: the image representing the target image and the three images of the color palettes. As the author of the package states, “pliman will take care of all the details!” The severity is the value displayed under ‘symptomatic’ in the output.</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-4_cc40258b7578c8dbed8eae720cd31967">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> img,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-7_3d9b4903303e3025e1e9908af07244e9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> img,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>$severity
-   healthy symptomatic
-1 92.68077    7.319234
-
-$shape
-NULL
-
-$statistics
-NULL
-
-attr(,"class")
-[1] "plm_disease"</code></pre>
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+<p>If we want to show the mask with two colors instead of the original, we can set to FALSE two “show_” arguments:</p>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-8_f8cd948697d317c1adada52ab87bc4b3">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">measure_disease</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">img =</span> img,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_contour =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">show_original =</span> <span class="cn">FALSE</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
 </section>
 <section id="multiple-images" class="level3" data-number="4.3.2">
 <h3 data-number="4.3.2" class="anchored" data-anchor-id="multiple-images"><span class="header-section-number">4.3.2</span> Multiple images</h3>
 <p>Measuring severity in single images is indeed engaging, but we often deal with multiple images, not just one. Using the above procedure to process each image individually would be time-consuming and potentially tedious.</p>
-<p>To automate the process, <em>pliman</em> offers a batch processing approach. Instead of using the <code>img</code> argument, one can use the <code>pattern</code> argument and define the prefix of the image names. Moreover, we also need to specify the directory where the original files are located.</p>
+<p>To automate the process, {pliman} offers a batch processing approach. Instead of using the <code>img</code> argument, one can use the <code>pattern</code> argument and define the prefix of the image names. Moreover, we also need to specify the directory where the original files are located.</p>
 <p>If the user wants to save the processed masks, they should set the <code>save_image</code> argument to TRUE and also specify the directory where the images will be saved. Here’s an example of how to process 10 images of soybean rust symptoms. The output is a <code>list</code> object with the measures of the percent healthy and percent symptomatic area for each leaf in the <code>severity</code> object.</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-5_65796e4c69cad52055c3653e0dc33daf">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pliman <span class="ot">&lt;-</span> <span class="fu">measure_disease</span>(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"img"</span>,</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_original =</span> <span class="st">"imgs/originals"</span> ,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_processed =</span> <span class="st">"imgs/processed"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_image =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> <span class="cn">FALSE</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>severity <span class="ot">&lt;-</span> pliman<span class="sc">$</span>severity</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-9_b1189fed84f5e0381274ddd6c0fa103a">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pliman <span class="ot">&lt;-</span> <span class="fu">measure_disease</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">pattern =</span> <span class="st">"img"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_original =</span> <span class="st">"imgs/originals"</span> ,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">dir_processed =</span> <span class="st">"imgs/processed"</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">save_image =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_healthy =</span> h,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_symptoms =</span> s,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">img_background =</span> b,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">verbose =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Done!</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Elapsed time: 00:00:19</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>severity <span class="ot">&lt;-</span> pliman<span class="sc">$</span>severity</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     img  healthy symptomatic
 1  img11 70.79655  29.2034481
@@ -519,57 +568,104 @@ attr(,"class")
 <figcaption class="figure-caption">Figure&nbsp;4.5: Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.</figcaption>
 </figure>
 </div>
+<section id="more-than-a-target-per-image" class="level4" data-number="4.3.2.1">
+<h4 data-number="4.3.2.1" class="anchored" data-anchor-id="more-than-a-target-per-image"><span class="header-section-number">4.3.2.1</span> More than a target per image</h4>
+<p>{pliman} offers a custom function to estimate the severity in multiple targets (e.g.&nbsp;leaf) per image. This is convenient to decrease the time when scanning the specimens, for example. Let’s combine five soybean rust leaves in a single image and import it for processing. We will further set the <code>index_lb</code> (leaf background), <code>save_image</code> to <code>TRUE</code> and inform the directory for the processed images using <code>dir_processed</code>.</p>
+<div class="cell" data-hash="data-actual-severity_cache/html/fig-img2_26fe1eddec1313e36505e7d68f50f58f">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>img2 <span class="ot">&lt;-</span> <span class="fu">image_import</span>(<span class="st">"imgs/soybean_three.png"</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">image_combine</span>(img2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-img2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="data-actual-severity_files/figure-html/fig-img2-1.png" class="img-fluid figure-img" width="672"></p>
+<figcaption class="figure-caption">Figure&nbsp;4.6: Imported image with multiple targets in a single image for further analysis using measure_disease_byl() function of the {pliman} package</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-11_55e8b9289bde9122f37f9ca9da9cce0c">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a> pliman2 <span class="ot">&lt;-</span> <span class="fu">measure_disease_byl</span>(<span class="at">img =</span> img2,</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">index_lb =</span> b,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">img_healthy =</span> h,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>                        <span class="at">img_symptoms =</span> s, </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>                        <span class="at">save_image =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>                        <span class="at">dir_processed =</span> <span class="st">"imgs/proc"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="data-actual-severity_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a> pliman2<span class="sc">$</span>severity</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  img leaf  healthy symptomatic
+1 img    1 59.11737   40.882632
+2 img    2 61.36616   38.633841
+3 img    3 93.21756    6.782436</code></pre>
+</div>
+</div>
+<p>The original image is splited and the individual new images are saved in the proc folder.</p>
+<div id="fig_sbr_processed" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/sbr_procor.png" class="img-fluid figure-img" width="505"></p>
+<figcaption class="figure-caption">Individual images of the soybean leaves after processed using the measure_disease_byl function of the {pliman} package.</figcaption>
+</figure>
+</div>
+</section>
 </section>
 </section>
 <section id="how-good-are-these-measurements" class="level2" data-number="4.4">
 <h2 data-number="4.4" class="anchored" data-anchor-id="how-good-are-these-measurements"><span class="header-section-number">4.4</span> How good are these measurements?</h2>
 <p>These 10 images were previously processed in QUANT software for measuring severity which is also based on image threshold. Let’s create a tibble for the image code and respective “actual” severity - assuming QUANT measures as reference.</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-6_3818930525137c716608445869ed4488">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>quant <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>img, <span class="sc">~</span>actual,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>   <span class="st">"img5"</span>,     <span class="dv">75</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img11"</span>,     <span class="dv">24</span>,</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img35"</span>,     <span class="dv">52</span>,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img37"</span>,     <span class="dv">38</span>,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img38"</span>,     <span class="dv">17</span>,</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img46"</span>,      <span class="dv">7</span>,</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img63"</span>,    <span class="fl">2.5</span>,</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img67"</span>,   <span class="fl">0.25</span>,</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img70"</span>,     <span class="dv">67</span>,</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img75"</span>,     <span class="dv">10</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-12_1f287c2dbc152992114be73fedb175a1">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>quant <span class="ot">&lt;-</span> <span class="fu">tribble</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>img, <span class="sc">~</span>actual,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>   <span class="st">"img5"</span>,     <span class="dv">75</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img11"</span>,     <span class="dv">24</span>,</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img35"</span>,     <span class="dv">52</span>,</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img37"</span>,     <span class="dv">38</span>,</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img38"</span>,     <span class="dv">17</span>,</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img46"</span>,      <span class="dv">7</span>,</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img63"</span>,    <span class="fl">2.5</span>,</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img67"</span>,   <span class="fl">0.25</span>,</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img70"</span>,     <span class="dv">67</span>,</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"img75"</span>,     <span class="dv">10</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can now combine the two dataframes and produce a scatter plot relating the two measures.</p>
 <div class="cell" data-hash="data-actual-severity_cache/html/fig-scatter_647bdead1f79d21731b5204bcea0010e">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">left_join</span>(severity, quant)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">left_join</span>(severity, quant)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Joining with `by = join_by(img)`</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, symptomatic)) <span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Quant"</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"pliman"</span>)<span class="sc">+</span></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(actual, symptomatic)) <span class="sc">+</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> <span class="dv">1</span>, <span class="at">intercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Quant"</span>,</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"pliman"</span>)<span class="sc">+</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-scatter" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="data-actual-severity_files/figure-html/fig-scatter-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Figure&nbsp;4.6: Scatter plot for the relationship between severity values measured by pliman and Quant software</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;4.7: Scatter plot for the relationship between severity values measured by pliman and Quant software</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the <em>pliman</em> measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!</p>
-<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-8_ae361bd07a4c75acc60a044b3c0658de">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>ccc <span class="ot">&lt;-</span> <span class="fu">epi.ccc</span>(dat<span class="sc">$</span>actual, dat<span class="sc">$</span>symptomatic)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>ccc<span class="sc">$</span>rho.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="data-actual-severity_cache/html/unnamed-chunk-14_25a0b09cef8d3b351793c7e7d7dd4aa4">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiR)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ccc <span class="ot">&lt;-</span> <span class="fu">epi.ccc</span>(dat<span class="sc">$</span>actual, dat<span class="sc">$</span>symptomatic)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>ccc<span class="sc">$</span>rho.c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>        est     lower     upper
 1 0.9940835 0.9774587 0.9984566</code></pre>
@@ -583,7 +679,7 @@ attr(,"class")
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/fI_Mm-GlPyw" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
 
 
-<div id="refs" class="references csl-bib-body" role="list">
+<div id="refs" class="references csl-bib-body" role="list" style="display: none">
 <div id="ref-alves2021" class="csl-entry" role="listitem">
 Alves, K. S., Guimarães, M., Ascari, J. P., Queiroz, M. F., Alfenas, R. F., Mizubuti, E. S. G., et al. 2021. RGB-based phenotyping of foliar disease severity under controlled conditions. Tropical Plant Pathology. 47:105–117 Available at: <a href="http://dx.doi.org/10.1007/S40858-021-00448-Y">http://dx.doi.org/10.1007/S40858-021-00448-Y</a>.
 </div>

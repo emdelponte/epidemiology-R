@@ -4,25 +4,25 @@ title: "Image analysis"
 
 ## The actual severity measure
 
-Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (as discussed in the previous chapter), one requires the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
+Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (as discussed in the previous chapter), we require the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
 
 The actual severity values are typically approximated using image analysis, wherein the image is segmented, and each pixel is categorized into one of three classes:
 
-1. Diseased (or symptomatic)
-2. Non-diseased (or healthy)
-3. Background (the non-plant portion of the image)
+1.  Diseased (or symptomatic)
+2.  Non-diseased (or healthy)
+3.  Background (the non-plant portion of the image)
 
 The ratio of the diseased area to the total area of the unit (e.g., the entire plant organ or section of the image) yields the proportion of the diseased area, or the percent area affected (when multiplied by 100). Researchers have employed various proprietary or open-source software to determine the actual severity, as documented in a review on Standard Area Diagrams [@delponte2017].
 
-In this section, we will utilize the `measure_disease()` function from the *pliman* (Plant IMage ANalysis) R package [@olivoto2022a] to measure the percent area affected. The package was compared with other software for determining plant disease severity across five different plant diseases and was shown to produce accurate results in most cases [@olivoto2022].
+In this section, we will utilize the `measure_disease()` function from the {pliman} (Plant IMage ANalysis) R package [@olivoto2022a], and its variations, to measure the percent area affected. The package was compared with other software for determining plant disease severity across five different plant diseases and was shown to produce accurate results in most cases [@olivoto2022].
 
-There are essentially two methods to measure severity. The first is predicated on image palettes that define each class of the image. The second relies on RGB-based indices [@alves2021]. Let’s explore the first method, as well as an interactive approach to setting color palettes.
+There are essentially two methods to measure severity. The first is predicated on image palettes that define each class of the image. The second relies on RGB-based indices [@alves2021]. Let's explore the first method, as well as an interactive approach to setting color palettes.
 
 ## Image palettes
 
-he most crucial step is the initial one, where the user needs to correctly define the color palettes for each class. In pliman, the palettes are separate images representing each of the three classes: background (b), symptomatic (s), and healthy (h).
+The most crucial step is the initial one, where the user needs to correctly define the color palettes for each class. In pliman, the palettes can be separate images representing each of the three classes: background (b), symptomatic (s), and healthy (h).
 
-The reference image palettes can be constructed by manually sampling small areas of the image and creating a composite image. Naturally, the results may vary depending on how these areas are selected. A study that validated pliman for determining disease severity demonstrated the effect of different palettes prepared independently by three researchers [@olivoto2022]. During the calibration of the palettes, examining the processed masks is crucial to create reference palettes that are the most representative of the respective class.
+The reference image palettes can be constructed by manually sampling small areas of the image and creating a composite image. As expected, the results may vary depending on how these areas are selected. A study that validated pliman for determining disease severity demonstrated the effect of different palettes prepared independently by three researchers, in which the composite palette (combining the three users) was superior [@olivoto2022]. During the calibration of the palettes, examining the processed masks is crucial to create reference palettes that are the most representative of the respective class.
 
 In this example, I manually selected and pasted several sections of images representing each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate PNG image file (JPG also works). These files were named: sbr_b.png, sbr_h.png, and sbr_s.png. They can be found [here in this folder](https://github.com/emdelponte/epidemiology-R/tree/main/imgs) for downloading.
 
@@ -46,9 +46,47 @@ We can visualize the imported image palettes using the `image_combine()` functio
 image_combine(h, s, b, ncol =3)
 ```
 
+An alternative way to set the palettes is to use the `pick_palette()` function. It allows to manually pick the colors for each class by clicking on top of the imported image. We can use one of the original images or a composite images with portions of several leaves. Let's use here one of the original images and pick the background colors and assigned to `b` vector.
+
+```{r}
+#| eval: false
+img <- image_import("imgs/originals/img5.png")
+b <- pick_palette(img)
+
+```
+
+The original image is displayed and the user needs to click on the background colors to select the pixels. A message will be displayed as follows:
+
+> Use the first mouse button to pick up points in the plot.
+Press Esc to exit.
+
+![Soybean rust leaf with small red dots at the upper leaf portion that indicate which colors were selected for the background](imgs/sbr_pick_palette.png){#fig_pick_palette fig-align="center" width="339"}
+
+After pressing ESC, the image palette for the background is constructed and can be displayed.
+
+```{r}
+#| eval: false
+image_combine(b)
+```
+
+![Image generating after picking the palette colors for the background of the leaf](imgs/b_picked.png){#fig_background_colors_picked fig-align="center" width="372"}
+
+Now, we can proceed and pick the colors for the other categories following the same logic.
+
+```{r}
+#| eval: false
+# Symptoms
+s <- pick_palette(img)
+
+# healthy
+h <- pick_palette(img)
+```
+
 ## Measuring severity
 
 ### Single image
+
+#### Using color palettes
 
 To determine severity in a single image (e.g. img46.png), the image file needs to be loaded and assigned to an object using the same `image_import()` function used to load the palettes. We can then visualize the image, again using `image_combine()`.
 
@@ -76,11 +114,25 @@ measure_disease(
 )
 ```
 
+If we want to show the mask with two colors instead of the original, we can set to FALSE two "show\_" arguments:
+
+```{r}
+set.seed(123)
+measure_disease(
+  img = img,
+  img_healthy = h,
+  img_symptoms = s,
+  img_background = b,
+  show_contour = FALSE,
+  show_original = FALSE
+)
+```
+
 ### Multiple images
 
 Measuring severity in single images is indeed engaging, but we often deal with multiple images, not just one. Using the above procedure to process each image individually would be time-consuming and potentially tedious.
 
-To automate the process, *pliman* offers a batch processing approach. Instead of using the `img` argument, one can use the `pattern` argument and define the prefix of the image names. Moreover, we also need to specify the directory where the original files are located.
+To automate the process, {pliman} offers a batch processing approach. Instead of using the `img` argument, one can use the `pattern` argument and define the prefix of the image names. Moreover, we also need to specify the directory where the original files are located.
 
 If the user wants to save the processed masks, they should set the `save_image` argument to TRUE and also specify the directory where the images will be saved. Here's an example of how to process 10 images of soybean rust symptoms. The output is a `list` object with the measures of the percent healthy and percent symptomatic area for each leaf in the `severity` object.
 
@@ -107,6 +159,36 @@ When the argument `save_image` is set to TRUE, the images are all saved in the f
 Let's have a look at one of the processed images.
 
 [![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.](imgs/processed/proc_img46.jpg){#fig-processed style="margin: 15px" fig-align="center" width="452"}](fig_proc1)
+
+#### More than a target per image
+
+{pliman} offers a custom function to estimate the severity in multiple targets (e.g. leaf) per image. This is convenient to decrease the time when scanning the specimens, for example. Let's combine five soybean rust leaves in a single image and import it for processing. We will further set the `index_lb` (leaf background), `save_image` to `TRUE` and inform the directory for the processed images using `dir_processed`.
+
+```{r}
+#| label: fig-img2
+#| fig-cap: "Imported image with multiple targets in a single image for further analysis using measure_disease_byl() function of the {pliman} package" 
+img2 <- image_import("imgs/soybean_three.png")
+image_combine(img2)
+
+
+
+```
+
+```{r}
+ pliman2 <- measure_disease_byl(img = img2,
+                        index_lb = b,
+                        img_healthy = h,
+                        img_symptoms = s, 
+                        save_image = TRUE,
+                        dir_processed = "imgs/proc")
+ 
+ pliman2$severity
+
+```
+
+The original image is splited and the individual new images are saved in the proc folder.
+
+![Individual images of the soybean leaves after processed using the measure_disease_byl function of the {pliman} package.](imgs/sbr_procor.png){#fig_sbr_processed fig-align="center" width="505"}
 
 ## How good are these measurements?
 
