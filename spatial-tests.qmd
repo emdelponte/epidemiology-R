@@ -80,7 +80,6 @@ The `doublets.test()` function of the *r4pde* package calculates the doublets an
 doublets.test(row1$y1)
 ```
 
-
 #### Join count
 
 In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified in the test. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
@@ -409,8 +408,6 @@ plot_AFSD(results[[2]][[3]])+
 
 ```
 
-
-
 ### Point pattern analysis
 
 Point pattern analysis involves the study of the spatial arrangement of points in a two-dimensional space. In its simplest form, one can visualize this as a scatter plot on a map, where each point represents an event, object, or entity in space. For example, the points might represent the locations of diseased plants in a population.
@@ -443,7 +440,6 @@ aggr$hull[hull_indices_aggr] <- TRUE
 
 
 ```
-
 
 The two dataframes has two variables each. Let's produce 2-D map.
 
@@ -484,7 +480,7 @@ prand | paggr
 
 #### Quadrat count
 
-In the Quadrat Count method, the study region is divided into a regular grid of smaller, equally-sized rectangular or square subregions known as quadrats. For each quadrat, the number of points falling inside it is counted. If the points are uniformly and independently distributed across the region (i.e., random), then the number of points in each quadrat should follow a Poisson distribution. If the variance of the counts is roughly equal to the mean of the counts, then the pattern is considered to be random. If the variance is greater than the mean, it suggests that the pattern is aggregated or clumped. 
+In the Quadrat Count method, the study region is divided into a regular grid of smaller, equally-sized rectangular or square subregions known as quadrats. For each quadrat, the number of points falling inside it is counted. If the points are uniformly and independently distributed across the region (i.e., random), then the number of points in each quadrat should follow a Poisson distribution. If the variance of the counts is roughly equal to the mean of the counts, then the pattern is considered to be random. If the variance is greater than the mean, it suggests that the pattern is aggregated or clumped.
 
 Using the {spatstats} package, we first need to create a ppp object which represents a point pattern. This is the primary object type in spatstat for point patterns.
 
@@ -549,7 +545,19 @@ qt_aggr
 
 #### Spatial KS test
 
-Performs a test of goodness-of-fit test of the uniform Poisson point process (Complete Spatial Randomness, CSR) for the data set. The test is performed by comparing the observed distribution of the values of a spatial covariate at the data points, and the predicted distribution of the same covariate under the model, using a classical goodness-of-fit test @baddeley2005. Thus, we must nominate a spatial covariate for this test. In the case below we nominate x, y or x and y as covariate.
+The Spatial Kolmogorov-Smirnov (KS) Test is a method to assess the goodness-of-fit of a given point pattern to the assumptions of Complete Spatial Randomness (CSR) @baddeley2005. Essentially, this means that it helps in determining whether a set of spatial points is distributed randomly or if there is some underlying pattern or interaction.
+
+However, unlike other goodness-of-fit tests in the spatial context, the Spatial KS Test leverages the values of a spatial covariate at the observed data points and contrasts them against the expected distribution of the same covariate under the assumption of CSR. The idea behind this test is to check if there's any difference between the observed distribution of a spatial covariate's values and the expected distribution if the points were distributed in a completely spatial random fashion.
+
+Key points of the test are:
+
+-   **Covariate**: For this test, a spatial covariate must be chosen. This is a spatially varying feature or value that might influence the point process. Examples include elevation, soil quality, or distance from a specific feature. The distribution of this covariate's values at the observed data points is the crux of the test.
+
+-   **Comparison with CSR**: The observed distribution of the spatial covariate's values at the data points is juxtaposed with what would be expected under the CSR model. The CSR model posits that points are distributed purely by chance, without any underlying structure or influence.
+
+-   **Methodology**: The test employs a classical goodness-of-fit approach to contrast the observed and expected distributions. Specifically, it utilizes the Kolmogorov-Smirnov statistic, a non-parametric measure to gauge the similarity between two distributions.
+
+As example, we may want to select spatial coordinates themselves (like **`x`**, **`y`**, or both) as the covariates. This means the test will assess how the observed distribution of x-coordinates (or y-coordinates or both) of the data points compares to what would be anticipated under CSR.
 
 Let's test for the aggregated data.
 
@@ -580,9 +588,9 @@ As shown above, we have sufficient evidence to reject the null hypothesis of com
 
 #### Distance based
 
-A spatial point process is a set of irregularly distributed locations within a defined region which are assumed to have been generated by some form of stochastic mechanism.
+##### Ripley's K
 
-The **K function**, a.k.a. Ripley's K-function, is a statistical measure used in spatial analysis to examine the spatial distribution of a single type of point in a given area. Named after its developer, the British statistician B.D. Ripley, the K-function measures the expected number of points within a given distance of an arbitrary point, assuming homogeneous intensity (a constant probability of a point occurring in a particular place).
+A spatial point process is a set of irregularly distributed locations within a defined region which are assumed to have been generated by some form of stochastic mechanism. The **K function**, a.k.a. Ripley's K-function, is a statistical measure used in spatial analysis to examine the spatial distribution of a single type of point in a given area. Named after its developer, the British statistician B.D. Ripley, the K-function measures the expected number of points within a given distance of an arbitrary point, assuming homogeneous intensity (a constant probability of a point occurring in a particular place).
 
 To describe it simply: imagine you have a map of diseased trees in a forest, and you select a tree at random. The K-function helps you answer the question: "How many other diseased trees do I expect to find within a certain distance from the diseased tree I've chosen?"
 
@@ -622,7 +630,7 @@ data.frame(ke) |>
   geom_ribbon(aes(ymin = lo, ymax = hi),
               fill = "steelblue", alpha = 0.5)+
   labs(y = "K(r)", x = "r")+
-  theme_bw(base_size = 16)
+  theme_r4pde(font_size = 16)
 ```
 
 `mad.test` performs the 'global' or 'Maximum Absolute Deviation' test described by Ripley (1977, 1981). See [@baddeley2014]. This performs hypothesis tests for goodness-of-fit of a point pattern data set to a point process model, based on Monte Carlo simulation from the model.
@@ -633,6 +641,8 @@ mad.test(ppp_aggr, Kest)
 mad.test(ppp_rand, Kest)
 
 ```
+
+##### O-ring statistics
 
 Another statistics that can be used is the **O-ring** statitics which are used in spatial analysis to quantify and test the degree of interaction between two types of spatial points [@wiegand2004]. The name derives from the method of placing a series of concentric circles (O-rings) around each point of type 1 and counting how many points of type 2 fall within each ring. The plot generated by O-ring statistics is called an O-ring plot or an O-function plot. It plots the radius of the rings on the x-axis and the estimated intensity of points of type 2 around points of type 1 on the y-axis.
 
@@ -675,18 +685,25 @@ plot(oring_envelope)
 To plot simulation envelopes using quantum plots [@esser2014], just pass an `envelope` object as input to [`plot_quantums()`](https://r-spatialecology.github.io/onpoint/reference/plot_quantums.html).
 
 ```{r}
-plot_quantums(oring_envelope, ylab = "O-ring")
+plot_quantums(oring_envelope, ylab = "O-ring")+
+  theme_r4pde()
 ```
 
 ### Grouped data
 
-If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are autocorrelation (known as Moran's I), semivariance and SADIE (an alternative approach to autocorrelation.)
+If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are:
+
+-    Autocorrelation (known as Moran's I)
+
+-   Semivariance
+
+-   SADIE (an alternative approach to autocorrelation.)
 
 #### Autocorrelation
 
 Spatial autocorrelation analysis provides a quantitative assessment of whether a large value of disease intensity in a sampling unit makes it more (positive autocorrelation) or less (negative auto- correlation) likely that neighboring sampling units tend to have a large value of disease intensity [@chapter2007].
 
-We will illustrate the method by reproducing the example provided in page 264 of the chapter on spatial analysis [@chapter2007], which was extracted from table 11.3 of @Campbell1990. The data represent a single transect with the number of *Macrophomia phaseolina* propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.
+We will illustrate the basic concept by reproducing the example provided in page 264 of the chapter on spatial analysis [@chapter2007], which was extracted from table 11.3 of @Campbell1990. The data represent a single transect with the number of *Macrophomia phaseolina* propagules per 10 g air-dry soil recorded in 16 contiguous quadrats across a field.
 
 ```{r}
 mp <- data.frame(
@@ -705,6 +722,7 @@ We can produce a plot to visualize the number of propagules across the transect.
 mp |>
   ggplot(aes(i, y)) +
   geom_col(fill = "darkred") +
+  theme_r4pde()+
   labs(
     x = "Relative position within a transect",
     y = "Number of propagules",
@@ -737,6 +755,7 @@ And now the plot known as autocorrelogram.
 ac_mp_dat |>
   ggplot(aes(index, ac_mp.acf, label = round(ac_mp.acf, 3))) +
   geom_col(fill = "darkred") +
+  theme_r4pde()+
   geom_text(vjust = 0, nudge_y = 0.05) +
   scale_x_continuous(n.breaks = 6) +
   geom_hline(yintercept = 0) +
@@ -745,7 +764,11 @@ ac_mp_dat |>
 
 The values we obtained here are not the same but quite close to the values reported in @madden2007. For the transect data, the calculated coefficients in the book example for lags 1, 2 and 3 are 0.625, 0.144, and - 0.041. The conclusion is the same, the smaller the distance between sampling units, the stronger is the correlation between the count values.
 
-The method above is usually referred to Moran's I [@Moran1950]. Let's use another example dataset from the book to calculate the Moran's I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of @xu2004. The data is stored in a CSV file.
+##### Moran's I
+
+The method above is usually referred to Moran's I [@Moran1950], a widely-used statistic to measure spatial autocorrelation in spatial datasets. The presence of spatial autocorrelation implies that nearby locations exhibit more similar (positive autocorrelation) or dissimilar (negative autocorrelation) values than would be expected under random arrangements.
+
+Let's use another example dataset from the book to calculate the Moran's I in R. The data is shown in page 269 of the book. The data represent the number of diseased plants per quadrat (out of a total of 100 plants in each) in 144 quadrats. It was based on an epidemic generated using the stochastic simulator of @xu2004. The data is stored in a CSV file.
 
 ```{r}
 #| warning: false
@@ -760,7 +783,7 @@ epi1 <- epi |>
 
 ```
 
-Using `moran()` function of the *spdep* R package.
+The {spdep} package in R provides a suite of functions for handling spatial dependence in data, and one of its main functions for assessing spatial autocorrelation is **`moran()`**. The **`moran()`** function calculates Moran's I statistic for a given dataset. It requires two primary inputs: 1) A **Numeric Vector**: This vector represents the values for which spatial autocorrelation is to be measured. Typically, this could be a variable like population density, temperature, or any other spatial attribute; and 2) A **Spatial Weights Matrix**: This matrix represents the spatial relationships between the observations. It can be thought of as defining the "neighbors" for each observation. The {spdep} package provides functions to create various types of spatial weights, such as contiguity-based weights or distance-based weights. Let's load the library and start with the procedures.\
 
 ```{r}
 set.seed(100)
@@ -788,12 +811,36 @@ moran(x = epi1, # numeric vector
       S0 = Szero(col.W)) # global sum of weights
 ```
 
-The Moran's test for spatial autocorrelation uses spatial weights matrix in weights list form.
+The `$I` is Moran's I and `$K` output is the sample kurtosis of x, or a measure of the "tailedness" of the probability distribution of a real-valued random variable.
+
+The interpretations for Moran's I is as follows: A positive Moran's I indicates positive spatial autocorrelation. Nearby locations tend to have similar values, while a Negative Moran's I suggests negative spatial autocorrelation. Neighboring locations have dissimilar values. Moran's close to zero indicates no spatial autocorrelation. The distribution appears random.
+
+In the context of Moran's I and spatial statistics, kurtosis of the data (**`x`**) can provide additional insights. For instance, if the data is leptokurtic (`$K` \> 3), it might suggest that there are some hotspots or cold spots (clusters of high or low values) in the spatial dataset. On the other hand, platykurtic (`$K` \< 3) data might indicate a more even spread without pronounced clusters. This information can be useful when interpreting the results of spatial autocorrelation tests and in understanding the underlying spatial structures.
+
+##### Moran's test
+
+The Moran's I test is a cornerstone of spatial statistics, used to detect spatial autocorrelation in data. In the realm of the **`spdep`** package in R, the **`moran.test()`** function is employed to perform this test. The Moran's test for spatial autocorrelation uses spatial weights matrix in weights list form. The key inputs are:
+
+-   **x**: This is a numeric vector containing the values we wish to test for spatial autocorrelation. It could be anything like population densities, number of diseased unites or severity, in the context of plant disease.
+
+-   **listw**: This represents the spatial weights, and it's in list form. The spatial weights matrix is essential for the Moran's test because it defines the "relationship" between different observations. How we define these relationships can vary: it might be based on distance (e.g., closer observations have higher weights), contiguity (e.g., observations that share a border), or other criteria.
 
 ```{r}
 moran.test(x = epi1, 
            listw = col.W)
 ```
+
+The function will return the Moran's I statistic value, an expected value under the null hypothesis of no spatial autocorrelation, the variance, and a p-value. The p-value can be used to determine the statistical significance of the observed Moran's I value. The interpretation is as follows:
+
+-   A significant **positive Moran's I value** indicates positive spatial autocorrelation, meaning that similar values cluster together in the spatial dataset.
+
+-   A significant **negative Moran's I value** suggests negative spatial autocorrelation, implying that dissimilar values are adjacent to one another.
+
+-   If Moran's I is not statistically significant (based on the p-value), it suggests that the spatial pattern might be random, and there's no evidence of spatial autocorrelation.
+
+In conclusion, the **`moran.test()`** function offers a structured way to investigate spatial autocorrelation in datasets. Spatial weights play a crucial role in this analysis, representing the spatial relationships between observations.
+
+As before, we can construct a correlogram using the output of the `sp.correlogram()` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2007]. Let's store the results in a dataframe.
 
 ```{r}
 correl_I <- sp.correlogram(nb, epi1, 
@@ -802,12 +849,9 @@ correl_I <- sp.correlogram(nb, epi1,
                            zero.policy = TRUE)
 ```
 
-We can generate a correlogram using the output of the `sp.correlogram()` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2007]. Let's store the results in a dataframe.
-
 ```{r}
 df_correl <- data.frame(correl_I$res) |> 
   mutate(lag = c(1:10))
-
 # Show the spatial autocorrelation for 10 distance lags
 round(df_correl$X1,3)
 ```
@@ -821,6 +865,7 @@ Then, we can generate the plot using *ggplot*.
 df_correl |>
   ggplot(aes(lag, X1)) +
   geom_col(fill = "darkred") +
+  theme_r4pde()+
   scale_x_continuous(n.breaks = 10) +
   labs(x = "Distance lag", y = "Spatial autocorrelation")
 ```
@@ -896,7 +941,7 @@ sadie_epi2 <- sadie(epi2)
 sadie_epi2
 ```
 
-The simple output shows the *Ia* value and associated *P*-value. As suggested by the low value of the *P*-value, the pattern is highly aggregated. The `summary()` function provides a more complete information such as the overall inflow and outflow measures. A dataframe with the clustering index for each sampling unit is also provided using the `summary()` function.
+The simple output shows the *Ia* value and associated *P*-value. As suggested by the low value of the *P*-value, the pattern is highly aggregated. The `summary()` function provides a more complete information such as the overall inflow and outflow measures. A data frame with the clustering index for each sampling unit is also provided using the `summary()` function.
 
 ```{r}
 summary(sadie_epi2)
@@ -907,7 +952,7 @@ The `plot()` function allows to map the clustering indices and so to identify re
 ```{r}
 #| label: fig-sadie1
 #| fig-cap: "Map of the SADIE clustering indices where red identifiy patches (outflow) and blue identify gaps (inflow)"
-plot(sadie_epi2)
+plot(sadie_epi2) 
 ```
 
 A isocline plot can be obtained by setting the `isocline` argument as `TRUE`.
@@ -920,7 +965,15 @@ plot(sadie_epi2, isoclines = TRUE)
 
 ## Sparsely sampled data
 
-Different from intensively mapped data, sparsely sampled data do not contain information about the spatial location of the units, and so it is not taken into account in the analysis. The analysis of sparsely sampled data usually involves characterizing the extent of variability in the mean level of disease intensity per sampling unit [@chapter2007]. There are two types of approaches to analyse these data in the context of spatial patterns of plant disease epidemics: 1) testing the goodness of fit to statistical probability distributions and 2) calculating indices of aggregation. These will be discussed further separated depending on the nature of the data, whether count or incidence (proportion), for which specific distributions are assumed to describe the data.
+Sparsely sampled data differs significantly from intensively mapped data. While the latter provides intricate details about the spatial location of each unit, sparsely sampled data lacks this granularity. This absence means that the spatial location of individual units isn't factored into the analysis of sparsely sampled data.
+
+In the realm of analyzing such data, particularly in understanding disease intensity, researchers often aim to characterize the range of variability in the average level of disease intensity for each sampling unit, as indicated by [@chapter2007]. The methodology to analyze sparsely sampled data, especially in relation to the spatial patterns seen in plant disease epidemics, can be broadly categorized into two primary approaches:
+
+1.  **Goodness of Fit to Statistical Distributions**: This approach focuses on testing how well the observed data matches expected statistical probability distributions. By doing so, researchers can assess the likelihood that the observed data is a good fit for a particular statistical model or distribution.
+
+2.  **Indices of Aggregation Calculation**: This involves computing various metrics that can help determine the degree to which data points, or disease incidents in this case, tend to cluster or aggregate in certain areas or patterns.
+
+Furthermore, the choice of analysis method often hinges on the nature of the data in question. For instance, data can either be in the form of raw counts or as incidences (proportions). Depending on this distinction, specific statistical distributions are presumed to best represent and describe the data. Subsequent sections will delve deeper into these methods, distinguishing between count and incidence data to provide clarity on the best analytical approach for each type.
 
 ### Count data
 
@@ -930,7 +983,7 @@ Two statistical distributions can be adopted as reference for the description of
 
 Let's work with the previous simulation data of 144 quadrats with a variable count of diseased plants per quadrat (in a maximum of 100). Notice that we won't consider the location of each quadrat as in the previous analyses of intensively mapped data. We only need the vector with the number of infected units per sampling unit.
 
-The *epiphy* package provides a function called `fit_two_distr()`, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a dataframe created using the `count()` function where the number of infection units is designated as `i`. It won't work with a single vector of numbers. We create the dataframe using:
+The *epiphy* package provides a function called `fit_two_distr()`, which allows fitting these two distribution for count data. In this case, either randomness assumption (Poisson distributions) or aggregation assumption (negative binomial) are made, and then, a goodness-of-fit comparison of both distributions is performed using a log-likelihood ratio test. The function requires a data frame created using the `count()` function where the number of infection units is designated as `i`. It won't work with a single vector of numbers. We create the data frame using:
 
 ```{r}
 #| warning: false
@@ -973,6 +1026,7 @@ df |>
   ggplot(aes(category, value, fill = pattern)) +
   geom_col(position = "dodge", width = 2) +
   scale_fill_manual(values = c("gray70", "darkred", "steelblue")) +
+  theme_r4pde()+
   theme(legend.position = "top")
 ```
 
@@ -1068,4 +1122,8 @@ calpha.test(t)
 
 #### Binary power law
 
-When we have a collection of incidence data sets at the sampling unit scale the binary form of the power law can be used to assess the overall degree of heterogeneity. This spatial analysis method describes the relationship between the observed variance of diseased individuals within a data set and the corresponding variance under the assumption that the data have a random distribution distribution (i.e., Binomial for proportion data).
+When dealing with incidence data sets at the sampling unit scale, one often aims to discern patterns or tendencies in the data, especially with regards to the distribution of diseased individuals. The binary form of the power law is a statistical method used to assess the overall degree of heterogeneity in such data sets. In essence, this method compares the observed variance in the number of diseased individuals in the data set to the variance one would expect under a random distribution.
+
+For incidence data, which deals with proportions, the expected random distribution is typically the Binomial distribution. The Binomial distribution is a discrete probability distribution that describes the number of successes in a fixed number of binary experiments. In the context of disease incidence, a "success" can be interpreted as the occurrence of a disease in a given sampling unit.
+
+By comparing the observed variance to the variance under the Binomial distribution, researchers can determine if the disease is spreading in a manner that is consistent with random chance, or if there are significant deviations that might suggest other underlying factors at play.
