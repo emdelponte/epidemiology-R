@@ -4,11 +4,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
-
-A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space and the choice of the methods depends on the question, the nature of the data and scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected.
+A range of techniques, most based on statistical tests, can be used to detect deviations from randomness in space. The choice of the methods depends on the question, the nature of the data and scale of observation. Usually, more than one test is applied for the same or different scales of interest depending on how the data are collected.
 
 The several exploratory or inferential methods can be classified based on the spatial scale and type of data (binary, count, etc.) collected, but mainly if the spatial location of the unit is known (mapped) or not known (sampled). Following @madden2007, two major groups can be formed. The first group uses intensively mapped data for which the location \[x,y\] of the sampling unit is known. Examples of data include binary data (plant is infected or not infected) in planting row, point pattern (spatial arrangements of points in a 2-D space) and quadrat data (grids are superimposed on point pattern data). The second group is the sparsely sampled data in the form of count or proportion (incidence) data for which the location is not known or, if known, not taken into account in the analysis.
 
@@ -84,191 +80,12 @@ The `doublets.test()` function of the *r4pde* package calculates the doublets an
 doublets.test(row1$y1)
 ```
 
-#### Foci analysis
-
-The Analysis of Foci Structure and Dynamics (AFSD), introduced by [@nelson1996simple] and further expanded by [@laranjeira1998dinamica], was used in several studies on citrus diseases in Brazil. In this analysis, the data come from incidence maps where both the diseased and no-diseased trees are mapped in the 2D plane [@jesusjunior2004; @laranjeira2004].
-
-Here is an example of an incidence map with four foci (adapted from [@laranjeira1998dinamica]). The data is organized in the wide format where the first column x is the index for the row and each column is the position of the plant within the row. The 0 and 1 represent the non-diseased and diseased plant, respectively.
-
-```{r}
-foci <- tibble::tribble(
-           ~x, ~`1`, ~`2`, ~`3`, ~`4`, ~`5`, ~`6`, ~`7`, ~`8`, ~`9`,
-           1,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           2,   1,   1,   1,   0,   0,   0,   0,   1,   0,
-           3,   1,   1,   1,   0,   0,   0,   1,   1,   1,
-           4,   0,   1,   1,   0,   0,   0,   0,   1,   0,
-           5,   0,   1,   1,   0,   0,   0,   0,   0,   0,
-           6,   0,   0,   0,   1,   0,   0,   0,   0,   0,
-           7,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           8,   0,   0,   0,   0,   0,   0,   0,   0,   0,
-           9,   0,   0,   0,   0,   0,   1,   0,   1,   0,
-          10,   0,   0,   0,   0,   0,   0,   1,   0,   0,
-          11,   0,   1,   0,   0,   0,   1,   0,   1,   0,
-          12,   0,   0,   0,   0,   0,   0,   0,   0,   0
-          )
-
-```
-
-Since the data frame is in the wide format, we need to reshape it to the long format using `pivot_longer` function of the *tidyr* package before plotting using *ggplot2* package.
-
-```{r}
-library(tidyr)
-
-foci2 <- foci |> 
-  pivot_longer(2:10, names_to = "y", values_to = "i")
-foci2
-
-```
-
-Now we can make the plot.
-
-```{r}
-#| warning: false
-#| message: false
-#| label: fig-foci1
-#| fig-cap: "Examples of foci of plant diseases - see text for description"
-library(ggplot2)
-foci2 |> 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile(color = "black")+
-  scale_fill_manual(values = c("grey96", "grey20"))+
-  theme_void()+
-  coord_fixed()+
-  theme(legend.position = "none")
-```
-
-In the above plot, the upper left focus is composed of four diseased plants with a pattern of vertical and horizontal proximity to the central unit (or the Rook's case). The upper right focus, also with four diseased plants denotes a pattern of longitudinal proximity to the central unit (or the Bishop's case). The lower left focus is composed of 11 diseased plants with 4 rows and 6 columns occupied by the focus; the shape index of the focus (SIF) is 1.25 and the compactness index of the focus (CIF) is 0.55. The lower right is a single-unit focus.
-
-In this analysis, several statistics can be summarized, both at the single focus and averaging across all foci in the area, including:
-
--   Number of foci (NF) and number of single focus (NSF)
-
--   To compare maps with different number of plants, NF and NSF can be normalized to 1000 plants as NF1000 and NSF1000
-
--   Number of plants in each focus i (NPFi)
-
--   Maximum number of rows of the focus i (rfi) and maximum number of columns of the focus i (cfi)
-
--   Mean shape index of foci (meanSIF = \[∑(fri / cfi)\]/NF), where SIF values equal to 1.0 indicate isodiametrical foci; values greater than 1.0 indicate foci with greater length in the direction between the planting rows and values less than 1 indicate foci with greater length in the direction of the planting row.
-
--   Mean compactness index of foci (meanCIF = \[∑(NPFi/rfi\*cfi)\]/NF), where CIF values close to 1.0 indicate a more compact foci, that is, greater aggregation and proximity among all the plants belonging to the focus
-
-We can obtain the above-mentioned foci statistics using the `AFSD` function of the *r4pde* package. Let's calculate for the foci2 dataset already loaded, but first we need to check whether all variables are numeric or integer.
-
-```{r}
-
-str(foci2) # y was not numeric
-foci2$y <- as.integer(foci2$y) # transform to numeric
-
-library(r4pde)
-result_foci <- AFSD(foci2)
-  
-```
-
-The AFSD function returns a list of three data frames. The first is a summary statistics of this analysis, together with the disease incidence (DIS_INC), for the data frame in analysis.
-
-```{r}
-knitr::kable(result_foci[[1]])
-```
-
-The second object in the list is a data frame with statistics at the focus level, including the number of rows and columns occupied by each focus as well as the two indices for each focus: shape and compactness.
-
-```{r}
-knitr::kable(result_foci[[2]])
-```
-
-The third object is the original data frame amended with the id for each focus which can be plotted and labelled (the focus ID) using the `plot_AFSD()` function.
-
-```{r}
-foci_data <- result_foci[[3]]
-DT::datatable(foci_data)
-```
-
-The plot shows the ID for each focus.
-
-```{r}
-plot_AFSD(foci_data)+
-  theme_bw()
-  
-```
-
-We will now analyse an actual data set from the *epiphy* package. The data describe the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the dataset. We will work with the data from 1928 when 6 assessments were made in time. We will first work with time 1 by using `filter()` function of the *dplyr* package.
-
-```{r}
-#| warning: false
-#| message: false
-
-library(epiphy)
-tswv_1928 <- tomato_tswv$field_1928
-df1 <- tswv_1928 |>
-  filter(t == 1) |> # filter time 1
-  select(x, y, i) # select only three variables
-```
-
-Follows the incidence map of the area at time 1.
-
-```{r}
-df1 |> 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile(color = "black")+
-  theme_void()+
-  scale_fill_grey(start = 0.8, end = 0.2)+
-  coord_fixed()+
-  theme(legend.position = "none")
-```
-
-Now we can run the AFSD function and obtain the statistics.
-
-```{r}
-result_df1 <- AFSD(df1)
-
-knitr::kable(result_df1[[1]])
-```
-
-This analysis is usually applied to multiple maps and the statistics are visually related to the incidence in the area in a scatter plot. Let's calculate the statistics for all five times of the data frame where we will keep now the time variable in the dataframe and split it by time before applying the function. We can do it using the `map` function of the *purrr* package.
-
-```{r}
-library(purrr)
-
-df_all <- tomato_tswv$field_1928
-
-# Split the dataframe by 'time'
-df_split <- split(df_all, df_all$t)
-
-# Apply the AFSD function to each split dataframe
-results <- map(df_split, AFSD)
-
-
-```
-
-We can check the summary results for time 2 and time 3.
-
-```{r}
-time2 <- data.frame(results[[2]][1])
-knitr::kable(time2)
-
-time3 <- data.frame(results[[3]][1])
-knitr::kable(time3)
-
-# Plot the results to see the two foci in time 1
-plot_AFSD(results[[1]][[3]])+
-  theme_void()+
-  coord_fixed()
-
-# Plot time 2
-plot_AFSD(results[[2]][[3]])+
-  theme_void()+
-  coord_fixed()
-
-
-
-```
 
 #### Join count
 
 In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified in the test. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
 
-In R, we can use the `join.count()` function of the *spdep* package to perform a joint count test. First, we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
+In R, we can use the `join.count()` function of the {spdep} package to perform a joint count test. First, we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
 
 ```{r}
 S2 <- c(1,0,1,1,0,
@@ -282,7 +99,7 @@ Visualize the two-dimensional array:
 
 ```{r}
 #| label: fig-joincount1
-#| fig-cap: "Visualization of a matrix of presence or absence data representing a disease spatial pattern"
+#| fig-cap: "Visualization of a matrix of presence/absence data representing a disease spatial pattern"
 # Convert to raster 
 mapS2 <- terra::rast(matrix(S2, 5 , 5))
 # Convert to data frame
@@ -291,6 +108,7 @@ mapS3 |>
   ggplot(aes(x, y, label = lyr.1, fill = factor(lyr.1))) +
   geom_tile(color = "white", size = 0.5) +
   theme_void() +
+  coord_fixed()+
   labs(fill = "Status") +
   scale_fill_manual(values = c("gray70", "darkred"))+
   theme(legend.position = "top")
@@ -360,6 +178,7 @@ tswv_1929 |>
   scale_fill_manual(values = c("gray70", "darkred")) +
   facet_wrap( ~ t) +
   labs(fill = "Status")+
+  theme_r4pde(font_size =12)+
   theme(legend.position = "top")
 ```
 
@@ -408,11 +227,195 @@ joincount.test(factor(S3),
                 nb2listw(nb1))
 ```
 
+#### Foci analysis
+
+The Analysis of Foci Structure and Dynamics (AFSD), introduced by [@nelson1996simple] and further expanded by [@laranjeira1998dinamica], was used in several studies on citrus diseases in Brazil. In this analysis, the data come from incidence maps where both the diseased and no-diseased trees are mapped in the 2D plane [@jesusjunior2004; @laranjeira2004].
+
+Here is an example of an incidence map with four foci (adapted from [@laranjeira1998dinamica]). The data is organized in the wide format where the first column x is the index for the row and each column is the position of the plant within the row. The 0 and 1 represent the non-diseased and diseased plant, respectively.
+
+```{r}
+foci <- tibble::tribble(
+           ~x, ~`1`, ~`2`, ~`3`, ~`4`, ~`5`, ~`6`, ~`7`, ~`8`, ~`9`,
+           1,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           2,   1,   1,   1,   0,   0,   0,   0,   1,   0,
+           3,   1,   1,   1,   0,   0,   0,   1,   1,   1,
+           4,   0,   1,   1,   0,   0,   0,   0,   1,   0,
+           5,   0,   1,   1,   0,   0,   0,   0,   0,   0,
+           6,   0,   0,   0,   1,   0,   0,   0,   0,   0,
+           7,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           8,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+           9,   0,   0,   0,   0,   0,   1,   0,   1,   0,
+          10,   0,   0,   0,   0,   0,   0,   1,   0,   0,
+          11,   0,   1,   0,   0,   0,   1,   0,   1,   0,
+          12,   0,   0,   0,   0,   0,   0,   0,   0,   0
+          )
+
+```
+
+Since the data frame is in the wide format, we need to reshape it to the long format using `pivot_longer` function of the *tidyr* package before plotting using *ggplot2* package.
+
+```{r}
+library(tidyr)
+
+foci2 <- foci |> 
+  pivot_longer(2:10, names_to = "y", values_to = "i")
+foci2
+
+```
+
+Now we can make the plot.
+
+```{r}
+#| warning: false
+#| message: false
+#| label: fig-foci1
+#| fig-cap: "Examples of foci of plant diseases - see text for description"
+library(ggplot2)
+foci2 |> 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile(color = "black")+
+  scale_fill_manual(values = c("grey70", "darkred"))+
+  theme_void()+
+  coord_fixed()+
+  theme(legend.position = "none")
+```
+
+In the above plot, the upper left focus is composed of four diseased plants with a pattern of vertical and horizontal proximity to the central unit (or the Rook's case). The upper right focus, also with four diseased plants denotes a pattern of longitudinal proximity to the central unit (or the Bishop's case). The lower left focus is composed of 11 diseased plants with 4 rows and 6 columns occupied by the focus; the shape index of the focus (SIF) is 1.25 and the compactness index of the focus (CIF) is 0.55. The lower right is a single-unit focus.
+
+In this analysis, several statistics can be summarized, both at the single focus and averaging across all foci in the area, including:
+
+-   Number of foci (NF) and number of single focus (NSF)
+
+-   To compare maps with different number of plants, NF and NSF can be normalized to 1000 plants as NF1000 and NSF1000
+
+-   Number of plants in each focus i (NPFi)
+
+-   Maximum number of rows of the focus i (rfi) and maximum number of columns of the focus i (cfi)
+
+-   Mean shape index of foci (meanSIF = \[∑(fri / cfi)\]/NF), where SIF values equal to 1.0 indicate isodiametrical foci; values greater than 1.0 indicate foci with greater length in the direction between the planting rows and values less than 1 indicate foci with greater length in the direction of the planting row.
+
+-   Mean compactness index of foci (meanCIF = \[∑(NPFi/rfi\*cfi)\]/NF), where CIF values close to 1.0 indicate a more compact foci, that is, greater aggregation and proximity among all the plants belonging to the focus
+
+We can obtain the above-mentioned foci statistics using the `AFSD` function of the *r4pde* package. Let's calculate for the foci2 dataset already loaded, but first we need to check whether all variables are numeric or integer.
+
+```{r}
+#| warning: false
+#| message: false
+str(foci2) # y was not numeric
+foci2$y <- as.integer(foci2$y) # transform to numeric
+
+library(r4pde)
+result_foci <- AFSD(foci2)
+  
+```
+
+The AFSD function returns a list of three data frames. The first is a summary statistics of this analysis, together with the disease incidence (DIS_INC), for the data frame in analysis.
+
+```{r}
+knitr::kable(result_foci[[1]])
+```
+
+The second object in the list is a data frame with statistics at the focus level, including the number of rows and columns occupied by each focus as well as the two indices for each focus: shape and compactness.
+
+```{r}
+knitr::kable(result_foci[[2]])
+```
+
+The third object is the original data frame amended with the id for each focus which can be plotted and labelled (the focus ID) using the `plot_AFSD()` function.
+
+```{r}
+foci_data <- result_foci[[3]]
+DT::datatable(foci_data)
+```
+
+The plot shows the ID for each focus.
+
+```{r}
+plot_AFSD(foci_data)+
+  theme_light()
+  
+  
+```
+
+We will now analyse an actual data set from the *epiphy* package. The data describe the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the data set. We will work with the data from 1928 when six assessments were made in time. We will first work with time 1 by using `filter()` function of the *dplyr* package.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(epiphy)
+tswv_1928 <- tomato_tswv$field_1928
+df1 <- tswv_1928 |>
+  filter(t == 1) |> # filter time 1
+  select(x, y, i) # select only three variables
+```
+
+Follows the incidence map of the area at time 1.
+
+```{r}
+df1 |> 
+  ggplot(aes(x, y, fill = factor(i)))+
+  geom_tile(color = "black")+
+  theme_void()+
+  scale_fill_manual(values = c("grey70", "darkred"))+
+  coord_fixed()+
+  theme(legend.position = "none")
+```
+
+Now we can run the AFSD function and obtain the statistics.
+
+```{r}
+result_df1 <- AFSD(df1)
+
+knitr::kable(result_df1[[1]])
+```
+
+This analysis is usually applied to multiple maps and the statistics are visually related to the incidence in the area in a scatter plot. Let's calculate the statistics for all five times of the data frame where we will keep now the time variable in the dataframe and split it by time before applying the function. We can do it using the `map` function of the *purrr* package.
+
+```{r}
+library(purrr)
+
+df_all <- tomato_tswv$field_1928
+
+# Split the dataframe by 'time'
+df_split <- split(df_all, df_all$t)
+
+# Apply the AFSD function to each split dataframe
+results <- map(df_split, AFSD)
+
+
+```
+
+We can check the summary results for time 2 and time 3.
+
+```{r}
+time2 <- data.frame(results[[2]][1])
+knitr::kable(time2)
+
+time3 <- data.frame(results[[3]][1])
+knitr::kable(time3)
+
+# Plot the results to see the two foci in time 1
+plot_AFSD(results[[1]][[3]])+
+  theme_void()+
+  coord_fixed()
+
+# Plot time 2
+plot_AFSD(results[[2]][[3]])+
+  theme_void()+
+  coord_fixed()
+
+
+
+```
+
+
+
 ### Point pattern analysis
 
-Point pattern analysis involves the study of the spatial arrangement of points in a two-dimensional space. In its simplest form, one can visualize this as a scatterplot on a map, where each point represents an event, object, or entity in space. For example, the points might represent the locations of diseased plants in a population.
+Point pattern analysis involves the study of the spatial arrangement of points in a two-dimensional space. In its simplest form, one can visualize this as a scatter plot on a map, where each point represents an event, object, or entity in space. For example, the points might represent the locations of diseased plants in a population.
 
-The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatterplot but with the provision that the axes are equally scaled. However, while the visualization can provide a basic understanding of the spatial distribution, the real power of point pattern analysis lies in the quantitative methods that allow one to analyze the distribution in a more detailed and systematic way. These methods help to identify whether the points are randomly distributed, clustered (points are closer together than expected by chance), or regularly spaced (points are more evenly spaced than expected by chance). This analysis can provide insights into underlying processes that might explain the observed patterns.
+The easiest way to visualize a 2-D point pattern is to produce a map of the locations, which is simply a scatter plot but with the provision that the axes are equally scaled. However, while the visualization can provide a basic understanding of the spatial distribution, the real power of point pattern analysis lies in the quantitative methods that allow one to analyze the distribution in a more detailed and systematic way. These methods help to identify whether the points are randomly distributed, clustered (points are closer together than expected by chance), or regularly spaced (points are more evenly spaced than expected by chance). This analysis can provide insights into underlying processes that might explain the observed patterns.
 
 Let's work with two simulated datasets that were originally generated to produced a random or an aggregated (clustered) pattern.
 
@@ -425,7 +428,7 @@ rand <- SpatialRandom
 aggr <- SpatialAggregated
 ```
 
-In order to create a polygon with the most extreme points, we can use the `chull()` function to find the convex hull, which will give us the indices of the points that form the smallest convex polygon that contains all the points in our dataset.
+In order to create a polygon with the most extreme points, we can use the `chull()` function to find the convex hull, which will give us the indices of the points that form the smallest convex polygon that contains all the points in our data set.
 
 ```{r}
 hull_indices_rand <- chull(rand)
@@ -441,8 +444,6 @@ aggr$hull[hull_indices_aggr] <- TRUE
 
 ```
 
-```{r}
-```
 
 The two dataframes has two variables each. Let's produce 2-D map.
 
@@ -481,14 +482,16 @@ library(patchwork)
 prand | paggr
 ```
 
-#### Quadrat based
+#### Quadrat count
 
-Quadrat count analysis for random data
+In the Quadrat Count method, the study region is divided into a regular grid of smaller, equally-sized rectangular or square subregions known as quadrats. For each quadrat, the number of points falling inside it is counted. If the points are uniformly and independently distributed across the region (i.e., random), then the number of points in each quadrat should follow a Poisson distribution. If the variance of the counts is roughly equal to the mean of the counts, then the pattern is considered to be random. If the variance is greater than the mean, it suggests that the pattern is aggregated or clumped. 
+
+Using the {spatstats} package, we first need to create a ppp object which represents a point pattern. This is the primary object type in spatstat for point patterns.
 
 ```{r}
 #| warning: false
 #| message: false
-#| 
+
 library(spatstat)
 ### Create window 
 window_rand <- ripras(rand$x, rand$y)
@@ -496,26 +499,33 @@ window_rand <- ripras(rand$x, rand$y)
 # create the point pattern object
 ppp_rand <- ppp(rand$x, rand$y, window_rand)
 plot(ppp_rand)
+```
 
-## Quadrat count 10 x 10
-qq <- quadratcount(ppp_rand,8,8, keepempty=TRUE) 
+Using the `quadratcount` function, we can divide the study region into a grid and count the number of points in each cell:
+
+```{r}
+## Quadrat count 8 x 8
+qq <- quadratcount(ppp_rand,8,8, keepempty = TRUE) 
 
 # plot the quadrat count
 plot(qq)
+```
 
+To determine whether the observed distribution of points is consistent with a random Poisson process, we can use the`quadrat.test` function:
+
+```{r}
 # Quadrat test
 qt <- quadrat.test(qq, alternative="clustered", method="M")
 qt
-
-
 ```
 
-Quadrat count analysis for aggregated data
+The result will give a Chi-squared statistic and a p-value. If the p-value is very low, then the pattern is likely not random. Keep in mind that the choice of the number and size of quadrats can affect the results. It's often helpful to try a few different configurations to ensure robust conclusions.
+
+Lets repeat this procedure for the situation of aggregated data.
 
 ```{r}
 #| warning: false
 #| message: false
-#| 
 
 ### Create window 
 window_aggr <- ripras(aggr$x, aggr$y)
@@ -524,7 +534,7 @@ window_aggr <- ripras(aggr$x, aggr$y)
 ppp_aggr <- ppp(aggr$x, aggr$y, window_aggr)
 plot(ppp_aggr)
 
-## Quadrat count 10 x 10
+## Quadrat count 8 x 8
 qq_aggr <- quadratcount(ppp_aggr,8,8, keepempty=TRUE) 
 
 # plot the quadrat count
