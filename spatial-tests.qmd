@@ -16,29 +16,28 @@ In this situation the individual plants are mapped, meaning that their relative 
 
 #### Runs test
 
-A **run** is defined as a succession of *one or more* diseased (D) or healthy (H) plants, which are followed and preceded by a plant of the other disease status or no plant at all. In the example below, we can count 13 runs.
+A **run** is defined as a succession of *one or more* diseased (D) or healthy (H) plants, which are followed and preceded by a plant of the other disease status or no plant at all [@madden1982]. In the example below, we can count 13 runs.
 
-![Example for the computation of the number of ordinary runs in a sequence of binary data](imgs/runs.png){#fig-runs1 fig-align="center" width="391"}
+![Example for the computation of the number of ordinary runs in a sequence of binary data](imgs/runs.png){#fig-runs1 fig-align="center" width="503"}
 
 There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
 
-Let's create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 20 plants and assign it to `y`. For plotting purposes, we make a dataframe for more complete information.
+Let's create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 32 plants and assign it to `y`. For plotting purposes, we make a data frame for more complete information.
 
 ```{r}
 #| warning: false
 #| message: false
 library(tidyverse) 
-theme_set(theme_bw(base_size = 16))
 ```
 
 ```{r}
-y1 <- c(1,1,1,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,1,1)
-x1 <- c(1:20) # position of each plant
+y1 <- c(1,1,1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,0,0,0)
+x1 <- c(1:32) # position of each plant
 z1 <- 1
 row1 <- data.frame(x1, y1, z1) # create a dataframe
 ```
 
-We can then visualize the series using ggplot and count the number of runs as 7, aided by the color used to identify a run.
+We can then visualize the series using ggplot and count the number of runs as 7, aided by the different colors used to identify a run.
 
 ```{r}
 #| warning: false
@@ -48,7 +47,7 @@ We can then visualize the series using ggplot and count the number of runs as 7,
 
 row1 |>
   ggplot(aes(x1, z1, label = x1, color = factor(y1))) +
-  geom_point(shape = 15, size = 7) +
+  geom_point(shape = 15, size = 5) +
   theme_void() +
   scale_x_continuous(breaks = max(z1)) +
   scale_color_manual(values = c("gray70", "darkred")) +
@@ -66,13 +65,20 @@ library(r4pde)
 oruns.test(row1$y1)
 ```
 
+Alternatively, we can use the `runs.test` function of the {randtests} package. Note that because we have binary (0 or 1) data, we need to set the threshold to 0.5 and the alternative to "less" (or just "l" in the function's argument).
+
+```{r}
+library(randtests)
+runs.test(row1$y1, alternative = "l", threshold = 0.5)
+```
+
 #### Doublets
 
-Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the field. If the observed number is greater than the expected number, contagion within the field is suspected. The example below shows 8 doublets.
+Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the field [@madden1982]. If the observed number is greater than the expected number, contagion within the field is suspected. The example below shows 8 doublets.
 
-![Example for the computation of the number of doublets (DD) in a sequence of binary data](imgs/doublets.png){#fig-doublet1 fig-align="center" width="385"}
+![Example for the computation of the number of doublets (DD) in a sequence of binary data](imgs/doublets.png){#fig-doublet1 fig-align="center" width="470"}
 
-The `doublets.test()` function of the *r4pde* package calculates the doublets and associated statistics.
+The `doublets.test()` function of the {r4pde} package calculates the doublets and associated statistics. The result below confirms the one obtained using the runs test.
 
 ```{r}
 doublets.test(row1$y1)
@@ -691,7 +697,7 @@ plot_quantums(oring_envelope, ylab = "O-ring")+
 
 If the data are intensively mapped, meaning that the spatial locations of the sampling units are known, we are not limited to analyse presence/absence (incidence) only data at the unit level. The sampling units may be quadrats where the total number of plants and the number of disease plants (or number of pathogen propagules) are known. Alternatively, it could be a continuous measure of severity. The question here, similar to the previous section, is whether a plant being diseased makes it more (or less) likely that neighboring plants will be diseased. If that is the case, diseased plants are exhibiting spatial autocorrelation. The most common methods are:
 
--    Autocorrelation (known as Moran's I)
+-   Autocorrelation (known as Moran's I)
 
 -   Semivariance
 
