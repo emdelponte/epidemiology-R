@@ -26,12 +26,12 @@ Now, the plot to visualize the random pattern.
 #| message: false
 
 library(tidyverse) 
-library(ggthemes)
-theme_set(theme_few())
+library(r4pde)
+theme_set(theme_r4pde())
 
 pr <- dat |> # R base pipe operator
   ggplot(aes(x, y))+
-  theme_grey(base_size = 16)+
+  theme_r4pde(font_size = 12)+
   geom_point(size =3, 
              color = "darkred")+
   ylim(0,30)+
@@ -57,7 +57,7 @@ This should give us an aggregated pattern.
 #| fig-cap: "Aggregated pattern of a plant disease epidemic"
 pag <- dat2 |>
   ggplot(aes(x, y))+
-  theme_grey(base_size = 16)+
+  theme_r4pde(font_size = 12)+
   geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
@@ -79,7 +79,7 @@ dat3 <- data.frame(x, y)
 
 preg <- dat3 |>
   ggplot(aes(x, y))+
-  theme_grey(base_size = 16)+
+  theme_r4pde(font_size = 12)+
   geom_point(size = 3, color = "darkred")+
   ylim(0,30)+
   xlim(0,30)+
@@ -92,7 +92,8 @@ preg
 ```{r}
 #| warning: false
 #| message: false
-
+#| label: fig-all
+#| fig-cap: "Patterns of a plant disease epidemic"
 library(patchwork)
 preg + pr + pag
 ggsave("imgs/spatial.png", width = 10, height = 4)
@@ -114,15 +115,36 @@ tswv_1928 <- tomato_tswv$field_1928
 tswv_1928 |>
   filter(variety == "Burwood-Prize"&
          irrigation == "trenches") |> 
-  ggplot(aes(x, y, color = factor(i)))+
-  geom_point(aes(group = seq_along(factor(t))), size =2)+
+  ggplot(aes(x, y, fill= factor(i)))+
+  geom_tile(color = "black")+
   coord_fixed()+
-  scale_color_manual(values = c("grey70", "darkred"))+
-  labs(color = "Status", title = "")+
+  scale_fill_manual(values = c("grey70", "darkred"))+
+  labs(fill = "Status", title = "")+
   theme_void()+
   theme(legend.position = "bottom")+
   facet_wrap(~ t, nrow =1)
+  
 ```
+
+In this other example, the severity of gummy stebem blight (*Didymella bryoniae)* of watermelon [@café-filho2010] was recorded in a 0-4 ordinal scale over time (days after planting) and space, in a naturally-infected rain-fed commercial field, to evaluate the effect of the distance of initial inoculum on the intensity of the disease. The dataset is included in the {r4pde} package that accompanies the book.
+
+```{r}
+
+library(r4pde)
+df <- DidymellaWatermellon 
+
+df |> 
+  ggplot(aes(NS_col, EW_row, fill = severity))+
+  coord_fixed()+
+  geom_tile (color = "white")+
+  theme_void()+
+  theme(legend.position = c(0.9,0.25))+
+ scale_fill_gradient(low = "grey70", high = "darkred")+
+  facet_wrap(~ dap, ncol = 4)
+
+```
+
+We can see that the disease spread from the initial focus detected at 50 days after planting, taking the entire field 37 days later with various levels of severity.
 
 ## Simulating spatial patterns
 
