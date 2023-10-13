@@ -137,7 +137,7 @@ chiang |>
 In the qualitative ordinal scale, each class provides a description of the symptoms. An example is the ordinal 0-3 scale for rating eyespot of wheat developed by [@scott1974].
 
 | Class | Description                                                                                                 |
-|------------------------|------------------------------------------------|
+|------------------------|-----------------------------------------------|
 | 0     | uninfected                                                                                                  |
 | 1     | slight eyespot (or or more small lesion occupying in total less than half of the circumference of the stem) |
 | 2     | moderate eyespot (one or more lesions occupying at least half the circumference of the stem)                |
@@ -236,9 +236,7 @@ DSI2(ratings2$class, ratings2$n, 6)
 
 #### Example data
 
-We will use a data set that was made available in an article on the use of survival analysis as a basis to test hypothesis when using quantitative ordinal scales [@chiang2023a]. The data and codes used in the paper can be found in this GitHub [repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens).
-
-The data is structured as four treatments with 30 ratings that vary from 1 to 6 score of the H-B scale.
+We will use a dataset made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales [@chiang2023a]. The data and codes used in the paper can be found in the specified GitHub [repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens). The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.
 
 ```{r}
 
@@ -257,7 +255,7 @@ dat_ordinal <- tibble::tibble(
 dat_ordinal
 ```
 
-Because the ordinal response was obtained using an interval scale, the mid-point of the score was also obtained. We enter the data below and combine the two data frames.
+Because the ordinal response was obtained using an interval scale, the mid-point of the score was also obtained.
 
 ```{r}
 # Create the vectors for the treatments
@@ -268,18 +266,19 @@ trDm <- c(18.5,18.5,9,18.5,18.5,37.5,37.5,9,37.5,9,4.5,18.5,18.5,37.5,9,37.5,
        18.5,37.5,18.5,9,18.5,18.5,18.5,4.5,18.5,37.5,18.5,18.5,18.5,37.5)
 
 # Create the tibble
-dat_ordinal_mp <- tibble(
+dat_ordinal_mp <- tibble::tibble(
   treatment = rep(c("A", "B", "C", "D"), each = 30),
   midpoint = c(trAm, trBm, trCm, trDm)
 )
-head(dat_ordinal_mp)
+dat_ordinal_mp
 
 
 ```
 
-Let's visualize the data.
+The visualization using box-plots suggests differences between the treatments.
 
 ```{r}
+
 p_score <- dat_ordinal |> 
   ggplot(aes(treatment, score))+
   geom_boxplot()+
@@ -294,6 +293,67 @@ library(patchwork)
 p_score | p_mp
 ```
 
+#### Parametric (using mid-point)
+
+Parametric methods can be employed when analyzing data, provided that the underlying assumptions of these methods are satisfied. For data that is based on ordinal scores, one way to apply parametric methods is to convert these scores into the mid-points of their corresponding percent scales. Once converted, the data is better suited for parametric analyses. Among the available techniques, the most frequently utilized is the application of an ANOVA (Analysis of Variance) model. This model is particularly useful for testing the null hypothesis, which posits that there are no significant differences among the treatments being studied.
+
+We can use the `aov` function to fit the model and check the parametric assumptions using the `DHARMa` package.
+
+```{r}
+#| warning: false
+#| message: false
+
+m1_mp <- aov(midpoint ~ treatment, data = dat_ordinal_mp)
+# normality and homocedasticity tests
+library(DHARMa)
+plot(simulateResiduals(m1_mp))
+```
+
+Since both normality and homoscedasticity assumptions are violated in our initial model, we will halt further analysis using this model. Instead, we will explore an alternative approach that includes data transformation (logit).
+
+```{r}
+#| warning: false
+#| message: false
+
+# data transformation
+library(car)
+# transform midpoint to proportion
+dat_ordinal_mp$midpoint2 <- dat_ordinal_mp$midpoint/100
+
+m2_mp <- aov(logit(midpoint2) ~ treatment, data = dat_ordinal_mp)
+plot(simulateResiduals(m2_mp)) # assumptions are met
 
 
 
+```
+
+Now that both assumptions have been met, we can proceed to use a means comparison test to determine which treatments differ from one another, with the assistance of the {emmeans} package. It's important to note that the results are displayed in the original scale after transformation, specifically when using `type = "response`.
+
+```{r}
+library(emmeans)
+means_m2_mp <- emmeans(m2_mp, "treatment", type = "response")
+means_m2_mp
+```
+
+The best way to visualize the differences between treatments is using the `pwpm` function to display a matrix of estimates, pairwise differences, and P values. Most commonly, the compact letter display is used for means comparison.
+
+```{r}
+#| warning: false
+#| message: false
+
+# matrix
+pwpm(means_m2_mp)
+
+# compact letter display
+library(multcomp)
+cld(means_m2_mp)
+```
+
+#### Non-parametric (ordinal score)
+
+Because ordinal score data generally do not meet the assumptions of traditional parametric statistical methods, non-parametric methods can be considered as an alternative. These methods do not assume a specific distribution for the underlying population and are more flexible in handling the intricacies of ordinal data. Such methods have been proposed for analyzing ordinal data in plant pathology [@shah2004]. For our example, when more than two treatments are involved, a Kruskal-Wallis test can be utilized. The `kruskal` function of the {agricolae} package does the job we want. Note that in this case we use the ordinal score directly and not the mid-point value.
+
+```{r}
+library(agricolae)
+kruskal(dat_ordinal$score, dat_ordinal$treatment, console = TRUE)
+```

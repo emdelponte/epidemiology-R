@@ -352,6 +352,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#analysis-of-ordinal-data" id="toc-analysis-of-ordinal-data" class="nav-link" data-scroll-target="#analysis-of-ordinal-data"><span class="header-section-number">3.3</span> Analysis of ordinal data</a>
   <ul>
   <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data"><span class="header-section-number">3.3.0.1</span> Example data</a></li>
+  <li><a href="#parametric-using-mid-point" id="toc-parametric-using-mid-point" class="nav-link" data-scroll-target="#parametric-using-mid-point"><span class="header-section-number">3.3.0.2</span> Parametric (using mid-point)</a></li>
+  <li><a href="#non-parametric-ordinal-score" id="toc-non-parametric-ordinal-score" class="nav-link" data-scroll-target="#non-parametric-ordinal-score"><span class="header-section-number">3.3.0.3</span> Non-parametric (ordinal score)</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-ordinal.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -986,8 +988,7 @@ Controversy of the H-B scale
 <h2 data-number="3.3" class="anchored" data-anchor-id="analysis-of-ordinal-data"><span class="header-section-number">3.3</span> Analysis of ordinal data</h2>
 <section id="example-data" class="level4" data-number="3.3.0.1">
 <h4 data-number="3.3.0.1" class="anchored" data-anchor-id="example-data"><span class="header-section-number">3.3.0.1</span> Example data</h4>
-<p>We will use a data set that was made available in an article on the use of survival analysis as a basis to test hypothesis when using quantitative ordinal scales <span class="citation" data-cites="chiang2023a">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>)</span>. The data and codes used in the paper can be found in this GitHub <a href="https://github.com/StatisticalMethodsinPlantProtection/CompMuCens">repository</a>.</p>
-<p>The data is structured as four treatments with 30 ratings that vary from 1 to 6 score of the H-B scale.</p>
+<p>We will use a dataset made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales <span class="citation" data-cites="chiang2023a">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>)</span>. The data and codes used in the paper can be found in the specified GitHub <a href="https://github.com/StatisticalMethodsinPlantProtection/CompMuCens">repository</a>. The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-12_0ff04b7e1cc9c0c5099ea8075e8ccfe0">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the vectors for the treatments</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>trAs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">4</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">5</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">6</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">2</span>,<span class="dv">3</span>)</span>
@@ -1019,8 +1020,8 @@ Controversy of the H-B scale
 # ℹ 110 more rows</code></pre>
 </div>
 </div>
-<p>Because the ordinal response was obtained using an interval scale, the mid-point of the score was also obtained. We enter the data below and combine the two data frames.</p>
-<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-13_28ca6b0be3d83cadfd55b743ab3c5db7">
+<p>Because the ordinal response was obtained using an interval scale, the mid-point of the score was also obtained.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-13_6a07c75939be1b3d8f855222269e4858">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the vectors for the treatments</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>trAm <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="fl">1.5</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="dv">9</span>,<span class="fl">1.5</span>,<span class="fl">18.5</span>,<span class="fl">1.5</span>,<span class="fl">1.5</span>,<span class="fl">4.5</span>,<span class="dv">9</span>,<span class="fl">4.5</span>,<span class="fl">1.5</span>,<span class="fl">1.5</span>,<span class="fl">37.5</span>,<span class="fl">1.5</span>,<span class="fl">1.5</span>,<span class="dv">9</span>,<span class="fl">1.5</span>,<span class="dv">9</span>,<span class="fl">1.5</span>,<span class="dv">9</span>,<span class="fl">18.5</span>,<span class="fl">4.5</span>,<span class="dv">9</span>,<span class="fl">1.5</span>,<span class="fl">1.5</span>,<span class="fl">4.5</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>trBm <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fl">18.5</span>,<span class="fl">4.5</span>,<span class="fl">1.5</span>,<span class="dv">9</span>,<span class="dv">9</span>,<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="dv">9</span>,<span class="fl">37.5</span>,<span class="dv">9</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">1.5</span>,<span class="fl">37.5</span>,<span class="fl">1.5</span>, <span class="fl">4.5</span>,<span class="fl">18.5</span>,<span class="fl">1.5</span>,<span class="fl">37.5</span>,<span class="dv">9</span>,<span class="fl">4.5</span>,<span class="fl">1.5</span>,<span class="fl">18.5</span>,<span class="fl">4.5</span>,<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="fl">18.5</span>)</span>
@@ -1029,25 +1030,30 @@ Controversy of the H-B scale
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>       <span class="fl">18.5</span>,<span class="fl">37.5</span>,<span class="fl">18.5</span>,<span class="dv">9</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">4.5</span>,<span class="fl">18.5</span>,<span class="fl">37.5</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">18.5</span>,<span class="fl">37.5</span>)</span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the tibble</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>dat_ordinal_mp <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>dat_ordinal_mp <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">treatment =</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>), <span class="at">each =</span> <span class="dv">30</span>),</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">midpoint =</span> <span class="fu">c</span>(trAm, trBm, trCm, trDm)</span>
 <span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(dat_ordinal_mp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>dat_ordinal_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 2
-  treatment midpoint
-  &lt;chr&gt;        &lt;dbl&gt;
-1 A             18.5
-2 A              9  
-3 A              1.5
-4 A             18.5
-5 A             18.5
-6 A              9  </code></pre>
+<pre><code># A tibble: 120 × 2
+   treatment midpoint
+   &lt;chr&gt;        &lt;dbl&gt;
+ 1 A             18.5
+ 2 A              9  
+ 3 A              1.5
+ 4 A             18.5
+ 5 A             18.5
+ 6 A              9  
+ 7 A              9  
+ 8 A              1.5
+ 9 A             18.5
+10 A              1.5
+# ℹ 110 more rows</code></pre>
 </div>
 </div>
-<p>Let’s visualize the data.</p>
-<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-14_171248391509aa2e961305a275e96dd9">
+<p>The visualization using box-plots suggests differences between the treatments.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-14_f5f425f74fc944d375f9143438fbbe51">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p_score <span class="ot">&lt;-</span> dat_ordinal <span class="sc">|&gt;</span> </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treatment, score))<span class="sc">+</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
@@ -1058,19 +1064,129 @@ Controversy of the H-B scale
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
 <span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
 <span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>
-Attaching package: 'patchwork'</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>The following object is masked from 'package:cowplot':
-
-    align_plots</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>p_score <span class="sc">|</span> p_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>p_score <span class="sc">|</span> p_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-ordinal_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="parametric-using-mid-point" class="level4" data-number="3.3.0.2">
+<h4 data-number="3.3.0.2" class="anchored" data-anchor-id="parametric-using-mid-point"><span class="header-section-number">3.3.0.2</span> Parametric (using mid-point)</h4>
+<p>Parametric methods can be employed when analyzing data, provided that the underlying assumptions of these methods are satisfied. For data that is based on ordinal scores, one way to apply parametric methods is to convert these scores into the mid-points of their corresponding percent scales. Once converted, the data is better suited for parametric analyses. Among the available techniques, the most frequently utilized is the application of an ANOVA (Analysis of Variance) model. This model is particularly useful for testing the null hypothesis, which posits that there are no significant differences among the treatments being studied.</p>
+<p>We can use the <code>aov</code> function to fit the model and check the parametric assumptions using the <code>DHARMa</code> package.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-15_b70e251f9f7af77818415b9a9cbf144b">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>m1_mp <span class="ot">&lt;-</span> <span class="fu">aov</span>(midpoint <span class="sc">~</span> treatment, <span class="at">data =</span> dat_ordinal_mp)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co"># normality and homocedasticity tests</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DHARMa)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(m1_mp))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-ordinal_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Since both normality and homoscedasticity assumptions are violated in our initial model, we will halt further analysis using this model. Instead, we will explore an alternative approach that includes data transformation (logit).</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-16_a179928223ec848c7bad9af4ec4fb684">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># data transformation</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(car)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># transform midpoint to proportion</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>dat_ordinal_mp<span class="sc">$</span>midpoint2 <span class="ot">&lt;-</span> dat_ordinal_mp<span class="sc">$</span>midpoint<span class="sc">/</span><span class="dv">100</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>m2_mp <span class="ot">&lt;-</span> <span class="fu">aov</span>(<span class="fu">logit</span>(midpoint2) <span class="sc">~</span> treatment, <span class="at">data =</span> dat_ordinal_mp)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="fu">simulateResiduals</span>(m2_mp)) <span class="co"># assumptions are met</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="data-ordinal_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Now that both assumptions have been met, we can proceed to use a means comparison test to determine which treatments differ from one another, with the assistance of the {emmeans} package. It’s important to note that the results are displayed in the original scale after transformation, specifically when using <code>type = "response</code>.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-17_b830e1960602a083daa9d5e2ce41123a">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(emmeans)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>means_m2_mp <span class="ot">&lt;-</span> <span class="fu">emmeans</span>(m2_mp, <span class="st">"treatment"</span>, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>means_m2_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> treatment response      SE  df lower.CL upper.CL
+ A           0.0808 0.00983 116   0.0634   0.1026
+ B           0.1248 0.01446 116   0.0989   0.1564
+ C           0.0461 0.00582 116   0.0358   0.0591
+ D           0.2071 0.02173 116   0.1674   0.2535
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale </code></pre>
+</div>
+</div>
+<p>The best way to visualize the differences between treatments is using the <code>pwpm</code> function to display a matrix of estimates, pairwise differences, and P values. Most commonly, the compact letter display is used for means comparison.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-18_861a9739cc4e67f26378a33cfb7273c4">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pwpm</span>(means_m2_mp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         A        B        C        D
+A [0.0808]   0.0530   0.0094   &lt;.0001
+B    0.617 [0.1248]   &lt;.0001   0.0085
+C    1.820    2.953 [0.0461]   &lt;.0001
+D    0.337    0.546    0.185 [0.2071]
+
+Row and column labels: treatment
+Upper triangle: P values   null = 1  adjust = "tukey"
+Diagonal: [Estimates] (response)   type = "response"
+Lower triangle: Comparisons (odds.ratio)   earlier vs. later</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># compact letter display</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(multcomp)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cld</span>(means_m2_mp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> treatment response      SE  df lower.CL upper.CL .group
+ C           0.0461 0.00582 116   0.0358   0.0591  1    
+ A           0.0808 0.00983 116   0.0634   0.1026   2   
+ B           0.1248 0.01446 116   0.0989   0.1564   2   
+ D           0.2071 0.02173 116   0.1674   0.2535    3  
+
+Confidence level used: 0.95 
+Intervals are back-transformed from the logit scale 
+P value adjustment: tukey method for comparing a family of 4 estimates 
+Tests are performed on the log odds ratio scale 
+significance level used: alpha = 0.05 
+NOTE: Compact letter displays can be misleading
+      because they show NON-findings rather than findings.
+      Consider using 'pairs()', 'pwpp()', or 'pwpm()' instead. </code></pre>
+</div>
+</div>
+</section>
+<section id="non-parametric-ordinal-score" class="level4" data-number="3.3.0.3">
+<h4 data-number="3.3.0.3" class="anchored" data-anchor-id="non-parametric-ordinal-score"><span class="header-section-number">3.3.0.3</span> Non-parametric (ordinal score)</h4>
+<p>Because ordinal score data generally do not meet the assumptions of traditional parametric statistical methods, non-parametric methods can be considered as an alternative. These methods do not assume a specific distribution for the underlying population and are more flexible in handling the intricacies of ordinal data. Such methods have been proposed for analyzing ordinal data in plant pathology <span class="citation" data-cites="shah2004">(<a href="references.html#ref-shah2004" role="doc-biblioref">Shah and Madden 2004</a>)</span>. For our example, when more than two treatments are involved, a Kruskal-Wallis test can be utilized. The <code>kruskal</code> function of the {agricolae} package does the job we want. Note that in this case we use the ordinal score directly and not the mid-point value.</p>
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-19_b3f799ab0c957c4b3b44ca41f9d15f4d">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kruskal</span>(dat_ordinal<span class="sc">$</span>score, dat_ordinal<span class="sc">$</span>treatment, <span class="at">console =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Study: dat_ordinal$score ~ dat_ordinal$treatment
+Kruskal-Wallis test's
+Ties or no Ties
+
+Critical Value: 52.34422
+Degrees of freedom: 3
+Pvalue Chisq  : 2.529543e-11 
+
+dat_ordinal$treatment,  means of the ranks
+
+  dat_ordinal.score  r
+A          52.05000 30
+B          69.58333 30
+C          29.61667 30
+D          90.75000 30
+
+Post Hoc Analysis
+
+t-Student: 1.980626
+Alpha    : 0.05
+Minimum Significant Difference: 13.1991 
+
+Treatments with the same letter are not significantly different.
+
+  dat_ordinal$score groups
+D          90.75000      a
+B          69.58333      b
+A          52.05000      c
+C          29.61667      d</code></pre>
 </div>
 </div>
 
@@ -1102,6 +1218,9 @@ Nutter, F. W., and Esker, P. D. 2006. The Role of Psychophysics in Phytopatholog
 </div>
 <div id="ref-scott1974" class="csl-entry" role="listitem">
 Scott, P. R., and Hollins, T. W. 1974. Effects of eyespot on the yield of winter wheat. Annals of Applied Biology. 78:269–279 Available at: <a href="http://dx.doi.org/10.1111/j.1744-7348.1974.tb01506.x">http://dx.doi.org/10.1111/j.1744-7348.1974.tb01506.x</a>.
+</div>
+<div id="ref-shah2004" class="csl-entry" role="listitem">
+Shah, D. A., and Madden, L. V. 2004. Nonparametric Analysis of Ordinal Data in Designed Factorial Experiments. Phytopathology®. 94:33–43 Available at: <a href="http://dx.doi.org/10.1094/PHYTO.2004.94.1.33">http://dx.doi.org/10.1094/PHYTO.2004.94.1.33</a>.
 </div>
 </div>
 </section>
