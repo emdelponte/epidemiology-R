@@ -1,12 +1,12 @@
 ---
 title: "Ordinal scales"
 editor_options: 
-  chunk_output_type: inline
+  chunk_output_type: console
 ---
 
 ## Introduction
 
-Ordinal scales are organized as rank-ordered numeric classes, with a finite number of such classes. The utilization of ordinal scales is often due to their convenience and speed of rating [@madden2007]. In fact, plant pathologists often encounter situations where direct estimates of the nearest percent severity are time-consuming or impractical, besides being unreliably and inacuratelly estimated. In plant pathological research, there are two commonly used types of ordinal scales: quantitative and qualitative [@Chiang2022].
+Ordinal scales are organized as rank-ordered numeric classes, with a finite number of such classes. The utilization of ordinal scales is often due to their convenience and speed of rating [@madden2007]. In plant pathological research, there are two commonly used types of ordinal scales: quantitative and qualitative [@Chiang2022].
 
 ### Quantitative ordinal
 
@@ -147,7 +147,7 @@ In the qualitative ordinal scale, each class provides a description of the sympt
 
 ## Disease severity index (DSI)
 
-Sometimes, when quantitative or qualitative ordinal scales are used, the scores given to various individual specimens (the observational units) are transformed into an index on a percentage basis, such as the disease severity index (DSI) which is used as a value for the experimental unit further in data analysis. The DSI is a single number that summarizes a large amount of information on disease severity [@chester1950]. The formula for a DSI (%) can be written as follows:
+Sometimes, when quantitative or qualitative ordinal scales are used, the scores are transformed into an index on a percentage basis, such as the disease severity index (DSI) which is used in data analysis. The DSI is a single number that summarizes a large amount of information on disease severity [@chester1950]. The formula for a DSI (%) can be written as follows:
 
 $DSI = \frac{∑(class \ freq. \ ✕ \ score \  of \ class)} {total \ n \ ✕ \ maximal \ class} ✕ 100$
 
@@ -234,32 +234,25 @@ DSI2(ratings2$class, ratings2$n, 6)
 
 ## Analysis of ordinal data
 
-Ordinal score data, often encountered in plant pathology, typically do not align well with the assumptions of traditional parametric statistical methods. Given this challenge, non-parametric methods have emerged as a compelling alternative for handling ordinal plant pathological data [@shah2004]. Unlike their parametric counterparts, these methods do not rest on the presumption of a specific distribution for the underlying population, offering greater flexibility in accommodating the intricacies inherent to ordinal data. On the other hand, when the conditions are right, parametric methods can also be harnessed effectively.
-
-A common strategy, particularly for ordinal scores, involves converting these values into the mid-points of their corresponding percent scales. This transformation renders the data more amenable to parametric analyses. However, the mid-point conversion has been criticized in the literature as it may amplify the imprecision, especially when the interval size is wide, and because it does not really reflect a true value, but an interval for each estimate [@chiang2023a; @onofri2018].
-
-Let's see some examples of analysis using the mid-point conversion in a parametric framework as well as the non-parametric tests.
+Ordinal score data, often encountered in fields like plant pathology, typically do not align well with the assumptions of traditional parametric statistical methods. Given this challenge, non-parametric methods have emerged as a compelling alternative [@shah2004]. Unlike their parametric counterparts, these methods do not rest on the presumption of a specific distribution for the underlying population, offering greater flexibility in accommodating the intricacies inherent to ordinal data. On the other hand, when the conditions are right, parametric methods can also be harnessed effectively. A common strategy, particularly for ordinal scores, involves converting these values into the mid-points of their corresponding percent scales. This transformation renders the data more amenable to parametric analyses.
 
 #### Example data
 
-We will use a data set made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales [@chiang2023a]. The data and codes used in the paper can be found in the specified GitHub [repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens). The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.
+We will use a dataset made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales [@chiang2023a]. The data and codes used in the paper can be found in the specified GitHub [repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens). The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.
 
 ```{r}
 
 # Create the vectors for the treatments
-trAs <- c(5,4,2,5,5,4,4,2,5,2,2,3,4,3,2,
-          2,6,2,2,4,2,4,2,4,5,3,4,2,2,3)
-trBs <- c(5,3,2,4,4,5,4,5,4,4,6,4,5,5,5,
-          2,6,2,3,5,2,6,4,3,2,5,3,5,4,5)
-trCs <- c(2,3,1,4,1,1,4,1,1,3,2,1,4,1,1,
-          2,5,2,1,3,1,4,2,2,2,4,2,3,2,2)
-trDs <- c(5,5,4,5,5,6,6,4,6,4,3,5,5,6,4,
-          6,5,6,5,4,5,5,5,3,5,6,5,5,5,6)
+trAs <- c(5,4,2,5,5,4,4,2,5,2,2,3,4,3,2,2,6,2,2,4,2,4,2,4,5,3,4,2,2,3)
+trBs <- c(5,3,2,4,4,5,4,5,4,4,6,4,5,5,5,2,6,2,3,5,2,6,4,3,2,5,3,5,4,5)
+trCs <- c(2,3,1,4,1,1,4,1,1,3,2,1,4,1,1,2,5,2,1,3,1,4,2,2,2,4,2,3,2,2)
+trDs <- c(5,5,4,5,5,6,6,4,6,4,3,5,5,6,4,6,5,6,5,4,5,5,5,3,5,6,5,5,5,6)
+
+
 
 # Create the tibble
 dat_ordinal <- tibble::tibble(
-  treatment = rep(c("A", "B", "C", "D"), 
-                  each = 30),
+  treatment = rep(c("A", "B", "C", "D"), each = 30),
   score = c(trAs, trBs, trCs, trDs)
 )
 
@@ -270,26 +263,15 @@ Because the ordinal response was obtained using an interval scale, the mid-point
 
 ```{r}
 # Create the vectors for the treatments
-trAm <- c(18.5,9,1.5,18.5,18.5,9,9,1.5,
-          18.5,1.5,1.5,4.5,9,4.5,1.5,1.5,
-          37.5,1.5,1.5,9,1.5,9,1.5,9,18.5,
-          4.5,9,1.5,1.5,4.5)
-trBm <- c(18.5,4.5,1.5,9,9,18.5,9,18.5,9,
-          9,37.5,9,18.5,18.5,18.5,1.5,37.5,
-          1.5, 4.5,18.5,1.5,37.5,9,4.5,1.5,
-          18.5,4.5,18.5,9,18.5)
-trCm <- c(1.5,4.5,0,9,0,0,9,0,0,4.5,1.5,0,9
-          ,0,0,1.5,18.5,1.5,0,4.5,0,9,1.5,1.5,
-          1.5,9,1.5,4.5,1.5,1.5)
-trDm <- c(18.5,18.5,9,18.5,18.5,37.5,37.5,9,
-          37.5,9,4.5,18.5,18.5,37.5,9,37.5,
-       18.5,37.5,18.5,9,18.5,18.5,18.5,4.5,18.5,
-       37.5,18.5,18.5,18.5,37.5)
+trAm <- c(18.5,9,1.5,18.5,18.5,9,9,1.5,18.5,1.5,1.5,4.5,9,4.5,1.5,1.5,37.5,1.5,1.5,9,1.5,9,1.5,9,18.5,4.5,9,1.5,1.5,4.5)
+trBm <- c(18.5,4.5,1.5,9,9,18.5,9,18.5,9,9,37.5,9,18.5,18.5,18.5,1.5,37.5,1.5, 4.5,18.5,1.5,37.5,9,4.5,1.5,18.5,4.5,18.5,9,18.5)
+trCm <- c(1.5,4.5,0,9,0,0,9,0,0,4.5,1.5,0,9,0,0,1.5,18.5,1.5,0,4.5,0,9,1.5,1.5, 1.5,9,1.5,4.5,1.5,1.5)
+trDm <- c(18.5,18.5,9,18.5,18.5,37.5,37.5,9,37.5,9,4.5,18.5,18.5,37.5,9,37.5,
+       18.5,37.5,18.5,9,18.5,18.5,18.5,4.5,18.5,37.5,18.5,18.5,18.5,37.5)
 
 # Create the tibble
 dat_ordinal_mp <- tibble::tibble(
-  treatment = rep(c("A", "B", "C", "D"), 
-                  each = 30),
+  treatment = rep(c("A", "B", "C", "D"), each = 30),
   midpoint = c(trAm, trBm, trCm, trDm)
 )
 dat_ordinal_mp
@@ -314,7 +296,7 @@ library(patchwork)
 p_score | p_mp
 ```
 
-#### Parametric (mid-point conversion)
+#### Parametric (using mid-point)
 
 Parametric methods can be employed when analyzing data, provided that the underlying assumptions of these methods are satisfied. For data that is based on ordinal scores, one way to apply parametric methods is to convert these scores into the mid-points of their corresponding percent scales. Once converted, the data is better suited for parametric analyses. Among the available techniques, the most frequently utilized is the application of an ANOVA (Analysis of Variance) model. This model is particularly useful for testing the null hypothesis, which posits that there are no significant differences among the treatments being studied.
 
@@ -323,6 +305,7 @@ We can use the `aov` function to fit the model and check the parametric assumpti
 ```{r}
 #| warning: false
 #| message: false
+
 m1_mp <- aov(midpoint ~ treatment, data = dat_ordinal_mp)
 # normality and homocedasticity tests
 library(DHARMa)
@@ -378,6 +361,29 @@ library(agricolae)
 kruskal(dat_ordinal$score, dat_ordinal$treatment, console = TRUE)
 ```
 
-#### Interpretation
+#### Survival analysis
 
-Upon comparing the two methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis test suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked.
+
+A method based on survival analysis was recently introduced for the analysis of ordinal data [@chiang2023a]. The authors developed an R script called "CompMuCens", which facilitates the comparison of multiple treatment means for plant disease severity data. This is achieved through nonparametric survival analysis using class- or interval-based data derived from a quantitative ordinal scale. The code is accessible in [this repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/tree/main)  and has been incorporated into the {r4pde} package.
+
+We continue with our ongoing working example data. Since the expected variable name for the score in the function is x, we must adjust our data frame accordingly.
+
+```{r}
+names(dat_ordinal) <- c("treatment", "x")
+
+```
+
+The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the data and the scale arguments.
+
+```{r}
+library(interval)
+library(r4pde)
+
+scale <- c(0,3,6,12,25,50,75,88,94,97,100, 100)
+CompMuCens(dat_ordinal, scale)
+
+```
+
+Results show a data frame with the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this case all treatments differ from each other. 
+
+
