@@ -1219,12 +1219,32 @@ C          29.61667      d</code></pre>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(dat_ordinal) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"treatment"</span>, <span class="st">"x"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>CompMuCens()</code> function uses the <code>ictest()</code> from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function’s input and output can be found <a href="https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf">here</a>. We just need to set the <code>dat</code>a and the <code>scale</code> arguments. The scale will be used to convert the scores in to the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.</p>
-<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-21_2f085582d2507595035f2d4efabb278b">
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-21_8959ecc828a575c07e0d91d1206d483a">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(interval)</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>scale <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">3</span>,<span class="dv">6</span>,<span class="dv">12</span>,<span class="dv">25</span>,<span class="dv">50</span>,<span class="dv">75</span>,<span class="dv">88</span>,<span class="dv">94</span>,<span class="dv">97</span>,<span class="dv">100</span>, <span class="dv">100</span>)</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">#CompMuCens(dat_ordinal, scale)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">CompMuCens</span>(dat_ordinal, scale)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$U.Score
+  treatment      score
+1         D -15.125000
+2         B  -4.541667
+3         A   4.225000
+4         C  15.441667
+
+$Hypothesis.test
+  treat1 treat2 p-value for H0: treat1 ≤ treat2 p-value for H0: treat1 = treat2
+1      D      B                    0.0018767018                              NA
+2      B      A                    0.0113215174                              NA
+3      A      C                    0.0007456484                              NA
+
+$adj.Signif
+[1] 0.01666667
+
+$Conclusion
+[1] "D&gt;B&gt;A&gt;C"</code></pre>
+</div>
 </div>
 <p>The outcomes are three: a data frame with the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.</p>
 </section>
