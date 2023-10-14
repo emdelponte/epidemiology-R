@@ -378,6 +378,30 @@ library(agricolae)
 kruskal(dat_ordinal$score, dat_ordinal$treatment, console = TRUE)
 ```
 
+#### Survival analysis
+
+A method based on survival analysis was more recently introduced for the analysis of ordinal data [@chiang2023a]. The authors developed an R script called "CompMuCens", which facilitates the comparison of multiple treatment means for plant disease severity data. This is achieved through nonparametric survival analysis using class- or interval-based data derived from a quantitative ordinal scale. The code is accessible in [this repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/tree/main) and has been incorporated into the {r4pde} package.
+
+We continue with our working example data. Since the expected variable name for the score in the function is `x`, we must adjust our data frame accordingly.
+
+```{r}
+names(dat_ordinal) <- c("treatment", "x")
+
+```
+
+The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the `dat`a and the `scale` arguments. The scale will be used to convert the scores in to the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.
+
+```{r}
+library(interval)
+library(r4pde)
+
+scale <- c(0,3,6,12,25,50,75,88,94,97,100, 100)
+#CompMuCens(dat_ordinal, scale)
+
+```
+
+The outcomes are three: a data frame with the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
+
 #### Interpretation
 
-Upon comparing the two methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis test suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked.
+Upon comparing the two methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading [@chiang2023a]
