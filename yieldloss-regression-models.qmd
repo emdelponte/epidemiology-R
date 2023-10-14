@@ -4,10 +4,21 @@ editor: visual
 bibliography: references.bib
 ---
 
+## Introduction
 
-## Example data
+When we aim to empirically describe the relationship between yield (either in absolute terms represented as \[YLD\], or in relative terms such as relative yield \[RY\] or relative yield loss \[RL\]) and disease intensity (denoted as y), the most straightforward approach is to employ a single metric of disease intensity. This could be in the form of disease incidence, severity, electronic measurements, among others. A linear model, as suggested by [@chapter2007a], often proves to be a suitable choice for this purpose. Such models are frequently termed as single-point or critical-point models. The nomenclature stems from the fact that the assessment of the disease occurs at one pivotal moment during the epidemic. This moment is typically chosen because it's when the disease's impact correlates with yield outcomes.
 
-We will continue using the same data on white mold epidemics in soybean seen in previous chapter.
+A version of the equation, for the absolute quantity of yield (YLD), is written as:
+
+$YLD = 𝛽_0 - 𝛽_1y$
+
+where $𝛽_0$ and $𝛽_1$ are parameters and y is a disease measure. For this particular case, the intercept is a yield property of a given plant genoptye in a given environment when the disease of interest is absent (or the attainable yield). The (negative) slope represents the change (reduction) in yield with change (increase) in disease intensity.
+
+The interpretation of the model parameters depends on the specific yield variable being related to disease. If relative yield loss is related to disease, the slope will be positive, because the loss (relative decrease in yield) will increase with the increase in disease intensity assessed at the critical time. Anyway, the differences in the intercept reflect the environmental effect on yield when disease is absent, while varying slopes reflect the environmental effect on yield response to disease [@chapter2007a].
+
+## Example 1: single study
+
+We demonstrate the fitting of linear regression models (assuming a straight line relationship) to crop loss data on the effects of white mold on soybean yield [@lehner2016]. This is the same data illustrated in the previous chapter. Let's load the data and assign them to a data frame named as `wm.`
 
 ```{r}
 #| message: false
@@ -16,7 +27,7 @@ library(r4pde)
 wm <- WhiteMoldSoybean
 ```
 
-First, let's work with data from a single trial (trial 1).
+First, we will work with data from a single trial (trial 1).
 
 ```{r}
 library(tidyverse)
@@ -26,11 +37,9 @@ wm1 <- wm |>
 head(wm1, 13)
 ```
 
-
-
 ## Linear regression
 
-Assuming a linear relationship between the variables, we can employ a linear regression model. From this model, the intercept provides an indication of the attainable yield (the yield when there is no disease). Conversely, the slope represents the rate at which the yield decreases for every one percentage point increase in disease incidence.
+Assuming a linear relationship between `yld` and `inc`, we can employ a linear regression model for trial 1 using the `lm()` function.
 
 ```{r}
 lm1 <-  lm(yld ~ inc, data = wm1) 
@@ -38,19 +47,20 @@ jtools::summ(lm1)
 
 ```
 
-The model explains a statistically significant and substantial proportion of variance (R2 = 0.81, F(1, 11) = 46.86, p \< .001, adj. R2 = 0.79). The model's intercept, corresponding to inc = 0, is at 3329.14 (95% CI \[3138.00, 3520.28\], t(11) = 38.33, p \< .001). The effect of inc is statistically significant and negative (beta = -14.21, 95% CI \[-18.78, -9.64\], t(11) = -6.85, p \< .001; Std. beta = -0.90, 95% CI \[-1.19, -0.61\]). In other words, 14.21 kg is lost for each unitary increase in incidence, given the attainable yield of 3,329.14 kg.
+In the summary output, we can notice that the model explains a statistically significant and substantial proportion of variance. The model's intercept, corresponding to inc = 0, is at 3329.14. The effect of inc is statistically significant and negative ( beta = -14.21). In another words, 140.21 kg is lost for each 10 percent point increase in incidence, given the attainable yield of 3,329.14 kg.
 
 ## Damage coefficients
 
-Damage curves offer a visual representation of how various factors, in this case plant diseases, can impact a given system. When we want to normalize these effects to better compare across different systems or conditions, it's useful to express these curves in relative terms rather than absolute ones. To achieve this, we can adjust the derived slope by dividing it by the intercept. This step essentially scales the rate of damage in relation to the baseline or the starting point (when there's no damage). By subsequently multiplying the result by 100, we convert this value into a percentage. This percentage is termed the "relative damage coefficient". What makes this coefficient particularly useful is its ability to standardize the measurement of damage, facilitating comparisons across diverse pathosystems.
+Damage curves offer a visual representation of how plant diseases can impact a given crop in terms of yield loss. When we want to normalize these effects to better compare across different systems or conditions, it is useful to express these curves in relative terms rather than absolute ones. To achieve this, we can adjust the derived slope by dividing it by the intercept. This step essentially scales the rate of damage in relation to the baseline or the starting point (when there's no damage). By subsequently multiplying the result by 100, we convert this value into a percentage. This percentage is termed the "relative damage coefficient". What makes this coefficient particularly useful is its ability to standardize the measurement of damage, facilitating comparisons across diverse pathosystems.
 
-Two plots can be used, one that shows the effect of the disease on the relative yield and the other that shows the effect on yield loss (which in this case represents a positive slope). Both representations can be found in the literature.
+Two plots can be produced, one that shows the effect of the disease on the relative yield and the other on the effect on yield loss (which in this case represents a positive slope). Both representations can be found in the literature. Let's use the estimated coefficients and produce these two plots.
 
 ```{r}
+# Extract the coefficients from model fit
 dc <- (lm1$coefficients[2]/lm1$coefficients[1])*100
 dc 
 
-# Plot for the relative damage curve
+# Plot the relative damage curve
 x = seq(0,100,0.1)
 y = seq(0,100,0.1)
 dat <- data.frame(x,y)
@@ -85,25 +95,25 @@ p2
 
 ```
 
-## Multiple trials
+## Example 2: Multiple studies
 
 ### Introduction
 
-When managing data sourced from multiple trials, a naive and straightforward approach is to pool all the data and fit a "global" linear regression. This tactic, while efficient, operates under the assumption that the different trials share common underlying characteristics, which might not always be the case.
+When managing data sourced from multiple studies (or experiments), a naive and straightforward approach is to pool all the data and fit a "global" linear regression. This option, while efficient, operates under the assumption that the different studies share common underlying characteristics, which might not always be the case.
 
 Another simplistic methodology entails running independent linear regressions for each trial and subsequently averaging the intercepts and slopes. While this provides a glimpse into the general behavior of the data, it potentially sidesteps important variations that exist between individual trials. This variation is crucial, as different trials could have unique environments, treatments, or experimental conditions, all of which can influence results.
 
-Neglecting these variations can mask important nuances and lead to overgeneralized or inaccurate conclusions. In order to accommodate the inherent variability and structure present in multitrial data, researchers often turn to more refined analytical frameworks. Two such frameworks stand out in their ability to provide a nuanced view:
+Neglecting these variations can mask important nuances and lead to overgeneralized or inaccurate conclusions. In order to accommodate the inherent variability and structure present in multitrial data, researchers often turn to more refined analytical frameworks. Two such frameworks stand out in their ability to provide a nuanced view.
 
-1.  **Meta-Analytic modeling:** This approach synthesizes results across multiple studies to arrive at a more comprehensive understanding. In the context of linear regressions across multiple trials, the coefficients (both intercepts and slopes) from each trial can be treated as effect sizes. The standard error of these coefficients, which reflects the precision of the estimate, can then be used to weight each coefficient, ensuring that more reliable estimates have greater influence on the overall mean. This method can also provide insights into heterogeneity across trials, and if required, moderators can be explored to account for this variability.
+The first is a meta-analytic modelling. This approach synthesizes results across multiple studies to arrive at a more comprehensive understanding @madden2011. In the context of linear regressions across multiple trials, the coefficients (both intercepts and slopes) from each trial can be treated as effect sizes @dallalana2015. The standard error of these coefficients, which reflects the precision of the estimate, can then be used to weight each coefficient, ensuring that more reliable estimates have greater influence on the overall mean. This method can also provide insights into heterogeneity across trials, and if required, moderators can be explored to account for this variability @lehner2016.
 
-2.  **Random Coefficients (Mixed Effects) modelling:** This approach allows the intercepts and slopes to vary across different trials, treating them as random effects. By modeling the coefficients as random effects, we're assuming they come from a distribution, and we aim to estimate the parameters of this distribution. This structure acknowledges that variability exists between different trials and allows for the sharing of information across trials, thereby improving the estimation.
+A second approach is to fit a random coefficients (mixed effects) models. This approach allows the intercepts and slopes to vary across different trials, treating them as random effects @madden2009. By modeling the coefficients as random effects, we're assuming they come from a distribution, and we aim to estimate the parameters of this distribution. This structure acknowledges that variability exists between different trials and allows for the sharing of information across trials, thereby improving the estimation.
 
 Both methods have their strengths and are appropriate under different circumstances. The choice largely depends on the research question, data structure, and the assumptions one is willing to make.
 
 ### Global regression
 
-Let's begin by fitting a "global regression", but we might want to first inspect the damage curve visually.
+Let's begin by fitting a "global regression", but we might want to first inspect the damage curve withe the fit of the global regression model visually.
 
 ```{r}
 #| warning: false
@@ -112,7 +122,7 @@ Let's begin by fitting a "global regression", but we might want to first inspect
 ggplot(wm, aes(inc, yld))+
       theme_r4pde(font_size = 12)+
        geom_point(shape = 1)+
-       stat_smooth(method = lm, fullrange=TRUE, se = F, col = "black")+
+       stat_smooth(method = lm, fullrange=TRUE, se = TRUE, col = "black")+
        ylab("Yield (kg/ha)")+
        xlab("White mold incidence (%)")
 ```
@@ -131,29 +141,28 @@ The global intercept and slope were estimated as 3,299 kg/ha and -9.26 kg/p.p. (
 
 ### Individual regressions
 
-Now we can fit separate regressions for each trial. Let's visualize first.
+Now we can fit separate regressions for each trial.
 
 ```{r}
-ggplot(wm, aes(inc, yld))+
+ggplot(wm, aes(inc, yld, group = study))+
       theme_r4pde(font_size = 12)+
        geom_point(shape = 1)+
-       stat_smooth(method = lm, fullrange=TRUE, se = F, col = "black")+
+       stat_smooth(method = lm, se = F, col = "black")+
        ylab("Yield (kg/ha)")+
-       xlab("White mold incidence (%)")+
-      facet_wrap(~ study, ncol = 7, scales = "fixed") 
+       xlab("White mold incidence (%)")
+      #facet_wrap(~ study, ncol = 7, scales = "fixed") 
 ```
 
-To fit separate regression lines for each study and extract the coefficients, we can use the **`group_by()`** function along with **`do()`**.
+To fit separate regression lines for each study and extract the coefficients, we can use the `group_by()` function along with `do()` and of the {dplyr} package and `tidy()` from {broom} package.
+
+The data is first grouped by the `study` column. Then, for each study, a linear regression is fitted with `yld` as the response variable and `inc` as the predictor. The `tidy` function from the `broom` package is then used to extract the coefficients and confidence intervals for each regression line. The resulting output should give us a *tidy* dataframe with coefficients for each trial.
 
 ```{r}
-
 fit_all <- wm%>%
   group_by(study) |> 
-  do(tidy(lm(.$yld ~ .$inc), conf.int=TRUE))
+  do(broom::tidy(lm(.$yld ~ .$inc), conf.int=TRUE))
 fit_all
 ```
-
-With this code above, the data is first grouped by the `study` column. Then, for each study, a linear regression is fitted with `yld` as the response variable and `inc` as the predictor. The `tidy` function from the `broom` package is then used to extract the coefficients and confidence intervals for each regression line. The resulting output should give you a tidy dataframe with coefficients for each trial.
 
 Now we can plot the distributions of each coefficient.
 
@@ -177,7 +186,7 @@ library(patchwork)
 p3 | p4
 ```
 
-Let's summarize the data on the slopes and intercept to compare with the global regression approach.
+Let's summarize the data on the slopes and intercept, using the `summary()` function.
 
 ```{r}
 fit_all |> 
@@ -195,11 +204,9 @@ fit_all |>
 
 ```
 
-Note that the values of the coefficients are very different from those obtained with the global regression model.
-
 ### Meta-analysis
 
-Here the objective is to combine the estimates from multiple studies or trials into a single overall estimate using a random-effects meta-analysis. The goal is to capture both the central tendency (i.e., the overall effect) and the variability (heterogeneity) among those individual estimates.
+Here the objective is to combine the estimates from multiple studies or trials into a single overall estimate using a random-effects meta-analysis using {metafor} R package @viechtbauer2010. The goal is to capture both the central tendency (i.e., the overall effect) and the variability (heterogeneity) among those individual estimates. Let's first prepare data for analysis and then run separate meta-analysis for the intercepts and slopes.
 
 ```{r}
 #| warning: false
@@ -224,15 +231,13 @@ summary(ma2)
 
 ```
 
-A forest plot can be generated in {metafor}.
-
-```{r}
-forest(ma2)
-```
+In the output above, we can notice that there is considerable heterogeneity in both the intercepts and slopes (P \< 0.01 for Q statistics), meaning that there may be moderators variables that, if added to the model, could potentially reduce the variance. The estimates for the intercept and slopes were 3479.30 kg/ha and -18.18 kg/p.p. (percentage point), respectively.
 
 ### Random coefficients model
 
-Here, the `lme4` package in R offers a comprehensive suite of tools to fit linear mixed-effects models. When analyzing data from multiple trials using this package, it allows for both intercepts and slopes to vary across the trials by treating them as random effects. By doing so, the inherent assumption is that these coefficients (intercepts and slopes) are drawn from certain distributions, and the goal becomes estimating the parameters of these distributions. This modeling technique acknowledges and captures the variability present across different trials. Importantly, by treating the coefficients as random effects, `lme4` enables the sharing of information across trials. This not only provides a more holistic understanding of the underlying data structure but also enhances the precision and robustness of the coefficient estimates.
+Among several options in the R ecosystem, the {lme4} package in R offers a comprehensive suite of tools to fit linear mixed-effects models @bates2015. When analyzing data from multiple trials using this package, it allows for both intercepts and slopes to vary across the trials by treating them as random effects. By doing so, the inherent assumption is that these coefficients (intercepts and slopes) are drawn from certain distributions, and the goal becomes estimating the parameters of these distributions. This modeling technique acknowledges and captures the variability present across different trials. Importantly, by treating the coefficients as random effects, this enables the sharing of information across trials. This not only provides a more holistic understanding of the underlying data structure but also enhances the precision and robustness of the coefficient estimates.
+
+The `lmer()` function allows to fit a mixed model with both the fixed (inc) and random effects (inc \| study).
 
 ```{r}
 #| warning: false
@@ -243,43 +248,13 @@ rc1 <- lmer(yld ~ inc + (inc |study), data = wm,
             REML = F)
 summary(rc1)
 
-
-# Extract the blups
-cc2 <- coef(rc1)$study
-cc2 %>% 
- pivot_longer(1:2, names_to = "coef", values_to = "value") %>% 
- ggplot(aes(x=value))+
- theme_r4pde()+
-       geom_histogram(bins = 10, fill = "grey50", color = "white")+
-       facet_wrap(~coef, scales = "free_x")
-
-
-
 ```
 
-We can produce a plot with lines for the BLUPs of the individual studies and for the overall estimate.
-
-```{r}
-
-Intercept <- cc2$`(Intercept)`
-inc<- cc2$inc
-
-data <- data.frame(Intercept, inc)
-
-ggplot(data) +
-  geom_abline(aes(intercept = Intercept, slope = inc), colour = "gray50") +
-  geom_abline(aes(intercept = 3455.43, slope = -17.236), linewidth = 2)+
-  xlim(0,100)+
-  ylim(0, 6000)+
-  labs(title = "", x = "Incidence (%)", y = "Yield (kg/ha)") +
-  theme_r4pde()
-
-
-```
 
 ### Conclusion
 
 Results from various regression methods show that the calculated damage coefficients fall within the range of -0.28 to -0.56 (see table below). This range of values represents the extent to which damage is influenced by the method in consideration. The most straightforward method, often referred to as the naive approach, produced the most conservative estimate, positioning the damage coefficient at the lower bound of the observed range. In stark contrast, computing the mean values from multiple individual regressions yielded a dc that topped the range, signifying a greater estimated impact.
+
 
 | Model               | intercept |  slope   | damage coefficient |
 |:--------------------|:---------:|:--------:|:------------------:|
@@ -290,4 +265,4 @@ Results from various regression methods show that the calculated damage coeffici
 
 : Table: Intercept, slope and damage coefficients for the four regression approaches to summarize the relationship between soybean yield and white mold incidence.
 
-However, it's worth noting that the coefficients derived from the more advanced techniques---meta-analysis and mixed-models---were quite congruent. Their close alignment suggests that both methodologies, while operating on different principles, capture the underlying dynamics of the data in somewhat analogous ways. A prominent advantage of employing these advanced techniques is their ability to encapsulate and quantify uncertainty. This capability is crucial in scientific analyses as it provides a clearer understanding of the confidence levels associated with the derived coefficients. By being able to measure and articulate this uncertainty, researchers can ensure their interpretations and subsequent decisions are founded on a solid empirical base.
+However, it's worth noting that the coefficients derived from the more advanced techniques - meta-analysis and mixed-models - were quite congruent. Their close alignment suggests that both methodologies, while operating on different principles, capture the underlying dynamics of the data in somewhat analogous ways. A prominent advantage of employing these advanced techniques is their ability to encapsulate and quantify uncertainty. This capability is crucial in scientific analyses as it provides a clearer understanding of the confidence levels associated with the derived coefficients. By being able to measure and articulate this uncertainty, researchers can ensure their interpretations and subsequent decisions are founded on a solid empirical base.
