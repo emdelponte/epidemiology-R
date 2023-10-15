@@ -37,7 +37,7 @@ z1 <- 1
 row1 <- data.frame(x1, y1, z1) # create a dataframe
 ```
 
-We can then visualize the series using ggplot and count the number of runs as 7, aided by the different colors used to identify a run.
+We can then visualize the series using ggplot and count the number of runs as 8, aided by the different colors used to identify a run.
 
 ```{r}
 #| warning: false
@@ -72,17 +72,6 @@ library(randtests)
 runs.test(row1$y1, alternative = "l", threshold = 0.5)
 ```
 
-#### Doublets
-
-Doublet analysis is used to compare the observed number or adjacent diseased plants, a doublet (DD or 11), to the number expected if the disease were randomly distributed in the field [@madden1982]. If the observed number is greater than the expected number, contagion within the field is suspected. The example below shows 8 doublets.
-
-![Example for the computation of the number of doublets (DD) in a sequence of binary data](imgs/doublets.png){#fig-doublet1 fig-align="center" width="470"}
-
-The `doublets.test()` function of the {r4pde} package calculates the doublets and associated statistics. The result below confirms the one obtained using the runs test.
-
-```{r}
-doublets.test(row1$y1)
-```
 
 #### Join count
 
@@ -104,12 +93,12 @@ Visualize the two-dimensional array:
 #| label: fig-joincount1
 #| fig-cap: "Visualization of a matrix of presence/absence data representing a disease spatial pattern"
 # Convert to raster 
-mapS2 <- terra::rast(matrix(S2, 5 , 5))
+mapS2 <- terra::rast(matrix(S2, 5 , 5, byrow = TRUE))
 # Convert to data frame
 mapS3 <- terra::as.data.frame(mapS2, xy = TRUE)
 mapS3 |>
   ggplot(aes(x, y, label = lyr.1, fill = factor(lyr.1))) +
-  geom_tile(color = "white", size = 0.5) +
+  geom_tile(color = "white", linewidth = 0.5) +
   theme_void() +
   coord_fixed()+
   labs(fill = "Status") +
@@ -137,13 +126,6 @@ joincount.test(factor(S2),
 
 The function returns a list with a class for each of the status (in this case 0 and 1) with several components. We should look at the *P-value*. The alternative hypothesis (greater) is that the same status joins occur more frequently than expected if they were labelled in a spatial random way. In this case, we do not reject the null hypothesis of randomness.
 
-We can run the ordinary runs and doublets tests, which only considers the adjacent neighbor, for the same series and compare the results.
-
-```{r}
-oruns.test(S2)
-doublets.test(S2)
-```
-
 Let's repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence to reject the null hypothesis, indicating aggregation of plants.
 
 ```{r}
@@ -155,7 +137,6 @@ S3 <- c(1,1,1,0,0,
 
 joincount.test(factor(S3), 
                 nb2listw(nb))
-oruns.test(S3)
 ```
 
 We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package [@gigot2018]. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the dataset has two dataframes) of the dataset `tomato_tswv` to a new dataframe called `tswv_1929`.
@@ -213,7 +194,7 @@ joincount.test(factor(S1),
 We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.
 
 ```{r}
-# Pull the binary sequence of time 1
+# Pull the binary sequence of time 2
 S2 <- tswv_1929 |>
   filter(t == "2") |>
   pull(i)
@@ -221,7 +202,7 @@ S2 <- tswv_1929 |>
 joincount.test(factor(S2),
                nb2listw(nb1))
 
-# Pull the binary sequence of time 1
+# Pull the binary sequence of time 3
 S3 <- tswv_1929 |>
   filter(t == "3") |>
   pull(i)
