@@ -234,7 +234,7 @@ DSI2(ratings2$class, ratings2$n, 6)
 
 ## Analysis of ordinal data
 
-Ordinal score data, often encountered in plant pathology, typically do not align well with the assumptions of traditional parametric statistical methods. Given this challenge, non-parametric methods have emerged as a compelling alternative for handling ordinal plant pathological data [@shah2004]. Unlike their parametric counterparts, these methods do not rest on the presumption of a specific distribution for the underlying population, offering greater flexibility in accommodating the intricacies inherent to ordinal data. On the other hand, when the conditions are right, parametric methods can also be harnessed effectively.
+Ordinal score data typically do not align well with the assumptions of traditional parametric statistical methods. Given this challenge, non-parametric methods have emerged as a compelling alternative for handling ordinal plant pathological data [@shah2004]. Unlike their parametric counterparts, these methods do not rest on the presumption of a specific distribution for the underlying population, offering greater flexibility in accommodating the intricacies inherent to ordinal data. On the other hand, when the conditions are right, parametric methods can also be harnessed effectively.
 
 A common strategy, particularly for ordinal scores, involves converting these values into the mid-points of their corresponding percent scales. This transformation renders the data more amenable to parametric analyses. However, the mid-point conversion has been criticized in the literature as it may amplify the imprecision, especially when the interval size is wide, and because it does not really reflect a true value, but an interval for each estimate [@chiang2023a; @onofri2018].
 
@@ -343,8 +343,6 @@ dat_ordinal_mp$midpoint2 <- dat_ordinal_mp$midpoint/100
 m2_mp <- aov(logit(midpoint2) ~ treatment, data = dat_ordinal_mp)
 plot(simulateResiduals(m2_mp)) # assumptions are met
 
-
-
 ```
 
 Now that both assumptions have been met, we can proceed to use a means comparison test to determine which treatments differ from one another, with the assistance of the {emmeans} package. It's important to note that the results are displayed in the original scale after transformation, specifically when using `type = "response`.
@@ -389,7 +387,7 @@ names(dat_ordinal) <- c("treatment", "x")
 
 ```
 
-The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the `dat`a and the `scale` arguments. The scale will be used to convert the scores in to the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.
+The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the `dat` and the `scale` arguments. The scale will be used to convert the scores in to the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.
 
 ```{r}
 library(interval)
@@ -400,8 +398,8 @@ CompMuCens(dat_ordinal, scale)
 
 ```
 
-The outcomes are three: a data frame with the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
+The outcomes are three: the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
 
 #### Interpretation
 
-Upon comparing the two methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading [@chiang2023a]
+Upon comparing the three methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading [@chiang2023a]
