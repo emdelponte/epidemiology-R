@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.3.433">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -373,14 +373,14 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p>The study of spatial patterns is conducted at a specific time or multiple times during the epidemic. When assessed multiple times, both spatial and temporal processes can be characterized. Because epidemics change over time, it is expected that spatial patterns are not constant but change over time as well. Usually, plant pathologists are interested in determining spatial patterns at one or various spatial scales, depending on the objective of the study. The scale of interest may be a leaf or root, plant, field, municipality, state, country or even intercontinental area. The diseased units observed may vary from lesions on a single leaf to diseased fields in a large production region.</p>
 <p>The patterns can be classified into two main types that occur naturally: <strong>random</strong> or <strong>aggregated</strong>. The random pattern originates because the chances for the units (leaf, plant, crop) to be infected are equal and low, and are largely independent from each other. In aggregated spatial patterns, such chances are unequal and there is dependency among the units. For example, a healthy unit close to a diseased unit is at higher risk than more distant units.</p>
 <p>Let’s simulate in R two vectors (x,y) for the positions of diseased units that follow a random or an aggregated pattern. For the random pattern, we use <code>runif</code>, a function which generates random deviates from the uniform distribution.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/unnamed-chunk-1_eebd1ec29cdd566cadadd2a0fa595511">
+<div class="cell" data-hash="spatial-patterns_cache/html/unnamed-chunk-1_e833c92bf0d01f203d6b47741f0c6bbd">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)          <span class="co"># for reproducibility</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">0</span>, <span class="dv">30</span>)  <span class="co"># x vector</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">50</span>, <span class="dv">0</span>, <span class="dv">30</span>)  <span class="co"># y vector</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x,y) <span class="co"># dataframe for plotting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now, the plot to visualize the random pattern.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-random_b28c103be3ce43a3f9ff14adba8bbda5">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-random_96b26a80c4adf55f23605f11098f43c5">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_r4pde</span>())</span>
@@ -406,13 +406,13 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now, we can generate new x and y vectors using <code>rnbinom</code> function which allows generating values for the negative binomial distribution (which should give rise to aggregated patterns) with parameters <code>size</code> and <code>prob</code>. Let’s simulate 50 values with mean 12 and size 20 as dispersal parameter.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/unnamed-chunk-3_056df657d65d77e11660d30c036f80b7">
+<div class="cell" data-hash="spatial-patterns_cache/html/unnamed-chunk-3_0d554a30dd9f58193f024a89580e83f6">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rnbinom</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mu =</span> <span class="dv">12</span>, <span class="at">size =</span> <span class="dv">20</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rnbinom</span>(<span class="at">n =</span> <span class="dv">50</span>, <span class="at">mu =</span> <span class="dv">5</span>, <span class="at">size =</span> <span class="dv">20</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This should give us an aggregated pattern.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-aggregated_d7adaf1b5274632aa02772eca5f8e1ca">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-aggregated_11fb5d8782cb5b18f236860e33b3b2ec">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pag <span class="ot">&lt;-</span> dat2 <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y))<span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
@@ -433,7 +433,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-regular_307f3b85630fa3bcca43c012cd3b5c15">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-regular_72281bd4940c5eb42afd559908ca96c7">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">5</span>,<span class="dv">10</span>,<span class="dv">15</span>,<span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>), <span class="dv">5</span>) </span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">15</span>, <span class="dv">20</span>, <span class="dv">25</span>, <span class="dv">30</span>, <span class="dv">35</span>, <span class="dv">40</span>, <span class="dv">45</span>), <span class="at">each =</span> <span class="dv">10</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dat3 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(x, y)</span>
@@ -460,7 +460,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-all_1c5898c230dedad40ed473ead617823f">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-all_bcb5967a5f213c6f653d957bed1bbe5c">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>preg <span class="sc">+</span> pr <span class="sc">+</span> pag</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"imgs/spatial.png"</span>, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -477,7 +477,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="spatiotemporal" class="level2" data-number="14.2">
 <h2 data-number="14.2" class="anchored" data-anchor-id="spatiotemporal"><span class="header-section-number">14.2</span> Spatiotemporal</h2>
 <p>The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let’s visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the <em>epiphy</em> R package. Let’s use only one variety and one irrigation type.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-spatiotemporal1_955bd356934bd66b2a78bf99e438fe10">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-spatiotemporal1_468fb0692206101a1ff808530fd138ad">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>tswv_1928 <span class="ot">&lt;-</span> tomato_tswv<span class="sc">$</span>field_1928</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -502,7 +502,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>In this other example, the severity of gummy stebem blight (<em>Didymella bryoniae)</em> of watermelon <span class="citation" data-cites="café-filho2010">(<a href="references.html#ref-café-filho2010" role="doc-biblioref">Café-Filho et al. 2010</a>)</span> was recorded in a 0-4 ordinal scale over time (days after planting) and space, in a naturally-infected rain-fed commercial field, to evaluate the effect of the distance of initial inoculum on the intensity of the disease. The dataset is included in the {r4pde} package that accompanies the book.</p>
-<div class="cell" data-hash="spatial-patterns_cache/html/fig-spatiotemporal2_5b0f4bff766bc283de70fedaf51fa577">
+<div class="cell" data-hash="spatial-patterns_cache/html/fig-spatiotemporal2_e212555e8aa7840fe552c402d5e18a1c">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> DidymellaWatermellon </span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
