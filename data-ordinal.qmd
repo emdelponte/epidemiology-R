@@ -240,7 +240,7 @@ A common strategy, particularly for ordinal scores, involves converting these va
 
 Let's see some examples of analysis using the mid-point conversion in a parametric framework as well as the non-parametric tests.
 
-#### Example data
+### Example data
 
 We will use a data set made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales [@chiang2023a]. The data and codes used in the paper can be found in the specified GitHub [repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens). The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.
 
@@ -302,19 +302,21 @@ The visualization using box-plots suggests differences between the treatments.
 ```{r}
 p_score <- dat_ordinal |> 
   ggplot(aes(treatment, score))+
-  geom_boxplot()+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point()+
   theme_r4pde()
 
 p_mp <- dat_ordinal_mp |> 
   ggplot(aes(treatment, midpoint))+
-  geom_boxplot()+
+  geom_boxplot(outlier.colour = NA)+
+  geom_point()+
   theme_r4pde()
 
 library(patchwork)
 p_score | p_mp
 ```
 
-#### Parametric (mid-point conversion)
+### Parametric (mid-point conversion)
 
 Parametric methods can be employed when analyzing data, provided that the underlying assumptions of these methods are satisfied. For data that is based on ordinal scores, one way to apply parametric methods is to convert these scores into the mid-points of their corresponding percent scales. Once converted, the data is better suited for parametric analyses. Among the available techniques, the most frequently utilized is the application of an ANOVA (Analysis of Variance) model. This model is particularly useful for testing the null hypothesis, which posits that there are no significant differences among the treatments being studied.
 
@@ -367,7 +369,7 @@ library(multcomp)
 cld(means_m2_mp)
 ```
 
-#### Non-parametric (ordinal score)
+### Non-parametric (ordinal score)
 
 Because ordinal score data generally do not meet the assumptions of traditional parametric statistical methods, non-parametric methods can be considered as an alternative. Such methods have been proposed for analyzing ordinal data in plant pathology [@shah2004]. For our example, when more than two treatments are involved, a Kruskal-Wallis test can be utilized. The `kruskal` function of the {agricolae} package does the job we want. Note that in this case we use the ordinal score directly and not the mid-point value.
 
@@ -376,7 +378,7 @@ library(agricolae)
 kruskal(dat_ordinal$score, dat_ordinal$treatment, console = TRUE)
 ```
 
-#### Survival analysis
+### Survival analysis
 
 A method based on survival analysis was more recently introduced for the analysis of ordinal data [@chiang2023a]. The authors developed an R script called "CompMuCens", which facilitates the comparison of multiple treatment means for plant disease severity data. This is achieved through nonparametric survival analysis using class- or interval-based data derived from a quantitative ordinal scale. The code is accessible in [this repository](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/tree/main) and has been incorporated into the {r4pde} package.
 
@@ -400,6 +402,6 @@ CompMuCens(dat_ordinal, scale)
 
 The outcomes are three: the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
 
-#### Interpretation
+### Interpretation
 
 Upon comparing the three methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading [@chiang2023a]

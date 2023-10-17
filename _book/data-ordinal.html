@@ -351,11 +351,11 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#disease-severity-index-dsi" id="toc-disease-severity-index-dsi" class="nav-link" data-scroll-target="#disease-severity-index-dsi"><span class="header-section-number">3.2</span> Disease severity index (DSI)</a></li>
   <li><a href="#analysis-of-ordinal-data" id="toc-analysis-of-ordinal-data" class="nav-link" data-scroll-target="#analysis-of-ordinal-data"><span class="header-section-number">3.3</span> Analysis of ordinal data</a>
   <ul>
-  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data"><span class="header-section-number">3.3.0.1</span> Example data</a></li>
-  <li><a href="#parametric-mid-point-conversion" id="toc-parametric-mid-point-conversion" class="nav-link" data-scroll-target="#parametric-mid-point-conversion"><span class="header-section-number">3.3.0.2</span> Parametric (mid-point conversion)</a></li>
-  <li><a href="#non-parametric-ordinal-score" id="toc-non-parametric-ordinal-score" class="nav-link" data-scroll-target="#non-parametric-ordinal-score"><span class="header-section-number">3.3.0.3</span> Non-parametric (ordinal score)</a></li>
-  <li><a href="#survival-analysis" id="toc-survival-analysis" class="nav-link" data-scroll-target="#survival-analysis"><span class="header-section-number">3.3.0.4</span> Survival analysis</a></li>
-  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><span class="header-section-number">3.3.0.5</span> Interpretation</a></li>
+  <li><a href="#example-data" id="toc-example-data" class="nav-link" data-scroll-target="#example-data"><span class="header-section-number">3.3.1</span> Example data</a></li>
+  <li><a href="#parametric-mid-point-conversion" id="toc-parametric-mid-point-conversion" class="nav-link" data-scroll-target="#parametric-mid-point-conversion"><span class="header-section-number">3.3.2</span> Parametric (mid-point conversion)</a></li>
+  <li><a href="#non-parametric-ordinal-score" id="toc-non-parametric-ordinal-score" class="nav-link" data-scroll-target="#non-parametric-ordinal-score"><span class="header-section-number">3.3.3</span> Non-parametric (ordinal score)</a></li>
+  <li><a href="#survival-analysis" id="toc-survival-analysis" class="nav-link" data-scroll-target="#survival-analysis"><span class="header-section-number">3.3.4</span> Survival analysis</a></li>
+  <li><a href="#interpretation" id="toc-interpretation" class="nav-link" data-scroll-target="#interpretation"><span class="header-section-number">3.3.5</span> Interpretation</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/data-ordinal.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -991,8 +991,8 @@ Controversy of the H-B scale
 <p>Ordinal score data typically do not align well with the assumptions of traditional parametric statistical methods. Given this challenge, non-parametric methods have emerged as a compelling alternative for handling ordinal plant pathological data <span class="citation" data-cites="shah2004">(<a href="references.html#ref-shah2004" role="doc-biblioref">Shah and Madden 2004</a>)</span>. Unlike their parametric counterparts, these methods do not rest on the presumption of a specific distribution for the underlying population, offering greater flexibility in accommodating the intricacies inherent to ordinal data. On the other hand, when the conditions are right, parametric methods can also be harnessed effectively.</p>
 <p>A common strategy, particularly for ordinal scores, involves converting these values into the mid-points of their corresponding percent scales. This transformation renders the data more amenable to parametric analyses. However, the mid-point conversion has been criticized in the literature as it may amplify the imprecision, especially when the interval size is wide, and because it does not really reflect a true value, but an interval for each estimate <span class="citation" data-cites="chiang2023a onofri2018">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>; <a href="references.html#ref-onofri2018" role="doc-biblioref">Onofri et al. 2018</a>)</span>.</p>
 <p>Let’s see some examples of analysis using the mid-point conversion in a parametric framework as well as the non-parametric tests.</p>
-<section id="example-data" class="level4" data-number="3.3.0.1">
-<h4 data-number="3.3.0.1" class="anchored" data-anchor-id="example-data"><span class="header-section-number">3.3.0.1</span> Example data</h4>
+<section id="example-data" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="example-data"><span class="header-section-number">3.3.1</span> Example data</h3>
 <p>We will use a data set made available in an article on the application of the survival analysis technique to test hypotheses when using quantitative ordinal scales <span class="citation" data-cites="chiang2023a">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>)</span>. The data and codes used in the paper can be found in the specified GitHub <a href="https://github.com/StatisticalMethodsinPlantProtection/CompMuCens">repository</a>. The data is structured into four treatments, each with 30 ratings ranging from a score of 1 to 6 on the H-B scale.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-12_b3429d9f045be88007c1e110834e28f3">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the vectors for the treatments</span></span>
@@ -1074,26 +1074,28 @@ Controversy of the H-B scale
 </div>
 </div>
 <p>The visualization using box-plots suggests differences between the treatments.</p>
-<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-14_171248391509aa2e961305a275e96dd9">
+<div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-14_9ff32d06ea612ec9ef9673c035095ad8">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p_score <span class="ot">&lt;-</span> dat_ordinal <span class="sc">|&gt;</span> </span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treatment, score))<span class="sc">+</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>p_mp <span class="ot">&lt;-</span> dat_ordinal_mp <span class="sc">|&gt;</span> </span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treatment, midpoint))<span class="sc">+</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>()<span class="sc">+</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>p_score <span class="sc">|</span> p_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>p_mp <span class="ot">&lt;-</span> dat_ordinal_mp <span class="sc">|&gt;</span> </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(treatment, midpoint))<span class="sc">+</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">outlier.colour =</span> <span class="cn">NA</span>)<span class="sc">+</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>p_score <span class="sc">|</span> p_mp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="data-ordinal_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
-<section id="parametric-mid-point-conversion" class="level4" data-number="3.3.0.2">
-<h4 data-number="3.3.0.2" class="anchored" data-anchor-id="parametric-mid-point-conversion"><span class="header-section-number">3.3.0.2</span> Parametric (mid-point conversion)</h4>
+<section id="parametric-mid-point-conversion" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="parametric-mid-point-conversion"><span class="header-section-number">3.3.2</span> Parametric (mid-point conversion)</h3>
 <p>Parametric methods can be employed when analyzing data, provided that the underlying assumptions of these methods are satisfied. For data that is based on ordinal scores, one way to apply parametric methods is to convert these scores into the mid-points of their corresponding percent scales. Once converted, the data is better suited for parametric analyses. Among the available techniques, the most frequently utilized is the application of an ANOVA (Analysis of Variance) model. This model is particularly useful for testing the null hypothesis, which posits that there are no significant differences among the treatments being studied.</p>
 <p>We can use the <code>aov</code> function to fit the model and check the parametric assumptions using the <code>DHARMa</code> package.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-15_ca86cc612234ae42d2d5a4136036e991">
@@ -1171,8 +1173,8 @@ NOTE: Compact letter displays can be misleading
 </div>
 </div>
 </section>
-<section id="non-parametric-ordinal-score" class="level4" data-number="3.3.0.3">
-<h4 data-number="3.3.0.3" class="anchored" data-anchor-id="non-parametric-ordinal-score"><span class="header-section-number">3.3.0.3</span> Non-parametric (ordinal score)</h4>
+<section id="non-parametric-ordinal-score" class="level3" data-number="3.3.3">
+<h3 data-number="3.3.3" class="anchored" data-anchor-id="non-parametric-ordinal-score"><span class="header-section-number">3.3.3</span> Non-parametric (ordinal score)</h3>
 <p>Because ordinal score data generally do not meet the assumptions of traditional parametric statistical methods, non-parametric methods can be considered as an alternative. Such methods have been proposed for analyzing ordinal data in plant pathology <span class="citation" data-cites="shah2004">(<a href="references.html#ref-shah2004" role="doc-biblioref">Shah and Madden 2004</a>)</span>. For our example, when more than two treatments are involved, a Kruskal-Wallis test can be utilized. The <code>kruskal</code> function of the {agricolae} package does the job we want. Note that in this case we use the ordinal score directly and not the mid-point value.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-19_b3f799ab0c957c4b3b44ca41f9d15f4d">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(agricolae)</span>
@@ -1211,8 +1213,8 @@ C          29.61667      d</code></pre>
 </div>
 </div>
 </section>
-<section id="survival-analysis" class="level4" data-number="3.3.0.4">
-<h4 data-number="3.3.0.4" class="anchored" data-anchor-id="survival-analysis"><span class="header-section-number">3.3.0.4</span> Survival analysis</h4>
+<section id="survival-analysis" class="level3" data-number="3.3.4">
+<h3 data-number="3.3.4" class="anchored" data-anchor-id="survival-analysis"><span class="header-section-number">3.3.4</span> Survival analysis</h3>
 <p>A method based on survival analysis was more recently introduced for the analysis of ordinal data <span class="citation" data-cites="chiang2023a">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>)</span>. The authors developed an R script called “CompMuCens”, which facilitates the comparison of multiple treatment means for plant disease severity data. This is achieved through nonparametric survival analysis using class- or interval-based data derived from a quantitative ordinal scale. The code is accessible in <a href="https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/tree/main">this repository</a> and has been incorporated into the {r4pde} package.</p>
 <p>We continue with our working example data. Since the expected variable name for the score in the function is <code>x</code>, we must adjust our data frame accordingly.</p>
 <div class="cell" data-hash="data-ordinal_cache/html/unnamed-chunk-20_6b5a69ab2284ccbce1b6d0e4352203cb">
@@ -1248,8 +1250,8 @@ $Conclusion
 </div>
 <p>The outcomes are three: the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.</p>
 </section>
-<section id="interpretation" class="level4" data-number="3.3.0.5">
-<h4 data-number="3.3.0.5" class="anchored" data-anchor-id="interpretation"><span class="header-section-number">3.3.0.5</span> Interpretation</h4>
+<section id="interpretation" class="level3" data-number="3.3.5">
+<h3 data-number="3.3.5" class="anchored" data-anchor-id="interpretation"><span class="header-section-number">3.3.5</span> Interpretation</h3>
 <p>Upon comparing the three methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it’s crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading <span class="citation" data-cites="chiang2023a">(<a href="references.html#ref-chiang2023a" role="doc-biblioref">Chiang et al. 2023</a>)</span></p>
 
 
