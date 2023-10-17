@@ -476,20 +476,21 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </section>
 <section id="join-count" class="level4" data-number="15.1.1.2">
 <h4 data-number="15.1.1.2" class="anchored" data-anchor-id="join-count"><span class="header-section-number">15.1.1.2</span> Join count</h4>
-<p>In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.</p>
-<p>Let’s use the <code>join_count()</code> function of the {r4pde} package to perform a join count test. First, we need to create the series of binary data from left to right and top to bottom. The data is displayed in Fig. 9.13 in page 260 of the book chapter on spatial analysis <span class="citation" data-cites="chapter2007">(<a href="references.html#ref-chapter2007" role="doc-biblioref">Madden et al. 2007a</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-5_16f605ca5f9738dbbaee00ab43c18561">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
+<p>In a joint count statistics <span class="citation" data-cites="renshaw1982">(<a href="references.html#ref-renshaw1982" role="doc-biblioref">Renshaw et al. 1982</a>)</span>, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation. The expected number of join counts can defined under randomness and the corresponding standard errors can be estimated given some constants are calculated based on the number of rows and columns of the matrix.</p>
+<p>Let’s use the <code>join_count()</code> function of the {r4pde} package to perform a join count test. The formulations in this function apply only for a rectangular array with no missing values, with the “rook” definition of proximity, and they were all presented in the book The Study of Plant Disease Epidemics, page 261 <span class="citation" data-cites="chapter2007">(<a href="references.html#ref-chapter2007" role="doc-biblioref">Madden et al. 2007a</a>)</span>.</p>
+<p>Let’s create a series of binary data from left to right and top to bottom. The data is displayed in Fig. 9.13 in page 260 of the aforementioned book <span class="citation" data-cites="chapter2007">(<a href="references.html#ref-chapter2007" role="doc-biblioref">Madden et al. 2007a</a>)</span>. In the example, there are 5 rows and 5 columns. This will be informed later to to compose the matrix which is the data format for analysis.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-5_f5bc16aae56265a8af09edfa7d037d63">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>m1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">1</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(S2, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>matrix1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(m1, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Visualize the two-dimensional array:</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-joincount1_58de6b39057fbd64f1cce57b31fb052f">
+<p>We can visualize the two-dimensional array by converting to a raster.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/fig-joincount1_4eb3d7eb8709eb8817c83ee99a577ac2">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">matrix</span>(S2, <span class="dv">5</span> , <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">matrix</span>(matrix1, <span class="dv">5</span> , <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">as.data.frame</span>(mapS2, <span class="at">xy =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>mapS3 <span class="sc">|&gt;</span></span>
@@ -509,9 +510,10 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<p>The function <code>join_count</code> calculates spatial statistics for a matrix based on the specifications and calculations shown in the book <span class="citation" data-cites="chapter2007">(<a href="references.html#ref-chapter2007" role="doc-biblioref">Madden et al. 2007a</a>)</span>. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated or non-aggregated (random) regarding the presence of 1 (“D”) and 0 (“H”) values in the matrix.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-7_41b5f8a54f6f5efad25ec1314f040f4a">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(S2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The function <code>join_count()</code> calculates spatial statistics for a matrix based on the specifications and calculations shown in the book <span class="citation" data-cites="chapter2007">(<a href="references.html#ref-chapter2007" role="doc-biblioref">Madden et al. 2007a</a>)</span>. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated or non-aggregated (random) based on a standard normal distribution test statistic Z-score applied separately for HD or DD sequences. For HD, Z-score lower than - 1.64 (more negative) is taken as a basis for rejection of hypothesis of randomness (P = 0.05). For DD sequences, Z-score greater than 1.64 indicates aggregation.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-7_958474d7ebfcc8dd6a5a5430c5fd6fa1">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(matrix1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Join Count Analysis of Spatial Patterns of Plant Diseases:
  ----------------------------------------------------------
@@ -531,16 +533,16 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
  ----------------------------------------------------------</code></pre>
 </div>
 </div>
-<p>The function returns a list with several elements including the last one which is a message regarding the spatial pattern as aggregated or random. Let’s repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence of aggregation of diseased plants.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-8_dd779e22223085ed777d3426b32a7602">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<p>In the example above, the observed count of HD sequence was larger than the expected count, so the Z-score suggests non aggregation, or randomness. The DD sequence observed count was lower than expected count, confirming non aggregation. Let’s repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence of aggregation of diseased plants, because the observed DD is greater than expected and observed HD is lower than expected. The Z-score for HD is less than -1.64 (P&lt; 0.05) and the Z-score for DD is greater than 1.64 (P &lt; 0.05).</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-8_8391e1ec7eb6ebd82d5553057e1838ba">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>m2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>       <span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>       <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(S3, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>matrix2 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(m2, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>r4pde<span class="sc">::</span><span class="fu">join_count</span>(S3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(matrix2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Join Count Analysis of Spatial Patterns of Plant Diseases:
  ----------------------------------------------------------
@@ -560,8 +562,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
  ----------------------------------------------------------</code></pre>
 </div>
 </div>
-<p>As shown above the Z value for HD is less than -1.64 and the Z value for DD is greater than 1.64 (P = 0.05).</p>
-<p>We can apply these tests for a real example epidemic data provided by the <a href="https://chgigot.github.io/epiphy/">epiphy</a> R package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. Let’s work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the data set has two data frames) of the data set <code>tomato_tswv</code> to a new data frame called <code>tswv_1929</code>.</p>
+<p>We can apply these tests for a real example epidemic data provided by the {epiphy} R package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. Let’s work with a portion of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one data frame (the data set has two data frames) of the data set <code>tomato_tswv</code> to a new data frame called <code>tswv_1929</code>.</p>
 <div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-9_5edb24a08f0241173194bd7ce7c22806">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epiphy)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="ot">&lt;-</span> tomato_tswv<span class="sc">$</span>field_1929</span>
@@ -580,8 +581,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 10 1 10 1 0 1</code></pre>
 </div>
 </div>
-<p>The inspection of the first 10 rows of the data frame shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let’s visualize these data for each sampling time.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-tsw_b895ce071fb659c9d8e26cb679ad209c">
+<p>The inspection of the first 10 rows of the data frame shows five variables where <code>x</code> and <code>y</code> are spatial grid coordinates, <code>t</code> is assessment time, <code>i</code> is the status of the plant (0 = healthy, 1 = diseased) and <code>n</code> is the sampling unit size (here all one). Let’s visualize these data for each sampling time.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/fig-tsw_2e4096ac5365b67383e1f3bed5bbeabc">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i))) <span class="sc">+</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -589,7 +590,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"gray70"</span>, <span class="st">"darkred"</span>)) <span class="sc">+</span></span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> t) <span class="sc">+</span></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"Status"</span>)<span class="sc">+</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span><span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>()<span class="sc">+</span></span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"top"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-tsw" class="quarto-figure quarto-figure-center anchored">
@@ -600,25 +601,22 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<p>Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-11_ffc0ce3d9ed2a8cdb1ecd7a10110a378">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(x, y) <span class="sc">|&gt;</span> </span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summary</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Check the number of rows (y) and columns (x) for further preparing the matrix with the number of rows and columns for the join count statistics.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-11_592c5193493113bc0892520f79747d92">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(tswv_1929<span class="sc">$</span>y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>       x               y        
- Min.   : 1.00   Min.   : 1.00  
- 1st Qu.: 6.75   1st Qu.:15.75  
- Median :12.50   Median :30.50  
- Mean   :12.50   Mean   :30.50  
- 3rd Qu.:18.25   3rd Qu.:45.25  
- Max.   :24.00   Max.   :60.00  </code></pre>
+<pre><code>[1] 60</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>m29 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i) <span class="sc">|&gt;</span> </span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="dv">24</span>, <span class="dv">60</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(m29)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">max</span>(tswv_1929<span class="sc">$</span>x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 24</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>m29 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span> </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i) <span class="sc">|&gt;</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(<span class="dv">24</span>, <span class="dv">60</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(m29)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Join Count Analysis of Spatial Patterns of Plant Diseases:
  ----------------------------------------------------------
@@ -638,14 +636,14 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
  ----------------------------------------------------------</code></pre>
 </div>
 </div>
-<p>We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-12_c91cc58c0b6769d7925bc3743fdd2bf0">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 2</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(<span class="fu">matrix</span>(S2, <span class="dv">24</span>, <span class="dv">60</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>We can apply the join count test for time.</p>
+<div class="cell" data-hash="spatial-tests_cache/html/unnamed-chunk-12_d30037d707ea8a9e2b3a65533662b2de">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 2</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>S2 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"2"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(<span class="fu">matrix</span>(S2, <span class="dv">24</span>, <span class="dv">60</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Join Count Analysis of Spatial Patterns of Plant Diseases:
  ----------------------------------------------------------
@@ -661,30 +659,6 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
     - Expected Count: 318.48
     - Standard Deviation: 26.40
     - Z-score: 0.91
- The pattern for 'DD' sequences is 'not aggregated'.
- ----------------------------------------------------------</code></pre>
-</div>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pull the binary sequence of time 3</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>S3 <span class="ot">&lt;-</span> tswv_1929 <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(t <span class="sc">==</span> <span class="st">"3"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(i)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="fu">join_count</span>(<span class="fu">matrix</span>(S3, <span class="dv">24</span>, <span class="dv">60</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Join Count Analysis of Spatial Patterns of Plant Diseases:
- ----------------------------------------------------------
- 1) 'HD' Sequences:
-    - Observed Count: 1299
-    - Expected Count : 1366.55
-    - Standard Deviation: 28.07
-    - Z-score: -2.42
- The pattern for 'HD' sequences is 'aggregated'.
-
- 2) 'DD' Sequences:
-    - Observed Count: 951
-    - Expected Count: 924.43
-    - Standard Deviation: 43.98
-    - Z-score: 0.62
  The pattern for 'DD' sequences is 'not aggregated'.
  ----------------------------------------------------------</code></pre>
 </div>
@@ -2124,6 +2098,9 @@ Moran, P. A. P. 1950. <a href="https://doi.org/10.2307/2332142">Notes on continu
 </div>
 <div id="ref-nelson1996simple" class="csl-entry" role="listitem">
 Nelson, S. C. 1996. A simple analysis of disease foci. Phytopathology. 86:432–439.
+</div>
+<div id="ref-renshaw1982" class="csl-entry" role="listitem">
+Renshaw, E., Cliff, A. D., and Ord, J. K. 1982. Spatial processes, models and applications. Biometrics. 38:287 Available at: <a href="http://dx.doi.org/10.2307/2530324">http://dx.doi.org/10.2307/2530324</a>.
 </div>
 <div id="ref-wiegand2004" class="csl-entry" role="listitem">
 Wiegand, T., and A. Moloney, K. 2004. Rings, circles, and null-models for point pattern analysis in ecology. Oikos. 104:209–229 Available at: <a href="http://dx.doi.org/10.1111/j.0030-1299.2004.12497.x">http://dx.doi.org/10.1111/j.0030-1299.2004.12497.x</a>.

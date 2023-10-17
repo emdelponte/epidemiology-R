@@ -64,26 +64,28 @@ oruns_test(row1$y1)
 
 #### Join count
 
-In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
+In a joint count statistics [@renshaw1982], two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation. The expected number of join counts can defined under randomness and the corresponding standard errors can be estimated given some constants are calculated based on the number of rows and columns of the matrix.
 
-Let's use the `join_count()` function of the {r4pde} package to perform a join count test. First, we need to create the series of binary data from left to right and top to bottom. The data is displayed in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
+Let's use the `join_count()` function of the {r4pde} package to perform a join count test. The formulations in this function apply only for a rectangular array with no missing values, with the "rook" definition of proximity, and they were all presented in the book The Study of Plant Disease Epidemics, page 261 [@chapter2007].
+
+Let's create a series of binary data from left to right and top to bottom. The data is displayed in Fig. 9.13 in page 260 of the aforementioned book [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to to compose the matrix which is the data format for analysis.
 
 ```{r}
-S2 <- c(1,0,1,1,0,
+m1 <- c(1,0,1,1,0,
        1,1,0,0,0,
        1,0,1,0,0,
        1,0,0,1,0,
        0,1,0,1,1)
-S2 <- matrix(S2, 5, 5, byrow = TRUE)
+matrix1 <- matrix(m1, 5, 5, byrow = TRUE)
 ```
 
-Visualize the two-dimensional array:
+We can visualize the two-dimensional array by converting to a raster.
 
 ```{r}
 #| label: fig-joincount1
 #| fig-cap: "Visualization of a matrix of presence/absence data representing a disease spatial pattern"
 # Convert to raster 
-mapS2 <- terra::rast(matrix(S2, 5 , 5, byrow = TRUE))
+mapS2 <- terra::rast(matrix(matrix1, 5 , 5, byrow = TRUE))
 # Convert to data frame
 mapS3 <- terra::as.data.frame(mapS2, xy = TRUE)
 mapS3 |>
@@ -96,29 +98,28 @@ mapS3 |>
   theme(legend.position = "top")
 ```
 
-The function `join_count` calculates spatial statistics for a matrix based on the specifications and calculations shown in the book [@chapter2007]. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated or non-aggregated (random) regarding the presence of 1 ("D") and 0 ("H") values in the matrix.
+The function `join_count()` calculates spatial statistics for a matrix based on the specifications and calculations shown in the book [@chapter2007]. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated or non-aggregated (random) based on a standard normal distribution test statistic Z-score applied separately for HD or DD sequences. For HD, Z-score lower than - 1.64 (more negative) is taken as a basis for rejection of hypothesis of randomness (P = 0.05). For DD sequences, Z-score greater than 1.64 indicates aggregation.
 
 ```{r}
-join_count(S2)
+library(r4pde)
+join_count(matrix1)
 
 ```
 
-The function returns a list with several elements including the last one which is a message regarding the spatial pattern as aggregated or random. Let's repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence of aggregation of diseased plants.
+In the example above, the observed count of HD sequence was larger than the expected count, so the Z-score suggests non aggregation, or randomness. The DD sequence observed count was lower than expected count, confirming non aggregation. Let's repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence of aggregation of diseased plants, because the observed DD is greater than expected and observed HD is lower than expected. The Z-score for HD is less than -1.64 (P\< 0.05) and the Z-score for DD is greater than 1.64 (P \< 0.05).
 
 ```{r}
-S3 <- c(1,1,1,0,0,
+m2 <- c(1,1,1,0,0,
        1,1,1,0,0,
        1,1,1,0,0,
        1,1,1,0,0,
        0,0,0,0,0)
-S3 <- matrix(S3, 5, 5, byrow = TRUE)
+matrix2 <- matrix(m2, 5, 5, byrow = TRUE)
 
-r4pde::join_count(S3)
+join_count(matrix2)
 ```
 
-As shown above the Z value for HD is less than -1.64 and the Z value for DD is greater than 1.64 (P = 0.05).
-
-We can apply these tests for a real example epidemic data provided by the [epiphy](https://chgigot.github.io/epiphy/) R package [@gigot2018]. Let's work with part of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one dataframe (the data set has two data frames) of the data set `tomato_tswv` to a new data frame called `tswv_1929`.
+We can apply these tests for a real example epidemic data provided by the {epiphy} R package [@gigot2018]. Let's work with a portion of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one data frame (the data set has two data frames) of the data set `tomato_tswv` to a new data frame called `tswv_1929`.
 
 ```{r}
 #| message: false
@@ -128,7 +129,7 @@ tswv_1929 <- tomato_tswv$field_1929
 tswv_1929 |>  head(10) 
 ```
 
-The inspection of the first 10 rows of the data frame shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
+The inspection of the first 10 rows of the data frame shows five variables where `x` and `y` are spatial grid coordinates, `t` is assessment time, `i` is the status of the plant (0 = healthy, 1 = diseased) and `n` is the sampling unit size (here all one). Let's visualize these data for each sampling time.
 
 ```{r}
 #| label: fig-tsw
@@ -141,18 +142,18 @@ tswv_1929 |>
   scale_fill_manual(values = c("gray70", "darkred")) +
   facet_wrap( ~ t) +
   labs(fill = "Status")+
-  theme_r4pde(font_size =12)+
+  theme_void()+
   theme(legend.position = "top")
 ```
 
-Check the number of rows (y) and columns (x) for further preparing the neighbor object for the join count statistics.
+Check the number of rows (y) and columns (x) for further preparing the matrix with the number of rows and columns for the join count statistics.
 
 ```{r}
-tswv_1929 |> 
-  dplyr::select(x, y) |> 
-  summary()
+max(tswv_1929$y)
+max(tswv_1929$x)
 
 m29 <- tswv_1929 |> 
+  filter(t == 1) |> 
   pull(i) |> 
   matrix(24, 60, byrow = TRUE)
 
@@ -160,7 +161,7 @@ join_count(m29)
 
 ```
 
-We can apply the join count test for time 2 and time 3. Results show that the pattern changes from random to aggregate over time.
+We can apply the join count test for time.
 
 ```{r}
 # Pull the binary sequence of time 2
@@ -170,12 +171,7 @@ S2 <- tswv_1929 |>
 
 join_count(matrix(S2, 24, 60, byrow = TRUE))
 
-# Pull the binary sequence of time 3
-S3 <- tswv_1929 |>
-  filter(t == "3") |>
-  pull(i)
 
-join_count(matrix(S3, 24, 60, byrow = TRUE))
 
 ```
 
