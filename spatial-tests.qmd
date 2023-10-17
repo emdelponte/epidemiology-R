@@ -16,11 +16,7 @@ In this situation the individual plants are mapped, meaning that their relative 
 
 #### Runs test
 
-A **run** is defined as a succession of *one or more* diseased (D) or healthy (H) plants, which are followed and preceded by a plant of the other disease status or no plant at all [@madden1982]. In the example below, we can count 13 runs.
-
-![Example for the computation of the number of ordinary runs in a sequence of binary data](imgs/runs.png){#fig-runs1 fig-align="center" width="503"}
-
-There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
+A **run** is defined as a succession of *one or more* diseased (D) or healthy (H) plants, which are followed and preceded by a plant of the other disease status or no plant at all [@madden1982]. There would be few runs if there is an aggregation of diseased or healthy plants and a large number of runs for a random mixing of diseased and healthy plants.
 
 Let's create a vector of binary (0 = non-diseased; 1 = diseased) data representing a crop row with 32 plants and assign it to `y`. For plotting purposes, we make a data frame for more complete information.
 
@@ -59,7 +55,7 @@ ggsave("imgs/runs2.png", runs2, width = 12, height = 2, bg = "white")
 
 ![Sequence of diseased (1) or non-diseased (0) units (plants). The numbers represent the position of the unit](imgs/runs2.png){#fig-runs2}
 
-We can obtain the number of runs and related statistics using the `oruns_test()` function of the *r4pde* package.
+We can obtain the number of runs and related statistics using the `oruns_test()` function of the {r4pde}.
 
 ```{r}
 library(r4pde)
@@ -68,9 +64,9 @@ oruns_test(row1$y1)
 
 #### Join count
 
-In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The orientation(s) of interest (along rows, across rows, diagonally, or a a combination o these) should be specified in the test. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
+In this analysis, two adjacent plants may be classified by the type of join that links them: D-D, H-H or H-D. The number of joins of the specified type in the orientation(s) of interest is then counted. The question is whether the observed join-count is large (or small) relative to that expected for a random pattern. The join-count statistics provides a basic measure of spatial autocorrelation.
 
-Let's use the `join_count()` function of the {r4pde} package to perform a join count test. First, we need to create the series of binary data from top to bottom and left to right. The data are shown in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
+Let's use the `join_count()` function of the {r4pde} package to perform a join count test. First, we need to create the series of binary data from left to right and top to bottom. The data is displayed in Fig. 9.13 in page 260 of the book chapter on spatial analysis [@chapter2007]. In the example, there are 5 rows and 5 columns. This will be informed later to run the test.
 
 ```{r}
 S2 <- c(1,0,1,1,0,
@@ -100,16 +96,14 @@ mapS3 |>
   theme(legend.position = "top")
 ```
 
-The function `join_count` calculates spatial statistics for a matrix. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated, random, or uniform regarding the presence of 1s ("D") and 0s ("H").
+The function `join_count` calculates spatial statistics for a matrix based on the specifications and calculations shown in the book [@chapter2007]. It identifies patterns of aggregation for values in a binary matrix based on join count statistics. The results determine whether the observed spatial arrangement is aggregated or non-aggregated (random) regarding the presence of 1 ("D") and 0 ("H") values in the matrix.
 
 ```{r}
 join_count(S2)
 
 ```
 
-The function returns a list with several elements including the last one which is the spatial pattern as aggregated or random.
-
-Let's repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence to reject the null hypothesis, indicating aggregation of plants.
+The function returns a list with several elements including the last one which is a message regarding the spatial pattern as aggregated or random. Let's repeat the procedure using the second array of data shown in the book chapter, for which the result is different. In this case, there is evidence of aggregation of diseased plants.
 
 ```{r}
 S3 <- c(1,1,1,0,0,
@@ -134,7 +128,7 @@ tswv_1929 <- tomato_tswv$field_1929
 tswv_1929 |>  head(10) 
 ```
 
-The inspection of the first 10 rows of the dataframe shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
+The inspection of the first 10 rows of the data frame shows five variables where x and y are spatial grid coordinates, t is assessment time, i is the status of the plant (0 = healthy, 1 = diseased) and n is the sampling unit size (here all one). Let's visualize these data for each sampling time.
 
 ```{r}
 #| label: fig-tsw
