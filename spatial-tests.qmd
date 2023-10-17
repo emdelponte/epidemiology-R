@@ -386,35 +386,18 @@ rand <- SpatialRandom
 aggr <- SpatialAggregated
 ```
 
-In order to create a polygon with the most extreme points, we can use the `chull()` function to find the convex hull, which will give us the indices of the points that form the smallest convex polygon that contains all the points in our data set.
-
-```{r}
-hull_indices_rand <- chull(rand)
-# Add these indices as a new column to the data frame
-rand$hull <- FALSE
-rand$hull[hull_indices_rand] <- TRUE
-
-hull_indices_aggr <- chull(aggr)
-# Add these indices as a new column to the data frame
-aggr$hull <- FALSE
-aggr$hull[hull_indices_aggr] <- TRUE
-
-
-```
-
-The two dataframes has two variables each. Let's produce 2-D map.
+Let's produce 2-D map for each data frame.
 
 ```{r}
 #| warning: false
 #| message: false
 prand <- rand |> 
   ggplot(aes(x, y))+
-  geom_polygon(data = rand[hull_indices_rand, ], aes(x, y), fill = NA, color = 'black') +
   geom_point()+
   scale_color_manual(values = c("black", NA))+
   coord_fixed()+
   coord_flip()+
-  theme_void()+
+   theme_r4pde(font_size = 12)+
   theme(legend.position = "none")+
   labs (title = "Random spatial pattern", 
         x = "Latitude",
@@ -423,12 +406,11 @@ prand <- rand |>
 
 paggr <- aggr |> 
   ggplot(aes(x, y))+
-  geom_polygon(data = aggr[hull_indices_aggr, ], aes(x, y), fill = NA, color = 'black') +
   geom_point()+
   scale_color_manual(values = c("black", NA))+
   coord_fixed()+
   coord_flip()+
-  theme_void()+
+  theme_r4pde(font_size = 12)+
   theme(legend.position = "none")+
   labs (title = "Aggregated spatial pattern", 
         x = "Latitude",
@@ -450,8 +432,9 @@ Using the {spatstats} package, we first need to create a ppp object which repres
 #| message: false
 
 library(spatstat)
-### Create window 
-window_rand <- ripras(rand$x, rand$y)
+
+### Create rectangular window around the points
+window_rand <- bounding.box.xy(rand$x, rand$y)
 
 # create the point pattern object
 ppp_rand <- ppp(rand$x, rand$y, window_rand)
@@ -484,8 +467,8 @@ Lets repeat this procedure for the situation of aggregated data.
 #| warning: false
 #| message: false
 
-### Create window 
-window_aggr <- ripras(aggr$x, aggr$y)
+### Create a rectangular window around the points 
+window_aggr <- bounding.box.xy(aggr$x, aggr$y)
 
 # create the point pattern object
 ppp_aggr <- ppp(aggr$x, aggr$y, window_aggr)
@@ -747,6 +730,9 @@ epi1 <- epi |>
 The {spdep} package in R provides a suite of functions for handling spatial dependence in data, and one of its main functions for assessing spatial autocorrelation is **`moran()`**. The **`moran()`** function calculates Moran's I statistic for a given dataset. It requires two primary inputs: 1) A **Numeric Vector**: This vector represents the values for which spatial autocorrelation is to be measured. Typically, this could be a variable like population density, temperature, or any other spatial attribute; and 2) A **Spatial Weights Matrix**: This matrix represents the spatial relationships between the observations. It can be thought of as defining the "neighbors" for each observation. The {spdep} package provides functions to create various types of spatial weights, such as contiguity-based weights or distance-based weights. Let's load the library and start with the procedures.\
 
 ```{r}
+#| warning: false
+#| message: false
+
 set.seed(100)
 library(spdep)
 ```
@@ -801,7 +787,7 @@ The function will return the Moran's I statistic value, an expected value under 
 
 In conclusion, the **`moran.test()`** function offers a structured way to investigate spatial autocorrelation in datasets. Spatial weights play a crucial role in this analysis, representing the spatial relationships between observations.
 
-As before, we can construct a correlogram using the output of the `sp.correlogram()` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2007]. Let's store the results in a dataframe.
+As before, we can construct a correlogram using the output of the `sp.correlogram()` function. Note that the figure below is very similar to the one shown in Figure 91.5 in page 269 of the book chapter [@chapter2007]. Let's store the results in a data frame.
 
 ```{r}
 correl_I <- sp.correlogram(nb, epi1, 
