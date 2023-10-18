@@ -119,58 +119,63 @@ matrix2 <- matrix(m2, 5, 5, byrow = TRUE)
 join_count(matrix2)
 ```
 
-We can apply these tests for a real example epidemic data provided by the {epiphy} R package [@gigot2018]. Let's work with a portion of the intensively mapped data on the incidence of tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937). First, we need to load the library and then assign one data frame (the data set has two data frames) of the data set `tomato_tswv` to a new data frame called `tswv_1929`.
+We can apply these tests for a real example epidemic data provided by the {r4pde} R package. Let's work with a portion of the intensively mapped data on the occurrence of gummy stem blight (GSB) of watermelon [@café-filho2010].
 
 ```{r}
 #| message: false
 #| warning: false
-library(epiphy)
-tswv_1929 <- tomato_tswv$field_1929
-tswv_1929 |>  head(10) 
+library(r4pde)
+gsb <- DidymellaWatermelon
+gsb 
 ```
 
-The inspection of the first 10 rows of the data frame shows five variables where `x` and `y` are spatial grid coordinates, `t` is assessment time, `i` is the status of the plant (0 = healthy, 1 = diseased) and `n` is the sampling unit size (here all one). Let's visualize these data for each sampling time.
+The inspection of the data frame shows four variables where `dap` is the day after planting, `NS_col` is the north-south direction, `EW_row` is the east-west direction and `severity` is the severity in ordinal score (0-4). Let's see produce a map for the 65 and 74 `dap`, but first we need to create the incidence variable based on severity.
 
 ```{r}
 #| label: fig-tsw
-#| fig-cap: "Incidence maps for for tomato spotted wilt virus (TSWV) disease in field trials reported by Cochran (1936) and Bald (1937)"
+#| fig-cap: "Incidence maps for gummy stem blight of watermelon"
 
-tswv_1929 |>
-  ggplot(aes(x, y, fill = factor(i))) +
-  geom_tile() +
+gsb2 <- gsb |>
+  filter(dap %in% c(65, 74)) |> 
+  mutate(incidence = case_when(severity > 0 ~ 1,
+                               TRUE ~ 0))
+
+gsb2 |> 
+  ggplot(aes(NS_col, EW_row, fill = factor(incidence)))+
+  geom_tile(color = "white") +
   coord_fixed() +
   scale_fill_manual(values = c("gray70", "darkred")) +
-  facet_wrap( ~ t) +
+  facet_wrap( ~ dap) +
   labs(fill = "Status")+
   theme_void()+
   theme(legend.position = "top")
 ```
 
-Check the number of rows (y) and columns (x) for further preparing the matrix with the number of rows and columns for the join count statistics.
+Check the number of rows (y) and columns (x) for further preparing the matrix with the number of rows and columns for the join count statistics. The `m65` object should be in the matrix format before running the join count test.
 
 ```{r}
-max(tswv_1929$y)
-max(tswv_1929$x)
+max(gsb2$NS_col)
+max(gsb2$EW_row)
 
-m29 <- tswv_1929 |> 
-  filter(t == 1) |> 
-  pull(i) |> 
-  matrix(24, 60, byrow = TRUE)
+m65 <- gsb2 |> 
+  filter(dap == 65) |> 
+  pull(incidence) |> 
+  matrix(12, 16, byrow = TRUE)
 
-join_count(m29)
+join_count(m65)
 
 ```
 
-We can apply the join count test for time.
+We can apply the join count test for 74 dap and see that the pattern is now aggregated, contrary to 64 dap when it was random.
 
 ```{r}
 # Pull the binary sequence of time 2
-S2 <- tswv_1929 |>
-  filter(t == "2") |>
-  pull(i)
+m74 <- gsb2 |> 
+  filter(dap == 74) |> 
+  pull(incidence) |> 
+  matrix(12, 16, byrow = TRUE)
 
-join_count(matrix(S2, 24, 60, byrow = TRUE))
-
+join_count(m74)
 
 
 ```
@@ -280,53 +285,48 @@ The plot shows the ID for each focus.
 
 ```{r}
 plot_AFSD(foci_data)+
-  theme_light()
+  theme_void()
   
   
 ```
 
-We will now analyse an actual data set from the *epiphy* package. The data describe the incidence of tomato spotted wilt virus (TSWV) disease in field trials. There are two years in the data set. We will work with the data from 1928 when six assessments were made in time. We will first work with time 1 by using `filter()` function of the *dplyr* package.
+We will now analyse the gummy stem blight dataset again focusing on 65 and 74 dap. We first need to prepare the data for the analysis by getting the x, y and i vectors in the dataframe.
 
 ```{r}
 #| warning: false
 #| message: false
 
-library(epiphy)
-tswv_1928 <- tomato_tswv$field_1928
-df1 <- tswv_1928 |>
-  filter(t == 1) |> # filter time 1
-  select(x, y, i) # select only three variables
-```
-
-Follows the incidence map of the area at time 1.
-
-```{r}
-df1 |> 
-  ggplot(aes(x, y, fill = factor(i)))+
-  geom_tile(color = "black")+
-  theme_void()+
-  scale_fill_manual(values = c("grey70", "darkred"))+
-  coord_fixed()+
-  theme(legend.position = "none")
+library(r4pde)
+gsb65 <- DidymellaWatermelon |> 
+  filter(dap %in% c(65)) |> 
+  mutate(incidence = case_when(severity > 0 ~ 1,
+                               TRUE ~ 0)) |> 
+  select(EW_row, NS_col, incidence) |> 
+  rename(x = EW_row, y = NS_col, i = incidence)
 ```
 
 Now we can run the AFSD function and obtain the statistics.
 
 ```{r}
-result_df1 <- AFSD(df1)
+
+result_df1 <- AFSD(gsb65)
 
 knitr::kable(result_df1[[1]])
 ```
 
-This analysis is usually applied to multiple maps and the statistics are visually related to the incidence in the area in a scatter plot. Let's calculate the statistics for all five times of the data frame where we will keep now the time variable in the dataframe and split it by time before applying the function. We can do it using the `map` function of the *purrr* package.
+This analysis is usually applied to multiple maps and the statistics are visually related to the incidence in the area in a scatter plot. Let's calculate the statistics for the two dap . We can split it by dap before applying the function. We can do it using the `map` function of the *purrr* package.
 
 ```{r}
 library(purrr)
-
-df_all <- tomato_tswv$field_1928
+gsb65_74 <- DidymellaWatermelon |> 
+  filter(dap %in% c(65, 74)) |> 
+  mutate(incidence = case_when(severity > 0 ~ 1,
+                               TRUE ~ 0)) |> 
+  select(dap, EW_row, NS_col, incidence) |> 
+  rename(dap = dap, x = EW_row, y = NS_col, i = incidence)
 
 # Split the dataframe by 'time'
-df_split <- split(df_all, df_all$t)
+df_split <- split(gsb65_74, gsb65_74$dap)
 
 # Apply the AFSD function to each split dataframe
 results <- map(df_split, AFSD)
@@ -337,11 +337,11 @@ results <- map(df_split, AFSD)
 We can check the summary results for time 2 and time 3.
 
 ```{r}
-time2 <- data.frame(results[[2]][1])
-knitr::kable(time2)
+time65 <- data.frame(results[[1]][1])
+knitr::kable(time65)
 
-time3 <- data.frame(results[[3]][1])
-knitr::kable(time3)
+time74 <- data.frame(results[[2]][1])
+knitr::kable(time74)
 
 # Plot the results to see the two foci in time 1
 plot_AFSD(results[[1]][[3]])+
