@@ -82,7 +82,7 @@ The datasets utilized to characterize a disease-yield relationship should ideall
 
 In experimental setups, researchers rely on different treatments that are designed to result in varying disease epidemics, under the assumption that the disease has an impact on yield. These treatments often include manipulating the level of inoculum when the disease is expected to be minimal. This is achieved through inoculations with different amounts of the pathogen. Conversely, when the disease is expected to be severe, researchers might use fungicides at different rates, frequencies, or timings. An alternative strategy is to use different host genotypes, preferably isolines or near-isolines, which exhibit varying degrees of susceptibility to the disease. Another method is to manipulate the environment, for example by altering the irrigation levels.
 
-## Damage curves 
+## Damage curves
 
 In any case, the relationship between a measure of yield (either absolute or relative) and the disease variable can be evaluated using scatter plots that depict a "damage curve" [@chapter2007a]. The disease variable most commonly represents the assessment of the disease at a singular critical point. However, sometimes data obtained from multiple assessments throughout the disease epidemic is used to calculate the area under the disease progress curve, which is then used to represent the disease variable. This offers a more comprehensive view of the disease's impact over time, and can better capture the complex relationships between disease progression and yield loss [@chapter2007a].
 
@@ -102,10 +102,15 @@ glimpse(wm, 60)
 As seen above using `glimpse()` function, the full data set has 17 variables. Let's reduce the data set to a few variables (study, inc and yld) and the trials number 1 to 4.
 
 ```{r}
+#| warning: false
+#| message: false
 wm2 <- wm |> 
   dplyr::select(study, inc, yld) |> 
   filter(study %in% c(1,2, 3, 4)) 
-wm2
+
+# Inspect the dataframe
+library(gtExtras)
+gt_plt_summary(wm2)
 ```
 
 We can now produce the damage curves for each study. As it can be seen, the relationship can be adequately described by a straight line.

@@ -396,7 +396,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <li><strong>Actual</strong> yield is generally less than or equal to attainable yield, and is obtained under the effect of <em>reducing factors</em> such as those caused by pest (disease, insects, weeds) injuries - defined as measurable symptom caused by a harmful organism. It is the crop yield actually harvested in a farmer’s field.</li>
 </ul>
 <p><strong>Yield loss</strong> (expressed in absolute or relative terms) is the difference between the attainable and the actual yield. Yield loss studies are only possible when reliable field data are collected in sufficient number to allow the development of statistical (empirical) models as well as the validation of mechanistic simulation yield loss models.</p>
-<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-yield_97a830f20be47f8f49f0ac35ace8807f">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-yield_01e24c7a15e2d60437332f6c36d98994">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -481,41 +481,517 @@ $ yld             &lt;dbl&gt; 3729, 3739, 3863, 3904, 4471, 4313…</code></pre>
 </div>
 </div>
 <p>As seen above using <code>glimpse()</code> function, the full data set has 17 variables. Let’s reduce the data set to a few variables (study, inc and yld) and the trials number 1 to 4.</p>
-<div class="cell" data-hash="yieldloss-concepts_cache/html/unnamed-chunk-3_d582746823b6504da972e582c267526e">
+<div class="cell" data-hash="yieldloss-concepts_cache/html/unnamed-chunk-3_10eb366ae5912588a45a95cae4e3a015">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>wm2 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(study, inc, yld) <span class="sc">|&gt;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(study <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)) </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>wm2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 52 × 3
-   study   inc   yld
-   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
- 1     1    76  2265
- 2     1    53  2618
- 3     1    42  2554
- 4     1    37  2632
- 5     1    29  2820
- 6     1    42  2799
- 7     1    55  2503
- 8     1    40  2967
- 9     1    26  2965
-10     1    18  3088
-# ℹ 42 more rows</code></pre>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Inspect the dataframe</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtExtras)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">gt_plt_summary</span>(wm2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div id="ddnzcuzefc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+#ddnzcuzefc table {
+  font-family: Lato, system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ddnzcuzefc thead, #ddnzcuzefc tbody, #ddnzcuzefc tfoot, #ddnzcuzefc tr, #ddnzcuzefc td, #ddnzcuzefc th {
+  border-style: none;
+}
+
+#ddnzcuzefc p {
+  margin: 0;
+  padding: 0;
+}
+
+#ddnzcuzefc .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 3px;
+  border-top-color: #FFFFFF;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ddnzcuzefc .gt_title {
+  color: #333333;
+  font-size: 24px;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ddnzcuzefc .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ddnzcuzefc .gt_heading {
+  background-color: #FFFFFF;
+  text-align: left;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 0px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 0px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ddnzcuzefc .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ddnzcuzefc .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ddnzcuzefc .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ddnzcuzefc .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ddnzcuzefc .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ddnzcuzefc .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ddnzcuzefc .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ddnzcuzefc .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ddnzcuzefc .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ddnzcuzefc .gt_row {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #F6F7F7;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ddnzcuzefc .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 80%;
+  font-weight: bolder;
+  text-transform: uppercase;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ddnzcuzefc .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ddnzcuzefc .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ddnzcuzefc .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ddnzcuzefc .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ddnzcuzefc .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ddnzcuzefc .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ddnzcuzefc .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_striped {
+  background-color: #FAFAFA;
+}
+
+#ddnzcuzefc .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ddnzcuzefc .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ddnzcuzefc .gt_sourcenote {
+  font-size: 12px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ddnzcuzefc .gt_left {
+  text-align: left;
+}
+
+#ddnzcuzefc .gt_center {
+  text-align: center;
+}
+
+#ddnzcuzefc .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ddnzcuzefc .gt_font_normal {
+  font-weight: normal;
+}
+
+#ddnzcuzefc .gt_font_bold {
+  font-weight: bold;
+}
+
+#ddnzcuzefc .gt_font_italic {
+  font-style: italic;
+}
+
+#ddnzcuzefc .gt_super {
+  font-size: 65%;
+}
+
+#ddnzcuzefc .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ddnzcuzefc .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ddnzcuzefc .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ddnzcuzefc .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ddnzcuzefc .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ddnzcuzefc .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ddnzcuzefc .gt_indent_5 {
+  text-indent: 25px;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_title gt_font_normal" style="">wm2</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="">52 rows x 3 cols</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Column">Column</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Plot Overview">Plot Overview</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Missing">Missing</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Mean">Mean</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Median">Median</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="SD">SD</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="type" class="gt_row gt_left"><svg aria-hidden="true" role="img" viewbox="0 0 640 512" style="height:20px;width:25px;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#f18e2c;overflow:visible;position:relative;"><path d="M576 0c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V32c0-17.7 14.3-32 32-32zM448 96c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V128c0-17.7 14.3-32 32-32zM352 224V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V224c0-17.7 14.3-32 32-32s32 14.3 32 32zM192 288c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320c0-17.7 14.3-32 32-32zM96 416v64c0 17.7-14.3 32-32 32s-32-14.3-32-32V416c0-17.7 14.3-32 32-32s32 14.3 32 32z"></path></svg></td>
+<td headers="name" class="gt_row gt_left" style="font-weight: bold;">study</td>
+<td headers="value" class="gt_row gt_center"><!--?xml version='1.0' encoding='UTF-8' ?--><svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" class="svglite" width="141.73pt" height="34.02pt" viewbox="0 0 141.73 34.02"><defs>  <style type="text/css">    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {      fill: none;      stroke: #000000;      stroke-linecap: round;      stroke-linejoin: round;      stroke-miterlimit: 10.00;    }    .svglite text {      white-space: pre;    }  </style></defs><rect width="100%" height="100%" style="stroke: none; fill: none;"></rect><defs>  <clippath id="cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==">    <rect x="0.00" y="0.00" width="141.73" height="34.02"></rect>  </clippath></defs><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"></g><defs>  <clippath id="cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==">    <rect x="1.00" y="1.00" width="139.74" height="22.56"></rect>  </clippath></defs><g clip-path="url(#cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==)"><rect x="7.35" y="1.00" width="25.41" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="32.76" y="1.00" width="25.41" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="58.16" y="23.56" width="25.41" height="0.00" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="83.57" y="1.00" width="25.41" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="108.98" y="1.00" width="25.41" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.31" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="122.04" cy="21.82" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><line x1="73.67" y1="23.56" x2="73.67" y2="1.00" style="stroke-width: 1.07; stroke-linecap: butt;"></line></g><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"><polyline points="1.00,23.56 140.74,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="26.26,26.39 26.26,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="121.09,26.39 121.09,23.56 " style="stroke-width: 0.75;"></polyline><text x="26.26" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="3.60px" lengthadjust="spacingAndGlyphs">1</text><text x="121.09" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="3.60px" lengthadjust="spacingAndGlyphs">4</text></g></svg></td>
+<td headers="n_missing" class="gt_row gt_right">0.0%</td>
+<td headers="Mean" class="gt_row gt_right">2.5</td>
+<td headers="Median" class="gt_row gt_right">2.5</td>
+<td headers="SD" class="gt_row gt_right">1.1</td></tr>
+    <tr><td headers="type" class="gt_row gt_left gt_striped"><svg aria-hidden="true" role="img" viewbox="0 0 640 512" style="height:20px;width:25px;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#f18e2c;overflow:visible;position:relative;"><path d="M576 0c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V32c0-17.7 14.3-32 32-32zM448 96c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V128c0-17.7 14.3-32 32-32zM352 224V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V224c0-17.7 14.3-32 32-32s32 14.3 32 32zM192 288c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320c0-17.7 14.3-32 32-32zM96 416v64c0 17.7-14.3 32-32 32s-32-14.3-32-32V416c0-17.7 14.3-32 32-32s32 14.3 32 32z"></path></svg></td>
+<td headers="name" class="gt_row gt_left gt_striped" style="font-weight: bold;">inc</td>
+<td headers="value" class="gt_row gt_center gt_striped"><!--?xml version='1.0' encoding='UTF-8' ?--><svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" class="svglite" width="141.73pt" height="34.02pt" viewbox="0 0 141.73 34.02"><defs>  <style type="text/css">    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {      fill: none;      stroke: #000000;      stroke-linecap: round;      stroke-linejoin: round;      stroke-miterlimit: 10.00;    }    .svglite text {      white-space: pre;    }  </style></defs><rect width="100%" height="100%" style="stroke: none; fill: none;"></rect><defs>  <clippath id="cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==">    <rect x="0.00" y="0.00" width="141.73" height="34.02"></rect>  </clippath></defs><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"></g><defs>  <clippath id="cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==">    <rect x="1.00" y="1.00" width="139.74" height="22.56"></rect>  </clippath></defs><g clip-path="url(#cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==)"><rect x="7.35" y="14.27" width="21.17" height="9.29" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="28.52" y="4.98" width="21.17" height="18.58" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="49.69" y="1.00" width="21.17" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="70.87" y="11.61" width="21.17" height="11.94" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="92.04" y="19.57" width="21.17" height="3.98" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="113.21" y="20.90" width="21.17" height="2.65" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="25.62" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="129.15" cy="22.23" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><line x1="55.64" y1="23.56" x2="55.64" y2="1.00" style="stroke-width: 1.07; stroke-linecap: butt;"></line></g><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"><polyline points="1.00,23.56 140.74,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="26.63,26.39 26.63,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="128.14,26.39 128.14,23.56 " style="stroke-width: 0.75;"></polyline><text x="26.63" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="3.60px" lengthadjust="spacingAndGlyphs">6</text><text x="128.14" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="7.20px" lengthadjust="spacingAndGlyphs">76</text></g></svg></td>
+<td headers="n_missing" class="gt_row gt_right gt_striped">0.0%</td>
+<td headers="Mean" class="gt_row gt_right gt_striped">27.2</td>
+<td headers="Median" class="gt_row gt_right gt_striped">26.0</td>
+<td headers="SD" class="gt_row gt_right gt_striped">17.7</td></tr>
+    <tr><td headers="type" class="gt_row gt_left"><svg aria-hidden="true" role="img" viewbox="0 0 640 512" style="height:20px;width:25px;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:#f18e2c;overflow:visible;position:relative;"><path d="M576 0c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V32c0-17.7 14.3-32 32-32zM448 96c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V128c0-17.7 14.3-32 32-32zM352 224V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V224c0-17.7 14.3-32 32-32s32 14.3 32 32zM192 288c17.7 0 32 14.3 32 32V480c0 17.7-14.3 32-32 32s-32-14.3-32-32V320c0-17.7 14.3-32 32-32zM96 416v64c0 17.7-14.3 32-32 32s-32-14.3-32-32V416c0-17.7 14.3-32 32-32s32 14.3 32 32z"></path></svg></td>
+<td headers="name" class="gt_row gt_left" style="font-weight: bold;">yld</td>
+<td headers="value" class="gt_row gt_center"><!--?xml version='1.0' encoding='UTF-8' ?--><svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" class="svglite" width="141.73pt" height="34.02pt" viewbox="0 0 141.73 34.02"><defs>  <style type="text/css">    .svglite line, .svglite polyline, .svglite polygon, .svglite path, .svglite rect, .svglite circle {      fill: none;      stroke: #000000;      stroke-linecap: round;      stroke-linejoin: round;      stroke-miterlimit: 10.00;    }    .svglite text {      white-space: pre;    }  </style></defs><rect width="100%" height="100%" style="stroke: none; fill: none;"></rect><defs>  <clippath id="cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==">    <rect x="0.00" y="0.00" width="141.73" height="34.02"></rect>  </clippath></defs><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"></g><defs>  <clippath id="cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==">    <rect x="1.00" y="1.00" width="139.74" height="22.56"></rect>  </clippath></defs><g clip-path="url(#cpMS4wMHwxNDAuNzR8MS4wMHwyMy41Ng==)"><rect x="7.35" y="22.43" width="18.15" height="1.13" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="25.50" y="14.53" width="18.15" height="9.02" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="43.64" y="1.00" width="18.15" height="22.56" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="61.79" y="13.40" width="18.15" height="10.15" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="79.94" y="15.66" width="18.15" height="7.90" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="98.09" y="17.92" width="18.15" height="5.64" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><rect x="116.24" y="21.30" width="18.15" height="2.26" style="stroke-width: 1.07; stroke: #FFFFFF; stroke-linecap: butt; stroke-linejoin: miter; fill: #F8BB87;"></rect><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="20.46" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><circle cx="120.85" cy="22.43" r="0.46" style="stroke-width: 0.71; stroke: none;"></circle><line x1="60.27" y1="23.56" x2="60.27" y2="1.00" style="stroke-width: 1.07; stroke-linecap: butt;"></line></g><g clip-path="url(#cpMC4wMHwxNDEuNzN8MC4wMHwzNC4wMg==)"><polyline points="1.00,23.56 140.74,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="21.44,26.39 21.44,23.56 " style="stroke-width: 0.75;"></polyline><polyline points="119.87,26.39 119.87,23.56 " style="stroke-width: 0.75;"></polyline><text x="21.44" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="14.40px" lengthadjust="spacingAndGlyphs">2.0K</text><text x="119.87" y="33.36" text-anchor="middle" style="font-size: 6.00px; font-weight: 0; font-family: &quot;Courier&quot;;" textlength="14.40px" lengthadjust="spacingAndGlyphs">3.7K</text></g></svg></td>
+<td headers="n_missing" class="gt_row gt_right">0.0%</td>
+<td headers="Mean" class="gt_row gt_right">2,773.6</td>
+<td headers="Median" class="gt_row gt_right">2,663.0</td>
+<td headers="SD" class="gt_row gt_right">430.8</td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
 </div>
 </div>
 <p>We can now produce the damage curves for each study. As it can be seen, the relationship can be adequately described by a straight line.</p>
-<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve1_c7560c1969ac4ea232c0a89e47b6dc62">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>wm2 <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">group =</span> study))<span class="sc">+</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_r4pde</span>(<span class="at">font_size=</span> <span class="dv">14</span>)<span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> F, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fullrange =</span> T)<span class="sc">+</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">1800</span>, <span class="dv">3500</span>)<span class="sc">+</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>study)<span class="sc">+</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Study"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve1_d5774c95da3f5c4a02eecdbea1fd8eeb">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>wm2 <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>             <span class="at">group =</span> study))<span class="sc">+</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>   <span class="fu">theme_r4pde</span>(<span class="at">font_size=</span> <span class="dv">14</span>)<span class="sc">+</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> F, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fullrange =</span> T)<span class="sc">+</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">1800</span>, <span class="dv">3500</span>)<span class="sc">+</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>study)<span class="sc">+</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Study"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-damagecurve1" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -526,25 +1002,25 @@ $ yld             &lt;dbl&gt; 3729, 3739, 3863, 3904, 4471, 4313…</code></pre>
 </div>
 </div>
 <p>We can plot the relationships for all studies combined, which will resemble a “spaghetti” plot after adding the individual regression lines.</p>
-<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve2_517a005f5463b57816bc8e9e43959890">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, <span class="at">group =</span> study))<span class="sc">+</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>)<span class="sc">+</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">5000</span>)<span class="sc">+</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>)</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, <span class="at">group =</span> study))<span class="sc">+</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>)<span class="sc">+</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> F, <span class="at">fullrange =</span> T, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">5000</span>)<span class="sc">+</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>)</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">|</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="yieldloss-concepts_cache/html/fig-damagecurve2_3aba4b3313b72989156fb791979b19e1">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, <span class="at">group =</span> study))<span class="sc">+</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>)<span class="sc">+</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>)<span class="sc">+</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">5000</span>)<span class="sc">+</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> wm <span class="sc">|&gt;</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(inc, yld, <span class="at">group =</span> study))<span class="sc">+</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>)<span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> F, <span class="at">fullrange =</span> T, <span class="at">color =</span> <span class="st">"black"</span>)<span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">5000</span>)<span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"White mold incidence (%)"</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Soybean yield (kg/ha)"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">|</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-damagecurve2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
