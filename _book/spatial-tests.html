@@ -502,7 +502,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>matrix1 <span class="ot">&lt;-</span> <span class="fu">matrix</span>(m1, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can visualize the two-dimensional array by converting to a raster.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-joincount1_4eb3d7eb8709eb8817c83ee99a577ac2">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-joincount1_3bab05a1cc69679944116da6d12f3856">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to raster </span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mapS2 <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="fu">matrix</span>(matrix1, <span class="dv">5</span> , <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to data frame</span></span>
@@ -599,7 +599,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>The inspection of the data frame shows four variables where <code>dap</code> is the day after planting, <code>NS_col</code> is the north-south direction, <code>EW_row</code> is the east-west direction and <code>severity</code> is the severity in ordinal score (0-4). Let’s produce a map for the 65 and 74 <code>dap</code>, but first we need to create the incidence variable based on severity.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-tsw_2e6c94c2efe09b639245ab1547dfd7c9">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-tsw_749b512e8818e42e4179c7c6a3838af6">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>gsb2 <span class="ot">&lt;-</span> gsb <span class="sc">|&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(dap <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">65</span>, <span class="dv">74</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">incidence =</span> <span class="fu">case_when</span>(severity <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
@@ -733,7 +733,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Now we can make the plot.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-foci1_6980ea7d0eeac561dd1e90a13f172481">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-foci1_1f3a0d26359f3e2c8bc40699f4702bcd">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>foci2 <span class="sc">|&gt;</span> </span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">fill =</span> <span class="fu">factor</span>(i)))<span class="sc">+</span></span>
@@ -1450,7 +1450,7 @@ mad = 106.7, rank = 90, p-value = 0.9</code></pre>
 </div>
 </div>
 <p>We can produce a plot to visualize the number of propagules across the transect.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-macrophomina_d324967d58e822d945b80b24d5a3930a">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-macrophomina_6f332fd0dbb3d70f6872900bd38f2501">
 <div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>mp <span class="sc">|&gt;</span></span>
 <span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(i, y)) <span class="sc">+</span></span>
 <span id="cb78-3"><a href="#cb78-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -1497,7 +1497,7 @@ Autocorrelations of series 'mp$y', by lag
 </div>
 </div>
 <p>And now the plot known as autocorrelogram.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel_7eb21e4b6b6f6eb2797780f8ddfc02b4">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel_6bafa0f911df764f47813b9d1d3fc39c">
 <div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>ac_mp_dat <span class="sc">|&gt;</span></span>
 <span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(index, ac_mp.acf, <span class="at">label =</span> <span class="fu">round</span>(ac_mp.acf, <span class="dv">3</span>))) <span class="sc">+</span></span>
 <span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -1608,7 +1608,7 @@ Moran I statistic       Expectation          Variance
 </div>
 </div>
 <p>Then, we can generate the plot using <em>ggplot</em>.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel2_a3c7e8e2a769ed93dde6e81fa9caf163">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-autocorrel2_2e36b4ccc27192183c6ff4c255e060fb">
 <div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>df_correl <span class="sc">|&gt;</span></span>
 <span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(lag, X1)) <span class="sc">+</span></span>
 <span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>) <span class="sc">+</span></span>
@@ -1660,7 +1660,7 @@ Moran I statistic       Expectation          Variance
 <pre><code>variog: computing omnidirectional variogram</code></pre>
 </div>
 </div>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-semivariance_5f89a93148bc68b1d0cebddd09c1986b">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-semivariance_7427c41557e36ad8d5db93587e2f2ada">
 <div class="sourceCode cell-code" id="cb100"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb100-1"><a href="#cb100-1" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">variofit</span>(v1, <span class="at">ini.cov.pars =</span> <span class="fu">c</span>(<span class="dv">1200</span>, <span class="dv">12</span>), </span>
 <span id="cb100-2"><a href="#cb100-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">cov.model =</span> <span class="st">"exponential"</span>, </span>
 <span id="cb100-3"><a href="#cb100-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">fix.nugget =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1689,7 +1689,7 @@ variofit: minimisation function used: optim </code></pre>
 <p>The null hypothesis to test is that the observed pattern is random. SADIE calculates an index of aggregation (<em>Ia</em>). When this is equal to 1, the pattern is random. If this is greater than 1, the pattern is aggregated. Hypothesis testing is based on the randomization procedure. The null hypothesis of randomness, with an alternative hypothesis of aggregation.</p>
 <p>An extension was made to quantify the contribution of each sampling unit count to the observed pattern. Regions with large counts are defined as patches and regions with small counts are defined as gaps. For each sampling unit, a clustering index is calculated and can be mapped.</p>
 <p>In R, we can use the <code>sadie()</code> function of the <em>epiphy</em> package <span class="citation" data-cites="gigot2018">(<a href="references.html#ref-gigot2018" role="doc-biblioref">Gigot 2018</a>)</span>. The function computes the different indices and probabilities based on the distance to regularity for the observed spatial pattern and a specified number of random permutations of this pattern. To run the analysis, the dataframe should have only three columns: the first two must be the x and y coordinates and the third one the observations. Let’s continue working with the simulated epidemic dataset named <code>epi2</code>. We can map the original data as follows:</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-mapgrouped_489df76ac73a9f1ee24b1b37a2ec501d">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-mapgrouped_8a8b75b3adda3591e20d7ecd3018b37c">
 <div class="sourceCode cell-code" id="cb103"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a>epi2 <span class="sc">|&gt;</span></span>
 <span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y, <span class="at">label =</span> n, <span class="at">fill =</span> n)) <span class="sc">+</span></span>
 <span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span></span>
@@ -1752,7 +1752,7 @@ Number of permutations: 100</code></pre>
 </div>
 </div>
 <p>The <code>plot()</code> function allows to map the clustering indices and so to identify regions of patches (red, outflow) and gaps (blue, inflow).</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie1_e39ee0f2b395a0ec11e4f007dffe5d63">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie1_eb20f2fae16f389cd071c25b1dc6843e">
 <div class="sourceCode cell-code" id="cb110"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb110-1"><a href="#cb110-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-sadie1" class="quarto-figure quarto-figure-center anchored">
@@ -1764,7 +1764,7 @@ Number of permutations: 100</code></pre>
 </div>
 </div>
 <p>A isocline plot can be obtained by setting the <code>isocline</code> argument as <code>TRUE</code>.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie2_fe1c00cce210aefcb34e8c49d12f931e">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-sadie2_4f6f6c30a065e14d7de26245887a7f38">
 <div class="sourceCode cell-code" id="cb111"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb111-1"><a href="#cb111-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sadie_epi2, <span class="at">isoclines =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-sadie2" class="quarto-figure quarto-figure-center anchored">
@@ -1836,7 +1836,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>The very low value of the <em>P</em>-value of the LLR test suggest that the negative binomial provides a better fit to the data. The <code>plot()</code> function allows for visualizing the expected random and aggregated frequencies together with the observed frequencies. The number of breaks can be adjusted as indicated.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-freq_644dffd448e1dc8e57150d7a96e38be2">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-freq_1baf4b9c253145bf198e050fc9f4755b">
 <div class="sourceCode cell-code" id="cb117"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb117-1"><a href="#cb117-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(fit_data_count, <span class="at">breaks =</span> <span class="dv">5</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="fig-freq" class="quarto-figure quarto-figure-center anchored">
@@ -1848,7 +1848,7 @@ Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</code></pre>
 </div>
 </div>
 <p>See below another way to plot by extracting the frequency data (and pivoting from wide to long format) from the generated list and using <em>ggplot</em>. Clearly, the negative binomial is a better description for the observed count data.</p>
-<div class="cell" data-hash="spatial-tests_cache/html/fig-freq1_125408f26d42ce8cbee6577bb26e4df9">
+<div class="cell" data-hash="spatial-tests_cache/html/fig-freq1_226fb4a873436acc904b7f50989b8775">
 <div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> fit_data_count<span class="sc">$</span>freq <span class="sc">|&gt;</span></span>
 <span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>, <span class="at">names_to =</span> <span class="st">"pattern"</span>, <span class="at">values_to =</span> <span class="st">"value"</span>)</span>
 <span id="cb118-3"><a href="#cb118-3" aria-hidden="true" tabindex="-1"></a></span>
