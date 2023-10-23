@@ -160,8 +160,20 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="./cite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How to cite</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="./author.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">About the author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./acknowledgements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Acknowledgements</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -367,13 +379,13 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(y = a . e^{-b.x}\)</span> ,</p>
 <p>where <span class="math inline">\(a\)</span> is the disease intensity at the distance zero and <span class="math inline">\(b\)</span> is the rate of decline, in this case negative because disease intensity decreases with the increase of the distance from inoculum source. Let’s make a plot for two disease gradients of varying parameters for this model.</p>
 <p>First we need to load essential packages for programming, customizing the outputs and defining a global ggplot theme.</p>
-<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-1_d6ca3380c28a2beb55dcd29f5d8b3e09">
+<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-1_2bdf11341316ea1279aa3f944661b85c">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_r4pde</span>()) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Set the parameters for the exponential model with two rates and the same inoculum level at the source:</p>
-<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-2_c4e6ed9476a5588071fba793dfd2ab49">
+<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-2_721dabe067e19b14b87a203ab51b6abc">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at distance zero for gradient 1</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at distance zero for gradient 2</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>b1 <span class="ot">&lt;-</span> <span class="fl">0.1</span> <span class="co"># decline rate for gradient 1</span></span>
@@ -383,7 +395,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>max1), <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span><span class="sc">:</span>a1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The following code allows to visualize the model predictions.</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-exp1_f7070d27035f28030f4ebfa5688ce152">
+<div class="cell" data-hash="spatial-models_cache/html/fig-exp1_3f7c90e2257f5d455e171207b190b453">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
@@ -413,7 +425,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <p><span class="math inline">\(Y = a_{P}.(x + C) - b_{P}\)</span></p>
 <p>For this reason, the model is named as the modified power law. Here, the constant <span class="math inline">\(C\)</span> is of the same unit of <span class="math inline">\(x\)</span>. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the <span class="math inline">\(a\)</span> parameter is a theoretical value of <span class="math inline">\(Y\)</span> at the distance <span class="math inline">\(1-C\)</span> from the center of the inoculum source.</p>
 <p>Let’s plot two gradients with two rate parameters for the modified power law model:</p>
-<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-4_0dc60de78940decf985e56ed72020b13">
+<div class="cell" data-hash="spatial-models_cache/html/unnamed-chunk-4_aaa3396863dffab9d4acf352e2d5eb73">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 2</span></span>
@@ -423,7 +435,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>max2 <span class="ot">&lt;-</span> <span class="dv">80</span> <span class="co"># maximum distance for gradient 2</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">seq</span>(<span class="dv">1</span><span class="sc">:</span>max1), <span class="at">y =</span> <span class="fu">seq</span>(<span class="dv">0</span><span class="sc">:</span>a1))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="cell" data-hash="spatial-models_cache/html/fig-power1_048d9d466a974de2cd58ad07bb013be5">
+<div class="cell" data-hash="spatial-models_cache/html/fig-power1_e01eeead41d9788593ba653eeca466d4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
@@ -459,7 +471,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <section id="plot-for-the-linearized-form-of-models" class="level3" data-number="12.3.2">
 <h3 data-number="12.3.2" class="anchored" data-anchor-id="plot-for-the-linearized-form-of-models"><span class="header-section-number">12.3.2</span> Plot for the linearized form of models</h3>
 <p>Let’s visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was <span class="math inline">\(ln(y)\)</span>.</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-exp2_85139f9602d36ad0e1289e419585e782">
+<div class="cell" data-hash="spatial-models_cache/html/fig-exp2_c2e7377f660ca594346c93eaf4cf7739">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 2</span></span>
@@ -486,7 +498,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Follows the linearization of the modified power law model. Note that the transformation used was <span class="math inline">\(ln(y)\)</span> and <span class="math inline">\(ln(x+C)\)</span> .</p>
-<div class="cell" data-hash="spatial-models_cache/html/fig-power2_bdd8b0a39b8f8f4f310c44f96026312a">
+<div class="cell" data-hash="spatial-models_cache/html/fig-power2_5dd0a46a7a6bd9deb143e3446cce886d">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>a1 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 1</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>a2 <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># y at zero distance for gradient 2</span></span>
