@@ -126,6 +126,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </script>
+<meta name="mermaid-theme" content="forest">
 <script src="site_libs/quarto-diagram/mermaid.min.js"></script>
 <script src="site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
@@ -395,14 +396,18 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">18.1</span> Introduction</a></li>
-  <li><a href="#what-types-of-systems-are-there" id="toc-what-types-of-systems-are-there" class="nav-link" data-scroll-target="#what-types-of-systems-are-there"><span class="header-section-number">18.2</span> What types of systems are there?</a>
+  <li><a href="#risk-assessment-framework" id="toc-risk-assessment-framework" class="nav-link" data-scroll-target="#risk-assessment-framework"><span class="header-section-number">18.2</span> Risk assessment framework</a></li>
+  <li><a href="#when-is-a-warning-system-needed" id="toc-when-is-a-warning-system-needed" class="nav-link" data-scroll-target="#when-is-a-warning-system-needed"><span class="header-section-number">18.3</span> When is a warning system needed?</a></li>
+  <li><a href="#what-types-of-systems-are-there" id="toc-what-types-of-systems-are-there" class="nav-link" data-scroll-target="#what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</a>
   <ul>
-  <li><a href="#disease-thresholds" id="toc-disease-thresholds" class="nav-link" data-scroll-target="#disease-thresholds"><span class="header-section-number">18.2.1</span> Disease thresholds</a></li>
-  <li><a href="#warnings-based-on-weather" id="toc-warnings-based-on-weather" class="nav-link" data-scroll-target="#warnings-based-on-weather"><span class="header-section-number">18.2.2</span> Warnings based on weather</a>
+  <li><a href="#disease-thresholds" id="toc-disease-thresholds" class="nav-link" data-scroll-target="#disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</a></li>
+  <li><a href="#warnings-based-on-weather" id="toc-warnings-based-on-weather" class="nav-link" data-scroll-target="#warnings-based-on-weather"><span class="header-section-number">18.4.2</span> Warnings based on weather</a>
   <ul>
-  <li><a href="#wallin-model" id="toc-wallin-model" class="nav-link" data-scroll-target="#wallin-model"><span class="header-section-number">18.2.2.1</span> Wallin model</a></li>
+  <li><a href="#wallin-model" id="toc-wallin-model" class="nav-link" data-scroll-target="#wallin-model"><span class="header-section-number">18.4.2.1</span> Wallin model</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#interactive-app" id="toc-interactive-app" class="nav-link" data-scroll-target="#interactive-app"><span class="header-section-number">18.5</span> Interactive app</a></li>
+  <li><a href="#bonus-code" id="toc-bonus-code" class="nav-link" data-scroll-target="#bonus-code"><span class="header-section-number">18.6</span> Bonus code</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/warning-systems.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -428,10 +433,33 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 
 <section id="introduction" class="level2" data-number="18.1">
 <h2 data-number="18.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">18.1</span> Introduction</h2>
-<p>One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and pesticide use. Since the early 1900s, warning systems (synonyms: disease forecaster, predictor, or decision support systems<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>) have advanced considerably, particularly for major threats like potato late blight and apple scab for which several systems were developed and improved over the decades. Technological progress in recent decades has boosted the development and automation of these systems, now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers.</p>
-<p>In its core, warning systems are based on a <strong>model</strong>, defined here as a simplified, often mathematical, representation of a process used for making predictions or suggesting management actions. They range from basic rules (e.g.&nbsp;if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics.</p>
-<p>The purpose behind modeling diseases and creating warning systems is to <strong>understand and predict</strong> plant disease epidemics, though these efforts don’t always lead to direct practical applications. Extensive research goes into determining disease drivers and modeling epidemic aspects, primarily for <strong>academic insight</strong> or specific investigative goals rather than creating user-end tools. While complex models, including simulation types, serve to consolidate current knowledge or assess disease risk under specific scenarios (e.g.&nbsp;historical or future climate, various management, etc), they infrequently aim to develop directly applicable warning systems for disease management. But when are warning systems needed? The box and the figure below provide some information on their utility. In the box, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging were it occurs. On the other hand, warning systems can be used if the disease is more erratic but damaging.</p>
-<div class="cell">
+<p>One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and rationalizing pesticide use. Since the early 1900s, warning systems (synonyms: disease forecaster, predictor) have advanced considerably. More comprehensively, these systems have evolved to a Decision Support System (DSS), when they integrate expert input, models, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks. In fact, technological progress in recent decades has boosted the development and automation of decision support system (DSS), now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers (<a href="#fig-dss">Figure&nbsp;<span>18.1</span></a>).</p>
+<div id="fig-dss" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/dss.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;18.1: Core elements of a decision support system that provides risk information for plant disease management</figcaption>
+</figure>
+</div>
+<p>In its core, a DSS for plant disease management are based on a disease <strong>model</strong>, or a simplified, often mathematical, representation of a the system (here the pathosystem) used for making predictions or suggesting management decisions based on the risk information they provide. The models range from basic rules (e.g.&nbsp;if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics. Usually these models depend on weather information, that are collected on site in automatic weather stations or, more recently, from remote sensing or data reanalysis sources, as input and are improved and tested with field data.</p>
+</section>
+<section id="risk-assessment-framework" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="risk-assessment-framework"><span class="header-section-number">18.2</span> Risk assessment framework</h2>
+<p>There are basically two types of decisions related to plant disease management: tactical and strategical and these can be related to the distinct input data and time frames of information (i.e., historical data, pre-season, growing season, and future seasons) used in risk assessment. A framework with associated terminology can be proposed based on such relations (<a href="#fig-timeline">Figure&nbsp;<span>18.2</span></a>) and its components are explained next.</p>
+<div id="fig-timeline" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/timeline.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;18.2: Framework and associated terminology for plant disease risk assessment</figcaption>
+</figure>
+</div>
+<p><strong>Historical</strong> data refers to those obtained from or simulated for previous years or seasons. This can include past observed weather patterns, observed or simulated disease outbreaks. In the p<strong>re-season</strong> period,data or predictions are made before the actual planting or growing season starts. This could be early predictions of weather patterns, disease risks, or market demands. During the <strong>growing season,</strong> real-time data or short-term predictions are made for risk assessment. This is the period when crops are in the fields and are actively monitored. Finally, for <strong>future seasons,</strong> forecasts or predictions (e.g.&nbsp;climate change scenarios) are made for subsequent years or planting seasons.</p>
+<p><strong>Strategical</strong> are decisions that have a long-term impact and are typically based on historical data and forecasts for future seasons. Examples might include choosing where to plant the crops in the next years, which cultivar to plant, and making infrastructure investments. <strong>Tactical</strong> are short-term decisions typically based on real-time data or short-term predictions, especially those relevant to the current growing season. A key example include the application of fungicide sprays.</p>
+<p><strong>Risk Analysis is</strong> a comprehensive assessment of potential disease risks, considering both historical data and forecasts. The goal is to understand and mitigate potential threats to agricultural production. <strong>Risk Prediction</strong> can be broken down into a) <strong>Outlook:</strong> Broad predictions or estimations about potential risks, often based on pre-season data. Example: El Niño Southern Oscilation (ENSO) information; b) <strong>Forecasting:</strong> Short-term predictions, typically for the growing season, about specific risks such as critical weather events; and c) <strong>Warning:</strong> Immediate alerts about imminent risks, like an upcoming risk of plant infection, crucial for tactical decisions.</p>
+<p>In this chapter we will focus on warning system that make use of seasonal weather to provide risk information for tactical decisions.</p>
+</section>
+<section id="when-is-a-warning-system-needed" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="when-is-a-warning-system-needed"><span class="header-section-number">18.3</span> When is a warning system needed?</h2>
+<p>The figure and the box below provide some information on their utility. In the figure, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging were it occurs. Warning systems can be used if the disease is more erratic but still damaging when it occurs. If the epidemics are too frequent by no economic control is available, host resistance comes into play. If there is economic control (e.g.&nbsp;fungicide sprays) during the season, farmers should apply scheduled treatments given the high risk of the disease.</p>
+<div class="cell" data-fig-width="5">
 <div class="cell-output-display">
 <div id="fig-diagram2" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
@@ -445,20 +473,25 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
     E{Frequent&lt;BR&gt;epidemics?}
     F[Scheduled treatments]
     G[Warning System]
+    H{Economic&lt;BR&gt;control?}
+    I[Host Resistance]
 
     Start --&gt; A
     A --&gt;|N| B
     B --&gt;|N| Start
-    D --&gt;|N| G
+    D --&gt;|N| Start
     A --&gt;|Y| D
     D --&gt;|Y| E
-    E --&gt;|Y| F
+    E --&gt;|Y| H
     B --&gt;|Y| C
     E --&gt;|N| G
+    H --&gt;|N| I
+    H --&gt;|Y| F
+    
 
 </pre>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;18.1: Decision chart for the need of risk analysis or warning systems in disease management</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;18.3: Decision chart for the need of risk analysis, warning systems, schedule treatment or host resistance in disease management</figcaption>
 </figure>
 </div>
 </div>
@@ -469,10 +502,11 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Box- When is a warning system needed?
+Warning
 </div>
 </div>
 <div class="callout-body-container callout-body">
+<p>When is a warning system needed?</p>
 <p>For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in <span class="citation" data-cites="Campbell1990">(<a href="references.html#ref-Campbell1990" role="doc-biblioref">Campbell and Madden. L. 1990</a>)</span>:</p>
 <ol type="1">
 <li><p>They should target diseases that are prevalent and economically damaging, affecting yield or quality. Merely having severe economic consequences doesn’t guarantee a system’s practical use or attention from growers and advisors.</p></li>
@@ -483,18 +517,18 @@ Box- When is a warning system needed?
 </div>
 </div>
 </section>
-<section id="what-types-of-systems-are-there" class="level2" data-number="18.2">
-<h2 data-number="18.2" class="anchored" data-anchor-id="what-types-of-systems-are-there"><span class="header-section-number">18.2</span> What types of systems are there?</h2>
+<section id="what-types-of-systems-are-there" class="level2" data-number="18.4">
+<h2 data-number="18.4" class="anchored" data-anchor-id="what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</h2>
 <p>These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system as based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.</p>
-<p>Disease warning systems can include simple rules of thumb (e.g.&nbsp;if-then), static or dynamic disease thresholds, direct detection of inoculum, empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. The underlying models in these systems can be grouped into two different basic types: 1) Empirical, based on statistical correlations with disease data; 2) Mechanistic (process-based), constructed around understood cause-effect relationships within disease progression. Let’s see some examples of these systems together with their implementation in R.</p>
-<section id="disease-thresholds" class="level3" data-number="18.2.1">
-<h3 data-number="18.2.1" class="anchored" data-anchor-id="disease-thresholds"><span class="header-section-number">18.2.1</span> Disease thresholds</h3>
+<p>Disease warning systems can include simple rules of thumb (e.g.&nbsp;if-then), static or dynamic disease thresholds, direct detection of inoculum, empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. The underlying models in these systems can be grouped into two different basic types: i) Empirical, based on statistical correlations with disease data; ii) Mechanistic (process-based), constructed around understood cause-effect relationships within disease progression. Let’s see some examples of these systems together with their implementation in R.</p>
+<section id="disease-thresholds" class="level3" data-number="18.4.1">
+<h3 data-number="18.4.1" class="anchored" data-anchor-id="disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</h3>
 <p>Damaging thresholds, integral to integrated pest management in entomology, serve as basic disease warning systems. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic thresholds, indicating when action is necessary to avoid reaching injury levels. These concepts, while straightforward, can be complex in practical scenarios.</p>
-<p>Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring is the base of this system.</p>
+<p>Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring for detection and quantification is vital this system.</p>
 <p>The concept of <strong>economic damage threshold</strong> (EDT) may be used as a criteria do warn fungicide spray. By definition, EDT is the amount of disease intensity (e.g.&nbsp;severity when dealing with foliar diseases) that corresponds to an economic loss that equates the control cost to combat the disease. A formula for the EDT was proposed by Mumford and Norton <span class="citation" data-cites="mumford1984">(<a href="references.html#ref-mumford1984" role="doc-biblioref">Mumford and Norton 1984</a>)</span> further modified by Reis <span class="citation" data-cites="reis2002modelo">(<a href="references.html#ref-reis2002modelo" role="doc-biblioref">Reis et al. 2002</a>)</span> for use in foliar fungal diseases, as described in Equation 3:</p>
 <p><span class="math inline">\(EDT = \frac{F_C}{S_P . D_C} . C_e\)</span> ,</p>
 <p>where EDT is the disease intensity, <span class="math inline">\(F_C\)</span> is the fungicide cost (USD/ha), <span class="math inline">\(S_P\)</span> is the soybean price (USD/ton), <span class="math inline">\(D_C\)</span> is the damage coefficient (calculated based on the potential yield) and <span class="math inline">\(C_e\)</span> is the control efficacy of the fungicide (proportion of disease reduction relative to non-treated). In practice, sprays should be applied prior to reaching the EDT, which gives rise to the AT (action threshold).</p>
-<p>In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT <span class="citation" data-cites="derossi2022">(<a href="references.html#ref-derossi2022" role="doc-biblioref">De Rossi et al. 2022</a>)</span>. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc was normalized to metric tons. More about Dc in the dedicated chapter on <a href="yieldloss-regression-models.html#damage-coefficients">yield loss</a>. The action threshold (AT) was defined in that study as 20% reduction of the EDT.</p>
+<p>In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT <span class="citation" data-cites="derossi2022">(<a href="references.html#ref-derossi2022" role="doc-biblioref">De Rossi et al. 2022</a>)</span>. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc is normalized to metric tons. More about Dc in the dedicated chapter on <a href="yieldloss-regression-models.html#damage-coefficients">yield loss</a>. The action threshold (AT) was defined in that study as 20% reduction of the EDT.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-2_801088ce966329a0040de66dd2821fe6">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calculate_EDT <span class="ot">&lt;-</span> <span class="cf">function</span>(Fc, Cp, Dc, Ec) {</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  EDT <span class="ot">&lt;-</span> (Fc <span class="sc">/</span> (Cp <span class="sc">*</span> Dc)) <span class="sc">*</span> Ce</span>
@@ -516,13 +550,13 @@ Box- When is a warning system needed?
 </div>
 </div>
 </section>
-<section id="warnings-based-on-weather" class="level3" data-number="18.2.2">
-<h3 data-number="18.2.2" class="anchored" data-anchor-id="warnings-based-on-weather"><span class="header-section-number">18.2.2</span> Warnings based on weather</h3>
+<section id="warnings-based-on-weather" class="level3" data-number="18.4.2">
+<h3 data-number="18.4.2" class="anchored" data-anchor-id="warnings-based-on-weather"><span class="header-section-number">18.4.2</span> Warnings based on weather</h3>
 <p>Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases. BLITECAST, the first computerized system, exemplifies this in its monitoring of late blight in potatoes and tomatoes. While initial inoculum is often undetectable, the presence of inoculum of the pathogens is assumed. Accurate predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.</p>
-<p>Weather-driven disease warning systems, like FAST and Wallin, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. These systems guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.</p>
-<section id="wallin-model" class="level4" data-number="18.2.2.1">
-<h4 data-number="18.2.2.1" class="anchored" data-anchor-id="wallin-model"><span class="header-section-number">18.2.2.1</span> Wallin model</h4>
-<p>J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications <span class="citation" data-cites="wallin1962">(<a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating ‘disease severity values’ (DSV) from plant emergence throughout the season, based on humidity and temperature metrics, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity &gt; 90% and the air temperature within the wet period.</p>
+<p>Weather-driven disease warning systems, like FAST and Wallin <span class="citation" data-cites="madden1978 wallin1962">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>; <a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. These systems guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.</p>
+<section id="wallin-model" class="level4" data-number="18.4.2.1">
+<h4 data-number="18.4.2.1" class="anchored" data-anchor-id="wallin-model"><span class="header-section-number">18.4.2.1</span> Wallin model</h4>
+<p>J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications <span class="citation" data-cites="wallin1962">(<a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating ‘disease severity values’ (DSV) from plant emergence throughout the season, based on humidity and temperature measures, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity &gt; 90% and the air temperature within the wet period.</p>
 <p><strong>Table.</strong> Relationship of temperature and relative humidity (RH) periods as used in the Wallin late blight forecasting system to predict disease severity values (0 to 4).</p>
 <table class="table">
 <tbody>
@@ -568,7 +602,7 @@ Box- When is a warning system needed?
 </tr>
 </tbody>
 </table>
-<p>Let’s download hourly weather data from NASA Power project using nasapower r package for the locality of Viçosa, MG, Brazil during the month of March 2022.</p>
+<p>Let’s calculate DVS in R based on Wallin’s system. But first we need to download hourly weather data from NASA Power project using nasapower r package for the locality of Viçosa, MG, Brazil during the month of March 2022.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-3_b916c09cff6d902e37e3759291b1206e">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
@@ -602,7 +636,7 @@ Box- When is a warning system needed?
 6 -42.9 -20.8  2022     3     2     2  98.1  18.8</code></pre>
 </div>
 </div>
-<p>In order to prepare the data to calculate the DSVs, we first need to obtain the leaf wetness duration variable (LW) based on hours of relative humidity &gt;90% and then the average temperature during the LW for each day. We group the variables by year, month and day and use <code>mutate()</code> and <code>summarise()</code>.</p>
+<p>We now need to obtain the leaf wetness duration variable (LW) based on hours of relative humidity &gt;90% and then the average temperature during the LW for each day. We can obtain these by grouping the variables by year, month and day and use <code>mutate()</code> and <code>summarise()</code>.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-4_57ec2d30b6a8da07c0facac8b55d2ad3">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weather2 <span class="ot">&lt;-</span> weather <span class="sc">|&gt;</span> </span>
@@ -613,7 +647,7 @@ Box- When is a warning system needed?
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">Air_LWD =</span> <span class="fu">mean</span>(T2M, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">LWD =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we are ready to calculate the daily DSV based on rules on the table and inspect the first 6 rows of the new table called <code>df_wallin</code>.</p>
+<p>Now we are ready to calculate the daily DSV based on Wallin’s rules on the table and inspect the first 6 rows of the new table called <code>df_wallin</code>.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-5_c7eebcf28a639a863e0c7ee8e310c8c0">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_wallin <span class="ot">&lt;-</span> weather2 <span class="sc">|&gt;</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
@@ -657,7 +691,7 @@ Box- When is a warning system needed?
 6  2022     3     6    19.0     9     0</code></pre>
 </div>
 </div>
-<p>We can visualize the daily and cumulative DSV for the monthly period. The dashed line indicates the action threshold of 20 cumulative DSV, or when a spray should be applied. Please not that in the real system, the DSV is reduced to zero and another counting is initiated.</p>
+<p>We can visualize the daily and cumulative DSV for the monthly period after transforming the date format using <code>as.Date()</code> function. The dashed horizontal line in the plot indicates the action threshold of 20 cumulative DSV, or when a spray should be applied. Please note that in real systems, the DSV is reduced to zero and another DSV counting is initiated after the spray.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-6_e9ad5565ffb041ae9654c3605e86622b">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="ot">&lt;-</span> df_wallin <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
@@ -675,6 +709,138 @@ Box- When is a warning system needed?
 <p><img src="warning-systems_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+</section>
+</section>
+<section id="interactive-app" class="level2" data-number="18.5">
+<h2 data-number="18.5" class="anchored" data-anchor-id="interactive-app"><span class="header-section-number">18.5</span> Interactive app</h2>
+<p>For educational purposes, we developed an interactive app using R Shiny. This app demonstrates the application of the Wallin and FAST rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (<a href="#fig-ws_systems">Figure&nbsp;<span>18.4</span></a>).</p>
+<p>To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.</p>
+<div id="fig-ws_systems" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/ws_systems.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;18.4: Screenshot of a web-based warning system for plant diseases based on Wallin’s and FAST rules</figcaption>
+</figure>
+</div>
+</section>
+<section id="bonus-code" class="level2" data-number="18.6">
+<h2 data-number="18.6" class="anchored" data-anchor-id="bonus-code"><span class="header-section-number">18.6</span> Bonus code</h2>
+<p>Here is a code to calculate DSV based on the FAST table <span class="citation" data-cites="madden1978">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>)</span> for the relation between leaf wetness duration and temperature during the wet period.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Mean temp (°C)</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13-17</td>
+<td>0-6</td>
+<td>7-15</td>
+<td>16-20</td>
+<td>21+</td>
+<td>23+</td>
+</tr>
+<tr class="even">
+<td>18-20</td>
+<td>0-3</td>
+<td>4-8</td>
+<td>9-15</td>
+<td>16-22</td>
+<td>23+</td>
+</tr>
+<tr class="odd">
+<td>21-25</td>
+<td>0-2</td>
+<td>3-5</td>
+<td>6-12</td>
+<td>13-20</td>
+<td>21+</td>
+</tr>
+<tr class="even">
+<td>26-29</td>
+<td>0-3</td>
+<td>4-8</td>
+<td>9-15</td>
+<td>16-22</td>
+<td>23+</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-7_da2d97ebf1343686ce5837ec5e299fd9">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a> df_fast <span class="ot">&lt;-</span> weather2 <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">DSV =</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 13 &lt;= T &lt; 18</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">6</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">7</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 18 &lt;= T &lt; 21</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">4</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">9</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 21 &lt;= T &lt; 26</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">3</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">5</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">6</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">12</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 26 &lt;= T &lt; 30</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">4</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">9</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Default (For temperatures out of the specified ranges or any other scenarios)</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># Assigning a default value of 0</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>df_fast</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 31 × 6
+# Groups:   YEAR, MO [1]
+    YEAR    MO    DY Air_LWD   LWD   DSV
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+ 1  2022     3     1    20.2     3     0
+ 2  2022     3     2    19.2    10     2
+ 3  2022     3     3    19.7    12     2
+ 4  2022     3     4    19.9    10     2
+ 5  2022     3     5    19.5     7     1
+ 6  2022     3     6    19.0     9     2
+ 7  2022     3     7    18.4     7     1
+ 8  2022     3     8    19.2    10     2
+ 9  2022     3     9    19.6    12     2
+10  2022     3    10    19.6    13     2
+# ℹ 21 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_fast2 <span class="ot">&lt;-</span> df_fast <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>df_fast2 <span class="sc">|&gt;</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, DSV))<span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#339966"</span>)<span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, DSV2))<span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">20</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2022-03-04"</span>), <span class="at">y =</span> <span class="fl">21.5</span>, <span class="at">label =</span> <span class="st">"Action threshold"</span>)<span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Daily and cumulative DSV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body" role="list" style="display: none">
@@ -683,6 +849,9 @@ Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epid
 </div>
 <div id="ref-derossi2022" class="csl-entry" role="listitem">
 De Rossi, R. L., Guerra, F. A., Plazas, M. C., Vuletic, E. E., Brücher, E., Guerra, G. D., et al. 2022. Crop damage, economic losses, and the economic damage threshold for northern corn leaf blight. Crop Protection. 154:105901 Available at: <a href="http://dx.doi.org/10.1016/j.cropro.2021.105901">http://dx.doi.org/10.1016/j.cropro.2021.105901</a>.
+</div>
+<div id="ref-madden1978" class="csl-entry" role="listitem">
+Madden, L. 1978. FAST, a forecast system for alternaria solani on tomato. Phytopathology. 68:1354 Available at: <a href="http://dx.doi.org/10.1094/phyto-68-1354">http://dx.doi.org/10.1094/phyto-68-1354</a>.
 </div>
 <div id="ref-mumford1984" class="csl-entry" role="listitem">
 Mumford, J. D., and Norton, G. A. 1984. Economics of Decision Making in Pest Management. Annual Review of Entomology. 29:157–174 Available at: <a href="http://dx.doi.org/10.1146/annurev.en.29.010184.001105">http://dx.doi.org/10.1146/annurev.en.29.010184.001105</a>.
@@ -694,14 +863,6 @@ Reis, E. M., Hoffmann, L. L., and Blum, M. 2002. Modelo de ponto crítico para e
 Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemics in United States and Canada. American Potato Journal. 39:306–312 Available at: <a href="http://dx.doi.org/10.1007/bf02862155">http://dx.doi.org/10.1007/bf02862155</a>.
 </div>
 </div>
-</section>
-</section>
-</section>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr>
-<ol>
-<li id="fn1"><p>More comprehensively, Decision Support Systems (DSS), integrate expert input, simulations, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
 </section>
 
 </main> <!-- /main -->

@@ -3,24 +3,42 @@ title: "Warning systems"
 editor: visual
 editor_options: 
   chunk_output_type: inline
-filters:
-  - shinylive
+format:
+  html:
+    mermaid:
+      theme: forest
 ---
 
 ## Introduction
 
-One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and pesticide use. Since the early 1900s, warning systems (synonyms: disease forecaster, predictor, or decision support systems[^warning-systems-1]) have advanced considerably, particularly for major threats like potato late blight and apple scab for which several systems were developed and improved over the decades. Technological progress in recent decades has boosted the development and automation of these systems, now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers.
+One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and rationalizing pesticide use. Since the early 1900s, warning systems (synonyms: disease forecaster, predictor) have advanced considerably. More comprehensively, these systems have evolved to a Decision Support System (DSS), when they integrate expert input, models, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks. In fact, technological progress in recent decades has boosted the development and automation of decision support system (DSS), now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers (@fig-dss).
 
-[^warning-systems-1]: More comprehensively, Decision Support Systems (DSS), integrate expert input, simulations, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks.
+![Core elements of a decision support system that provides risk information for plant disease management](imgs/dss.png){#fig-dss fig-align="center"}
 
-In its core, warning systems are based on a **model**, defined here as a simplified, often mathematical, representation of a process used for making predictions or suggesting management actions. They range from basic rules (e.g. if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics.
+In its core, a DSS for plant disease management are based on a disease **model**, or a simplified, often mathematical, representation of a the system (here the pathosystem) used for making predictions or suggesting management decisions based on the risk information they provide. The models range from basic rules (e.g. if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics. Usually these models depend on weather information, that are collected on site in automatic weather stations or, more recently, from remote sensing or data reanalysis sources, as input and are improved and tested with field data.
 
-The purpose behind modeling diseases and creating warning systems is to **understand and predict** plant disease epidemics, though these efforts don't always lead to direct practical applications. Extensive research goes into determining disease drivers and modeling epidemic aspects, primarily for **academic insight** or specific investigative goals rather than creating user-end tools. While complex models, including simulation types, serve to consolidate current knowledge or assess disease risk under specific scenarios (e.g. historical or future climate, various management, etc), they infrequently aim to develop directly applicable warning systems for disease management. But when are warning systems needed? The box and the figure below provide some information on their utility. In the box, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging were it occurs. On the other hand, warning systems can be used if the disease is more erratic but damaging.
+## Risk assessment framework
+
+There are basically two types of decisions related to plant disease management: tactical and strategical and these can be related to the distinct input data and time frames of information (i.e., historical data, pre-season, growing season, and future seasons) used in risk assessment. A framework with associated terminology can be proposed based on such relations (@fig-timeline) and its components are explained next.
+
+![Framework and associated terminology for plant disease risk assessment](imgs/timeline.png){#fig-timeline fig-align="center"}
+
+**Historical** data refers to those obtained from or simulated for previous years or seasons. This can include past observed weather patterns, observed or simulated disease outbreaks. In the p**re-season** period,data or predictions are made before the actual planting or growing season starts. This could be early predictions of weather patterns, disease risks, or market demands. During the **growing season,** real-time data or short-term predictions are made for risk assessment. This is the period when crops are in the fields and are actively monitored. Finally, for **future seasons,** forecasts or predictions (e.g. climate change scenarios) are made for subsequent years or planting seasons.
+
+**Strategical** are decisions that have a long-term impact and are typically based on historical data and forecasts for future seasons. Examples might include choosing where to plant the crops in the next years, which cultivar to plant, and making infrastructure investments. **Tactical** are short-term decisions typically based on real-time data or short-term predictions, especially those relevant to the current growing season. A key example include the application of fungicide sprays.
+
+**Risk Analysis is** a comprehensive assessment of potential disease risks, considering both historical data and forecasts. The goal is to understand and mitigate potential threats to agricultural production. **Risk Prediction** can be broken down into a) **Outlook:** Broad predictions or estimations about potential risks, often based on pre-season data. Example: El Niño Southern Oscilation (ENSO) information; b) **Forecasting:** Short-term predictions, typically for the growing season, about specific risks such as critical weather events; and c) **Warning:** Immediate alerts about imminent risks, like an upcoming risk of plant infection, crucial for tactical decisions.
+
+In this chapter we will focus on warning system that make use of seasonal weather to provide risk information for tactical decisions.
+
+## When is a warning system needed?
+
+The figure and the box below provide some information on their utility. In the figure, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging were it occurs. Warning systems can be used if the disease is more erratic but still damaging when it occurs. If the epidemics are too frequent by no economic control is available, host resistance comes into play. If there is economic control (e.g. fungicide sprays) during the season, farmers should apply scheduled treatments given the high risk of the disease.
 
 ```{mermaid}
 %%| label: fig-diagram2
-%%| fig-cap: "Decision chart for the need of risk analysis or warning systems in disease management"
-
+%%| fig-cap: "Decision chart for the need of risk analysis, warning systems, schedule treatment or host resistance in disease management"
+%%| fig-width: 5
 flowchart
     Start((Start))
     A{Disease<BR>present?}
@@ -30,21 +48,26 @@ flowchart
     E{Frequent<BR>epidemics?}
     F[Scheduled treatments]
     G[Warning System]
+    H{Economic<BR>control?}
+    I[Host Resistance]
 
     Start --> A
     A -->|N| B
     B -->|N| Start
-    D -->|N| G
+    D -->|N| Start
     A -->|Y| D
     D -->|Y| E
-    E -->|Y| F
+    E -->|Y| H
     B -->|Y| C
     E -->|N| G
+    H -->|N| I
+    H -->|Y| F
+    
 
 ```
 
 ::: callout-warning
-## Box- When is a warning system needed?
+When is a warning system needed?
 
 For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in [@Campbell1990]:
 
@@ -61,13 +84,13 @@ For operational and economical use, warning systems must fulfill four criteria t
 
 These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system as based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.
 
-Disease warning systems can include simple rules of thumb (e.g. if-then), static or dynamic disease thresholds, direct detection of inoculum, empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. The underlying models in these systems can be grouped into two different basic types: 1) Empirical, based on statistical correlations with disease data; 2) Mechanistic (process-based), constructed around understood cause-effect relationships within disease progression. Let's see some examples of these systems together with their implementation in R.
+Disease warning systems can include simple rules of thumb (e.g. if-then), static or dynamic disease thresholds, direct detection of inoculum, empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. The underlying models in these systems can be grouped into two different basic types: i) Empirical, based on statistical correlations with disease data; ii) Mechanistic (process-based), constructed around understood cause-effect relationships within disease progression. Let's see some examples of these systems together with their implementation in R.
 
 ### Disease thresholds
 
 Damaging thresholds, integral to integrated pest management in entomology, serve as basic disease warning systems. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic thresholds, indicating when action is necessary to avoid reaching injury levels. These concepts, while straightforward, can be complex in practical scenarios.
 
-Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring is the base of this system.
+Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring for detection and quantification is vital this system.
 
 The concept of **economic damage threshold** (EDT) may be used as a criteria do warn fungicide spray. By definition, EDT is the amount of disease intensity (e.g. severity when dealing with foliar diseases) that corresponds to an economic loss that equates the control cost to combat the disease. A formula for the EDT was proposed by Mumford and Norton [@mumford1984] further modified by Reis [@reis2002modelo] for use in foliar fungal diseases, as described in Equation 3:
 
@@ -75,7 +98,7 @@ $EDT = \frac{F_C}{S_P . D_C} . C_e$ ,
 
 where EDT is the disease intensity, $F_C$ is the fungicide cost (USD/ha), $S_P$ is the soybean price (USD/ton), $D_C$ is the damage coefficient (calculated based on the potential yield) and $C_e$ is the control efficacy of the fungicide (proportion of disease reduction relative to non-treated). In practice, sprays should be applied prior to reaching the EDT, which gives rise to the AT (action threshold).
 
-In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT [@derossi2022]. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc was normalized to metric tons. More about Dc in the dedicated chapter on [yield loss](yieldloss-regression-models.html#damage-coefficients). The action threshold (AT) was defined in that study as 20% reduction of the EDT.
+In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT [@derossi2022]. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc is normalized to metric tons. More about Dc in the dedicated chapter on [yield loss](yieldloss-regression-models.html#damage-coefficients). The action threshold (AT) was defined in that study as 20% reduction of the EDT.
 
 ```{r}
 calculate_EDT <- function(Fc, Cp, Dc, Ec) {
@@ -93,17 +116,15 @@ ADT = EDT_value * 0.80
 ADT
 ```
 
-
-
 ### Warnings based on weather
 
 Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases. BLITECAST, the first computerized system, exemplifies this in its monitoring of late blight in potatoes and tomatoes. While initial inoculum is often undetectable, the presence of inoculum of the pathogens is assumed. Accurate predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.
 
-Weather-driven disease warning systems, like FAST and Wallin, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. These systems guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.
+Weather-driven disease warning systems, like FAST and Wallin [@madden1978; @wallin1962], continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. These systems guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.
 
 #### Wallin model
 
-J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications [@wallin1962]. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating 'disease severity values' (DSV) from plant emergence throughout the season, based on humidity and temperature metrics, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity \> 90% and the air temperature within the wet period.
+J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications [@wallin1962]. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating 'disease severity values' (DSV) from plant emergence throughout the season, based on humidity and temperature measures, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity \> 90% and the air temperature within the wet period.
 
 **Table.** Relationship of temperature and relative humidity (RH) periods as used in the Wallin late blight forecasting system to predict disease severity values (0 to 4).
 
@@ -115,7 +136,7 @@ J.R. Wallin developed a model in the mid-20th century focusing on forecasting po
 | 11.7 - 15.0 C             | 12    | 13-15    | 16-18 | 19-21 | \>22 |
 | 15.1 - 26.6 C             | 9     | 10-12    | 13-15 | 16-18 | \>19 |
 
-Let's download hourly weather data from NASA Power project using nasapower r package for the locality of Viçosa, MG, Brazil during the month of March 2022.
+Let's calculate DVS in R based on Wallin's system. But first we need to download hourly weather data from NASA Power project using nasapower r package for the locality of Viçosa, MG, Brazil during the month of March 2022.
 
 ```{r}
 #| warning: false
@@ -134,7 +155,7 @@ head(weather)
 
 ```
 
-In order to prepare the data to calculate the DSVs, we first need to obtain the leaf wetness duration variable (LW) based on hours of relative humidity \>90% and then the average temperature during the LW for each day. We group the variables by year, month and day and use `mutate()` and `summarise()`.
+We now need to obtain the leaf wetness duration variable (LW) based on hours of relative humidity \>90% and then the average temperature during the LW for each day. We can obtain these by grouping the variables by year, month and day and use `mutate()` and `summarise()`.
 
 ```{r}
 #| warning: false
@@ -150,7 +171,7 @@ weather2 <- weather |>
                 LWD = n())
 ```
 
-Now we are ready to calculate the daily DSV based on rules on the table and inspect the first 6 rows of the new table called `df_wallin`.
+Now we are ready to calculate the daily DSV based on Wallin's rules on the table and inspect the first 6 rows of the new table called `df_wallin`.
 
 ```{r}
 df_wallin <- weather2 |> 
@@ -184,7 +205,7 @@ df_wallin <- weather2 |>
     head(df_wallin)
 ```
 
-We can visualize the daily and cumulative DSV for the monthly period. The dashed line indicates the action threshold of 20 cumulative DSV, or when a spray should be applied. Please not that in the real system, the DSV is reduced to zero and another counting is initiated.
+We can visualize the daily and cumulative DSV for the monthly period after transforming the date format using `as.Date()` function. The dashed horizontal line in the plot indicates the action threshold of 20 cumulative DSV, or when a spray should be applied. Please note that in real systems, the DSV is reduced to zero and another DSV counting is initiated after the spray.
 
 ```{r}
 df_wallin2 <- df_wallin |> 
@@ -200,4 +221,74 @@ df_wallin2 |>
   r4pde::theme_r4pde()+
   labs(x = "Date", y = "Daily and cumulative DSV")
   
+```
+
+## Interactive app
+
+For educational purposes, we developed an interactive app using R Shiny. This app demonstrates the application of the Wallin and FAST rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (@fig-ws_systems).
+
+To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.
+
+![Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}
+
+## Bonus code
+
+Here is a code to calculate DSV based on the FAST table [@madden1978] for the relation between leaf wetness duration and temperature during the wet period.
+
+| Mean temp (°C) | 0   | 1    | 2     | 3     | 4   |
+|----------------|-----|------|-------|-------|-----|
+| 13-17          | 0-6 | 7-15 | 16-20 | 21+   | 23+ |
+| 18-20          | 0-3 | 4-8  | 9-15  | 16-22 | 23+ |
+| 21-25          | 0-2 | 3-5  | 6-12  | 13-20 | 21+ |
+| 26-29          | 0-3 | 4-8  | 9-15  | 16-22 | 23+ |
+
+```{r}
+ df_fast <- weather2 %>% 
+      mutate(
+        DSV = case_when(
+          # Temperature Range: 13 <= T < 18
+          Air_LWD >= 13 & Air_LWD < 18 & LWD >= 0 & LWD <= 6 ~ 0,
+          Air_LWD >= 13 & Air_LWD < 18 & LWD >= 7 & LWD <= 15 ~ 1,
+          Air_LWD >= 13 & Air_LWD < 18 & LWD >= 16 & LWD <= 20 ~ 2,
+          Air_LWD >= 13 & Air_LWD < 18 & LWD > 20 ~ 3,
+          
+          # Temperature Range: 18 <= T < 21
+          Air_LWD >= 18 & Air_LWD < 21 & LWD >= 0 & LWD <= 3 ~ 0,
+          Air_LWD >= 18 & Air_LWD < 21 & LWD >= 4 & LWD <= 8 ~ 1,
+          Air_LWD >= 18 & Air_LWD < 21 & LWD >= 9 & LWD <= 15 ~ 2,
+          Air_LWD >= 18 & Air_LWD < 21 & LWD >= 16 & LWD <= 22 ~ 3,
+          Air_LWD >= 18 & Air_LWD < 21 & LWD > 22 ~ 4,
+          
+          # Temperature Range: 21 <= T < 26
+          Air_LWD >= 21 & Air_LWD < 26 & LWD >= 0 & LWD <= 2 ~ 0,
+          Air_LWD >= 21 & Air_LWD < 26 & LWD >= 3 & LWD <= 5 ~ 1,
+          Air_LWD >= 21 & Air_LWD < 26 & LWD >= 6 & LWD <= 12 ~ 2,
+          Air_LWD >= 21 & Air_LWD < 26 & LWD >= 13 & LWD <= 20 ~ 3,
+          Air_LWD >= 21 & Air_LWD < 26 & LWD > 20 ~ 4,
+          
+          # Temperature Range: 26 <= T < 30
+          Air_LWD >= 26 & Air_LWD < 30 & LWD >= 0 & LWD <= 3 ~ 0,
+          Air_LWD >= 26 & Air_LWD < 30 & LWD >= 4 & LWD <= 8 ~ 1,
+          Air_LWD >= 26 & Air_LWD < 30 & LWD >= 9 & LWD <= 15 ~ 2,
+          Air_LWD >= 26 & Air_LWD < 30 & LWD >= 16 & LWD <= 22 ~ 3,
+          Air_LWD >= 26 & Air_LWD < 30 & LWD > 22 ~ 4,
+          
+          # Default (For temperatures out of the specified ranges or any other scenarios)
+          TRUE ~ 0  # Assigning a default value of 0
+        )
+      )
+df_fast
+
+df_fast2 <- df_fast |> 
+  mutate(DSV2 = cumsum(DSV),
+  date = as.Date(sprintf('%04d-%02d-%02d', YEAR, MO, DY)))
+
+df_fast2 |> 
+  ggplot(aes(date, DSV))+
+  geom_col(fill = "#339966")+
+  geom_line(aes(date, DSV2))+
+  geom_hline(yintercept = 20, linetype = 2)+
+  annotate(geom = "text", x = as.Date("2022-03-04"), y = 21.5, label = "Action threshold")+
+  r4pde::theme_r4pde()+
+  labs(x = "Date", y = "Daily and cumulative DSV")
 ```
