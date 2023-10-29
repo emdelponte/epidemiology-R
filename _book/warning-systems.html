@@ -126,6 +126,9 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </script>
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -425,9 +428,41 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 
 <section id="introduction" class="level2" data-number="18.1">
 <h2 data-number="18.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">18.1</span> Introduction</h2>
-<p>One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and pesticide use. Since the early 1900s, predictive systems have advanced considerably, particularly for major threats like potato late blight and apple scab for which several systems were developed and improved over the decades. Technological progress in recent decades has boosted the development and automation of these systems, now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers.</p>
-<p>The purpose behind modeling diseases and creating warning systems is to <strong>understand and predict</strong> plant disease epidemics, though these efforts don’t always lead to direct practical applications. Extensive research goes into determining disease drivers and modeling epidemic aspects, primarily for <strong>academic insight</strong> or specific investigative goals rather than creating user-end tools. While complex models, including simulation types, serve to consolidate current knowledge, they infrequently aim to develop directly applicable warning systems for disease management.</p>
-<p>It is important to understand the terms used in this field. A <strong>model</strong> is described as a simplified, often mathematical, representation of a process used for making predictions or suggesting management actions. While “forecast” and “prediction” are generally interchangeable in plant pathology, the term “warning system” is preferred for its historical use and specificity in indicating impending risk or need for intervention. Various terms like “disease forecaster,” “predictor,” and “decision aid” are synonymous in the field. More comprehensive tools, known as Decision Support Systems (DSS), integrate expert input, simulations, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks.</p>
+<p>One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and pesticide use. Since the early 1900s, warning systems (synonyms: disease forecaster, predictor, or decision support systems<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>) have advanced considerably, particularly for major threats like potato late blight and apple scab for which several systems were developed and improved over the decades. Technological progress in recent decades has boosted the development and automation of these systems, now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers.</p>
+<p>In its core, warning systems are based on a <strong>model</strong>, defined here as a simplified, often mathematical, representation of a process used for making predictions or suggesting management actions. They range from basic rules (e.g.&nbsp;if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics.</p>
+<p>The purpose behind modeling diseases and creating warning systems is to <strong>understand and predict</strong> plant disease epidemics, though these efforts don’t always lead to direct practical applications. Extensive research goes into determining disease drivers and modeling epidemic aspects, primarily for <strong>academic insight</strong> or specific investigative goals rather than creating user-end tools. While complex models, including simulation types, serve to consolidate current knowledge or assess disease risk under specific scenarios (e.g.&nbsp;historical or future climate, various management, etc), they infrequently aim to develop directly applicable warning systems for disease management. But when are warning systems needed? The box and the figure below provide some information on their utility. In the box, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging were it occurs. On the other hand, warning systems can be used if the disease is more erratic but damaging.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-diagram2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-diagram2">flowchart
+    Start((Start))
+    A{Disease&lt;BR&gt;present?}
+    B{Highly&lt;BR&gt;damaging?}
+    C[Risk Analysis]
+    D{Damaging?}
+    E{Frequent&lt;BR&gt;epidemics?}
+    F[Scheduled treatments]
+    G[Warning System]
+
+    Start --&gt; A
+    A --&gt;|N| B
+    B --&gt;|N| Start
+    D --&gt;|N| G
+    A --&gt;|Y| D
+    D --&gt;|Y| E
+    E --&gt;|Y| F
+    B --&gt;|Y| C
+    E --&gt;|N| G
+
+</pre>
+</div>
+<figcaption class="figure-caption">Figure&nbsp;18.1: Decision chart for the need of risk analysis or warning systems in disease management</figcaption>
+</figure>
+</div>
+</div>
+</div>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -438,7 +473,7 @@ Box- When is a warning system needed?
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>For operational use, they must fulfill four criteria to be practical:</p>
+<p>For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in <span class="citation" data-cites="Campbell1990">(<a href="references.html#ref-Campbell1990" role="doc-biblioref">Campbell and Madden. L. 1990</a>)</span>:</p>
 <ol type="1">
 <li><p>They should target diseases that are prevalent and economically damaging, affecting yield or quality. Merely having severe economic consequences doesn’t guarantee a system’s practical use or attention from growers and advisors.</p></li>
 <li><p>The diseases should exhibit variability across seasons in terms of onset, epidemic growth rate, severity, or another aspect, creating uncertainty in decision-making. Diseases with predictable patterns provide minimal information and little management advantage, reducing the relevance of warning systems.</p></li>
@@ -450,27 +485,27 @@ Box- When is a warning system needed?
 </section>
 <section id="what-types-of-systems-are-there" class="level2" data-number="18.2">
 <h2 data-number="18.2" class="anchored" data-anchor-id="what-types-of-systems-are-there"><span class="header-section-number">18.2</span> What types of systems are there?</h2>
-<p>These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. They range from basic guidelines and static thresholds to sophisticated simulation models covering entire disease epidemics. They might leverage diverse inputs beyond weather, like host, pathogen, and economic factors, catering to the complexities of disease prediction. The underlying models in these systems are either empirical, based on statistical correlations with disease data, or mechanistic (process-based), constructed around understood cause-effect relationships within disease progression.</p>
+<p>These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system as based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.</p>
+<p>Disease warning systems can include simple rules of thumb (e.g.&nbsp;if-then), static or dynamic disease thresholds, direct detection of inoculum, empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. The underlying models in these systems can be grouped into two different basic types: 1) Empirical, based on statistical correlations with disease data; 2) Mechanistic (process-based), constructed around understood cause-effect relationships within disease progression. Let’s see some examples of these systems together with their implementation in R.</p>
 <section id="disease-thresholds" class="level3" data-number="18.2.1">
 <h3 data-number="18.2.1" class="anchored" data-anchor-id="disease-thresholds"><span class="header-section-number">18.2.1</span> Disease thresholds</h3>
-<p>Disease thresholds, integral to integrated pest management in entomology, serve as basic disease warning systems. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic thresholds, indicating when action is necessary to avoid reaching injury levels. These concepts, while straightforward, are complex in practical scenarios, adapting to factors like crop stages and environmental conditions.</p>
-<p>Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops or quality-centric produce, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage.</p>
-<p>The concept of economic damage threshold (EDT) may be used as a criteria do warn fungicide spray. By definition, EDT is the amount of disease intensity (e.g.&nbsp;severity when dealing with foliar diseases) that corresponds to an economic loss that equals the control cost to combat the disease. A formula for the EDT was proposed by Mumford and Norton <span class="citation" data-cites="mumford1984">(<a href="references.html#ref-mumford1984" role="doc-biblioref">Mumford and Norton 1984</a>)</span> further modified by Reis <span class="citation" data-cites="reis2002modelo">(<a href="references.html#ref-reis2002modelo" role="doc-biblioref">Reis et al. 2002</a>)</span> for use in foliar fungal diseases, as described in Equation 3:</p>
+<p>Damaging thresholds, integral to integrated pest management in entomology, serve as basic disease warning systems. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic thresholds, indicating when action is necessary to avoid reaching injury levels. These concepts, while straightforward, can be complex in practical scenarios.</p>
+<p>Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease presence. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring is the base of this system.</p>
+<p>The concept of <strong>economic damage threshold</strong> (EDT) may be used as a criteria do warn fungicide spray. By definition, EDT is the amount of disease intensity (e.g.&nbsp;severity when dealing with foliar diseases) that corresponds to an economic loss that equates the control cost to combat the disease. A formula for the EDT was proposed by Mumford and Norton <span class="citation" data-cites="mumford1984">(<a href="references.html#ref-mumford1984" role="doc-biblioref">Mumford and Norton 1984</a>)</span> further modified by Reis <span class="citation" data-cites="reis2002modelo">(<a href="references.html#ref-reis2002modelo" role="doc-biblioref">Reis et al. 2002</a>)</span> for use in foliar fungal diseases, as described in Equation 3:</p>
 <p><span class="math inline">\(EDT = \frac{F_C}{S_P . D_C} . C_e\)</span> ,</p>
-<p>where EDT is the disease intensity, <span class="math inline">\(F_C\)</span> is the fungicide cost (USD/ha), <span class="math inline">\(S_P\)</span> is the soybean price (USD/ton), <span class="math inline">\(D_C\)</span> is the damage coefficient (calculated based on the potential yield) and <span class="math inline">\(C_e\)</span> is the control efficacy of the fungicide (%). In practice, sprays should be applied prior to reaching the EDT, which gives rise to the ADT (action disease threshold).</p>
-<p>In a study on northern corn leaf blight in Argentina, the following values were used by the authors to calculate the EDT <span class="citation" data-cites="derossi2022">(<a href="references.html#ref-derossi2022" role="doc-biblioref">De Rossi et al. 2022</a>)</span>. Note that in the study the authors adjusted the Dc to potential yield by multiplying by the potential yield value in metric tons, since the Dc is normalized to metric tons. More about Dc here in the dedicated chapter on <a href="yieldloss-regression-models.html#damage-coefficients">yield loss</a>. The action disease threshold (ADT) was defined as 20% reduction of the EDT in that study.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-1_a53d92ec9176ff21bc86b2d66c81b318">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calculate_EDT <span class="ot">&lt;-</span> <span class="cf">function</span>(Fc, Sp, Dc, Ec) {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  EDT <span class="ot">&lt;-</span> (Fc <span class="sc">/</span> (Sp <span class="sc">*</span> Dc)) <span class="sc">*</span> Ce</span>
+<p>where EDT is the disease intensity, <span class="math inline">\(F_C\)</span> is the fungicide cost (USD/ha), <span class="math inline">\(S_P\)</span> is the soybean price (USD/ton), <span class="math inline">\(D_C\)</span> is the damage coefficient (calculated based on the potential yield) and <span class="math inline">\(C_e\)</span> is the control efficacy of the fungicide (proportion of disease reduction relative to non-treated). In practice, sprays should be applied prior to reaching the EDT, which gives rise to the AT (action threshold).</p>
+<p>In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT <span class="citation" data-cites="derossi2022">(<a href="references.html#ref-derossi2022" role="doc-biblioref">De Rossi et al. 2022</a>)</span>. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc was normalized to metric tons. More about Dc in the dedicated chapter on <a href="yieldloss-regression-models.html#damage-coefficients">yield loss</a>. The action threshold (AT) was defined in that study as 20% reduction of the EDT.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-2_801088ce966329a0040de66dd2821fe6">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calculate_EDT <span class="ot">&lt;-</span> <span class="cf">function</span>(Fc, Cp, Dc, Ec) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  EDT <span class="ot">&lt;-</span> (Fc <span class="sc">/</span> (Cp <span class="sc">*</span> Dc)) <span class="sc">*</span> Ce</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(EDT)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Fc <span class="ot">&lt;-</span> <span class="dv">30</span>      <span class="co"># fixed cost of control is 30 USD/ha.</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Sp <span class="ot">&lt;-</span> <span class="dv">112</span>     <span class="co"># fixed soybean price is 112 USD/ton.</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Dc <span class="ot">&lt;-</span> <span class="fl">0.1712</span>  <span class="co"># for potential yield of 8.5 t/ha so 8.5 x 0.02015 = 0.1712.</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Ce <span class="ot">&lt;-</span> <span class="fl">0.70</span>    <span class="co"># control efficacy of fungicide is 70%.</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>EDT_value <span class="ot">&lt;-</span> <span class="fu">calculate_EDT</span>(Fc, Sp, Dc, Ce)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EDT_value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Fc <span class="ot">&lt;-</span> <span class="dv">30</span>      <span class="co"># fixed cost of control is 30 USD/ha.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Cp <span class="ot">&lt;-</span> <span class="dv">112</span>     <span class="co"># fixed crop price is 112 USD/ton.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Dc <span class="ot">&lt;-</span> <span class="fl">0.1712</span>  <span class="co"># for potential yield of 8.5 t/ha so 8.5 x 0.02015 = 0.1712.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Ce <span class="ot">&lt;-</span> <span class="fl">0.70</span>    <span class="co"># control efficacy of fungicide is 70%.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>EDT_value <span class="ot">&lt;-</span> <span class="fu">calculate_EDT</span>(Fc, Cp, Dc, Ce)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EDT_value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 1.09521</code></pre>
 </div>
@@ -483,12 +518,12 @@ Box- When is a warning system needed?
 </section>
 <section id="warnings-based-on-weather" class="level3" data-number="18.2.2">
 <h3 data-number="18.2.2" class="anchored" data-anchor-id="warnings-based-on-weather"><span class="header-section-number">18.2.2</span> Warnings based on weather</h3>
-<p>Disease warning systems frequently predict conditions conducive to pathogenesis, with wetness and temperature being key variables for many foliar diseases. BLITECAST, the first computerized system, exemplifies this in its monitoring of late blight in potatoes and tomatoes. While initial inoculum is often undetectable, the presence of pathogens like <em>Phytophthora infestans</em> is assumed. Accurate predictions of an outbreak are possible by tracking environmental conditions favorable for the pathogen’s development.</p>
-<p>Weather-driven disease warning systems, like FAST, TOMCAST, and PLAM, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. They guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on these accumulated severity values.</p>
+<p>Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases. BLITECAST, the first computerized system, exemplifies this in its monitoring of late blight in potatoes and tomatoes. While initial inoculum is often undetectable, the presence of inoculum of the pathogens is assumed. Accurate predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.</p>
+<p>Weather-driven disease warning systems, like FAST and Wallin, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability or severity values from environmental data, predicting infection and disease severity. These systems guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.</p>
 <section id="wallin-model" class="level4" data-number="18.2.2.1">
 <h4 data-number="18.2.2.1" class="anchored" data-anchor-id="wallin-model"><span class="header-section-number">18.2.2.1</span> Wallin model</h4>
-<p>J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating ‘disease severity values’ from plant emergence throughout the season, based on humidity and temperature metrics, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity &gt; 90% and the air temperature within that period.</p>
-<p><strong>Table.</strong> Relationship of temperature and relative humidity (RH) periods as used in the Wallin late blight forecasting system to predict Disease Severity Values (DSVs)</p>
+<p>J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications <span class="citation" data-cites="wallin1962">(<a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and corresponding minimum and maximum temperatures. By accumulating ‘disease severity values’ (DSV) from plant emergence throughout the season, based on humidity and temperature metrics, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity &gt; 90% and the air temperature within the wet period.</p>
+<p><strong>Table.</strong> Relationship of temperature and relative humidity (RH) periods as used in the Wallin late blight forecasting system to predict disease severity values (0 to 4).</p>
 <table class="table">
 <tbody>
 <tr class="odd">
@@ -534,7 +569,7 @@ Box- When is a warning system needed?
 </tbody>
 </table>
 <p>Let’s download hourly weather data from NASA Power project using nasapower r package for the locality of Viçosa, MG, Brazil during the month of March 2022.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-2_780c02a24a1675e89835e2f929a51d81">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-3_b916c09cff6d902e37e3759291b1206e">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">community =</span> <span class="st">"ag"</span>,</span>
@@ -568,7 +603,7 @@ Box- When is a warning system needed?
 </div>
 </div>
 <p>In order to prepare the data to calculate the DSVs, we first need to obtain the leaf wetness duration variable (LW) based on hours of relative humidity &gt;90% and then the average temperature during the LW for each day. We group the variables by year, month and day and use <code>mutate()</code> and <code>summarise()</code>.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-3_9d62f4c1751f233dca24b88d1c5cea81">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-4_57ec2d30b6a8da07c0facac8b55d2ad3">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weather2 <span class="ot">&lt;-</span> weather <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(YEAR, MO, DY) <span class="sc">|&gt;</span> </span>
@@ -579,7 +614,7 @@ Box- When is a warning system needed?
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">LWD =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we are ready to calculate the daily DSV based on rules on the table and inspect the first 6 rows of the new table called <code>df_wallin</code>.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-4_20c85eb678bc532e17a5e22e3d51eb8c">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-5_c7eebcf28a639a863e0c7ee8e310c8c0">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_wallin <span class="ot">&lt;-</span> weather2 <span class="sc">|&gt;</span> </span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">DSV =</span> <span class="fu">case_when</span>(</span>
@@ -623,7 +658,7 @@ Box- When is a warning system needed?
 </div>
 </div>
 <p>We can visualize the daily and cumulative DSV for the monthly period. The dashed line indicates the action threshold of 20 cumulative DSV, or when a spray should be applied. Please not that in the real system, the DSV is reduced to zero and another counting is initiated.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-5_e3e1069a72f9877c6c9d2f94d20fddf1">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-6_e9ad5565ffb041ae9654c3605e86622b">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="ot">&lt;-</span> df_wallin <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
@@ -637,12 +672,15 @@ Box- When is a warning system needed?
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Daily and cumulative DSV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="warning-systems_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
 
 <div id="refs" class="references csl-bib-body" role="list" style="display: none">
+<div id="ref-Campbell1990" class="csl-entry" role="listitem">
+Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epidemiology</em>. Wiley.
+</div>
 <div id="ref-derossi2022" class="csl-entry" role="listitem">
 De Rossi, R. L., Guerra, F. A., Plazas, M. C., Vuletic, E. E., Brücher, E., Guerra, G. D., et al. 2022. Crop damage, economic losses, and the economic damage threshold for northern corn leaf blight. Crop Protection. 154:105901 Available at: <a href="http://dx.doi.org/10.1016/j.cropro.2021.105901">http://dx.doi.org/10.1016/j.cropro.2021.105901</a>.
 </div>
@@ -652,9 +690,18 @@ Mumford, J. D., and Norton, G. A. 1984. Economics of Decision Making in Pest Man
 <div id="ref-reis2002modelo" class="csl-entry" role="listitem">
 Reis, E. M., Hoffmann, L. L., and Blum, M. 2002. Modelo de ponto crítico para estimar os danos causados pelo oídio em cevada. Fitopatologia Brasileira. 27:644–646.
 </div>
+<div id="ref-wallin1962" class="csl-entry" role="listitem">
+Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemics in United States and Canada. American Potato Journal. 39:306–312 Available at: <a href="http://dx.doi.org/10.1007/bf02862155">http://dx.doi.org/10.1007/bf02862155</a>.
+</div>
 </div>
 </section>
 </section>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn1"><p>More comprehensively, Decision Support Systems (DSS), integrate expert input, simulations, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
 </section>
 
 </main> <!-- /main -->
