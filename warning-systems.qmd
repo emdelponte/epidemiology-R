@@ -7,6 +7,7 @@ format:
   html:
     mermaid:
       theme: forest
+bibliography: references.bib
 ---
 
 ## Introduction
@@ -84,7 +85,7 @@ For operational and economical use, warning systems must fulfill four criteria t
 
 These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system are based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.
 
-Disease warning systems can include static or dynamic disease thresholds, direct detection of inoculum, simple rules of thumb (e.g. if-then), empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. Let's see some examples of these systems together with a possible implementation in R.
+Disease warning systems can include static or dynamic disease thresholds, direct detection of inoculum, simple rules of thumb (e.g. if-then) based on weather, infection risk during defined periods (risk models), or complex simulation models that estimate all phases of an epidemic. Let's see some examples of these systems together with a possible implementation in R.
 
 ### Disease thresholds
 
@@ -116,7 +117,7 @@ ADT = EDT_value * 0.80
 ADT
 ```
 
-### Monitoring within-season weather
+### Monitoring seasonal weather
 
 Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases [@bourke1970]. BLITECAST, the first computerized system [@krause1975blitecast] (which combined the Wallin and Hyre systems) provided the means of performing necessary calculations accurately and quickly and issuing recommendations to growers, is an example of successful automated warning system [@krause1975]. While initial inoculum is often undetectable, the presence of inoculum of the pathogen is assumed in many weather-based warning systems. Predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.
 
@@ -214,7 +215,7 @@ df_wallin2 <- df_wallin |>
 
 df_wallin2 |> 
   ggplot(aes(date, DSV))+
-  geom_col(fill = "#339966")+
+  geom_col(fill = "darkred")+
   geom_line(aes(date, DSV2))+
   geom_hline(yintercept = 20, linetype = 2)+
   annotate(geom = "text", x = as.Date("2022-03-04"), y = 20.5, label = "Action threshold")+
@@ -223,15 +224,15 @@ df_wallin2 |>
   
 ```
 
-## Interactive app
+#### Interactive app
 
 For educational purposes, an interactive app was developed using R Shiny. This [app](https://epidemiologiaufv.shinyapps.io/warning-systems/) demonstrates the application of the Wallin (forecast for late blight of potato) and FAST (Forecast for *Alternaria solani* on Tomatoes) rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (@fig-ws_systems).
 
 To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.
 
-[![Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
+[![Screenshot of a web-based warning system for plant diseases based on Wallin\'s and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
 
-## Bonus code
+#### Bonus code: FAST model
 
 Here is a code to calculate daily DSV values based on the FAST table [@madden1978] that relates the hours of relative humidity \> 90% (wet period) and temperature during the wet period during a 24-hour period.
 
@@ -285,10 +286,100 @@ df_fast2 <- df_fast |>
 
 df_fast2 |> 
   ggplot(aes(date, DSV))+
-  geom_col(fill = "#339966")+
+  geom_col(fill = "darkred")+
   geom_line(aes(date, DSV2))+
   geom_hline(yintercept = 20, linetype = 2)+
   annotate(geom = "text", x = as.Date("2022-03-04"), y = 21.5, label = "Action threshold")+
   r4pde::theme_r4pde()+
   labs(x = "Date", y = "Daily and cumulative DSV")
+```
+
+### Infection Risk During Defined Periods
+
+Many diseases like late blight of potatoes and early blight of tomatoes (but also others such as apple scab), as seen in the previous section, require continuous (season long) risk assessment. However, some warning systems assess risk at only one time point, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single disease warning is issued, such as the risk of an event such as disease occurrence above a threshold.
+
+These systems use statistical models (risk algorithms) to predict probabilities, such as infection risks, based on weather variables that occur over specific periods of time, usually when infections take place. For example, Fusarium head blight (FHB, caused by *Fusarium graminearum*) infection depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of *Sclerotinia* (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment[@willbur2018]. Such infections can be predicted using algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc.
+
+#### Logistic regression: Ohio FHB models
+
+FHB risk models were developed in the United States in the early 2000s to predict the risk of an epidemic, or when disease severity in the field was greater than 10% [@dewolf2003]. In the paper, several logistic regression models were developed using a summary of weather-related variables from two defined periods: seven days prior to flowering date and 10 days following flowering date (50% of wheat heads with anthers).
+
+Among the models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The variable selected was a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total hours, within the 10-day period, when the temperature (T) was \>=15 and \<= 30 ^o^C and relative humidity (RH) was \>90%.
+
+Let's implement this model in R and calculate the probability of infection. Again, we need to download hourly data from NASA Power project for a period of three years. Let's work with data from Wooster, OH, United States.
+
+```{r}
+library(nasapower)
+weather <- get_power(
+      community = "ag",
+      lonlat = c(-81.9399, 40.7982),
+      pars = c("RH2M", "T2M", "PRECTOTCORR"),
+      dates = c("2020-01-01", "2022-12-31"),
+      temporal_api = "hourly"
+    )
+head(weather)
+```
+
+We can then create a function named `calculate_TRH9010()`. This function calculates the number of hours that meet the specified condition (i.e., hours when 15 \<= T \<= 30 & RH \> 90), the probability (p) of infection, and the classification of the epidemic (epi) as 0 or 1 based on a defined threshold for p (0.36 in this case) [@dewolf2003]. The function's arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It's important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.
+
+```{r}
+calculate_TRH9010 <- function(data, YEAR, MO, DY){
+  start_row <- which(data$YEAR == YEAR & data$MO == MO & data$DY == DY & data$HR == 0)[1] 
+  if ((nrow(data) - start_row) < 9 * 24){ 
+    return(list(TRH9010 = NA, y = NA, p = NA, epi = NA))
+  }
+  subset_data <- data[start_row:(start_row + 9 * 24 - 1),] 
+  condition_met <- with(subset_data, T2M >= 15 & T2M <= 30 & RH2M > 90)
+  total_hours <- sum(condition_met)
+  y <- -3.3756 + 6.8128 * (total_hours / 136) # divide by maximum of 136 as in the paper
+  p <- exp(y) / (1 + exp(y))
+  epi <- ifelse(p > 0.36, 1, 0)
+  return(list(TRH9010 = total_hours, p = p, epi = epi))
+}
+
+```
+
+Now we apply the function for the 1st of June 2021. The output is the hour count, the probability and the epidemic classification.
+
+```{r}
+results <- calculate_TRH9010(weather, YEAR = 2021, MO = 6, DY = 1)
+results
+```
+
+We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let's write code to simulate 30 days in June using a `for()` loop which will store the results in a list, but we can further transform to a dataframe using `map_dfr()` function.
+
+```{r}
+num_days <- 30  
+all_results <- list()
+for(day in 1:num_days){
+  all_results[[paste0("", day)]] <- calculate_TRH9010(weather, YEAR = 2021, MO = 6, DY = day)
+}
+
+# transform results to a dataframe
+df <- all_results %>%
+  map_dfr(~ as.data.frame(t(.)), .id = "day")
+
+# Change variables  to numeric 
+df$p <- as.numeric(df$p)
+df$day <- as.numeric(df$day)
+df$epi <- as.numeric(df$epi)
+
+```
+
+Finally we plot the results.
+
+```{r}
+ggplot(df, aes(day, p, fill = factor(epi))) + 
+  geom_col()+
+  scale_x_continuous(n.breaks = 30)+
+  scale_fill_manual(values = c("grey60", "darkred"))+
+  geom_hline(yintercept = 0.36, linetype = 2)+
+  r4pde::theme_r4pde(font_size = 12)+
+  ylim(0,1)+
+  theme(legend.position = "bottom")+
+  labs(x = "Wheat flowering day in june 2021", y = "Risk probability",
+       fill = "Epidemic classification",
+       title = "Infection risk by Ohio (TRH9010) FHB model",
+       subtitle = "Location: Wooster, Ohio",
+       caption = "Model source: De Wolf et al. (2002)")
 ```

@@ -417,13 +417,17 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#what-types-of-systems-are-there" id="toc-what-types-of-systems-are-there" class="nav-link" data-scroll-target="#what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</a>
   <ul>
   <li><a href="#disease-thresholds" id="toc-disease-thresholds" class="nav-link" data-scroll-target="#disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</a></li>
-  <li><a href="#monitoring-within-season-weather" id="toc-monitoring-within-season-weather" class="nav-link" data-scroll-target="#monitoring-within-season-weather"><span class="header-section-number">18.4.2</span> Monitoring within-season weather</a>
+  <li><a href="#monitoring-seasonal-weather" id="toc-monitoring-seasonal-weather" class="nav-link" data-scroll-target="#monitoring-seasonal-weather"><span class="header-section-number">18.4.2</span> Monitoring seasonal weather</a>
   <ul>
   <li><a href="#wallin-model" id="toc-wallin-model" class="nav-link" data-scroll-target="#wallin-model"><span class="header-section-number">18.4.2.1</span> Wallin model</a></li>
+  <li><a href="#interactive-app" id="toc-interactive-app" class="nav-link" data-scroll-target="#interactive-app"><span class="header-section-number">18.4.2.2</span> Interactive app</a></li>
+  <li><a href="#bonus-code-fast-model" id="toc-bonus-code-fast-model" class="nav-link" data-scroll-target="#bonus-code-fast-model"><span class="header-section-number">18.4.2.3</span> Bonus code: FAST model</a></li>
+  </ul></li>
+  <li><a href="#infection-risk-during-defined-periods" id="toc-infection-risk-during-defined-periods" class="nav-link" data-scroll-target="#infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection Risk During Defined Periods</a>
+  <ul>
+  <li><a href="#logistic-regression-ohio-fhb-models" id="toc-logistic-regression-ohio-fhb-models" class="nav-link" data-scroll-target="#logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#interactive-app" id="toc-interactive-app" class="nav-link" data-scroll-target="#interactive-app"><span class="header-section-number">18.5</span> Interactive app</a></li>
-  <li><a href="#bonus-code" id="toc-bonus-code" class="nav-link" data-scroll-target="#bonus-code"><span class="header-section-number">18.6</span> Bonus code</a></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/warning-systems.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
@@ -535,7 +539,7 @@ When is a warning system useful?
 <section id="what-types-of-systems-are-there" class="level2" data-number="18.4">
 <h2 data-number="18.4" class="anchored" data-anchor-id="what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</h2>
 <p>These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system are based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.</p>
-<p>Disease warning systems can include static or dynamic disease thresholds, direct detection of inoculum, simple rules of thumb (e.g.&nbsp;if-then), empirically-derived risk models, or complex simulation models that estimate all phases of an epidemic. Let’s see some examples of these systems together with a possible implementation in R.</p>
+<p>Disease warning systems can include static or dynamic disease thresholds, direct detection of inoculum, simple rules of thumb (e.g.&nbsp;if-then) based on weather, infection risk during defined periods (risk models), or complex simulation models that estimate all phases of an epidemic. Let’s see some examples of these systems together with a possible implementation in R.</p>
 <section id="disease-thresholds" class="level3" data-number="18.4.1">
 <h3 data-number="18.4.1" class="anchored" data-anchor-id="disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</h3>
 <p>Damaging thresholds, integral to integrated pest management in entomology, can serve as a basic disease warning system. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic or action thresholds, indicating when action is necessary to avoid reaching injury levels <span class="citation" data-cites="pedigo1986">(<a href="references.html#ref-pedigo1986" role="doc-biblioref">Pedigo et al. 1986</a>)</span>. These concepts, while straightforward, can be quite complex in practical scenarios.</p>
@@ -565,8 +569,8 @@ When is a warning system useful?
 </div>
 </div>
 </section>
-<section id="monitoring-within-season-weather" class="level3" data-number="18.4.2">
-<h3 data-number="18.4.2" class="anchored" data-anchor-id="monitoring-within-season-weather"><span class="header-section-number">18.4.2</span> Monitoring within-season weather</h3>
+<section id="monitoring-seasonal-weather" class="level3" data-number="18.4.2">
+<h3 data-number="18.4.2" class="anchored" data-anchor-id="monitoring-seasonal-weather"><span class="header-section-number">18.4.2</span> Monitoring seasonal weather</h3>
 <p>Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases <span class="citation" data-cites="bourke1970">(<a href="references.html#ref-bourke1970" role="doc-biblioref">Bourke 1970</a>)</span>. BLITECAST, the first computerized system <span class="citation" data-cites="krause1975blitecast">(<a href="references.html#ref-krause1975blitecast" role="doc-biblioref">Krause et al. 1975</a>)</span> (which combined the Wallin and Hyre systems) provided the means of performing necessary calculations accurately and quickly and issuing recommendations to growers, is an example of successful automated warning system <span class="citation" data-cites="krause1975">(<a href="references.html#ref-krause1975" role="doc-biblioref">Krause and Massie 1975</a>)</span>. While initial inoculum is often undetectable, the presence of inoculum of the pathogen is assumed in many weather-based warning systems. Predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.</p>
 <p>Weather-based disease warning systems, like FAST (Forecasting <em>Alternaria solani</em> on tomatoes) and Wallin <span class="citation" data-cites="madden1978 wallin1962">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>; <a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability from environmental data, predicting infection and disease severity. They serve to guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.</p>
 <section id="wallin-model" class="level4" data-number="18.4.2.1">
@@ -707,14 +711,14 @@ When is a warning system useful?
 </div>
 </div>
 <p>We can visualize the daily and cumulative DSV for the monthly period after transforming the date format using <code>as.Date()</code> function. The dashed horizontal line in the plot indicates the action threshold of 20 cumulative DSV points, or when a spray should be applied. Please note that in real systems, the DSV is reduced to zero and another DSV counting is initiated after the spray.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-6_e9ad5565ffb041ae9654c3605e86622b">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-6_6c3a2ae35c24a7e021db8c1f58f1eb4d">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="ot">&lt;-</span> df_wallin <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="sc">|&gt;</span> </span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, DSV))<span class="sc">+</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#339966"</span>)<span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>)<span class="sc">+</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, DSV2))<span class="sc">+</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">20</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2022-03-04"</span>), <span class="at">y =</span> <span class="fl">20.5</span>, <span class="at">label =</span> <span class="st">"Action threshold"</span>)<span class="sc">+</span></span>
@@ -725,21 +729,19 @@ When is a warning system useful?
 </div>
 </div>
 </section>
-</section>
-</section>
-<section id="interactive-app" class="level2" data-number="18.5">
-<h2 data-number="18.5" class="anchored" data-anchor-id="interactive-app"><span class="header-section-number">18.5</span> Interactive app</h2>
+<section id="interactive-app" class="level4" data-number="18.4.2.2">
+<h4 data-number="18.4.2.2" class="anchored" data-anchor-id="interactive-app"><span class="header-section-number">18.4.2.2</span> Interactive app</h4>
 <p>For educational purposes, an interactive app was developed using R Shiny. This <a href="https://epidemiologiaufv.shinyapps.io/warning-systems/">app</a> demonstrates the application of the Wallin (forecast for late blight of potato) and FAST (Forecast for <em>Alternaria solani</em> on Tomatoes) rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (<a href="#fig-ws_systems">Figure&nbsp;<span>18.4</span></a>).</p>
 <p>To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.</p>
 <div id="fig-ws_systems" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><a href="https://epidemiologiaufv.shinyapps.io/warning-systems/"><img src="imgs/ws_systems.png" class="img-fluid figure-img"></a></p>
-<figcaption class="figure-caption">Figure&nbsp;18.4: Screenshot of a web-based warning system for plant diseases based on Wallin’s and FAST rules</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;18.4: Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules</figcaption>
 </figure>
 </div>
 </section>
-<section id="bonus-code" class="level2" data-number="18.6">
-<h2 data-number="18.6" class="anchored" data-anchor-id="bonus-code"><span class="header-section-number">18.6</span> Bonus code</h2>
+<section id="bonus-code-fast-model" class="level4" data-number="18.4.2.3">
+<h4 data-number="18.4.2.3" class="anchored" data-anchor-id="bonus-code-fast-model"><span class="header-section-number">18.4.2.3</span> Bonus code: FAST model</h4>
 <p>Here is a code to calculate daily DSV values based on the FAST table <span class="citation" data-cites="madden1978">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>)</span> that relates the hours of relative humidity &gt; 90% (wet period) and temperature during the wet period during a 24-hour period.</p>
 <table class="table">
 <thead>
@@ -787,7 +789,7 @@ When is a warning system useful?
 </tr>
 </tbody>
 </table>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-7_da2d97ebf1343686ce5837ec5e299fd9">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-7_1aae4d3539e8d34000b58be2a16a0487">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a> df_fast <span class="ot">&lt;-</span> weather2 <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">DSV =</span> <span class="fu">case_when</span>(</span>
@@ -846,7 +848,7 @@ When is a warning system useful?
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>df_fast2 <span class="sc">|&gt;</span> </span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, DSV))<span class="sc">+</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"#339966"</span>)<span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>)<span class="sc">+</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, DSV2))<span class="sc">+</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">20</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
 <span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2022-03-04"</span>), <span class="at">y =</span> <span class="fl">21.5</span>, <span class="at">label =</span> <span class="st">"Action threshold"</span>)<span class="sc">+</span></span>
@@ -854,6 +856,118 @@ When is a warning system useful?
 <span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Daily and cumulative DSV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="warning-systems_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="infection-risk-during-defined-periods" class="level3" data-number="18.4.3">
+<h3 data-number="18.4.3" class="anchored" data-anchor-id="infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection Risk During Defined Periods</h3>
+<p>Many diseases like late blight of potatoes and early blight of tomatoes (but also others such as apple scab), as seen in the previous section, require continuous (season long) risk assessment. However, some warning systems assess risk at only one time point, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single disease warning is issued, such as the risk of an event such as disease occurrence above a threshold.</p>
+<p>These systems use statistical models (risk algorithms) to predict probabilities, such as infection risks, based on weather variables that occur over specific periods of time, usually when infections take place. For example, Fusarium head blight (FHB, caused by <em>Fusarium graminearum</em>) infection depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of <em>Sclerotinia</em> (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment<span class="citation" data-cites="willbur2018">(<a href="references.html#ref-willbur2018" role="doc-biblioref">Willbur et al. 2018</a>)</span>. Such infections can be predicted using algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc.</p>
+<section id="logistic-regression-ohio-fhb-models" class="level4" data-number="18.4.3.1">
+<h4 data-number="18.4.3.1" class="anchored" data-anchor-id="logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</h4>
+<p>FHB risk models were developed in the United States in the early 2000s to predict the risk of an epidemic, or when disease severity in the field was greater than 10% <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. In the paper, several logistic regression models were developed using a summary of weather-related variables from two defined periods: seven days prior to flowering date and 10 days following flowering date (50% of wheat heads with anthers).</p>
+<p>Among the models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The variable selected was a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total hours, within the 10-day period, when the temperature (T) was &gt;=15 and &lt;= 30 <sup>o</sup>C and relative humidity (RH) was &gt;90%.</p>
+<p>Let’s implement this model in R and calculate the probability of infection. Again, we need to download hourly data from NASA Power project for a period of three years. Let’s work with data from Wooster, OH, United States.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-8_b18203014763e9d2da6368c1fdce28c3">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">community =</span> <span class="st">"ag"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lonlat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">81.9399</span>, <span class="fl">40.7982</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"RH2M"</span>, <span class="st">"T2M"</span>, <span class="st">"PRECTOTCORR"</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2020-01-01"</span>, <span class="st">"2022-12-31"</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">temporal_api =</span> <span class="st">"hourly"</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(weather)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NASA/POWER CERES/MERRA2 Native Resolution Hourly Data  
+ Dates (month/day/year): 01/01/2020 through 12/31/2022  
+ Location: Latitude  40.7982   Longitude -81.9399  
+ Elevation from MERRA-2: Average for 0.5 x 0.625 degree lat/lon region = 309.08 meters 
+ The value for missing source data that cannot be computed or is outside of the sources availability range: NA  
+ Parameter(s):  
+ 
+ Parameters: 
+ RH2M            MERRA-2 Relative Humidity at 2 Meters (%) ;
+ T2M             MERRA-2 Temperature at 2 Meters (C) ;
+ PRECTOTCORR     MERRA-2 Precipitation Corrected (mm/hour)  
+ 
+# A tibble: 6 × 9
+    LON   LAT  YEAR    MO    DY    HR  RH2M   T2M PRECTOTCORR
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+1 -81.9  40.8  2019    12    31    19  79.6 -2.75        0.02
+2 -81.9  40.8  2019    12    31    20  80.8 -2.99        0.02
+3 -81.9  40.8  2019    12    31    21  82.8 -3.17        0.02
+4 -81.9  40.8  2019    12    31    22  83.9 -3.27        0.01
+5 -81.9  40.8  2019    12    31    23  85   -3.37        0.01
+6 -81.9  40.8  2020     1     1     0  86.4 -3.55        0.01</code></pre>
+</div>
+</div>
+<p>We can then create a function named <code>calculate_TRH9010()</code>. This function calculates the number of hours that meet the specified condition (i.e., hours when 15 &lt;= T &lt;= 30 &amp; RH &gt; 90), the probability (p) of infection, and the classification of the epidemic (epi) as 0 or 1 based on a defined threshold for p (0.36 in this case) <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. The function’s arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It’s important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-9_4ab2cd74220798a8a128c496109ba7ab">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>calculate_TRH9010 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, YEAR, MO, DY){</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  start_row <span class="ot">&lt;-</span> <span class="fu">which</span>(data<span class="sc">$</span>YEAR <span class="sc">==</span> YEAR <span class="sc">&amp;</span> data<span class="sc">$</span>MO <span class="sc">==</span> MO <span class="sc">&amp;</span> data<span class="sc">$</span>DY <span class="sc">==</span> DY <span class="sc">&amp;</span> data<span class="sc">$</span>HR <span class="sc">==</span> <span class="dv">0</span>)[<span class="dv">1</span>] </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> ((<span class="fu">nrow</span>(data) <span class="sc">-</span> start_row) <span class="sc">&lt;</span> <span class="dv">9</span> <span class="sc">*</span> <span class="dv">24</span>){ </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">TRH9010 =</span> <span class="cn">NA</span>, <span class="at">y =</span> <span class="cn">NA</span>, <span class="at">p =</span> <span class="cn">NA</span>, <span class="at">epi =</span> <span class="cn">NA</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  subset_data <span class="ot">&lt;-</span> data[start_row<span class="sc">:</span>(start_row <span class="sc">+</span> <span class="dv">9</span> <span class="sc">*</span> <span class="dv">24</span> <span class="sc">-</span> <span class="dv">1</span>),] </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  condition_met <span class="ot">&lt;-</span> <span class="fu">with</span>(subset_data, T2M <span class="sc">&gt;=</span> <span class="dv">15</span> <span class="sc">&amp;</span> T2M <span class="sc">&lt;=</span> <span class="dv">30</span> <span class="sc">&amp;</span> RH2M <span class="sc">&gt;</span> <span class="dv">90</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  total_hours <span class="ot">&lt;-</span> <span class="fu">sum</span>(condition_met)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">3.3756</span> <span class="sc">+</span> <span class="fl">6.8128</span> <span class="sc">*</span> (total_hours <span class="sc">/</span> <span class="dv">136</span>) <span class="co"># divide by maximum of 136 as in the paper</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">exp</span>(y) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(y))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  epi <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(p <span class="sc">&gt;</span> <span class="fl">0.36</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">TRH9010 =</span> total_hours, <span class="at">p =</span> p, <span class="at">epi =</span> epi))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we apply the function for the 1st of June 2021. The output is the hour count, the probability and the epidemic classification.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-10_a2b34bcde5c60e6027012e1d46e94dd7">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">calculate_TRH9010</span>(weather, <span class="at">YEAR =</span> <span class="dv">2021</span>, <span class="at">MO =</span> <span class="dv">6</span>, <span class="at">DY =</span> <span class="dv">1</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$TRH9010
+[1] 62
+
+$p
+[1] 0.4329649
+
+$epi
+[1] 1</code></pre>
+</div>
+</div>
+<p>We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let’s write code to simulate 30 days in June using a <code>for()</code> loop which will store the results in a list, but we can further transform to a dataframe using <code>map_dfr()</code> function.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-11_22df8373b886c1a5a8f460588fa362c3">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>num_days <span class="ot">&lt;-</span> <span class="dv">30</span>  </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>all_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_days){</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  all_results[[<span class="fu">paste0</span>(<span class="st">""</span>, day)]] <span class="ot">&lt;-</span> <span class="fu">calculate_TRH9010</span>(weather, <span class="at">YEAR =</span> <span class="dv">2021</span>, <span class="at">MO =</span> <span class="dv">6</span>, <span class="at">DY =</span> day)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># transform results to a dataframe</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> all_results <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(.)), <span class="at">.id =</span> <span class="st">"day"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Change variables  to numeric </span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>p <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>p)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>day)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>epi <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>epi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally we plot the results.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-12_70846ac5cbad51b671ffc3794f3a3563">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(day, p, <span class="at">fill =</span> <span class="fu">factor</span>(epi))) <span class="sc">+</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">30</span>)<span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey60"</span>, <span class="st">"darkred"</span>))<span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.36</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)<span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Wheat flowering day in june 2021"</span>, <span class="at">y =</span> <span class="st">"Risk probability"</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Epidemic classification"</span>,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Infection risk by Ohio (TRH9010) FHB model"</span>,</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Location: Wooster, Ohio"</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Model source: De Wolf et al. (2002)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 
@@ -867,6 +981,9 @@ Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epid
 </div>
 <div id="ref-derossi2022" class="csl-entry" role="listitem">
 De Rossi, R. L., Guerra, F. A., Plazas, M. C., Vuletic, E. E., Brücher, E., Guerra, G. D., et al. 2022. Crop damage, economic losses, and the economic damage threshold for northern corn leaf blight. Crop Protection. 154:105901 Available at: <a href="http://dx.doi.org/10.1016/j.cropro.2021.105901">http://dx.doi.org/10.1016/j.cropro.2021.105901</a>.
+</div>
+<div id="ref-dewolf2003" class="csl-entry" role="listitem">
+De Wolf, E. D., Madden, L. V., and Lipps, P. E. 2003. Risk Assessment Models for Wheat Fusarium Head Blight Epidemics Based on Within-Season Weather Data. Phytopathology®. 93:428–435 Available at: <a href="http://dx.doi.org/10.1094/PHYTO.2003.93.4.428">http://dx.doi.org/10.1094/PHYTO.2003.93.4.428</a>.
 </div>
 <div id="ref-krause1975" class="csl-entry" role="listitem">
 Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology. 13:31–47 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.13.090175.000335">http://dx.doi.org/10.1146/annurev.py.13.090175.000335</a>.
@@ -895,7 +1012,12 @@ Reis, E. M., Hoffmann, L. L., and Blum, M. 2002. Modelo de ponto crítico para e
 <div id="ref-wallin1962" class="csl-entry" role="listitem">
 Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemics in United States and Canada. American Potato Journal. 39:306–312 Available at: <a href="http://dx.doi.org/10.1007/bf02862155">http://dx.doi.org/10.1007/bf02862155</a>.
 </div>
+<div id="ref-willbur2018" class="csl-entry" role="listitem">
+Willbur, J. F., Fall, M. L., Bloomingdale, C., Byrne, A. M., Chapman, S. A., Isard, S. A., et al. 2018. Weather-Based Models for Assessing the Risk of <span><em>Sclerotinia sclerotiorum</em></span> Apothecial Presence in Soybean (<span><em>Glycine max</em></span>) Fields. Plant Disease. 102:73–84 Available at: <a href="http://dx.doi.org/10.1094/PDIS-04-17-0504-RE">http://dx.doi.org/10.1094/PDIS-04-17-0504-RE</a>.
 </div>
+</div>
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
