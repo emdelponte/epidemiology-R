@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.450">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R4PDE.net - 18&nbsp; Warning systems</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./references.html" rel="next">
+<link href="./yieldloss-regression-models.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-5T7SZYQV79"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
+</script>
+<meta name="mermaid-theme" content="forest">
+<script src="site_libs/quarto-diagram/mermaid.min.js"></script>
+<script src="site_libs/quarto-diagram/mermaid-init.js"></script>
+<link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./warning-systems.html">Disease prediction</a></li><li class="breadcrumb-item"><a href="./warning-systems.html"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Warning systems</span></a></li></ol></nav>
+      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+      </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R4PDE.net</a> 
+        <div class="sidebar-tools-main tools-wide">
+    <a href="https://github.com/emdelponte/epidemiology-R" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <div class="dropdown">
+      <a href="" title="Download" id="quarto-navigation-tool-dropdown-0" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download"><i class="bi bi-download"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-0">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./R4PDE.net.epub">
+              <i class="bi bi-bi-journal pe-1"></i>
+            Download ePub
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="./R4PDE.net.docx">
+              <i class="bi bi-bi-file-word pe-1"></i>
+            Download Docx
+            </a>
+          </li>
+      </ul>
+    </div>
+    <div class="dropdown">
+      <a href="" title="Share" id="quarto-navigation-tool-dropdown-1" class="quarto-navigation-tool dropdown-toggle px-1" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Share"><i class="bi bi-share"></i></a>
+      <ul class="dropdown-menu" aria-labelledby="quarto-navigation-tool-dropdown-1">
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://twitter.com/intent/tweet?url=|url|">
+              <i class="bi bi-bi-twitter pe-1"></i>
+            Twitter
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item sidebar-tools-main-item" href="https://www.linkedin.com/sharing/share-offsite/?url=|url|">
+              <i class="bi bi-bi-linkedin pe-1"></i>
+            LinkedIn
+            </a>
+          </li>
+      </ul>
+    </div>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Welcome</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cite.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">How to cite</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./author.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">About the author</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./acknowledgements.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Acknowledgements</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+ <span class="menu-text">Epidemic data</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-terminology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Disease variables</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-ordinal.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Ordinal scales</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-actual-severity.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Image analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-accuracy.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Reliability and accuracy</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-sads.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Standard area diagrams</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./data-training.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Training sessions</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
+ <span class="menu-text">Temporal analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./temporal-dpc.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Disease progress curves</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./temporal-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Population models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./temporal-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Model fitting</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
+ <span class="menu-text">Spatial analysis</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spatial-gradients.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Spatial gradients</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spatial-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Gradient models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spatial-fitting.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Fitting gradient models</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spatial-patterns.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Spatial patterns</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./spatial-tests.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Tests for patterns</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false">
+ <span class="menu-text">Epidemics and yield</span></a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="false" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./yieldloss-concepts.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Definitions and concepts</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./yieldloss-regression-models.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Statistical models</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true">
+ <span class="menu-text">Disease prediction</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./warning-systems.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Warning systems</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">18.1</span> Introduction</a></li>
+  <li><a href="#risk-assessment-and-decision-framework" id="toc-risk-assessment-and-decision-framework" class="nav-link" data-scroll-target="#risk-assessment-and-decision-framework"><span class="header-section-number">18.2</span> Risk assessment and decision framework</a></li>
+  <li><a href="#when-is-a-warning-system-needed" id="toc-when-is-a-warning-system-needed" class="nav-link" data-scroll-target="#when-is-a-warning-system-needed"><span class="header-section-number">18.3</span> When is a warning system needed?</a></li>
+  <li><a href="#what-types-of-systems-are-there" id="toc-what-types-of-systems-are-there" class="nav-link" data-scroll-target="#what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</a>
+  <ul>
+  <li><a href="#disease-thresholds" id="toc-disease-thresholds" class="nav-link" data-scroll-target="#disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</a></li>
+  <li><a href="#monitoring-season-long-weather" id="toc-monitoring-season-long-weather" class="nav-link" data-scroll-target="#monitoring-season-long-weather"><span class="header-section-number">18.4.2</span> Monitoring season-long weather</a>
+  <ul>
+  <li><a href="#wallin-model" id="toc-wallin-model" class="nav-link" data-scroll-target="#wallin-model"><span class="header-section-number">18.4.2.1</span> Wallin model</a></li>
+  <li><a href="#fast-model" id="toc-fast-model" class="nav-link" data-scroll-target="#fast-model"><span class="header-section-number">18.4.2.2</span> FAST model</a></li>
+  <li><a href="#bonus-interactive-app" id="toc-bonus-interactive-app" class="nav-link" data-scroll-target="#bonus-interactive-app"><span class="header-section-number">18.4.2.3</span> Bonus: interactive app</a></li>
+  </ul></li>
+  <li><a href="#infection-risk-during-defined-periods" id="toc-infection-risk-during-defined-periods" class="nav-link" data-scroll-target="#infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection risk during defined periods</a>
+  <ul>
+  <li><a href="#logistic-regression-ohio-fhb-models" id="toc-logistic-regression-ohio-fhb-models" class="nav-link" data-scroll-target="#logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/warning-systems.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Warning systems</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level2" data-number="18.1">
+<h2 data-number="18.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">18.1</span> Introduction</h2>
+<p>One practical application of plant disease epidemiology is to predict disease occurrences to guide timely management interventions, reducing crop damage and rationalizing pesticide use. Since the early to mid 1900s, warning systems (synonyms: disease forecaster, predictor) have advanced considerably. More comprehensively, these systems have evolved to a Decision Support System (DSS), when they integrate expert input, models, and databases for more nuanced management recommendations, transcending simple prediction to encompass various goals within computerized frameworks. In fact, technological progress in recent decades has boosted the development and automation of DSSs, now widely available in public and private sectors, providing direct, sophisticated guidance to crop advisors and growers (<a href="#fig-dss">Figure&nbsp;<span>18.1</span></a>).</p>
+<div id="fig-dss" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/dss.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;18.1: Core elements of a decision support system that provides risk information for plant disease management</figcaption>
+</figure>
+</div>
+<p>In its core, a DSS targeting risk prediction for plant disease management are based on a disease <strong>model</strong>, or a simplified, often mathematical, representation of a the system (here the pathosystem) used for making predictions or suggesting management decisions based on the risk information they provide. The models range from basic rules (e.g.&nbsp;if-then) and static thresholds to sophisticated simulation models covering entire disease epidemics. Historically, these models collect weather information from on site automatic weather stations, but can be fed with data from remote sensing (e.g.&nbsp;satellite) or data reanalysis sources.</p>
+</section>
+<section id="risk-assessment-and-decision-framework" class="level2" data-number="18.2">
+<h2 data-number="18.2" class="anchored" data-anchor-id="risk-assessment-and-decision-framework"><span class="header-section-number">18.2</span> Risk assessment and decision framework</h2>
+<p>There are basically two types of decisions related to plant disease management: tactical and strategical and these can be related to the distinct time frames of information (i.e., historical data, pre-season, growing season, and future seasons). A risk assessment and decision framework, with associated terminology, can be proposed based on such relations (<a href="#fig-timeline">Figure&nbsp;<span>18.2</span></a>) and its components are explained next.</p>
+<div id="fig-timeline" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="imgs/timeline.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;18.2: Framework and associated terminology for plant disease risk assessment</figcaption>
+</figure>
+</div>
+<p><strong>Historical</strong> data and prediction refers to those obtained from or simulated for previous years or seasons. This can include past observed weather patterns, observed or simulated disease outbreaks. The goal is to learn about the “normal” patterns associated with disease prevalence and severity. In the p<strong>re-season</strong> period, predictions are made before the actual planting or growing season starts. This could be based on early predictions of weather patterns for the season. During the <strong>growing season,</strong> real-time data is used to provide short-term predictions. This is the period when crops are in the fields and are actively monitored. Finally, for <strong>future seasons,</strong> projections (e.g.&nbsp;climate change scenarios) can be made for the subsequent years or decades.</p>
+<p><strong>Strategical</strong> decisions are those with a long-term impact and are typically based on historical data and projections for future seasons. Examples might include choosing where to plant the crops in the next years, which cultivar to plant, and making infrastructure investments. <strong>Tactical</strong> are short-term decisions typically based on real-time data or short-term predictions, especially those relevant to the current growing season. A chief example include the timing of fungicide applications.</p>
+<p>As to risk terminology, <strong>risk analysis</strong> is a comprehensive assessment of potential disease risks, considering both historical data and projections of the future. The goal is to understand and mitigate potential threats to agricultural production. <strong>Risk prediction</strong> can be broken down into a) <strong>outlook:</strong> Broad predictions or estimations about potential risks, often based on pre-season data. Example: effects that El Niño Southern Oscilation (ENSO) may have on disease patterns; b) <strong>forecasting:</strong> short-term predictions, typically for the growing season, such as critical weather events; and c) <strong>warning:</strong> Immediate alerts about imminent risks, like an upcoming risk of plant infection, crucial for tactical decisions.</p>
+<p>In this chapter we will focus on warning systems that make use of disease monitoring or seasonal weather to provide risk information for tactical decisions.</p>
+</section>
+<section id="when-is-a-warning-system-needed" class="level2" data-number="18.3">
+<h2 data-number="18.3" class="anchored" data-anchor-id="when-is-a-warning-system-needed"><span class="header-section-number">18.3</span> When is a warning system needed?</h2>
+<p>The figure and the box below provide some information on their utility. In the figure, risk analysis is defined as an approach for pathogens/diseases that are not present in a target region and for which modeling can be used for risk estimation if the disease is highly damaging where it occurs. Warning systems can be used if the disease is more erratic but still damaging when occuring. If the epidemics are too frequent and no effective and economic control is available (for example, some nematodes and virus), plant host resistance is the way to go. If there are effective and economic control measures (e.g.&nbsp;fungicide sprays) during the season, farmers should follows scheduled application of treatments.</p>
+<div class="cell" data-fig-width="4">
+<div class="cell-output-display">
+<div id="fig-diagram2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div>
+<pre class="mermaid mermaid-js" data-label="fig-diagram2">flowchart
+    Start((Start))
+    A{Disease&lt;BR&gt;present?}
+    B{Highly&lt;BR&gt;damaging?}
+    C[Risk Analysis]
+    D{Damaging?}
+    E{Frequent&lt;BR&gt;epidemics?}
+    F[Scheduled treatments]
+    G[Warning System]
+    H{Economic&lt;BR&gt;control?}
+    I[Host Resistance]
+
+    Start --&gt; A
+    A --&gt;|N| B
+    B --&gt;|N| Start
+    D --&gt;|N| Start
+    A --&gt;|Y| D
+    D --&gt;|Y| E
+    E --&gt;|Y| H
+    B --&gt;|Y| C
+    E --&gt;|N| G
+    H --&gt;|N| I
+    H --&gt;|Y| F
+    
+
+</pre>
+</div>
+<figcaption class="figure-caption">Figure&nbsp;18.3: Decision chart for the need of risk analysis, warning systems, schedule treatment or host resistance in disease management</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+When is a warning system useful?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in <span class="citation" data-cites="Campbell1990">(<a href="references.html#ref-Campbell1990" role="doc-biblioref">Campbell and Madden. L. 1990</a>)</span>:</p>
+<ol type="1">
+<li><p>They should target diseases that are prevalent and economically damaging, affecting yield or quality. Merely having severe economic consequences doesn’t guarantee a system’s practical use or attention from growers and advisors.</p></li>
+<li><p>The diseases should exhibit variability across seasons in terms of onset, epidemic growth rate, severity, or another aspect, creating uncertainty in decision-making. Diseases with predictable patterns provide minimal information and little management advantage, reducing the relevance of warning systems.</p></li>
+<li><p>Users should be capable of acting on the system’s alerts, necessitating available and effective control measures and sufficient response time to prevent crop damage. Systems are unhelpful if practitioners can’t adapt their strategies promptly.</p></li>
+<li><p>The system must encompass comprehensive knowledge about the disease, synthesizing accurate risk estimates. Understanding the specific interactions between host, pathogen, and environment is crucial for the system’s effectiveness and relevance.</p></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="what-types-of-systems-are-there" class="level2" data-number="18.4">
+<h2 data-number="18.4" class="anchored" data-anchor-id="what-types-of-systems-are-there"><span class="header-section-number">18.4</span> What types of systems are there?</h2>
+<p>These systems vary significantly in structure and design, reflecting the multitude of plant diseases, objectives, available data, control strategies, developer preferences, and operational infrastructures. Usually, warning system are based on weather inputs, but they might leverage other inputs like host, pathogen, and economic factors, catering to the complexities of disease prediction.</p>
+<p>Disease warning systems can include static or dynamic disease thresholds, direct detection of inoculum, simple rules of thumb (e.g.&nbsp;if-then) based on weather, infection risk during defined periods (risk models), or complex simulation models that estimate all phases of an epidemic. Let’s see some examples of these systems together with a possible implementation in R.</p>
+<section id="disease-thresholds" class="level3" data-number="18.4.1">
+<h3 data-number="18.4.1" class="anchored" data-anchor-id="disease-thresholds"><span class="header-section-number">18.4.1</span> Disease thresholds</h3>
+<p>Damaging thresholds, integral to integrated pest management in entomology, can serve as a basic disease warning system. They involve economic injury levels, denoting pest abundance that equates control costs with incurred losses, and economic or action thresholds, indicating when action is necessary to avoid reaching injury levels <span class="citation" data-cites="pedigo1986">(<a href="references.html#ref-pedigo1986" role="doc-biblioref">Pedigo et al. 1986</a>)</span>. These concepts, while straightforward, can be quite complex in practical scenarios.</p>
+<p>Though less prevalent than in arthropod management, thresholds guide actions like fungicide application in plant diseases, especially those directly impacting yield through photosynthetic area reduction <span class="citation" data-cites="leiminger2012 nutter1993terms">(<a href="references.html#ref-leiminger2012" role="doc-biblioref">Leiminger and Hausladen 2012</a>; <a href="references.html#ref-nutter1993terms" role="doc-biblioref">Nutter et al. 1993</a>)</span>. However, their application is challenging for rapid, recurrent diseases affecting high-value crops, requiring prompt intervention even at minimal disease levels. With potato late blight, for instance, the first fungicide application may need to be applied by the time disease severity reaches as low as 0.1% of the foliage. Hence, disease monitoring for detection and quantification is vital for this system. In reality, for some rapid spreading and highly damaging diseases one cannot wait to “see” the disease to start protecting the crops, for which yield protection is best when applications are made preventatively.</p>
+<p>However, the concept of <strong>economic damage threshold</strong> (EDT) may be used as a criteria do indicate when to start with fungicide sprays. By definition, EDT is the amount of disease intensity (e.g.&nbsp;severity when dealing with foliar diseases) that corresponds to an economic loss that equates the control cost to combat the disease. A formula for the EDT was proposed by Mumford and Norton <span class="citation" data-cites="mumford1984">(<a href="references.html#ref-mumford1984" role="doc-biblioref">Mumford and Norton 1984</a>)</span> and further modified by Reis <span class="citation" data-cites="reis2002modelo">(<a href="references.html#ref-reis2002modelo" role="doc-biblioref">Reis et al. 2002</a>)</span> for use in foliar fungal diseases, as described in Equation 3:</p>
+<p><span class="math inline">\(EDT = \frac{F_C}{C_P . D_C} . C_e\)</span> ,</p>
+<p>where EDT is the disease intensity, <span class="math inline">\(F_C\)</span> is the fungicide cost (USD/ha), <span class="math inline">\(C_P\)</span> is the crop selling price (USD/ton), <span class="math inline">\(D_C\)</span> is the damage coefficient (adjusted to potential yield) and <span class="math inline">\(C_e\)</span> is the control efficacy of the fungicide (proportion of disease reduction relative to non-treated). In practice, sprays should be applied prior to reaching the EDT, which gives rise to the ADT (action damage threshold).</p>
+<p>In a study on northern corn leaf blight in Argentina, the following values were used to calculate the EDT <span class="citation" data-cites="derossi2022">(<a href="references.html#ref-derossi2022" role="doc-biblioref">De Rossi et al. 2022</a>)</span>. Note that the authors adjusted the Dc to potential yield by multiplying by the potential yield value (8.5 ton.ha) in metric tons, since the Dc is normalized to one metric ton. More about Dc in the dedicated chapter on <a href="yieldloss-regression-models.html#damage-coefficients">yield loss</a>. The action damage threshold (ADT) was defined in that study as 20% reduction of the EDT.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-2_801088ce966329a0040de66dd2821fe6">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>calculate_EDT <span class="ot">&lt;-</span> <span class="cf">function</span>(Fc, Cp, Dc, Ec) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  EDT <span class="ot">&lt;-</span> (Fc <span class="sc">/</span> (Cp <span class="sc">*</span> Dc)) <span class="sc">*</span> Ce</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(EDT)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>Fc <span class="ot">&lt;-</span> <span class="dv">30</span>      <span class="co"># fixed cost of control is 30 USD/ha.</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Cp <span class="ot">&lt;-</span> <span class="dv">112</span>     <span class="co"># fixed crop price is 112 USD/ton.</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Dc <span class="ot">&lt;-</span> <span class="fl">0.1712</span>  <span class="co"># for potential yield of 8.5 t/ha so 8.5 x 0.02015 = 0.1712.</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>Ce <span class="ot">&lt;-</span> <span class="fl">0.70</span>    <span class="co"># control efficacy of fungicide is 70%.</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>EDT_value <span class="ot">&lt;-</span> <span class="fu">calculate_EDT</span>(Fc, Cp, Dc, Ce)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(EDT_value)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.09521</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ADT <span class="ot">=</span> EDT_value <span class="sc">*</span> <span class="fl">0.80</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>ADT</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8761682</code></pre>
+</div>
+</div>
+</section>
+<section id="monitoring-season-long-weather" class="level3" data-number="18.4.2">
+<h3 data-number="18.4.2" class="anchored" data-anchor-id="monitoring-season-long-weather"><span class="header-section-number">18.4.2</span> Monitoring season-long weather</h3>
+<p>Disease warning systems frequently predict conditions conducive to infection of the plant by the pathogen, with wetness and temperature being key variables for many foliar diseases <span class="citation" data-cites="bourke1970">(<a href="references.html#ref-bourke1970" role="doc-biblioref">Bourke 1970</a>)</span>. BLITECAST, the first computerized system <span class="citation" data-cites="krause1975blitecast">(<a href="references.html#ref-krause1975blitecast" role="doc-biblioref">Krause et al. 1975</a>)</span> (which combined the Wallin and Hyre systems) provided the means of performing necessary calculations accurately and quickly and issuing recommendations to growers, is an example of successful automated warning system <span class="citation" data-cites="krause1975">(<a href="references.html#ref-krause1975" role="doc-biblioref">Krause and Massie 1975</a>)</span>. While initial inoculum is often undetectable, the presence of inoculum of the pathogen is assumed in many weather-based warning systems. Predictions of an outbreak are possible by tracking environmental conditions favorable for disease development.</p>
+<p>Weather-based disease warning systems, like FAST (Forecasting <em>Alternaria solani</em> on tomatoes) and Wallin <span class="citation" data-cites="madden1978 wallin1962">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>; <a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>, continuously monitor moisture and temperature for various crop diseases. These systems calculate weather favorability from environmental data, predicting infection and disease severity. They serve to guide growers on optimal spraying schedules, initiating treatments or determining application intervals based on accumulated severity values over time.</p>
+<section id="wallin-model" class="level4" data-number="18.4.2.1">
+<h4 data-number="18.4.2.1" class="anchored" data-anchor-id="wallin-model"><span class="header-section-number">18.4.2.1</span> Wallin model</h4>
+<p>J.R. Wallin developed a model in the mid-20th century focusing on forecasting potato late blight, detailed across several publications <span class="citation" data-cites="wallin1962">(<a href="references.html#ref-wallin1962" role="doc-biblioref">Wallin 1962</a>)</span>. The model tracks hourly relative humidity and temperature, emphasizing periods with relative humidity of 90% or more. It calculates the number of high-humidity hours and the corresponding average temperature during the wet period. By accumulating ‘disease severity values’ (DSV) from plant emergence throughout the season, based on humidity and temperature measures, the model predicts the initial onset and subsequent spread of potato late blight. The table below summarizes the way the DSVs are obtained based on combinations of hours of relative humdity &gt; 90% and the air temperature within the wet period.</p>
+<p><strong>Table.</strong> Relationship of temperature and relative humidity (RH) periods as used in the Wallin late blight forecasting system to predict disease severity values (0 to 4).</p>
+<table class="table">
+<tbody>
+<tr class="odd">
+<td></td>
+<td>Daily</td>
+<td>severity</td>
+<td>value</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Average Temperature Range</td>
+<td>0</td>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+<td>4</td>
+</tr>
+<tr class="odd">
+<td>7.2 - 11.6 C</td>
+<td>15</td>
+<td>16-18</td>
+<td>19-21</td>
+<td>22-24</td>
+<td>&gt;25</td>
+</tr>
+<tr class="even">
+<td>11.7 - 15.0 C</td>
+<td>12</td>
+<td>13-15</td>
+<td>16-18</td>
+<td>19-21</td>
+<td>&gt;22</td>
+</tr>
+<tr class="odd">
+<td>15.1 - 26.6 C</td>
+<td>9</td>
+<td>10-12</td>
+<td>13-15</td>
+<td>16-18</td>
+<td>&gt;19</td>
+</tr>
+</tbody>
+</table>
+<p>Let’s calculate DVS in R based on Wallin’s system. But first we need to download hourly weather data from NASA Power project using {nasapower} R package for the locality of Viçosa, MG, Brazil during the month of March 2022.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-3_b916c09cff6d902e37e3759291b1206e">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">community =</span> <span class="st">"ag"</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lonlat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">42.88</span>, <span class="sc">-</span><span class="fl">20.7561</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"RH2M"</span>, <span class="st">"T2M"</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2022-03-02"</span>, <span class="st">"2022-03-31"</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">temporal_api =</span> <span class="st">"hourly"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(weather)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NASA/POWER CERES/MERRA2 Native Resolution Hourly Data  
+ Dates (month/day/year): 03/02/2022 through 03/31/2022  
+ Location: Latitude  -20.7561   Longitude -42.88  
+ Elevation from MERRA-2: Average for 0.5 x 0.625 degree lat/lon region = 665.27 meters 
+ The value for missing source data that cannot be computed or is outside of the sources availability range: NA  
+ Parameter(s):  
+ 
+ Parameters: 
+ RH2M     MERRA-2 Relative Humidity at 2 Meters (%) ;
+ T2M      MERRA-2 Temperature at 2 Meters (C)  
+ 
+# A tibble: 6 × 8
+    LON   LAT  YEAR    MO    DY    HR  RH2M   T2M
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 -42.9 -20.8  2022     3     1    21  93.6  20.6
+2 -42.9 -20.8  2022     3     1    22  94.4  20.2
+3 -42.9 -20.8  2022     3     1    23  95.4  19.7
+4 -42.9 -20.8  2022     3     2     0  96.3  19.4
+5 -42.9 -20.8  2022     3     2     1  97.2  19.0
+6 -42.9 -20.8  2022     3     2     2  98.1  18.8</code></pre>
+</div>
+</div>
+<p>We now need to obtain the wet period (let’s call it leaf wetness, or LW) based on hours of relative humidity &gt;90% and then the average temperature during the LW period for each day. We can obtain these by grouping the variables by year, month and day and use <code>mutate()</code> and <code>summarise()</code>.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-4_57ec2d30b6a8da07c0facac8b55d2ad3">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>weather2 <span class="ot">&lt;-</span> weather <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>      <span class="fu">group_by</span>(YEAR, MO, DY) <span class="sc">|&gt;</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="at">LW =</span> <span class="fu">case_when</span>(RH2M <span class="sc">&gt;</span> <span class="dv">90</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                            <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(LW <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">|&gt;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">summarise</span>(<span class="at">Air_LWD =</span> <span class="fu">mean</span>(T2M, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                <span class="at">LWD =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we are ready to calculate the daily DSV based on Wallin’s rules on the table and inspect the first 6 rows of the new table called <code>df_wallin</code>.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-5_c7eebcf28a639a863e0c7ee8e310c8c0">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_wallin <span class="ot">&lt;-</span> weather2 <span class="sc">|&gt;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">DSV =</span> <span class="fu">case_when</span>(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 7.2 - 11.6 C</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="fl">7.2</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="fl">7.2</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">18</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="fl">7.2</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">21</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="fl">7.2</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">24</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="fl">7.2</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">24</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 11.7 - 15.0 C</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">12</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">12</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">18</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">21</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">11.7</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">21</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 15.1 - 26.6 C</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">26.6</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">9</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">26.6</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">9</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">12</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">26.6</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">12</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">26.6</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">15</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">18</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;</span> <span class="fl">15.1</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;=</span> <span class="fl">26.6</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">18</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Default (For temperatures out of the specified ranges or any other scenarios)</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># Assigning a default value of 0</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">head</span>(df_wallin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+# Groups:   YEAR, MO [1]
+   YEAR    MO    DY Air_LWD   LWD   DSV
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+1  2022     3     1    20.2     3     0
+2  2022     3     2    19.2    10     1
+3  2022     3     3    19.7    12     1
+4  2022     3     4    19.9    10     1
+5  2022     3     5    19.5     7     0
+6  2022     3     6    19.0     9     0</code></pre>
+</div>
+</div>
+<p>We can visualize the daily and cumulative DSV for the monthly period after transforming the date format using <code>as.Date()</code> function. The dashed horizontal line in the plot indicates the action threshold of 20 cumulative DSV points, or when a spray should be applied. Please note that in real systems, the DSV is reduced to zero and another DSV counting is initiated after the spray.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-6_6c3a2ae35c24a7e021db8c1f58f1eb4d">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="ot">&lt;-</span> df_wallin <span class="sc">|&gt;</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>df_wallin2 <span class="sc">|&gt;</span> </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, DSV))<span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>)<span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, DSV2))<span class="sc">+</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">20</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2022-03-04"</span>), <span class="at">y =</span> <span class="fl">20.5</span>, <span class="at">label =</span> <span class="st">"Action threshold"</span>)<span class="sc">+</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Daily and cumulative DSV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fast-model" class="level4" data-number="18.4.2.2">
+<h4 data-number="18.4.2.2" class="anchored" data-anchor-id="fast-model"><span class="header-section-number">18.4.2.2</span> FAST model</h4>
+<p>Here is a code to calculate daily DSV values based on the FAST table <span class="citation" data-cites="madden1978">(<a href="references.html#ref-madden1978" role="doc-biblioref">Madden 1978</a>)</span> that relates the hours of relative humidity &gt; 90% (wet period) and temperature during the wet period during a 24-hour period.</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Mean temp (°C)</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13-17</td>
+<td>0-6</td>
+<td>7-15</td>
+<td>16-20</td>
+<td>21+</td>
+<td>23+</td>
+</tr>
+<tr class="even">
+<td>18-20</td>
+<td>0-3</td>
+<td>4-8</td>
+<td>9-15</td>
+<td>16-22</td>
+<td>23+</td>
+</tr>
+<tr class="odd">
+<td>21-25</td>
+<td>0-2</td>
+<td>3-5</td>
+<td>6-12</td>
+<td>13-20</td>
+<td>21+</td>
+</tr>
+<tr class="even">
+<td>26-29</td>
+<td>0-3</td>
+<td>4-8</td>
+<td>9-15</td>
+<td>16-22</td>
+<td>23+</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-7_1aae4d3539e8d34000b58be2a16a0487">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a> df_fast <span class="ot">&lt;-</span> weather2 <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">DSV =</span> <span class="fu">case_when</span>(</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 13 &lt;= T &lt; 18</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">6</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">7</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">18</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 18 &lt;= T &lt; 21</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">4</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">9</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">18</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">21</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 21 &lt;= T &lt; 26</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">2</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">3</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">5</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">6</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">12</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">13</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">21</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">26</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">20</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Temperature Range: 26 &lt;= T &lt; 30</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">3</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">4</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">8</span> <span class="sc">~</span> <span class="dv">1</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">9</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">15</span> <span class="sc">~</span> <span class="dv">2</span>,</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;=</span> <span class="dv">16</span> <span class="sc">&amp;</span> LWD <span class="sc">&lt;=</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">3</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>          Air_LWD <span class="sc">&gt;=</span> <span class="dv">26</span> <span class="sc">&amp;</span> Air_LWD <span class="sc">&lt;</span> <span class="dv">30</span> <span class="sc">&amp;</span> LWD <span class="sc">&gt;</span> <span class="dv">22</span> <span class="sc">~</span> <span class="dv">4</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Default (For temperatures out of the specified ranges or any other scenarios)</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>          <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>  <span class="co"># Assigning a default value of 0</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>df_fast</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 31 × 6
+# Groups:   YEAR, MO [1]
+    YEAR    MO    DY Air_LWD   LWD   DSV
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+ 1  2022     3     1    20.2     3     0
+ 2  2022     3     2    19.2    10     2
+ 3  2022     3     3    19.7    12     2
+ 4  2022     3     4    19.9    10     2
+ 5  2022     3     5    19.5     7     1
+ 6  2022     3     6    19.0     9     2
+ 7  2022     3     7    18.4     7     1
+ 8  2022     3     8    19.2    10     2
+ 9  2022     3     9    19.6    12     2
+10  2022     3    10    19.6    13     2
+# ℹ 21 more rows</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df_fast2 <span class="ot">&lt;-</span> df_fast <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">DSV2 =</span> <span class="fu">cumsum</span>(DSV),</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>df_fast2 <span class="sc">|&gt;</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, DSV))<span class="sc">+</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>)<span class="sc">+</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(date, DSV2))<span class="sc">+</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">20</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="at">geom =</span> <span class="st">"text"</span>, <span class="at">x =</span> <span class="fu">as.Date</span>(<span class="st">"2022-03-04"</span>), <span class="at">y =</span> <span class="fl">21.5</span>, <span class="at">label =</span> <span class="st">"Action threshold"</span>)<span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Daily and cumulative DSV"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="bonus-interactive-app" class="level4" data-number="18.4.2.3">
+<h4 data-number="18.4.2.3" class="anchored" data-anchor-id="bonus-interactive-app"><span class="header-section-number">18.4.2.3</span> Bonus: interactive app</h4>
+<p>For educational purposes, an interactive app was developed using R Shiny. This <a href="https://epidemiologiaufv.shinyapps.io/warning-systems/">app</a> demonstrates the application of the Wallin (forecast for late blight of potato) and FAST (Forecast for <em>Alternaria solani</em> on Tomatoes) rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (<a href="#fig-ws_systems">Figure&nbsp;<span>18.4</span></a>).</p>
+<p>To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.</p>
+<div id="fig-ws_systems" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><a href="https://epidemiologiaufv.shinyapps.io/warning-systems/"><img src="imgs/ws_systems.png" class="img-fluid figure-img"></a></p>
+<figcaption class="figure-caption">Figure&nbsp;18.4: Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="infection-risk-during-defined-periods" class="level3" data-number="18.4.3">
+<h3 data-number="18.4.3" class="anchored" data-anchor-id="infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection risk during defined periods</h3>
+<p>Many diseases like late blight of potatoes and early blight of tomatoes (but also others such as apple scab), as seen in the previous section, require continuous (season long) risk assessment. However, some warning systems assess risk at only one time point, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single disease warning is issued, such as the risk of disease occurrence at a intensity above a threshold (e.g.&nbsp;incidence &gt; 30%).</p>
+<p>These systems use statistical models (risk algorithms) to predict probabilities of an event, usually for a binary response, based on weather variables that occur over specific periods of time, usually when infections take place. For example, Fusarium head blight (FHB, caused by <em>Fusarium graminearum</em>) infection depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of <em>Sclerotinia</em> (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment<span class="citation" data-cites="willbur2018">(<a href="references.html#ref-willbur2018" role="doc-biblioref">Willbur et al. 2018</a>)</span>. Such events of binary nature can be predicted using algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc. A commonly used algorithm is the logistic regression model which deals with binary classification.</p>
+<section id="logistic-regression-ohio-fhb-models" class="level4" data-number="18.4.3.1">
+<h4 data-number="18.4.3.1" class="anchored" data-anchor-id="logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</h4>
+<p>FHB risk models were developed in the United States in the early 2000s to predict the risk of an epidemic, or when disease severity in the field was greater than 10% <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. In the paper, the epidemic cases were classified as 0 and 1, according to that threshold, and several logistic regression models were fitted to the data using a summary of weather-related variables from two defined periods: seven days prior to flowering date and 10 days following flowering date (50% of wheat heads with anthers).</p>
+<p>Among several models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The variable selected was a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total hours, within the 10-day period, when the temperature (T) was &gt;=15 and &lt;= 30 <sup>o</sup>C and relative humidity (RH) was &gt;90%.</p>
+<p>Let’s implement this model in R and calculate the probability of infection. Again, we need to download hourly data from NASA Power project for a period of three years. Let’s work with data from Wooster, OH, United States.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-8_b18203014763e9d2da6368c1fdce28c3">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">community =</span> <span class="st">"ag"</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">lonlat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">81.9399</span>, <span class="fl">40.7982</span>),</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"RH2M"</span>, <span class="st">"T2M"</span>, <span class="st">"PRECTOTCORR"</span>),</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2020-01-01"</span>, <span class="st">"2022-12-31"</span>),</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">temporal_api =</span> <span class="st">"hourly"</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(weather)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NASA/POWER CERES/MERRA2 Native Resolution Hourly Data  
+ Dates (month/day/year): 01/01/2020 through 12/31/2022  
+ Location: Latitude  40.7982   Longitude -81.9399  
+ Elevation from MERRA-2: Average for 0.5 x 0.625 degree lat/lon region = 309.08 meters 
+ The value for missing source data that cannot be computed or is outside of the sources availability range: NA  
+ Parameter(s):  
+ 
+ Parameters: 
+ RH2M            MERRA-2 Relative Humidity at 2 Meters (%) ;
+ T2M             MERRA-2 Temperature at 2 Meters (C) ;
+ PRECTOTCORR     MERRA-2 Precipitation Corrected (mm/hour)  
+ 
+# A tibble: 6 × 9
+    LON   LAT  YEAR    MO    DY    HR  RH2M   T2M PRECTOTCORR
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+1 -81.9  40.8  2019    12    31    19  79.6 -2.75        0.02
+2 -81.9  40.8  2019    12    31    20  80.8 -2.99        0.02
+3 -81.9  40.8  2019    12    31    21  82.8 -3.17        0.02
+4 -81.9  40.8  2019    12    31    22  83.9 -3.27        0.01
+5 -81.9  40.8  2019    12    31    23  85   -3.37        0.01
+6 -81.9  40.8  2020     1     1     0  86.4 -3.55        0.01</code></pre>
+</div>
+</div>
+<p>We can then create a function named <code>calculate_TRH9010()</code>. This function calculates the number of hours that meet the specified condition (i.e., hours when 15 &lt;= T &lt;= 30 &amp; RH &gt; 90), the probability (p) of infection, and the classification of the epidemic (epi) as 0 or 1 based on a defined threshold for p (0.36 in this case) <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. The function’s arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It’s important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-9_4ab2cd74220798a8a128c496109ba7ab">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>calculate_TRH9010 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, YEAR, MO, DY){</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  start_row <span class="ot">&lt;-</span> <span class="fu">which</span>(data<span class="sc">$</span>YEAR <span class="sc">==</span> YEAR <span class="sc">&amp;</span> data<span class="sc">$</span>MO <span class="sc">==</span> MO <span class="sc">&amp;</span> data<span class="sc">$</span>DY <span class="sc">==</span> DY <span class="sc">&amp;</span> data<span class="sc">$</span>HR <span class="sc">==</span> <span class="dv">0</span>)[<span class="dv">1</span>] </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> ((<span class="fu">nrow</span>(data) <span class="sc">-</span> start_row) <span class="sc">&lt;</span> <span class="dv">9</span> <span class="sc">*</span> <span class="dv">24</span>){ </span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">TRH9010 =</span> <span class="cn">NA</span>, <span class="at">y =</span> <span class="cn">NA</span>, <span class="at">p =</span> <span class="cn">NA</span>, <span class="at">epi =</span> <span class="cn">NA</span>))</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  subset_data <span class="ot">&lt;-</span> data[start_row<span class="sc">:</span>(start_row <span class="sc">+</span> <span class="dv">9</span> <span class="sc">*</span> <span class="dv">24</span> <span class="sc">-</span> <span class="dv">1</span>),] </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>  condition_met <span class="ot">&lt;-</span> <span class="fu">with</span>(subset_data, T2M <span class="sc">&gt;=</span> <span class="dv">15</span> <span class="sc">&amp;</span> T2M <span class="sc">&lt;=</span> <span class="dv">30</span> <span class="sc">&amp;</span> RH2M <span class="sc">&gt;</span> <span class="dv">90</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  total_hours <span class="ot">&lt;-</span> <span class="fu">sum</span>(condition_met)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="sc">-</span><span class="fl">3.3756</span> <span class="sc">+</span> <span class="fl">6.8128</span> <span class="sc">*</span> (total_hours <span class="sc">/</span> <span class="dv">136</span>) <span class="co"># divide by maximum of 136 as in the paper</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">exp</span>(y) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(y))</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  epi <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(p <span class="sc">&gt;</span> <span class="fl">0.36</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">TRH9010 =</span> total_hours, <span class="at">p =</span> p, <span class="at">epi =</span> epi))</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we apply the function for the 1st of June 2021. The output is the hour count, the probability and the epidemic classification.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-10_a2b34bcde5c60e6027012e1d46e94dd7">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">calculate_TRH9010</span>(weather, <span class="at">YEAR =</span> <span class="dv">2021</span>, <span class="at">MO =</span> <span class="dv">6</span>, <span class="at">DY =</span> <span class="dv">1</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$TRH9010
+[1] 62
+
+$p
+[1] 0.4329649
+
+$epi
+[1] 1</code></pre>
+</div>
+</div>
+<p>We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let’s write code to simulate 30 days in June using a <code>for()</code> loop which will store the results in a list, but we can further transform to a dataframe using <code>map_dfr()</code> function.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-11_22df8373b886c1a5a8f460588fa362c3">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>num_days <span class="ot">&lt;-</span> <span class="dv">30</span>  </span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>all_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(day <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>num_days){</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  all_results[[<span class="fu">paste0</span>(<span class="st">""</span>, day)]] <span class="ot">&lt;-</span> <span class="fu">calculate_TRH9010</span>(weather, <span class="at">YEAR =</span> <span class="dv">2021</span>, <span class="at">MO =</span> <span class="dv">6</span>, <span class="at">DY =</span> day)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co"># transform results to a dataframe</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> all_results <span class="sc">%&gt;%</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span> <span class="fu">as.data.frame</span>(<span class="fu">t</span>(.)), <span class="at">.id =</span> <span class="st">"day"</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Change variables  to numeric </span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>p <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>p)</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>day <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>day)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>epi <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>epi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally we plot the results.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-12_70846ac5cbad51b671ffc3794f3a3563">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(day, p, <span class="at">fill =</span> <span class="fu">factor</span>(epi))) <span class="sc">+</span> </span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">30</span>)<span class="sc">+</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"grey60"</span>, <span class="st">"darkred"</span>))<span class="sc">+</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="fl">0.36</span>, <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>,<span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)<span class="sc">+</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Wheat flowering day in june 2021"</span>, <span class="at">y =</span> <span class="st">"Risk probability"</span>,</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Epidemic classification"</span>,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Infection risk by Ohio (TRH9010) FHB model"</span>,</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Location: Wooster, Ohio"</span>,</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Model source: De Wolf et al. (2002)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body" role="list" style="display: none">
+<div id="ref-bourke1970" class="csl-entry" role="listitem">
+Bourke, P. M. A. 1970. Use of Weather Information in the Prediction of Plant Disease Epiphytotics. Annual Review of Phytopathology. 8:345–370 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.08.090170.002021">http://dx.doi.org/10.1146/annurev.py.08.090170.002021</a>.
+</div>
+<div id="ref-Campbell1990" class="csl-entry" role="listitem">
+Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epidemiology</em>. Wiley.
+</div>
+<div id="ref-derossi2022" class="csl-entry" role="listitem">
+De Rossi, R. L., Guerra, F. A., Plazas, M. C., Vuletic, E. E., Brücher, E., Guerra, G. D., et al. 2022. Crop damage, economic losses, and the economic damage threshold for northern corn leaf blight. Crop Protection. 154:105901 Available at: <a href="http://dx.doi.org/10.1016/j.cropro.2021.105901">http://dx.doi.org/10.1016/j.cropro.2021.105901</a>.
+</div>
+<div id="ref-dewolf2003" class="csl-entry" role="listitem">
+De Wolf, E. D., Madden, L. V., and Lipps, P. E. 2003. Risk Assessment Models for Wheat Fusarium Head Blight Epidemics Based on Within-Season Weather Data. Phytopathology®. 93:428–435 Available at: <a href="http://dx.doi.org/10.1094/PHYTO.2003.93.4.428">http://dx.doi.org/10.1094/PHYTO.2003.93.4.428</a>.
+</div>
+<div id="ref-krause1975" class="csl-entry" role="listitem">
+Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology. 13:31–47 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.13.090175.000335">http://dx.doi.org/10.1146/annurev.py.13.090175.000335</a>.
+</div>
+<div id="ref-krause1975blitecast" class="csl-entry" role="listitem">
+Krause, R. A., Massie, L. B., and Hyre, R. A. 1975. BLITECAST: A computerized forecast of potato late blight. The Plant Disease Reporter. 59:95.
+</div>
+<div id="ref-leiminger2012" class="csl-entry" role="listitem">
+Leiminger, J. H., and Hausladen, H. 2012. Early Blight Control in Potato Using Disease-Orientated Threshold Values. Plant Disease. 96:124–130 Available at: <a href="http://dx.doi.org/10.1094/PDIS-05-11-0431">http://dx.doi.org/10.1094/PDIS-05-11-0431</a>.
+</div>
+<div id="ref-madden1978" class="csl-entry" role="listitem">
+Madden, L. 1978. FAST, a forecast system for alternaria solani on tomato. Phytopathology. 68:1354 Available at: <a href="http://dx.doi.org/10.1094/phyto-68-1354">http://dx.doi.org/10.1094/phyto-68-1354</a>.
+</div>
+<div id="ref-mumford1984" class="csl-entry" role="listitem">
+Mumford, J. D., and Norton, G. A. 1984. Economics of Decision Making in Pest Management. Annual Review of Entomology. 29:157–174 Available at: <a href="http://dx.doi.org/10.1146/annurev.en.29.010184.001105">http://dx.doi.org/10.1146/annurev.en.29.010184.001105</a>.
+</div>
+<div id="ref-nutter1993terms" class="csl-entry" role="listitem">
+Nutter, F., Teng, P., and Royer, M. 1993. Terms and concepts for yield, crop loss, and disease thresholds. Plant Disease. 77:193–211 Available at: <a href="http://doi.org/10.1094/PD-77-211">http://doi.org/10.1094/PD-77-211</a>.
+</div>
+<div id="ref-pedigo1986" class="csl-entry" role="listitem">
+Pedigo, L. P., Hutchins, S. H., and Higley, L. G. 1986. Economic Injury Levels in Theory and Practice. Annual Review of Entomology. 31:341–368 Available at: <a href="http://dx.doi.org/10.1146/annurev.en.31.010186.002013">http://dx.doi.org/10.1146/annurev.en.31.010186.002013</a>.
+</div>
+<div id="ref-reis2002modelo" class="csl-entry" role="listitem">
+Reis, E. M., Hoffmann, L. L., and Blum, M. 2002. Modelo de ponto crítico para estimar os danos causados pelo oídio em cevada. Fitopatologia Brasileira. 27:644–646.
+</div>
+<div id="ref-wallin1962" class="csl-entry" role="listitem">
+Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemics in United States and Canada. American Potato Journal. 39:306–312 Available at: <a href="http://dx.doi.org/10.1007/bf02862155">http://dx.doi.org/10.1007/bf02862155</a>.
+</div>
+<div id="ref-willbur2018" class="csl-entry" role="listitem">
+Willbur, J. F., Fall, M. L., Bloomingdale, C., Byrne, A. M., Chapman, S. A., Isard, S. A., et al. 2018. Weather-Based Models for Assessing the Risk of <span><em>Sclerotinia sclerotiorum</em></span> Apothecial Presence in Soybean (<span><em>Glycine max</em></span>) Fields. Plant Disease. 102:73–84 Available at: <a href="http://dx.doi.org/10.1094/PDIS-04-17-0504-RE">http://dx.doi.org/10.1094/PDIS-04-17-0504-RE</a>.
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./yieldloss-regression-models.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Statistical models</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./references.html" class="pagination-link">
+        <span class="nav-page-text">References</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">R4PDE - R for Plant Disease Epidemiology is written by Emerson Del Ponte</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">This book was built with <a href="https://quarto.org/">Quarto</a>.</div>
+  </div>
+</footer>
+
+
+
+</body></html>
