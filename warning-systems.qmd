@@ -115,7 +115,94 @@ print(EDT_value)
 
 ADT = EDT_value * 0.80
 ADT
+
 ```
+
+As we can see, the EDT is variable depending on these four parameters. But how does the EDT varies according to variations on each of the parameters individually? Let's perform some simulations with vary values of the parameter.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(r4pde)
+
+
+# vary Crop price
+Cp_values = seq(100, 500, by = 5)
+EDT_values <- vector("numeric", length(Cp_values))  
+for(i in seq_along(Cp_values)) {
+  Cp = Cp_values[i]
+  EDT_values[i] <- calculate_EDT(Fc, Cp, Dc, Ce)
+}
+p_cp <- data.frame(Cp_values, EDT_values) |> 
+  ggplot(aes(Cp_values, EDT_values))+
+  geom_line()+
+  labs(x = "Crop price (US$/ton)",
+       y = "EDT")+
+  theme_r4pde(font_size =14)
+
+# Vary fungicide price
+Fc_values = seq(10, 100, by = 5)
+EDT_values <- vector("numeric", length(Fc_values))  
+for(i in seq_along(Fc_values)) {
+  Fc = Fc_values[i]
+  EDT_values[i] <- calculate_EDT(Fc, Cp, Dc, Ce)
+}
+p_fc <- data.frame(Fc_values, EDT_values) |> 
+  ggplot(aes(Fc_values, EDT_values))+
+  geom_line()+
+   labs(x = "Control cost (US$/ha)",
+       y = "EDT")+
+  theme_r4pde(font_size =14)
+
+# Vary damage coefficient
+Dc_values = seq(0.001, 0.01, by = 0.0001)
+EDT_values <- vector("numeric", length(Dc_values))  
+for(i in seq_along(Dc_values)) {
+  Dc = Dc_values[i]
+  EDT_values[i] <- calculate_EDT(Fc, Cp, Dc, Ce)
+}
+p_dc <- data.frame(Dc_values, EDT_values) |> 
+  ggplot(aes(Dc_values, EDT_values))+
+  geom_line()+
+   labs(x = "Damage coefficient",
+       y = "EDT")+
+  theme_r4pde(font_size =14)
+
+# Vary Control efficacy
+Ce_values = seq(0.2, 1, by = 0.01)
+EDT_values <- vector("numeric", length(Ce_values))  
+for(i in seq_along(Ce_values)) {
+  Ce = Ce_values[i]
+  EDT_values[i] <- calculate_EDT(Fc, Cp, Dc, Ce)
+}
+p_ce <- data.frame(Ce_values, EDT_values) |> 
+  ggplot(aes(Ce_values, EDT_values))+
+  geom_line()+
+   labs(x = "Control efficacy (%)",
+       y = "EDT")+
+  theme_r4pde(font_size =14)
+
+
+  
+
+```
+
+```{r}
+#| warning: false
+#| label: fig-edt
+#| fig-cap: "Variation of the economic damage threshold (EDT) according to fluctuations on each parameter in the formula for its calculation"
+library(patchwork)
+(p_cp | p_fc) /
+  (p_dc | p_ce)
+```
+
+#### Bonus app: EDT calculator
+
+The scenario for EDT calculation is intricate, influenced by fluctuations in several parameters. To streamline these computations, a Shiny application called [EDT Calculator](https://epidemiologiaufv.shinyapps.io/EDTCalculator/) was developed, enabling users to specify each parameter and assess EDT (and respective 95% CI) under uncertainties in variables such as crop price and fungicide costs.
+
+[![Screenshot of the EDT calculator, a Shiny app for interactive calculation of economic damage threshold (EDT)](imgs/EDT_calculator.png){#fig-EDT fig-align="center"}](https://epidemiologiaufv.shinyapps.io/EDTCalculator/)
 
 ### Monitoring season-long weather
 
@@ -286,13 +373,13 @@ df_fast2 |>
   labs(x = "Date", y = "Daily and cumulative DSV")
 ```
 
-#### Bonus: interactive app
+#### Bonus app: Dashboard
 
-For educational purposes, an interactive app was developed using R Shiny. This [app](https://epidemiologiaufv.shinyapps.io/warning-systems/) demonstrates the application of the Wallin (forecast for late blight of potato) and FAST (Forecast for *Alternaria solani* on Tomatoes) rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (@fig-ws_systems).
+For educational purposes, an interactive dashboard was developed using R Shiny. This [app](https://epidemiologiaufv.shinyapps.io/warning-systems/) demonstrates the application of the Wallin (forecast for late blight of potato) and FAST (Forecast for *Alternaria solani* on Tomatoes) rules for calculating DSV, determining the appropriate timing for fungicide sprays (based on a defined threshold), and counting the total sprays during a selected period (@fig-ws_systems).
 
 To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.
 
-[![Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
+[![Screenshot of a web-based warning system for plant diseases based on Wallin\'s and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
 
 ### Infection risk during defined periods
 
