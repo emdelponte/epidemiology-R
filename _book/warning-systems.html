@@ -429,8 +429,8 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#infection-risk-during-defined-periods" id="toc-infection-risk-during-defined-periods" class="nav-link" data-scroll-target="#infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection risk during defined periods</a>
   <ul>
   <li><a href="#logistic-regression-ohio-fhb-models" id="toc-logistic-regression-ohio-fhb-models" class="nav-link" data-scroll-target="#logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</a></li>
+  <li><a href="#mechanistic-models-fhb-brazilian-model" id="toc-mechanistic-models-fhb-brazilian-model" class="nav-link" data-scroll-target="#mechanistic-models-fhb-brazilian-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: FHB Brazilian model</a></li>
   </ul></li>
-  <li><a href="#warnings-based-on-mechanistic-models" id="toc-warnings-based-on-mechanistic-models" class="nav-link" data-scroll-target="#warnings-based-on-mechanistic-models"><span class="header-section-number">18.4.4</span> Warnings based on mechanistic models</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/warning-systems.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -944,7 +944,7 @@ When is a warning system useful?
 <div id="fig-ws_systems" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><a href="https://epidemiologiaufv.shinyapps.io/warning-systems/"><img src="imgs/ws_systems.png" class="img-fluid figure-img"></a></p>
-<figcaption class="figure-caption">Figure&nbsp;18.6: Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;18.6: Screenshot of a web-based warning system for plant diseases based on Wallin’s and FAST rules</figcaption>
 </figure>
 </div>
 </section>
@@ -1060,11 +1060,10 @@ $epi
 </div>
 </div>
 </section>
-</section>
-<section id="warnings-based-on-mechanistic-models" class="level3" data-number="18.4.4">
-<h3 data-number="18.4.4" class="anchored" data-anchor-id="warnings-based-on-mechanistic-models"><span class="header-section-number">18.4.4</span> Warnings based on mechanistic models</h3>
-<p>Different from the previous approaches where statistical models are fitted to data obtained from controlled conditions (FAST and Wallin tables) or from the field (Ohio FHB model), some models are called mechanistic when based on the processes of the disease cycle and factors that affect theses process. These can be quite complex and sophisticated and there are numerous examples in the literature <span class="citation" data-cites="salotti2023 rossi2014 salotti2022 caffi2010 caffi2007">(<a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>; <a href="references.html#ref-rossi2014" role="doc-biblioref">Rossi et al. 2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-caffi2010" role="doc-biblioref">Caffi et al. 2010</a>, <a href="references.html#ref-caffi2007" role="doc-biblioref">2007</a>)</span>.</p>
-<p>One example is a mechanistic model for FHB developed in Brazil that is based on the dynamics of flowering in wheat <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span>. The original model integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a “spore cloud” and proportion of infected flowers, all of these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.</p>
+<section id="mechanistic-models-fhb-brazilian-model" class="level4" data-number="18.4.3.2">
+<h4 data-number="18.4.3.2" class="anchored" data-anchor-id="mechanistic-models-fhb-brazilian-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: FHB Brazilian model</h4>
+<p>Different from the previous approaches where statistical models are fitted to data, some models are called mechanistic (or process-based) when based on the processes of the disease cycle and factors that affect theses process. These can be quite complex and sophisticated and there are numerous examples in the literature <span class="citation" data-cites="salotti2023 rossi2014 salotti2022 caffi2010 caffi2007">(<a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>; <a href="references.html#ref-rossi2014" role="doc-biblioref">Rossi et al. 2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-caffi2010" role="doc-biblioref">Caffi et al. 2010</a>, <a href="references.html#ref-caffi2007" role="doc-biblioref">2007</a>)</span>.</p>
+<p>One example is a mechanistic model for FHB developed in Brazil that is based on the dynamics of flowering, the most vulnerable phase of the wheat crop <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span>. The original model integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a “spore cloud” and a proportion of infected flowers - all these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.</p>
 <p>A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration.</p>
 <p>The function <code>simulate_FHB()</code> requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 25 days.</p>
 <p>Among the several simplifications, which were based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 10 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 10th day.</p>
@@ -1330,6 +1329,7 @@ Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemi
 Willbur, J. F., Fall, M. L., Bloomingdale, C., Byrne, A. M., Chapman, S. A., Isard, S. A., et al. 2018. Weather-Based Models for Assessing the Risk of <span><em>Sclerotinia sclerotiorum</em></span> Apothecial Presence in Soybean (<span><em>Glycine max</em></span>) Fields. Plant Disease. 102:73–84 Available at: <a href="http://dx.doi.org/10.1094/PDIS-04-17-0504-RE">http://dx.doi.org/10.1094/PDIS-04-17-0504-RE</a>.
 </div>
 </div>
+</section>
 </section>
 </section>
 
