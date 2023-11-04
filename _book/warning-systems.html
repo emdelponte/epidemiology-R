@@ -427,6 +427,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <ul>
   <li><a href="#logistic-regression-ohio-fhb-models" id="toc-logistic-regression-ohio-fhb-models" class="nav-link" data-scroll-target="#logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</a></li>
   </ul></li>
+  <li><a href="#warnings-based-on-process-based-models" id="toc-warnings-based-on-process-based-models" class="nav-link" data-scroll-target="#warnings-based-on-process-based-models"><span class="header-section-number">18.4.4</span> Warnings based on process-based models</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/emdelponte/epidemiology-R/edit/main/warning-systems.qmd" class="toc-action">Edit this page</a></p><p><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -970,11 +971,222 @@ $epi
 <p><img src="warning-systems_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
+</section>
+</section>
+<section id="warnings-based-on-process-based-models" class="level3" data-number="18.4.4">
+<h3 data-number="18.4.4" class="anchored" data-anchor-id="warnings-based-on-process-based-models"><span class="header-section-number">18.4.4</span> Warnings based on process-based models</h3>
+<p>Different from the previous approaches where statistical models are fitted to data obtained from controlled conditions (FAST and Wallin tables) or from the field (Ohio FHB model), some models are based on processes of the disease cycle and can be quite complex and sophisticated. There are numerous examples in the literature of models that are based on the dynamics of the disease cycle <span class="citation" data-cites="salotti2023 rossi2014 salotti2022 caffi2010 caffi2007">(<a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>; <a href="references.html#ref-rossi2014" role="doc-biblioref">Rossi et al. 2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-caffi2010" role="doc-biblioref">Caffi et al. 2010</a>, <a href="references.html#ref-caffi2007" role="doc-biblioref">2007</a>)</span>.</p>
+<p>An example is a process-based model developed in Brazil that simulates the daily proportion of infected flowers in wheat by <em>Fusarium graminearum</em> <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span>. The original model integrates several sub models that estimate the daily proportion of flowers and the density of inoculum in a “spore cloud”. These are two critical factors that influence infection, and these factors are driven by rainfall, relative humidity, and temperature.</p>
+<p>A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration. The function requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 30 days.</p>
+<p>Among the simplifications, based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 20 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 20th day.</p>
+<p><span class="math inline">\([ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) &amp; \text{for } x = 1, \ldots, 20 \\ 0 &amp; \text{for } x = 21, \ldots, 30 \end{array} \right. ]\)</span> ,</p>
+<p>where <span class="math inline">\(𝞵\)</span> = 8 and <span class="math inline">\(𝝈\)</span> = 3.</p>
+<p>The infection probability is calculated as in the paper. It is based on an equation that considers temperature (T) and gives the proportion of anthers getting infected on any given day when a <strong>condition for infection</strong> is met.</p>
+<p><span class="math inline">\(INF=0.001029×exp(0.1957×T)\)</span></p>
+<p>There are mainly three conditions for infection, similar to what is described in the article:</p>
+<ul>
+<li><p><strong>Continuous 2-day Rain &amp; High Humidity</strong>: There should be rain (&gt; 0.5 mm) and the average humidity over two consecutive days should be high (&gt; 80%).</p></li>
+<li><p><strong>Rain Followed by Dry Day &amp; High Humidity</strong>: Rain and high humidity (&gt; 80%), followed by a day without rain but still with high humidity (&gt; 85%).</p></li>
+<li><p><strong>Dry Day &amp; High Humidity Followed by Rain</strong>: A day without rain but with high humidity (&gt; 85%), followed by a day with both rain and high humidity (&gt; 80%).</p></li>
+</ul>
+<p>Infection then occurs when any of the above conditions are met. In this simpler version (without the inoculum factor), the proportion of infected anthers is given by</p>
+<p><span class="math inline">\(infectedanthers=antherproportions×INF\)</span></p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-13_b686dd8ccfa5d6dd3bb0856285279100">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>simulate_FHB <span class="ot">&lt;-</span> <span class="cf">function</span>(start_date, weather_data) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  start_date <span class="ot">&lt;-</span> <span class="fu">as.Date</span>(start_date, <span class="at">format =</span> <span class="st">"%Y-%m-%d"</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract weather data for 30 days starting from the provided start_date</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  weather_subset <span class="ot">&lt;-</span> <span class="fu">subset</span>(weather_data, YYYYMMDD <span class="sc">&gt;=</span> start_date <span class="sc">&amp;</span> YYYYMMDD <span class="sc">&lt;</span> start_date <span class="sc">+</span> <span class="dv">30</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Simulation for 30 days</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">30</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Normal distribution formula for 20 days using fixed peak day (mu) and spread (sigma)</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  mu <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  sigma <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  anther_proportions <span class="ot">&lt;-</span> <span class="fu">c</span>((<span class="dv">1</span> <span class="sc">/</span> (sigma <span class="sc">*</span> <span class="fu">sqrt</span>(<span class="dv">2</span> <span class="sc">*</span> pi))) <span class="sc">*</span> <span class="fu">exp</span>(<span class="sc">-</span><span class="fl">0.5</span> <span class="sc">*</span> ((x[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>] <span class="sc">-</span> mu) <span class="sc">/</span> sigma)<span class="sc">^</span><span class="dv">2</span>), <span class="fu">rep</span>(<span class="dv">0</span>, <span class="dv">10</span>))  </span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adjust the values to have a peak of 0.8</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>  max_value <span class="ot">&lt;-</span> <span class="fu">max</span>(anther_proportions)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>  scaling_factor <span class="ot">&lt;-</span> <span class="fl">0.8</span> <span class="sc">/</span> max_value</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>  anther_proportions[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>] <span class="ot">&lt;-</span> anther_proportions[<span class="dv">1</span><span class="sc">:</span><span class="dv">20</span>] <span class="sc">*</span> scaling_factor</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Zero out the anthers after the day they should be zero</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  anther_proportions[<span class="dv">21</span><span class="sc">:</span><span class="dv">30</span>] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate the INF value</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>  INF <span class="ot">&lt;-</span> <span class="fl">0.001029</span> <span class="sc">*</span> <span class="fu">exp</span>(<span class="fl">0.1957</span> <span class="sc">*</span> weather_subset<span class="sc">$</span>T2M)</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate average RH for two consecutive days</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>  avg_RH2M_2days <span class="ot">&lt;-</span> (weather_subset<span class="sc">$</span>RH2M <span class="sc">+</span> <span class="fu">c</span>(weather_subset<span class="sc">$</span>RH2M[<span class="sc">-</span><span class="dv">1</span>], <span class="cn">NA</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Check conditions for infection</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>  condition1 <span class="ot">&lt;-</span> (weather_subset<span class="sc">$</span>PRECTOTCORR <span class="sc">&gt;</span> <span class="fl">0.3</span>) <span class="sc">&amp;</span> (avg_RH2M_2days <span class="sc">&gt;</span> <span class="dv">80</span>)</span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>  consecutive_rain_high_humidity <span class="ot">&lt;-</span> condition1 <span class="sc">&amp;</span> <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="fu">head</span>(condition1, <span class="sc">-</span><span class="dv">1</span>))</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>  preceded_condition <span class="ot">&lt;-</span> (weather_subset<span class="sc">$</span>PRECTOTCORR <span class="sc">&gt;</span> <span class="fl">0.3</span>) <span class="sc">&amp;</span> (avg_RH2M_2days <span class="sc">&gt;</span> <span class="dv">80</span>) <span class="sc">&amp;</span></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="fu">head</span>(weather_subset<span class="sc">$</span>RH2M, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">&gt;</span> <span class="dv">85</span>) <span class="sc">&amp;</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">head</span>(weather_subset<span class="sc">$</span>PRECTOTCORR, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">&lt;=</span> <span class="fl">0.3</span>, <span class="cn">FALSE</span>)</span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>  succeeded_condition <span class="ot">&lt;-</span> (weather_subset<span class="sc">$</span>PRECTOTCORR <span class="sc">&gt;</span> <span class="fl">0.3</span>) <span class="sc">&amp;</span> (avg_RH2M_2days <span class="sc">&gt;</span> <span class="dv">80</span>) <span class="sc">&amp;</span></span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="fu">tail</span>(weather_subset<span class="sc">$</span>RH2M, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">&gt;</span> <span class="dv">85</span>, <span class="cn">FALSE</span>) <span class="sc">&amp;</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="fu">tail</span>(weather_subset<span class="sc">$</span>PRECTOTCORR, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">&lt;=</span> <span class="fl">0.3</span>)</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-39"><a href="#cb21-39" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine conditions</span></span>
+<span id="cb21-40"><a href="#cb21-40" aria-hidden="true" tabindex="-1"></a>  infection_trigger <span class="ot">&lt;-</span> consecutive_rain_high_humidity <span class="sc">==</span> <span class="dv">1</span> <span class="sc">|</span> preceded_condition <span class="sc">|</span> succeeded_condition</span>
+<span id="cb21-41"><a href="#cb21-41" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Calculate infected anthers based on conditions</span></span>
+<span id="cb21-43"><a href="#cb21-43" aria-hidden="true" tabindex="-1"></a>  infected_anthers <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(infection_trigger, anther_proportions <span class="sc">*</span> INF, <span class="dv">0</span>)</span>
+<span id="cb21-44"><a href="#cb21-44" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-45"><a href="#cb21-45" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Cumulative infected anthers</span></span>
+<span id="cb21-46"><a href="#cb21-46" aria-hidden="true" tabindex="-1"></a>  cumulative_infected_anthers <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(infected_anthers)</span>
+<span id="cb21-47"><a href="#cb21-47" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-48"><a href="#cb21-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Compile results</span></span>
+<span id="cb21-49"><a href="#cb21-49" aria-hidden="true" tabindex="-1"></a>  result_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb21-50"><a href="#cb21-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">Date =</span> weather_subset<span class="sc">$</span>YYYYMMDD,</span>
+<span id="cb21-51"><a href="#cb21-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">T2M =</span> weather_subset<span class="sc">$</span>T2M,</span>
+<span id="cb21-52"><a href="#cb21-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">RAIN =</span> weather_subset<span class="sc">$</span>PRECTOTCORR,</span>
+<span id="cb21-53"><a href="#cb21-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">RH2M =</span> weather_subset<span class="sc">$</span>RH2M,</span>
+<span id="cb21-54"><a href="#cb21-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">Flowers =</span> <span class="fu">round</span>(anther_proportions,<span class="dv">3</span>),</span>
+<span id="cb21-55"><a href="#cb21-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">InfFlowers =</span> <span class="fu">round</span>(infected_anthers,<span class="dv">3</span>),</span>
+<span id="cb21-56"><a href="#cb21-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">CumInfFlowers =</span> <span class="fu">round</span>(cumulative_infected_anthers, <span class="dv">3</span>)</span>
+<span id="cb21-57"><a href="#cb21-57" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-58"><a href="#cb21-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(result_df)</span>
+<span id="cb21-59"><a href="#cb21-59" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s download the data again for the location of Wooster, Ohio, so that we can compare the results between the two models</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-14_b264ed4216c77cca2777d727e3d31e18">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>wooster <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">community =</span> <span class="st">"ag"</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">lonlat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">81.9399</span>, <span class="fl">40.7982</span>),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"RH2M"</span>, <span class="st">"T2M"</span>, <span class="st">"PRECTOTCORR"</span>),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2015-01-01"</span>, <span class="st">"2023-09-30"</span>),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">temporal_api =</span> <span class="st">"daily"</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(weather)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>NASA/POWER CERES/MERRA2 Native Resolution Hourly Data  
+ Dates (month/day/year): 01/01/2020 through 12/31/2022  
+ Location: Latitude  40.7982   Longitude -81.9399  
+ Elevation from MERRA-2: Average for 0.5 x 0.625 degree lat/lon region = 309.08 meters 
+ The value for missing source data that cannot be computed or is outside of the sources availability range: NA  
+ Parameter(s):  
+ 
+ Parameters: 
+ RH2M            MERRA-2 Relative Humidity at 2 Meters (%) ;
+ T2M             MERRA-2 Temperature at 2 Meters (C) ;
+ PRECTOTCORR     MERRA-2 Precipitation Corrected (mm/hour)  
+ 
+# A tibble: 6 × 9
+    LON   LAT  YEAR    MO    DY    HR  RH2M   T2M PRECTOTCORR
+  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
+1 -81.9  40.8  2019    12    31    19  79.6 -2.75        0.02
+2 -81.9  40.8  2019    12    31    20  80.8 -2.99        0.02
+3 -81.9  40.8  2019    12    31    21  82.8 -3.17        0.02
+4 -81.9  40.8  2019    12    31    22  83.9 -3.27        0.01
+5 -81.9  40.8  2019    12    31    23  85   -3.37        0.01
+6 -81.9  40.8  2020     1     1     0  86.4 -3.55        0.01</code></pre>
+</div>
+</div>
+<p>Now that we have the data, we can simulate for a specific date.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-15_a1655ceeab879a5088ba7a99c1ac8a13">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">&lt;-</span> <span class="st">"2021-06-01"</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">simulate_FHB</span>(start_date, wooster)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(result, <span class="dv">15</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Date   T2M RAIN  RH2M Flowers InfFlowers CumInfFlowers
+1  2021-06-01 18.36 0.01 54.12   0.053      0.000         0.000
+2  2021-06-02 16.70 4.97 81.94   0.108      0.000         0.000
+3  2021-06-03 18.01 9.23 92.56   0.199      0.007         0.007
+4  2021-06-04 20.47 0.59 78.75   0.329      0.000         0.007
+5  2021-06-05 22.42 0.00 70.19   0.485      0.000         0.007
+6  2021-06-06 23.73 0.01 69.75   0.641      0.000         0.007
+7  2021-06-07 23.89 8.62 82.19   0.757      0.000         0.007
+8  2021-06-08 23.31 6.13 84.44   0.800      0.079         0.086
+9  2021-06-09 23.36 2.30 80.06   0.757      0.000         0.086
+10 2021-06-10 24.01 2.78 77.81   0.641      0.000         0.086
+11 2021-06-11 23.90 0.88 79.81   0.485      0.000         0.086
+12 2021-06-12 23.70 0.83 73.62   0.329      0.000         0.086
+13 2021-06-13 23.21 1.73 73.06   0.199      0.000         0.086
+14 2021-06-14 20.46 0.61 67.81   0.108      0.000         0.086
+15 2021-06-15 17.98 0.08 67.31   0.053      0.000         0.086</code></pre>
+</div>
+</div>
+<p>Finally we can plot the dynamics of the flowering and the infections over time for a period of 30 days.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-16_087d1730ca3957357516c74b46f14695">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the data</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> result <span class="sc">|&gt;</span> </span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Date)) <span class="sc">+</span> </span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="fu">aes</span>(<span class="at">y =</span> Flowers,  </span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"Proportion of flowers"</span>),</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">"yellow"</span>, <span class="at">alpha =</span> <span class="fl">0.5</span>) <span class="sc">+</span> </span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> CumInfFlowers, </span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"Cum. Infected Flowers"</span>), </span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">linewidth =</span><span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"FHB simulation model"</span>,</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste</span>(<span class="st">"Total infected flowers = "</span>, </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">round</span>(<span class="fu">max</span>(result<span class="sc">$</span>CumInfFlowers<span class="sc">*</span><span class="dv">100</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="dv">2</span>), <span class="st">"%"</span>),</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Proportion"</span>, <span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">color =</span> <span class="st">"Legend"</span>) <span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-17_288549015690a69d1033723610f57dde">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> result <span class="sc">|&gt;</span> </span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> Date))<span class="sc">+</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="fu">aes</span>(<span class="at">x =</span> Date, <span class="at">y =</span> RAIN))<span class="sc">+</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> T2M))<span class="sc">+</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">y =</span> RH2M), <span class="at">linetype =</span> <span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">y =</span> <span class="st">"Value"</span>, </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Rain, T and RH"</span>)<span class="sc">+</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-18_c59020049f9053a9b06365f7d4f06256">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>p1 <span class="sc">/</span> p2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We can apply the function for a series of days and see how the final value of infected flowers behaves over time, considering each day as a starting flowering day.</p>
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-19_4783768cf88cfc919d575f1f41efd6b1">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of dates</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>dates_vector <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2021-06-01"</span>), <span class="fu">as.Date</span>(<span class="st">"2021-06-30"</span>), <span class="at">by=</span><span class="st">"days"</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply function and extract max cumulative infection</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>max_cumulative_infections <span class="ot">&lt;-</span> <span class="fu">sapply</span>(dates_vector, <span class="cf">function</span>(date) {</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">simulate_FHB</span>(date, wooster)</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>(result<span class="sc">$</span>CumInfFlowers, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>df_results <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">Date =</span> dates_vector,</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">MaxCumulativeInfection =</span> max_cumulative_infections</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the results</span></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>df_results <span class="sc">|&gt;</span> </span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(Date, MaxCumulativeInfection<span class="sc">*</span><span class="dv">100</span>))<span class="sc">+</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"darkred"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>)<span class="sc">+</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"FHB simulation model"</span>, </span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Wooster, Ohio - 2021"</span>,</span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">x =</span> <span class="st">"Starting day of flowering"</span>, <span class="at">y =</span> <span class="st">"Final percent of infected flowers"</span>)<span class="sc">+</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb29-23"><a href="#cb29-23" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="warning-systems_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body" role="list" style="display: none">
 <div id="ref-bourke1970" class="csl-entry" role="listitem">
 Bourke, P. M. A. 1970. Use of Weather Information in the Prediction of Plant Disease Epiphytotics. Annual Review of Phytopathology. 8:345–370 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.08.090170.002021">http://dx.doi.org/10.1146/annurev.py.08.090170.002021</a>.
+</div>
+<div id="ref-caffi2007" class="csl-entry" role="listitem">
+Caffi, T., Rossi, V., Cossu, A., and Fronteddu, F. 2007. Empirical vs. mechanistic models for primary infections of <span> <em>Plasmopara viticola</em></span>*. EPPO Bulletin. 37:261–271 Available at: <a href="http://dx.doi.org/10.1111/j.1365-2338.2007.01120.x">http://dx.doi.org/10.1111/j.1365-2338.2007.01120.x</a>.
+</div>
+<div id="ref-caffi2010" class="csl-entry" role="listitem">
+Caffi, T., Rossi, V., Legler, S. E., and Bugiani, R. 2010. A mechanistic model simulating ascosporic infections by <span><em>Erysiphe necator</em></span>, the powdery mildew fungus of grapevine. Plant Pathology. 60:522–531 Available at: <a href="http://dx.doi.org/10.1111/j.1365-3059.2010.02395.x">http://dx.doi.org/10.1111/j.1365-3059.2010.02395.x</a>.
 </div>
 <div id="ref-Campbell1990" class="csl-entry" role="listitem">
 Campbell, C. L., and Madden. L., V. 1990. <em>Introduction to plant disease epidemiology</em>. Wiley.
@@ -984,6 +1196,9 @@ De Rossi, R. L., Guerra, F. A., Plazas, M. C., Vuletic, E. E., Brücher, E., Gue
 </div>
 <div id="ref-dewolf2003" class="csl-entry" role="listitem">
 De Wolf, E. D., Madden, L. V., and Lipps, P. E. 2003. Risk Assessment Models for Wheat Fusarium Head Blight Epidemics Based on Within-Season Weather Data. Phytopathology®. 93:428–435 Available at: <a href="http://dx.doi.org/10.1094/PHYTO.2003.93.4.428">http://dx.doi.org/10.1094/PHYTO.2003.93.4.428</a>.
+</div>
+<div id="ref-delponte2005" class="csl-entry" role="listitem">
+Del Ponte, E. M., Fernandes, J. M. C., and Pavan, W. 2005. A risk infection simulation model for fusarium head blight of wheat. Fitopatologia Brasileira. 30:634–642 Available at: <a href="http://dx.doi.org/10.1590/S0100-41582005000600011">http://dx.doi.org/10.1590/S0100-41582005000600011</a>.
 </div>
 <div id="ref-krause1975" class="csl-entry" role="listitem">
 Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology. 13:31–47 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.13.090175.000335">http://dx.doi.org/10.1146/annurev.py.13.090175.000335</a>.
@@ -1009,6 +1224,15 @@ Pedigo, L. P., Hutchins, S. H., and Higley, L. G. 1986. Economic Injury Levels i
 <div id="ref-reis2002modelo" class="csl-entry" role="listitem">
 Reis, E. M., Hoffmann, L. L., and Blum, M. 2002. Modelo de ponto crítico para estimar os danos causados pelo oídio em cevada. Fitopatologia Brasileira. 27:644–646.
 </div>
+<div id="ref-rossi2014" class="csl-entry" role="listitem">
+Rossi, V., Onesti, G., Legler, S. E., and Caffi, T. 2014. Use of systems analysis to develop plant disease models based on literature data: grape black-rot as a case-study. European Journal of Plant Pathology. 141:427–444 Available at: <a href="http://dx.doi.org/10.1007/s10658-014-0553-z">http://dx.doi.org/10.1007/s10658-014-0553-z</a>.
+</div>
+<div id="ref-salotti2022" class="csl-entry" role="listitem">
+Salotti, I., Bove, F., and Rossi, V. 2022. Development and validation of a mechanistic, weather-based model for predicting puccinia graminis f. Sp. Tritici infections and stem rust progress in wheat. Frontiers in Plant Science. 13 Available at: <a href="http://dx.doi.org/10.3389/fpls.2022.897680">http://dx.doi.org/10.3389/fpls.2022.897680</a>.
+</div>
+<div id="ref-salotti2023" class="csl-entry" role="listitem">
+Salotti, I., and Rossi, V. 2023. A Mechanistic Model Accounting for the Effect of Soil Moisture, Weather, and Host Growth Stage on the Development of <span><em>Sclerotinia sclerotiorum</em></span>. Plant Disease. 107:514–533 Available at: <a href="http://dx.doi.org/10.1094/pdis-12-21-2743-re">http://dx.doi.org/10.1094/pdis-12-21-2743-re</a>.
+</div>
 <div id="ref-wallin1962" class="csl-entry" role="listitem">
 Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemics in United States and Canada. American Potato Journal. 39:306–312 Available at: <a href="http://dx.doi.org/10.1007/bf02862155">http://dx.doi.org/10.1007/bf02862155</a>.
 </div>
@@ -1016,7 +1240,6 @@ Wallin, J. R. 1962. Summary of recent progress in predicting late blight epidemi
 Willbur, J. F., Fall, M. L., Bloomingdale, C., Byrne, A. M., Chapman, S. A., Isard, S. A., et al. 2018. Weather-Based Models for Assessing the Risk of <span><em>Sclerotinia sclerotiorum</em></span> Apothecial Presence in Soybean (<span><em>Glycine max</em></span>) Fields. Plant Disease. 102:73–84 Available at: <a href="http://dx.doi.org/10.1094/PDIS-04-17-0504-RE">http://dx.doi.org/10.1094/PDIS-04-17-0504-RE</a>.
 </div>
 </div>
-</section>
 </section>
 </section>
 

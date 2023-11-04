@@ -383,3 +383,193 @@ ggplot(df, aes(day, p, fill = factor(epi))) +
        subtitle = "Location: Wooster, Ohio",
        caption = "Model source: De Wolf et al. (2002)")
 ```
+
+### Warnings based on process-based models
+
+Different from the previous approaches where statistical models are fitted to data obtained from controlled conditions (FAST and Wallin tables) or from the field (Ohio FHB model), some models are based on processes of the disease cycle and can be quite complex and sophisticated. There are numerous examples in the literature of models that are based on the dynamics of the disease cycle [@salotti2023; @rossi2014; @salotti2022; @caffi2010; @caffi2007].
+
+An example is a process-based model developed in Brazil that simulates the daily proportion of infected flowers in wheat by *Fusarium graminearum* [@delponte2005]. The original model integrates several sub models that estimate the daily proportion of flowers and the density of inoculum in a "spore cloud". These are two critical factors that influence infection, and these factors are driven by rainfall, relative humidity, and temperature.
+
+A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration. The function requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 30 days.
+
+Among the simplifications, based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 20 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 20th day.
+
+$[
+\text{antherproportions} = \left\{ 
+\begin{array}{ll}
+\frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 20 \\
+0 & \text{for } x = 21, \ldots, 30
+\end{array} 
+\right.
+]$ ,
+
+where $𝞵$ = 8 and $𝝈$ = 3.
+
+The infection probability is calculated as in the paper. It is based on an equation that considers temperature (T) and gives the proportion of anthers getting infected on any given day when a **condition for infection** is met.
+
+$INF=0.001029×exp(0.1957×T)$
+
+There are mainly three conditions for infection, similar to what is described in the article:
+
+-   **Continuous 2-day Rain & High Humidity**: There should be rain (> 0.5 mm) and the average humidity over two consecutive days should be high (\> 80%).
+
+-   **Rain Followed by Dry Day & High Humidity**: Rain and high humidity (> 80%), followed by a day without rain but still with high humidity (\> 85%).
+
+-   **Dry Day & High Humidity Followed by Rain**: A day without rain but with high humidity (\> 85%), followed by a day with both rain and high humidity (> 80%).
+
+Infection then occurs when any of the above conditions are met. In this simpler version (without the inoculum factor), the proportion of infected anthers is given by
+
+$infectedanthers=antherproportions×INF$
+
+```{r}
+simulate_FHB <- function(start_date, weather_data) {
+  start_date <- as.Date(start_date, format = "%Y-%m-%d")
+  
+  # Extract weather data for 30 days starting from the provided start_date
+  weather_subset <- subset(weather_data, YYYYMMDD >= start_date & YYYYMMDD < start_date + 30)
+  
+  # Simulation for 30 days
+  x <- 1:30
+  
+  # Normal distribution formula for 20 days using fixed peak day (mu) and spread (sigma)
+  mu <- 8
+  sigma <- 3
+  anther_proportions <- c((1 / (sigma * sqrt(2 * pi))) * exp(-0.5 * ((x[1:20] - mu) / sigma)^2), rep(0, 10))  
+  
+  # Adjust the values to have a peak of 0.8
+  max_value <- max(anther_proportions)
+  scaling_factor <- 0.8 / max_value
+  anther_proportions[1:20] <- anther_proportions[1:20] * scaling_factor
+  
+  # Zero out the anthers after the day they should be zero
+  anther_proportions[21:30] <- 0
+  
+  # Calculate the INF value
+  INF <- 0.001029 * exp(0.1957 * weather_subset$T2M)
+  
+  # Calculate average RH for two consecutive days
+  avg_RH2M_2days <- (weather_subset$RH2M + c(weather_subset$RH2M[-1], NA)) / 2
+  
+  # Check conditions for infection
+  condition1 <- (weather_subset$PRECTOTCORR > 0.3) & (avg_RH2M_2days > 80)
+  consecutive_rain_high_humidity <- condition1 & c(FALSE, head(condition1, -1))
+  preceded_condition <- (weather_subset$PRECTOTCORR > 0.3) & (avg_RH2M_2days > 80) &
+    c(FALSE, head(weather_subset$RH2M, -1) > 85) &
+    c(head(weather_subset$PRECTOTCORR, -1) <= 0.3, FALSE)
+  succeeded_condition <- (weather_subset$PRECTOTCORR > 0.3) & (avg_RH2M_2days > 80) &
+    c(tail(weather_subset$RH2M, -1) > 85, FALSE) &
+    c(FALSE, tail(weather_subset$PRECTOTCORR, -1) <= 0.3)
+  
+  # Combine conditions
+  infection_trigger <- consecutive_rain_high_humidity == 1 | preceded_condition | succeeded_condition
+  
+  # Calculate infected anthers based on conditions
+  infected_anthers <- ifelse(infection_trigger, anther_proportions * INF, 0)
+  
+  # Cumulative infected anthers
+  cumulative_infected_anthers <- cumsum(infected_anthers)
+  
+  # Compile results
+  result_df <- data.frame(
+    Date = weather_subset$YYYYMMDD,
+    T2M = weather_subset$T2M,
+    RAIN = weather_subset$PRECTOTCORR,
+    RH2M = weather_subset$RH2M,
+    Flowers = round(anther_proportions,3),
+    InfFlowers = round(infected_anthers,3),
+    CumInfFlowers = round(cumulative_infected_anthers, 3)
+  )
+  return(result_df)
+}
+```
+
+Let's download the data again for the location of Wooster, Ohio, so that we can compare the results between the two models
+
+```{r}
+library(nasapower)
+wooster <- get_power(
+  community = "ag",
+  lonlat = c(-81.9399, 40.7982),
+  pars = c("RH2M", "T2M", "PRECTOTCORR"),
+  dates = c("2015-01-01", "2023-09-30"),
+  temporal_api = "daily"
+)
+head(weather)
+```
+
+Now that we have the data, we can simulate for a specific date.
+
+```{r}
+start_date <- "2021-06-01"
+result <- simulate_FHB(start_date, wooster)
+head(result, 15)
+```
+
+Finally we can plot the dynamics of the flowering and the infections over time for a period of 30 days.
+
+```{r}
+# Plotting the data
+library(tidyverse)
+p1 <- result |> 
+  ggplot(aes(x = Date)) + 
+  geom_area(aes(y = Flowers,  
+                color = "Proportion of flowers"),
+            linewidth = 1, fill = "yellow", alpha = 0.5) + 
+  geom_line(aes(y = CumInfFlowers, 
+                color = "Cum. Infected Flowers"), 
+            linewidth =1) +
+  labs(title = "FHB simulation model",
+       subtitle = paste("Total infected flowers = ", 
+                        round(max(result$CumInfFlowers*100, na.rm = TRUE),2), "%"),
+       y = "Proportion", x = "Date", color = "Legend") +
+  r4pde::theme_r4pde(font_size = 12)+
+  theme(legend.position = "bottom")
+```
+
+```{r}
+p2 <- result |> 
+  ggplot(aes(x = Date))+
+  geom_col(aes(x = Date, y = RAIN))+
+  geom_line(aes(y = T2M))+
+  geom_line(aes(y = RH2M), linetype = 2)+
+  labs(y = "Value", 
+       title = "Rain, T and RH")+
+  r4pde::theme_r4pde(font_size = 12)
+```
+
+```{r}
+library(patchwork)
+p1 / p2
+```
+
+
+
+
+We can apply the function for a series of days and see how the final value of infected flowers behaves over time, considering each day as a starting flowering day. 
+
+```{r}
+# Vector of dates
+dates_vector <- seq(as.Date("2021-06-01"), as.Date("2021-06-30"), by="days")
+
+# Apply function and extract max cumulative infection
+max_cumulative_infections <- sapply(dates_vector, function(date) {
+  result <- simulate_FHB(date, wooster)
+  max(result$CumInfFlowers, na.rm = TRUE)
+})
+
+df_results <- data.frame(
+  Date = dates_vector,
+  MaxCumulativeInfection = max_cumulative_infections
+)
+
+# plot the results
+df_results |> 
+  ggplot(aes(Date, MaxCumulativeInfection*100))+
+  geom_col(fill = "darkred", alpha = 0.8)+
+  labs(title = "FHB simulation model", 
+       subtitle = "Wooster, Ohio - 2021",
+         x = "Starting day of flowering", y = "Final percent of infected flowers")+
+  
+  r4pde::theme_r4pde(font_size = 14)
+
+```
