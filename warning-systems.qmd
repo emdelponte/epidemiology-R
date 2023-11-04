@@ -349,7 +349,7 @@ results
 We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let's write code to simulate 30 days in June using a `for()` loop which will store the results in a list, but we can further transform to a dataframe using `map_dfr()` function.
 
 ```{r}
-num_days <- 30  
+num_days <- 15
 all_results <- list()
 for(day in 1:num_days){
   all_results[[paste0("", day)]] <- calculate_TRH9010(weather, YEAR = 2021, MO = 6, DY = day)
@@ -371,7 +371,7 @@ Finally we plot the results.
 ```{r}
 ggplot(df, aes(day, p, fill = factor(epi))) + 
   geom_col()+
-  scale_x_continuous(n.breaks = 30)+
+  scale_x_continuous(n.breaks = 15)+
   scale_fill_manual(values = c("grey60", "darkred"))+
   geom_hline(yintercept = 0.36, linetype = 2)+
   r4pde::theme_r4pde(font_size = 12)+
@@ -384,21 +384,23 @@ ggplot(df, aes(day, p, fill = factor(epi))) +
        caption = "Model source: De Wolf et al. (2002)")
 ```
 
-### Warnings based on process-based models
+### Warnings based on mechanistic models
 
-Different from the previous approaches where statistical models are fitted to data obtained from controlled conditions (FAST and Wallin tables) or from the field (Ohio FHB model), some models are based on processes of the disease cycle and can be quite complex and sophisticated. There are numerous examples in the literature of models that are based on the dynamics of the disease cycle [@salotti2023; @rossi2014; @salotti2022; @caffi2010; @caffi2007].
+Different from the previous approaches where statistical models are fitted to data obtained from controlled conditions (FAST and Wallin tables) or from the field (Ohio FHB model), some models are called mechanistic when based on the processes of the disease cycle and factors that affect theses process. These can be quite complex and sophisticated and there are numerous examples in the literature [@salotti2023; @rossi2014; @salotti2022; @caffi2010; @caffi2007].
 
-An example is a process-based model developed in Brazil that simulates the daily proportion of infected flowers in wheat by *Fusarium graminearum* [@delponte2005]. The original model integrates several sub models that estimate the daily proportion of flowers and the density of inoculum in a "spore cloud". These are two critical factors that influence infection, and these factors are driven by rainfall, relative humidity, and temperature.
+One example is a mechanistic model for FHB developed in Brazil that is based on the dynamics of flowering in wheat [@delponte2005]. The original model integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a "spore cloud" and proportion of infected flowers, all of these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.
 
-A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration. The function requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 30 days.
+A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration.
 
-Among the simplifications, based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 20 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 20th day.
+The function `simulate_FHB()` requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 25 days.
+
+Among the several simplifications, which were based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 10 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 10th day.
 
 $[ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 20 \\ 0 & \text{for } x = 21, \ldots, 30 \end{array} \right. ]$ ,
 
 where $𝞵$ = 8 and $𝝈$ = 3.
 
-The infection probability is calculated as in the paper. It is based on an equation that considers temperature (T) and gives the proportion of anthers getting infected on any given day when a **condition for infection** is met.
+The infection probability is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of anthers getting infected on any given day when a **condition for infection** is met.
 
 $INF=0.001029×exp(0.1957×T)$
 
@@ -410,32 +412,33 @@ There are mainly three conditions for infection, similar to what is described in
 
 -   **Dry Day & High Humidity Followed by Rain**: A day without rain but with high humidity (\> 85%), followed by a day with both rain and high humidity (\> 80%).
 
-Infection then occurs when any of the above conditions are met. In this simpler version (without the inoculum factor), the proportion of infected anthers is given by
+Infection then occurs when any of the above conditions are met. In this simpler version (without the inoculum factor), the proportion of infected spikelets, assuming that infected anthers will give rise to infected spikelets, is given by
 
-$infectedanthers=antherproportions×INF$
+$InfectedSpikelets = AntherProportions×INF$
 
 ```{r}
 simulate_FHB <- function(start_date, weather_data) {
   start_date <- as.Date(start_date, format = "%Y-%m-%d")
   
   # Extract weather data for 30 days starting from the provided start_date
-  weather_subset <- subset(weather_data, YYYYMMDD >= start_date & YYYYMMDD < start_date + 30)
+  weather_subset <- subset(weather_data, YYYYMMDD >= start_date & YYYYMMDD < start_date + 20)
   
-  # Simulation for 30 days
-  x <- 1:30
+  # Simulation for 20 days
+  x <- 1:20
   
-  # Normal distribution formula for 20 days using fixed peak day (mu) and spread (sigma)
-  mu <- 8
-  sigma <- 3
-  anther_proportions <- c((1 / (sigma * sqrt(2 * pi))) * exp(-0.5 * ((x[1:20] - mu) / sigma)^2), rep(0, 10))  
+  # Normal distribution formula for 10 days using fixed peak day (mu) and spread (sigma)
+  mu <- 6
+  sigma <- 2
+anther_proportions <- c((1 / (sigma * sqrt(2 * pi))) * exp(-0.5 * ((x[1:10] - mu) / sigma)^2), rep(0, 10))
+
   
   # Adjust the values to have a peak of 0.8
-  max_value <- max(anther_proportions)
-  scaling_factor <- 0.8 / max_value
-  anther_proportions[1:20] <- anther_proportions[1:20] * scaling_factor
-  
+ max_value <- max(anther_proportions)
+scaling_factor <- 0.8 / max_value
+anther_proportions <- anther_proportions * scaling_factor # This scales the entire vector
+
   # Zero out the anthers after the day they should be zero
-  anther_proportions[21:30] <- 0
+  anther_proportions[11:20] <- 0
   
   # Calculate the INF value
   INF <- 0.001029 * exp(0.1957 * weather_subset$T2M)
@@ -457,10 +460,10 @@ simulate_FHB <- function(start_date, weather_data) {
   infection_trigger <- consecutive_rain_high_humidity == 1 | preceded_condition | succeeded_condition
   
   # Calculate infected anthers based on conditions
-  infected_anthers <- ifelse(infection_trigger, anther_proportions * INF, 0)
+  infected_spikelets <- ifelse(infection_trigger, anther_proportions * INF, 0)
   
   # Cumulative infected anthers
-  cumulative_infected_anthers <- cumsum(infected_anthers)
+  cumulative_infected_spikelets <- cumsum(infected_spikelets)
   
   # Compile results
   result_df <- data.frame(
@@ -469,14 +472,14 @@ simulate_FHB <- function(start_date, weather_data) {
     RAIN = weather_subset$PRECTOTCORR,
     RH2M = weather_subset$RH2M,
     Flowers = round(anther_proportions,3),
-    InfFlowers = round(infected_anthers,3),
-    CumInfFlowers = round(cumulative_infected_anthers, 3)
+    InfSpikelets = round(infected_spikelets,3),
+    CumInfSpikelets = round(cumulative_infected_spikelets, 3)
   )
   return(result_df)
 }
 ```
 
-Let's download the data again for the location of Wooster, Ohio, so that we can compare the results between the two models
+Let's download the data again for the location of Wooster, Ohio during a 9-year period.
 
 ```{r}
 library(nasapower)
@@ -490,15 +493,15 @@ wooster <- get_power(
 head(wooster)
 ```
 
-Now that we have the data, we can simulate for a specific date.
+Now that we have the data, we can simulate FHB for a specific date.
 
 ```{r}
-start_date <- "2021-06-01"
+start_date <- "2018-05-15"
 result <- simulate_FHB(start_date, wooster)
 head(result, 15)
 ```
 
-Finally we can plot the dynamics of the flowering and the infections over time for a period of 30 days.
+Finally we can plot the dynamics of the flowering and the percent of infected spikelets during the period of 25 days after first flowers appear in the field.
 
 ```{r}
 # Plotting the data
@@ -508,15 +511,16 @@ p1 <- result |>
   geom_area(aes(y = Flowers,  
                 color = "Proportion of flowers"),
             linewidth = 1, fill = "yellow", alpha = 0.5) + 
-  geom_line(aes(y = CumInfFlowers, 
-                color = "Cum. Infected Flowers"), 
+  geom_line(aes(y = CumInfSpikelets, 
+                color = "Cum. Infected Spikelets"), 
             linewidth =1) +
   labs(title = "FHB simulation model",
-       subtitle = paste("Total infected flowers = ", 
-                        round(max(result$CumInfFlowers*100, na.rm = TRUE),2), "%"),
+       subtitle = paste("% Infected spikelets = ", 
+                        round(max(result$CumInfSpikelets*100, na.rm = TRUE),2), "%"),
        y = "Proportion", x = "Date", color = "Legend") +
   r4pde::theme_r4pde(font_size = 12)+
   theme(legend.position = "bottom")
+
 ```
 
 ```{r}
@@ -535,16 +539,16 @@ library(patchwork)
 p1 / p2
 ```
 
-We can apply the function for a series of days and see how the final value of infected flowers behaves over time, considering each day as a starting flowering day.
+We can apply the function for a series of days and see how the percent of infected spikelets fluctuates over time considering each day as a starting day of flowering day.
 
 ```{r}
 # Vector of dates
-dates_vector <- seq(as.Date("2021-06-01"), as.Date("2021-06-30"), by="days")
+dates_vector <- seq(as.Date("2019-05-15"), as.Date("2019-05-30"), by="days")
 
 # Apply function and extract max cumulative infection
 max_cumulative_infections <- sapply(dates_vector, function(date) {
   result <- simulate_FHB(date, wooster)
-  max(result$CumInfFlowers, na.rm = TRUE)
+  max(result$CumInfSpikelets, na.rm = TRUE)
 })
 
 df_results <- data.frame(
@@ -557,8 +561,8 @@ df_results |>
   ggplot(aes(Date, MaxCumulativeInfection*100))+
   geom_col(fill = "darkred", alpha = 0.8)+
   labs(title = "FHB simulation model", 
-       subtitle = "Wooster, Ohio - 2021",
-         x = "Starting day of flowering", y = "Final percent of infected flowers")+
+       subtitle = "Wooster, Ohio - 2019",
+         x = "Starting day of flowering", y = "% Infected Spikelets")+
   
   r4pde::theme_r4pde(font_size = 14)
 
