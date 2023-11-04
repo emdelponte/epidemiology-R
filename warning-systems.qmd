@@ -72,7 +72,7 @@ flowchart
 
 For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in [@Campbell1990]:
 
-1.  They should target diseases that are prevalent and economically damaging, affecting yield or quality. Merely having severe economic consequences doesn't guarantee a system's practical use or attention from growers and advisors.
+1.  The targeted disease must be economically damaging to crop yield or quality. Minor diseases with negligible effects on yield or quality are unlikely to gain attention from growers and advisors.
 
 2.  The diseases should exhibit variability across seasons in terms of onset, epidemic growth rate, severity, or another aspect, creating uncertainty in decision-making. Diseases with predictable patterns provide minimal information and little management advantage, reducing the relevance of warning systems.
 
@@ -383,17 +383,17 @@ To utilize the system, users should select the model, input the latitude and lon
 
 ### Infection risk during defined periods
 
-Many diseases like late blight of potatoes and early blight of tomatoes (but also others such as apple scab), as seen in the previous section, require continuous (season long) risk assessment. However, some warning systems assess risk at only one time point, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single disease warning is issued, such as the risk of disease occurrence at a intensity above a threshold (e.g. incidence \> 30%).
+Many diseases like late blight of potatoes and early blight of tomatoes, as seen in the previous section, require continuous (season long) risk monitoring to indicate multiple fungicide sprays. However, some warning systems assess risk at only at one time points, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single warning is issued, such as the risk of disease occurrence or occurrence at a intensity above a threshold (e.g. incidence \> 30%).
 
-These systems use statistical models (risk algorithms) to predict probabilities of an event, usually for a binary response, based on weather variables that occur over specific periods of time, usually when infections take place. For example, Fusarium head blight (FHB, caused by *Fusarium graminearum*) infection depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of *Sclerotinia* (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment[@willbur2018]. Such events of binary nature can be predicted using algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc. A commonly used algorithm is the logistic regression model which deals with binary classification.
+Some of these systems use statistical (risk algorithms) to predict probabilities of occurrence of the event (yes/no situation) based on weather variables that occur over specific periods of time, usually when primary infections take place. For example, Fusarium head blight (FHB, caused by *Fusarium graminearum*) disease depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of *Sclerotinia* (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment[@willbur2018]. Such events of binary nature can be predicted using risk algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc. A commonly used algorithm is the logistic regression model which deals with a binary classification.
 
 #### Logistic regression: Ohio FHB models
 
 FHB risk models were developed in the United States in the early 2000s to predict the risk of an epidemic, or when disease severity in the field was greater than 10% [@dewolf2003]. In the paper, the epidemic cases were classified as 0 and 1, according to that threshold, and several logistic regression models were fitted to the data using a summary of weather-related variables from two defined periods: seven days prior to flowering date and 10 days following flowering date (50% of wheat heads with anthers).
 
-Among several models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The variable selected was a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total hours, within the 10-day period, when the temperature (T) was \>=15 and \<= 30 ^o^C and relative humidity (RH) was \>90%.
+Among several models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The selected variable consisted of a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total number of hours, within the 10-day post-flowering period, when the temperature (T) was \>=15 and \<= 30 ^o^C and relative humidity (RH) was \>90%.
 
-Let's implement this model in R and calculate the probability of infection. Again, we need to download hourly data from NASA Power project for a period of three years. Let's work with data from Wooster, OH, United States.
+Let's implement this model in R and calculate the probability of infection. As usual, we first need to download hourly data from NASA Power project for a period of three years. Let's work with data from Wooster, OH, United States.
 
 ```{r}
 library(nasapower)
@@ -407,7 +407,7 @@ weather <- get_power(
 head(weather)
 ```
 
-We can then create a function named `calculate_TRH9010()`. This function calculates the number of hours that meet the specified condition (i.e., hours when 15 \<= T \<= 30 & RH \> 90), the probability (p) of infection, and the classification of the epidemic (epi) as 0 or 1 based on a defined threshold for p (0.36 in this case) [@dewolf2003]. The function's arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It's important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.
+We can then create a function named `calculate_TRH9010()`. This function calculates the number of hours when specified condition is met (i.e., hours when 15 \<= T \<= 30 & RH \> 90), the probability (*p*) of infection, and the classification of the epidemic (*epi*) as 0 or 1 based on a defined threshold for p (0.36 in this case) [@dewolf2003]. The function's arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It's important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.
 
 ```{r}
 calculate_TRH9010 <- function(data, YEAR, MO, DY){
@@ -426,14 +426,14 @@ calculate_TRH9010 <- function(data, YEAR, MO, DY){
 
 ```
 
-Now we apply the function for the 1st of June 2021. The output is the hour count, the probability and the epidemic classification.
+Now we apply the function for the 1st of June 2021 as flowering date. The output is the hour count, the probability and the epidemic classification.
 
 ```{r}
 results <- calculate_TRH9010(weather, YEAR = 2021, MO = 6, DY = 1)
 results
 ```
 
-We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let's write code to simulate 30 days in June using a `for()` loop which will store the results in a list, but we can further transform to a dataframe using `map_dfr()` function.
+We may want to apply the function for a series of days within a given month. Let's write code to predict the risk for the 15 days of June using a `for()` loop which will store the results in a list, but we can further transform to a dataframe using `map_dfr()` function.
 
 ```{r}
 num_days <- 15
@@ -466,34 +466,34 @@ ggplot(df, aes(day, p, fill = factor(epi))) +
   theme(legend.position = "bottom")+
   labs(x = "Wheat flowering day in june 2021", y = "Risk probability",
        fill = "Epidemic classification",
-       title = "Infection risk by Ohio (TRH9010) FHB model",
+       title = "FHB risk by Ohio (TRH9010) model",
        subtitle = "Location: Wooster, Ohio",
        caption = "Model source: De Wolf et al. (2002)")
 ```
 
-#### Mechanistic models: FHB Brazilian model
+#### Mechanistic models: Brazilian FHB model
 
-Different from the previous approaches where statistical models are fitted to data, some models are called mechanistic (or process-based) when based on the processes of the disease cycle and factors that affect theses process. These can be quite complex and sophisticated and there are numerous examples in the literature [@salotti2023; @rossi2014; @salotti2022; @caffi2010; @caffi2007].
+Different from the previous approach, where statistical models are fitted to data, some models are called mechanistic, dynamic or process-based. These are designed based on the knowledge of the processes of the disease cycle and the factors that affect these processes [@gonzález-domínguez2023]. These usually operate in a hourly to daily basis and can be quite complex and sophisticated with numerous examples being found in the literature [@salotti2023; @rossi2014; @salotti2022; @caffi2010; @caffi2007].
 
-One example is a mechanistic model for FHB developed in Brazil that is based on the dynamics of flowering, the most vulnerable phase of the wheat crop [@delponte2005]. The original model integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a "spore cloud" and a proportion of infected flowers - all these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.
+One example is a mechanistic model for FHB developed in Brazil. In its core, the model is based on the daily simulation of the flowering process, the most vulnerable phase of the wheat crop, and events that contribute to infect the flowers. The original model [@delponte2005] integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a "spore cloud" and a proportion of infected flowers - all these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.
 
-A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration.
+A modified, simplified version of the model that takes into account only the flowering process and weather-variables that drives infection, was written in R and is presented here for illustration.
 
-![Flow diagram for a simplified version of a mechanistic Fusarium head blight model that takes into account the amount of flowers on each day which will be infected depending on rules that define a wet period and temperature](imgs/FHB_diagram.png){#fig-fhbdiagram fig-align="center"}
+![A simplified version of a mechanistic Fusarium head blight model that takes into account the amount of flowers on each day which will be infected depending on rules that define a wet period and temperature during the wet period.](imgs/FHB_diagram.png){#fig-fhbdiagram fig-align="center"}
 
-The function `simulate_FHB()` requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 25 days.
+The function `simulate_FHB()` requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 20 days.
 
 Among the several simplifications, which were based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 10 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 10th day.
 
-$[ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 20 \\ 0 & \text{for } x = 21, \ldots, 30 \end{array} \right. ]$ ,
+$[ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 10 \\ 0 & \text{for } x = 11, \ldots, 20 \end{array} \right. ]$ ,
 
-where $𝞵$ = 8 and $𝝈$ = 3.
+where $𝞵$ = 6 and $𝝈$ = 2.
 
-The infection probability is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of anthers getting infected on any given day when a **condition for infection** is met.
+The probability of the infection of the flowers is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of flowers getting infected on any given day when a **condition for infection** is met.
 
 $INF=0.001029×exp(0.1957×T)$
 
-There are mainly three conditions for infection, similar to what is described in the article:
+There are three conditions for an infection event, similar to what is described in the article [@delponte2005]:
 
 -   **Continuous 2-day Rain & High Humidity**: There should be rain (\> 0.5 mm) and the average humidity over two consecutive days should be high (\> 80%).
 
@@ -579,10 +579,10 @@ wooster <- get_power(
   dates = c("2015-01-01", "2023-09-30"),
   temporal_api = "daily"
 )
-head(wooster)
+wooster
 ```
 
-Now that we have the data, we can simulate FHB for a specific date.
+Now that we have the data, we can simulate FHB for a specific start flowering date.
 
 ```{r}
 start_date <- "2018-05-15"
@@ -590,7 +590,7 @@ result <- simulate_FHB(start_date, wooster)
 head(result, 15)
 ```
 
-Finally we can plot the dynamics of the flowering and the percent of infected spikelets during the period of 25 days after first flowers appear in the field.
+Finally we can plot the dynamics of the flowering and the percent of infected spikelets during the period of 20 days after first flowers appear in the field.
 
 ```{r}
 # Plotting the data
@@ -628,7 +628,7 @@ library(patchwork)
 p1 / p2
 ```
 
-We can apply the function for a series of days and see how the percent of infected spikelets fluctuates over time considering each day as a starting day of flowering day.
+As in the previous section, we can apply the function for a series of days and see how the percent of infected spikelets fluctuates over time considering each day as a starting day for flowering.
 
 ```{r}
 # Vector of dates

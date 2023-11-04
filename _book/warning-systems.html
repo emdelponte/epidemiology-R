@@ -429,7 +429,7 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
   <li><a href="#infection-risk-during-defined-periods" id="toc-infection-risk-during-defined-periods" class="nav-link" data-scroll-target="#infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection risk during defined periods</a>
   <ul>
   <li><a href="#logistic-regression-ohio-fhb-models" id="toc-logistic-regression-ohio-fhb-models" class="nav-link" data-scroll-target="#logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</a></li>
-  <li><a href="#mechanistic-models-fhb-brazilian-model" id="toc-mechanistic-models-fhb-brazilian-model" class="nav-link" data-scroll-target="#mechanistic-models-fhb-brazilian-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: FHB Brazilian model</a></li>
+  <li><a href="#mechanistic-models-brazilian-fhb-model" id="toc-mechanistic-models-brazilian-fhb-model" class="nav-link" data-scroll-target="#mechanistic-models-brazilian-fhb-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: Brazilian FHB model</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -532,7 +532,7 @@ When is a warning system useful?
 <div class="callout-body-container callout-body">
 <p>For operational and economical use, warning systems must fulfill four criteria to be practical. A more comprehensive discussion on this topic is presented in <span class="citation" data-cites="Campbell1990">(<a href="references.html#ref-Campbell1990" role="doc-biblioref">Campbell and Madden. L. 1990</a>)</span>:</p>
 <ol type="1">
-<li><p>They should target diseases that are prevalent and economically damaging, affecting yield or quality. Merely having severe economic consequences doesn’t guarantee a system’s practical use or attention from growers and advisors.</p></li>
+<li><p>The targeted disease must be economically damaging to crop yield or quality. Minor diseases with negligible effects on yield or quality are unlikely to gain attention from growers and advisors.</p></li>
 <li><p>The diseases should exhibit variability across seasons in terms of onset, epidemic growth rate, severity, or another aspect, creating uncertainty in decision-making. Diseases with predictable patterns provide minimal information and little management advantage, reducing the relevance of warning systems.</p></li>
 <li><p>Users should be capable of acting on the system’s alerts, necessitating available and effective control measures and sufficient response time to prevent crop damage. Systems are unhelpful if practitioners can’t adapt their strategies promptly.</p></li>
 <li><p>The system must encompass comprehensive knowledge about the disease, synthesizing accurate risk estimates. Understanding the specific interactions between host, pathogen, and environment is crucial for the system’s effectiveness and relevance.</p></li>
@@ -951,13 +951,13 @@ When is a warning system useful?
 </section>
 <section id="infection-risk-during-defined-periods" class="level3" data-number="18.4.3">
 <h3 data-number="18.4.3" class="anchored" data-anchor-id="infection-risk-during-defined-periods"><span class="header-section-number">18.4.3</span> Infection risk during defined periods</h3>
-<p>Many diseases like late blight of potatoes and early blight of tomatoes (but also others such as apple scab), as seen in the previous section, require continuous (season long) risk assessment. However, some warning systems assess risk at only one time point, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single disease warning is issued, such as the risk of disease occurrence at a intensity above a threshold (e.g.&nbsp;incidence &gt; 30%).</p>
-<p>These systems use statistical models (risk algorithms) to predict probabilities of an event, usually for a binary response, based on weather variables that occur over specific periods of time, usually when infections take place. For example, Fusarium head blight (FHB, caused by <em>Fusarium graminearum</em>) infection depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of <em>Sclerotinia</em> (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment<span class="citation" data-cites="willbur2018">(<a href="references.html#ref-willbur2018" role="doc-biblioref">Willbur et al. 2018</a>)</span>. Such events of binary nature can be predicted using algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc. A commonly used algorithm is the logistic regression model which deals with binary classification.</p>
+<p>Many diseases like late blight of potatoes and early blight of tomatoes, as seen in the previous section, require continuous (season long) risk monitoring to indicate multiple fungicide sprays. However, some warning systems assess risk at only at one time points, such as those crops that are most vulnerable to diseases during specific growth phases. In these cases, a single warning is issued, such as the risk of disease occurrence or occurrence at a intensity above a threshold (e.g.&nbsp;incidence &gt; 30%).</p>
+<p>Some of these systems use statistical (risk algorithms) to predict probabilities of occurrence of the event (yes/no situation) based on weather variables that occur over specific periods of time, usually when primary infections take place. For example, Fusarium head blight (FHB, caused by <em>Fusarium graminearum</em>) disease depends on weather events that occur around the flowering stage, when the crop is most vulnerable. This is also the case of <em>Sclerotinia</em> (white mold) diseases that affect flowers and the presence/absence of apothecia is key for risk assessment<span class="citation" data-cites="willbur2018">(<a href="references.html#ref-willbur2018" role="doc-biblioref">Willbur et al. 2018</a>)</span>. Such events of binary nature can be predicted using risk algorithms that consider weather variables, cultivar susceptibility, soil moisture, etc. A commonly used algorithm is the logistic regression model which deals with a binary classification.</p>
 <section id="logistic-regression-ohio-fhb-models" class="level4" data-number="18.4.3.1">
 <h4 data-number="18.4.3.1" class="anchored" data-anchor-id="logistic-regression-ohio-fhb-models"><span class="header-section-number">18.4.3.1</span> Logistic regression: Ohio FHB models</h4>
 <p>FHB risk models were developed in the United States in the early 2000s to predict the risk of an epidemic, or when disease severity in the field was greater than 10% <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. In the paper, the epidemic cases were classified as 0 and 1, according to that threshold, and several logistic regression models were fitted to the data using a summary of weather-related variables from two defined periods: seven days prior to flowering date and 10 days following flowering date (50% of wheat heads with anthers).</p>
-<p>Among several models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The variable selected was a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total hours, within the 10-day period, when the temperature (T) was &gt;=15 and &lt;= 30 <sup>o</sup>C and relative humidity (RH) was &gt;90%.</p>
-<p>Let’s implement this model in R and calculate the probability of infection. Again, we need to download hourly data from NASA Power project for a period of three years. Let’s work with data from Wooster, OH, United States.</p>
+<p>Among several models, the authors found that a single variable model (model A) exhibited a good accuracy (0.83). The selected variable consisted of a combination of temperature and humidity for the 10-day period after flowering. Named TRH9010, it corresponds to the total number of hours, within the 10-day post-flowering period, when the temperature (T) was &gt;=15 and &lt;= 30 <sup>o</sup>C and relative humidity (RH) was &gt;90%.</p>
+<p>Let’s implement this model in R and calculate the probability of infection. As usual, we first need to download hourly data from NASA Power project for a period of three years. Let’s work with data from Wooster, OH, United States.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-10_709a8cb7d16d86e9ce8f2c89eb63f8eb">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
@@ -992,7 +992,7 @@ When is a warning system useful?
 6 -81.9  40.8  2020     1     1     0  86.4 -3.55        0.01</code></pre>
 </div>
 </div>
-<p>We can then create a function named <code>calculate_TRH9010()</code>. This function calculates the number of hours that meet the specified condition (i.e., hours when 15 &lt;= T &lt;= 30 &amp; RH &gt; 90), the probability (p) of infection, and the classification of the epidemic (epi) as 0 or 1 based on a defined threshold for p (0.36 in this case) <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. The function’s arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It’s important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.</p>
+<p>We can then create a function named <code>calculate_TRH9010()</code>. This function calculates the number of hours when specified condition is met (i.e., hours when 15 &lt;= T &lt;= 30 &amp; RH &gt; 90), the probability (<em>p</em>) of infection, and the classification of the epidemic (<em>epi</em>) as 0 or 1 based on a defined threshold for p (0.36 in this case) <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. The function’s arguments are the weather data frame, YEAR, MO, and DY, allowing us to estimate the risk for a specific day (the flowering date) within the downloaded period. It’s important to note that, in the original model, the variables were normalized (its value divided by the maximum observed value). Thus, the hour count for TRH9010 should be divided by the constant 136.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-11_fae89e0a22a30dc7715317c877ac32fe">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>calculate_TRH9010 <span class="ot">&lt;-</span> <span class="cf">function</span>(data, YEAR, MO, DY){</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  start_row <span class="ot">&lt;-</span> <span class="fu">which</span>(data<span class="sc">$</span>YEAR <span class="sc">==</span> YEAR <span class="sc">&amp;</span> data<span class="sc">$</span>MO <span class="sc">==</span> MO <span class="sc">&amp;</span> data<span class="sc">$</span>DY <span class="sc">==</span> DY <span class="sc">&amp;</span> data<span class="sc">$</span>HR <span class="sc">==</span> <span class="dv">0</span>)[<span class="dv">1</span>] </span>
@@ -1008,7 +1008,7 @@ When is a warning system useful?
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">list</span>(<span class="at">TRH9010 =</span> total_hours, <span class="at">p =</span> p, <span class="at">epi =</span> epi))</span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now we apply the function for the 1st of June 2021. The output is the hour count, the probability and the epidemic classification.</p>
+<p>Now we apply the function for the 1st of June 2021 as flowering date. The output is the hour count, the probability and the epidemic classification.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-12_e4d6d9e927fa536c493d950845518269">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">calculate_TRH9010</span>(weather, <span class="at">YEAR =</span> <span class="dv">2021</span>, <span class="at">MO =</span> <span class="dv">6</span>, <span class="at">DY =</span> <span class="dv">1</span>)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1023,7 +1023,7 @@ $epi
 [1] 1</code></pre>
 </div>
 </div>
-<p>We may want to apply the function for a series of days within a given month so that we can generate a series of probabilities. Let’s write code to simulate 30 days in June using a <code>for()</code> loop which will store the results in a list, but we can further transform to a dataframe using <code>map_dfr()</code> function.</p>
+<p>We may want to apply the function for a series of days within a given month. Let’s write code to predict the risk for the 15 days of June using a <code>for()</code> loop which will store the results in a list, but we can further transform to a dataframe using <code>map_dfr()</code> function.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-13_b08f12ab6188bce6672dcd4d2a32f053">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>num_days <span class="ot">&lt;-</span> <span class="dv">15</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>all_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
@@ -1041,7 +1041,7 @@ $epi
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>epi <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(df<span class="sc">$</span>epi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Finally we plot the results.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-14_b6087fc7c47ffcfd7a50d79e5d27853c">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-14_697c219d55c3358905be2f0f41b65cbb">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(day, p, <span class="at">fill =</span> <span class="fu">factor</span>(epi))) <span class="sc">+</span> </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">n.breaks =</span> <span class="dv">15</span>)<span class="sc">+</span></span>
@@ -1052,7 +1052,7 @@ $epi
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>)<span class="sc">+</span></span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Wheat flowering day in june 2021"</span>, <span class="at">y =</span> <span class="st">"Risk probability"</span>,</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">fill =</span> <span class="st">"Epidemic classification"</span>,</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Infection risk by Ohio (TRH9010) FHB model"</span>,</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"FHB risk by Ohio (TRH9010) model"</span>,</span>
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Location: Wooster, Ohio"</span>,</span>
 <span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Model source: De Wolf et al. (2002)"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -1060,24 +1060,24 @@ $epi
 </div>
 </div>
 </section>
-<section id="mechanistic-models-fhb-brazilian-model" class="level4" data-number="18.4.3.2">
-<h4 data-number="18.4.3.2" class="anchored" data-anchor-id="mechanistic-models-fhb-brazilian-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: FHB Brazilian model</h4>
-<p>Different from the previous approaches where statistical models are fitted to data, some models are called mechanistic (or process-based) when based on the processes of the disease cycle and factors that affect theses process. These can be quite complex and sophisticated and there are numerous examples in the literature <span class="citation" data-cites="salotti2023 rossi2014 salotti2022 caffi2010 caffi2007">(<a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>; <a href="references.html#ref-rossi2014" role="doc-biblioref">Rossi et al. 2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-caffi2010" role="doc-biblioref">Caffi et al. 2010</a>, <a href="references.html#ref-caffi2007" role="doc-biblioref">2007</a>)</span>.</p>
-<p>One example is a mechanistic model for FHB developed in Brazil that is based on the dynamics of flowering, the most vulnerable phase of the wheat crop <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span>. The original model integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a “spore cloud” and a proportion of infected flowers - all these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.</p>
-<p>A modified, simplified version of the model that takes into account only the flowering process and weather that drives infection, was written in R and is presented here for illustration.</p>
+<section id="mechanistic-models-brazilian-fhb-model" class="level4" data-number="18.4.3.2">
+<h4 data-number="18.4.3.2" class="anchored" data-anchor-id="mechanistic-models-brazilian-fhb-model"><span class="header-section-number">18.4.3.2</span> Mechanistic models: Brazilian FHB model</h4>
+<p>Different from the previous approach, where statistical models are fitted to data, some models are called mechanistic, dynamic or process-based. These are designed based on the knowledge of the processes of the disease cycle and the factors that affect these processes <span class="citation" data-cites="gonzález-domínguez2023">(<a href="references.html#ref-gonzález-domínguez2023" role="doc-biblioref">González-Domínguez et al. 2023</a>)</span>. These usually operate in a hourly to daily basis and can be quite complex and sophisticated with numerous examples being found in the literature <span class="citation" data-cites="salotti2023 rossi2014 salotti2022 caffi2010 caffi2007">(<a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>; <a href="references.html#ref-rossi2014" role="doc-biblioref">Rossi et al. 2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-caffi2010" role="doc-biblioref">Caffi et al. 2010</a>, <a href="references.html#ref-caffi2007" role="doc-biblioref">2007</a>)</span>.</p>
+<p>One example is a mechanistic model for FHB developed in Brazil. In its core, the model is based on the daily simulation of the flowering process, the most vulnerable phase of the wheat crop, and events that contribute to infect the flowers. The original model <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span> integrates several sub models that estimate the daily proportion of flowers, a density of inoculum in a “spore cloud” and a proportion of infected flowers - all these variables being driven by daily variables of temperature and wetness variables such as rainfall and relative humidity.</p>
+<p>A modified, simplified version of the model that takes into account only the flowering process and weather-variables that drives infection, was written in R and is presented here for illustration.</p>
 <div id="fig-fhbdiagram" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="imgs/FHB_diagram.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;18.7: Flow diagram for a simplified version of a mechanistic Fusarium head blight model that takes into account the amount of flowers on each day which will be infected depending on rules that define a wet period and temperature</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;18.7: A simplified version of a mechanistic Fusarium head blight model that takes into account the amount of flowers on each day which will be infected depending on rules that define a wet period and temperature during the wet period.</figcaption>
 </figure>
 </div>
-<p>The function <code>simulate_FHB()</code> requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 25 days.</p>
+<p>The function <code>simulate_FHB()</code> requires a starting date and weather data frame (adapted here to use NASA Power data set) to run a simulation during 20 days.</p>
 <p>Among the several simplifications, which were based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 10 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 10th day.</p>
-<p><span class="math inline">\([ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) &amp; \text{for } x = 1, \ldots, 20 \\ 0 &amp; \text{for } x = 21, \ldots, 30 \end{array} \right. ]\)</span> ,</p>
-<p>where <span class="math inline">\(𝞵\)</span> = 8 and <span class="math inline">\(𝝈\)</span> = 3.</p>
-<p>The infection probability is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of anthers getting infected on any given day when a <strong>condition for infection</strong> is met.</p>
+<p><span class="math inline">\([ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) &amp; \text{for } x = 1, \ldots, 10 \\ 0 &amp; \text{for } x = 11, \ldots, 20 \end{array} \right. ]\)</span> ,</p>
+<p>where <span class="math inline">\(𝞵\)</span> = 6 and <span class="math inline">\(𝝈\)</span> = 2.</p>
+<p>The probability of the infection of the flowers is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of flowers getting infected on any given day when a <strong>condition for infection</strong> is met.</p>
 <p><span class="math inline">\(INF=0.001029×exp(0.1957×T)\)</span></p>
-<p>There are mainly three conditions for infection, similar to what is described in the article:</p>
+<p>There are three conditions for an infection event, similar to what is described in the article <span class="citation" data-cites="delponte2005">(<a href="references.html#ref-delponte2005" role="doc-biblioref">Del Ponte et al. 2005</a>)</span>:</p>
 <ul>
 <li><p><strong>Continuous 2-day Rain &amp; High Humidity</strong>: There should be rain (&gt; 0.5 mm) and the average humidity over two consecutive days should be high (&gt; 80%).</p></li>
 <li><p><strong>Rain Followed by Dry Day &amp; High Humidity</strong>: Rain and high humidity (&gt; 80%), followed by a day without rain but still with high humidity (&gt; 85%).</p></li>
@@ -1148,7 +1148,7 @@ $epi
 <span id="cb23-60"><a href="#cb23-60" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Let’s download the data again for the location of Wooster, Ohio during a 9-year period.</p>
-<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-16_3d1105ec84db0b281b6f168ca91c4746">
+<div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-16_5f5d6770351bd0138ebef12323b12b48">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>wooster <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">community =</span> <span class="st">"ag"</span>,</span>
@@ -1157,7 +1157,7 @@ $epi
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2015-01-01"</span>, <span class="st">"2023-09-30"</span>),</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">temporal_api =</span> <span class="st">"daily"</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wooster)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>wooster</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>NASA/POWER CERES/MERRA2 Native Resolution Daily Data  
  Dates (month/day/year): 01/01/2015 through 09/30/2023  
@@ -1171,18 +1171,23 @@ $epi
  T2M             MERRA-2 Temperature at 2 Meters (C) ;
  PRECTOTCORR     MERRA-2 Precipitation Corrected (mm/day)  
  
-# A tibble: 6 × 10
-    LON   LAT  YEAR    MM    DD   DOY YYYYMMDD    RH2M   T2M PRECTOTCORR
-  &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;
-1 -81.9  40.8  2015     1     1     1 2015-01-01  67.4 -5.04        0   
-2 -81.9  40.8  2015     1     2     2 2015-01-02  79.8 -2.1         0   
-3 -81.9  40.8  2015     1     3     3 2015-01-03  94    1.96       25.7 
-4 -81.9  40.8  2015     1     4     4 2015-01-04  88.9  3.89        8.65
-5 -81.9  40.8  2015     1     5     5 2015-01-05  63.1 -9.22        0.54
-6 -81.9  40.8  2015     1     6     6 2015-01-06  76.6 -9.92        2.3 </code></pre>
+# A tibble: 3,195 × 10
+     LON   LAT  YEAR    MM    DD   DOY YYYYMMDD    RH2M    T2M PRECTOTCORR
+   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;date&gt;     &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;
+ 1 -81.9  40.8  2015     1     1     1 2015-01-01  67.4  -5.04        0   
+ 2 -81.9  40.8  2015     1     2     2 2015-01-02  79.8  -2.1         0   
+ 3 -81.9  40.8  2015     1     3     3 2015-01-03  94     1.96       25.7 
+ 4 -81.9  40.8  2015     1     4     4 2015-01-04  88.9   3.89        8.65
+ 5 -81.9  40.8  2015     1     5     5 2015-01-05  63.1  -9.22        0.54
+ 6 -81.9  40.8  2015     1     6     6 2015-01-06  76.6  -9.92        2.3 
+ 7 -81.9  40.8  2015     1     7     7 2015-01-07  70.9 -12.3         0.58
+ 8 -81.9  40.8  2015     1     8     8 2015-01-08  72.2 -13.7         0.54
+ 9 -81.9  40.8  2015     1     9     9 2015-01-09  75.6 -10.8         1.41
+10 -81.9  40.8  2015     1    10    10 2015-01-10  78.6 -14.2         0.02
+# ℹ 3,185 more rows</code></pre>
 </div>
 </div>
-<p>Now that we have the data, we can simulate FHB for a specific date.</p>
+<p>Now that we have the data, we can simulate FHB for a specific start flowering date.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-17_3ea81d195ef8f489f1c14a4a5738be84">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>start_date <span class="ot">&lt;-</span> <span class="st">"2018-05-15"</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">simulate_FHB</span>(start_date, wooster)</span>
@@ -1206,7 +1211,7 @@ $epi
 15 2018-05-29 24.91  0.01 80.69   0.000        0.000           0.069</code></pre>
 </div>
 </div>
-<p>Finally we can plot the dynamics of the flowering and the percent of infected spikelets during the period of 25 days after first flowers appear in the field.</p>
+<p>Finally we can plot the dynamics of the flowering and the percent of infected spikelets during the period of 20 days after first flowers appear in the field.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-18_c368c4a9e7305d276e194198d98cd30f">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the data</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -1242,7 +1247,7 @@ $epi
 <p><img src="warning-systems_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-<p>We can apply the function for a series of days and see how the percent of infected spikelets fluctuates over time considering each day as a starting day of flowering day.</p>
+<p>As in the previous section, we can apply the function for a series of days and see how the percent of infected spikelets fluctuates over time considering each day as a starting day for flowering.</p>
 <div class="cell" data-hash="warning-systems_cache/html/unnamed-chunk-21_8d1b7e345dab4fa0fb92e8631192e746">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of dates</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>dates_vector <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">as.Date</span>(<span class="st">"2019-05-15"</span>), <span class="fu">as.Date</span>(<span class="st">"2019-05-30"</span>), <span class="at">by=</span><span class="st">"days"</span>)</span>
@@ -1294,6 +1299,9 @@ De Wolf, E. D., Madden, L. V., and Lipps, P. E. 2003. Risk Assessment Models for
 </div>
 <div id="ref-delponte2005" class="csl-entry" role="listitem">
 Del Ponte, E. M., Fernandes, J. M. C., and Pavan, W. 2005. A risk infection simulation model for fusarium head blight of wheat. Fitopatologia Brasileira. 30:634–642 Available at: <a href="http://dx.doi.org/10.1590/S0100-41582005000600011">http://dx.doi.org/10.1590/S0100-41582005000600011</a>.
+</div>
+<div id="ref-gonzález-domínguez2023" class="csl-entry" role="listitem">
+González-Domínguez, E., Caffi, T., Rossi, V., Salotti, I., and Fedele, G. 2023. Plant Disease Models and Forecasting: Changes in Principles and Applications over the Last 50 Years. Phytopathology®. 113:678–693 Available at: <a href="http://dx.doi.org/10.1094/phyto-10-22-0362-kd">http://dx.doi.org/10.1094/phyto-10-22-0362-kd</a>.
 </div>
 <div id="ref-krause1975" class="csl-entry" role="listitem">
 Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology. 13:31–47 Available at: <a href="http://dx.doi.org/10.1146/annurev.py.13.090175.000335">http://dx.doi.org/10.1146/annurev.py.13.090175.000335</a>.
