@@ -292,7 +292,7 @@ For educational purposes, an interactive app was developed using R Shiny. This [
 
 To utilize the system, users should select the model, input the latitude and longitude (or choose a location from the map), and specify the time period for the simulation, such as from plant emergence to harvest. The weather data for this simulation is sourced from the NASA Power project via the {nasapower} R package.
 
-[![Screenshot of a web-based warning system for plant diseases based on Wallin\'s and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
+[![Screenshot of a web-based warning system for plant diseases based on Wallin's and FAST rules](imgs/ws_systems.png){#fig-ws_systems fig-align="center"}](https://epidemiologiaufv.shinyapps.io/warning-systems/)
 
 ### Infection risk during defined periods
 
@@ -394,14 +394,7 @@ A modified, simplified version of the model that takes into account only the flo
 
 Among the simplifications, based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 20 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 20th day.
 
-$[
-\text{antherproportions} = \left\{ 
-\begin{array}{ll}
-\frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 20 \\
-0 & \text{for } x = 21, \ldots, 30
-\end{array} 
-\right.
-]$ ,
+$[ \text{antherproportions} = \left\{ \begin{array}{ll} \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right) & \text{for } x = 1, \ldots, 20 \\ 0 & \text{for } x = 21, \ldots, 30 \end{array} \right. ]$ ,
 
 where $𝞵$ = 8 and $𝝈$ = 3.
 
@@ -411,11 +404,11 @@ $INF=0.001029×exp(0.1957×T)$
 
 There are mainly three conditions for infection, similar to what is described in the article:
 
--   **Continuous 2-day Rain & High Humidity**: There should be rain (> 0.5 mm) and the average humidity over two consecutive days should be high (\> 80%).
+-   **Continuous 2-day Rain & High Humidity**: There should be rain (\> 0.5 mm) and the average humidity over two consecutive days should be high (\> 80%).
 
--   **Rain Followed by Dry Day & High Humidity**: Rain and high humidity (> 80%), followed by a day without rain but still with high humidity (\> 85%).
+-   **Rain Followed by Dry Day & High Humidity**: Rain and high humidity (\> 80%), followed by a day without rain but still with high humidity (\> 85%).
 
--   **Dry Day & High Humidity Followed by Rain**: A day without rain but with high humidity (\> 85%), followed by a day with both rain and high humidity (> 80%).
+-   **Dry Day & High Humidity Followed by Rain**: A day without rain but with high humidity (\> 85%), followed by a day with both rain and high humidity (\> 80%).
 
 Infection then occurs when any of the above conditions are met. In this simpler version (without the inoculum factor), the proportion of infected anthers is given by
 
@@ -494,7 +487,7 @@ wooster <- get_power(
   dates = c("2015-01-01", "2023-09-30"),
   temporal_api = "daily"
 )
-head(weather)
+head(wooster)
 ```
 
 Now that we have the data, we can simulate for a specific date.
@@ -542,10 +535,7 @@ library(patchwork)
 p1 / p2
 ```
 
-
-
-
-We can apply the function for a series of days and see how the final value of infected flowers behaves over time, considering each day as a starting flowering day. 
+We can apply the function for a series of days and see how the final value of infected flowers behaves over time, considering each day as a starting flowering day.
 
 ```{r}
 # Vector of dates
