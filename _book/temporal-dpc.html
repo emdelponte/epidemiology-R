@@ -474,7 +474,7 @@ Figure&nbsp;8.1: Five main processes of the disease cycle
 </div>
 </div>
 <p>Epidemiologists are generally interested in determining the length of the incubation, latent, and infectious periods as influenced by factors related to the host, pathogen, or environment. This is relevant because the longer it takes for the completion of the incubation and latent periods, the lower the potential number of repeated cycles. In summary, a single “infection cycle” represents all events that occur from infection to dispersal, and this occurs only once for many diseases, while for others there may be multiple cycles, which are defined as an “infection chain.”</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-2_0b8f4ab510d44c759ee9fb52b7e9806f">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -529,12 +529,12 @@ Figure&nbsp;8.2: Three time-related epidemiological periods and their relations 
 <p>A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (<em>y</em>) in the host population is assessed sequentially in time (<em>t</em>).</p>
 <p>A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a data frame in R for a single DPC and make a plot using ggplot. By convention we use <code>t</code> for time and <code>y</code> for disease intensity, expressed in percentage (0 to 100%).</p>
 <p>Firstly, let’s load the essential R packages and set up the environment.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-3_6fbd999f8a0be5344b00a2c161062921">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># essential packages </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">theme_set</span>(<span class="fu">theme_r4pde</span>()) <span class="co"># set global theme</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There are several ways to create a data frame in R. I like to use the <code>tribble</code> function as below. The entered data will be assigned to a dataframe called <code>dpc</code>.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-4_13ef61496aff1d9ea76ef050793b2f77">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dpc <span class="ot">&lt;-</span> </span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tribble</span>(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>t,  <span class="sc">~</span>y, </span>
@@ -549,7 +549,7 @@ Figure&nbsp;8.2: Three time-related epidemiological periods and their relations 
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now the plot</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-5_fed5962e48a957450e61d8a924389c91">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dpc1 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()<span class="sc">+</span></span>
@@ -573,9 +573,9 @@ Figure&nbsp;8.3: A typical disease progress curve for an epidemic that reaches t
 </section>
 <section id="epidemic-classification" class="level2" data-number="8.3">
 <h2 data-number="8.3" class="anchored" data-anchor-id="epidemic-classification"><span class="header-section-number">8.3</span> Epidemic classification</h2>
-<p>Vanderplank analysed the shapes of great number of epidemic curves and classified the epidemics into two basic types: monocyclic or polycyclic <span class="citation" data-cites="plantdi1963">(<a href="references.html#ref-plantdi1963" role="doc-biblioref">Vanderplank 1963</a>)</span>. In <strong>monocyclic</strong> epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidemics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Tipically, the progress curves for monocyclic epidemics have a saturation type shape.</p>
-<p>Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a <strong>polycyclic</strong> epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle. These epidemics most commonly present a sigmoid shape <a href="#fig-cycles" class="quarto-xref">Figure&nbsp;<span>8.4</span></a>.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-6_479ca9289678739fa9dae8884959348b">
+<p>Vanderplank analysed the shapes of great number of epidemic curves and classified the epidemics into two basic types: monocyclic or polycyclic <span class="citation" data-cites="plantdi1963">(<a href="references.html#ref-plantdi1963" role="doc-biblioref">Vanderplank 1963</a>)</span>. In <strong>monocyclic</strong> epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidemics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Tipically, the progress curves for monocyclic epidemics have a saturation type shape. An example of a monocyclic epidemic is the disease known as wheat smut caused by <em>Tilletia caries</em>. In this disease, although two types of spores are produced during a single cycle (teliospores and basidiospores), no additional infection cycles occur within the same growing season.</p>
+<p>Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a <strong>polycyclic</strong> epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle. These epidemics most commonly present a sigmoid shape <a href="#fig-cycles" class="quarto-xref">Figure&nbsp;<span>8.4</span></a>. An example of a polycyclic epidemic is soybean rust as it undergoes repeated infection cycles with uredospores on soybean.</p>
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
@@ -636,7 +636,7 @@ Figure&nbsp;8.4: Hypothetical curves for monocyclic (left) and polycyclic (right
 <li>Area under the area under the disease progress curve (AUDPC).</li>
 </ul>
 <p>Let’s visualize the AUDPC in the same plot that we produced above.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-7_4f9b1a2cc59fd0f5b6805fd42d10c8a3">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>dpc2 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Assessment time (days)"</span>,</span>
@@ -659,7 +659,7 @@ Figure&nbsp;8.5: Representation of the area under the disease progress curve
 </figure>
 </div>
 <p>The AUDPC summarizes the “total measure of disease stress” and is largely used to compare epidemics <span class="citation" data-cites="jeger2001">(<a href="references.html#ref-jeger2001" role="doc-biblioref">Jeger and Viljanen-Rollinson 2001</a>)</span>. The most common approach to calculate AUDPC is the trapezoidal method, which splits the disease progress curves into a series of rectangles, calculating the area of each of them and then summing the areas. Let’s extend the plot code to show those rectangles using the <code>annotate</code> function.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-8_f01c0e2dfc52ac996de5f07f97bc7941">
+<div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dpc3 <span class="ot">&lt;-</span> dpc <span class="sc">|&gt;</span></span>
@@ -707,7 +707,7 @@ Figure&nbsp;8.6: Representation of the area under the disease progress curve cal
 </figure>
 </div>
 <p>In R, we can obtain the AUDPC for the DPC we created earlier using the <code>AUDPC</code> function offered by the <em>epifitter</em> package. Because we are using the percent data, we need to set the argument <code>y_proportion = FALSE</code>. The function returns the absolute AUDPC. If one is interested in relative AUDPC, the argument <code>type</code> should be set to <code>"relative"</code>. There is also the alternative to AUDPC, the area under the disease progress stairs (AUDPS) <span class="citation" data-cites="simko2012">(<a href="references.html#ref-simko2012" role="doc-biblioref">Simko and Piepho 2012</a>)</span>.</p>
-<div class="cell" data-hash="temporal-dpc_cache/html/unnamed-chunk-9_72fed800fb79405b200c628a34190145">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(epifitter)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">AUDPC</span>(dpc<span class="sc">$</span>t, dpc<span class="sc">$</span>y, </span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">y_proportion =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
