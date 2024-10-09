@@ -1,5 +1,7 @@
 ---
-title: "Image analysis"
+title: "Measuring foliar severity"
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## The actual severity measure
@@ -50,19 +52,15 @@ An alternative way to set the palettes is to use the `pick_palette()` function. 
 
 ```{r}
 #| eval: false
-img <- image_import("imgs/originals/img5.png")
-b <- pick_palette(img)
+img <- image_import("imgs/originals/img46.png")
+
+b <- pick_palette(img, viewer = "mapview")
 
 ```
 
-The original image is displayed and the user needs to click on the background colors to select the pixels. A message will be displayed as follows:
+The original image is displayed and the user needs to select the place marker. It is possible to zoom in the image. After placing the markers via clicking on the background colors multiple times, the user should click on "Done".
 
-> Use the first mouse button to pick up points in the plot.
-Press Esc to exit.
-
-![Soybean rust leaf with small red dots at the upper leaf portion that indicate which colors were selected for the background](imgs/sbr_pick_palette.png){#fig_pick_palette fig-align="center" width="339"}
-
-After pressing ESC, the image palette for the background is constructed and can be displayed.
+![Soybean leaf displaying symptoms of soybean rust](imgs/sbr_pick_palette.png){#fig_pick_palette fig-align="center"}
 
 ```{r}
 #| eval: false
@@ -76,10 +74,10 @@ Now, we can proceed and pick the colors for the other categories following the s
 ```{r}
 #| eval: false
 # Symptoms
-s <- pick_palette(img)
+s <- pick_palette(img, viewer = "mapview")
 
 # healthy
-h <- pick_palette(img)
+h <- pick_palette(img, viewer = "mapview")
 ```
 
 ## Measuring severity
@@ -245,9 +243,3 @@ ccc$rho.c
 ```
 
 In conclusion, as mentioned earlier, the most critical step is defining the reference image palettes. A few preliminary runs may be necessary for some images to ensure that the segmentation is being carried out correctly, based on visual judgment. This is not different from any other color-threshold based methods, where the choices made by the user impact the final result and contribute to variation among assessors. The drawbacks are the same as those encountered with direct competitors, namely, the need for images to be taken under uniform and controlled conditions, especially with a contrasting background.
-
-## Creating palettes interactively
-
-Pliman offers another function `measure_disease_iter()` which allows the user to pick up samples in the image to create the color palettes for each required class (background, healthy and symptoms). Check the video below.
-
-{{< video https://www.youtube.com/embed/fI_Mm-GlPyw >}}
