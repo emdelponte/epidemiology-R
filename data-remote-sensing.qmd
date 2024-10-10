@@ -26,7 +26,7 @@ Optical remote sensing makes use of the radiation reflected by a surface in the 
 
 ![Optical remote sensing via spaceborne sensors, field spectroscopy and laboratory spectroscopy (Adapted from [https://pages.cms.hu-berlin.de/EOL/geo_rs/index.htm](https://pages.cms.hu-berlin.de/EOL/geo_rs/)) .](imgs/RS1.png){#fig-RS1}
 
-The proportion of the radiation reflected by a surface depends on the surface’s spectral reflection, absorption and transmission properties and varies with wavelength [@fig-RS2]. These spectral properties in turn depend on the surface’s physical and chemical constituents [@fig-RS2]. Measuring the reflected radiation hence allows us to draw conclusions on a surface’s characteristic, which is the basic principle behind optical remote sensing.
+The proportion of the radiation reflected by a surface depends on the surface's spectral reflection, absorption and transmission properties and varies with wavelength [@fig-RS2]. These spectral properties in turn depend on the surface's physical and chemical constituents [@fig-RS2]. Measuring the reflected radiation hence allows us to draw conclusions on a surface's characteristic, which is the basic principle behind optical remote sensing.
 
 ![Reflection, absortion and transmission by a surface (left). Spectral reflectance profile of a vegetation with major factors determining the reflection (right). Source: <https://pages.cms.hu-berlin.de/EOL/geo_rs/>](imgs/RS-2.jpg){#fig-RS2}
 
@@ -70,7 +70,7 @@ One popular use of remote sensing is in diagnosis and monitoring of plant *respo
 
 ### Optical methods for measuring crop disease
 
-There are a variety of optical sensors for the assessment of plant diseases. Sensors can be based only on the visible spectrum (400-700 nm) or on the visible and/or infrared spectrum (700 nm - 1mm). The latter may include near-infrared (NIR) (0.75-1.4 $μm$), short wavelength infrared (SWIR) (1.4–3 $μm$), medium wavelength infrared (MWIR) (3-8 $μm$), or thermal infrared (8-15 $μm$) [@fig-RS8]. Sensors record either imaging or non imaging (i.e average) spectral radiance values which need to be converted to reflectance before conducting any crop disease monitoring task.
+There are a variety of optical sensors for the assessment of plant diseases. Sensors can be based only on the visible spectrum (400-700 nm) or on the visible and/or infrared spectrum (700 nm - 1mm). The latter may include near-infrared (NIR) (0.75-1.4 $μm$), short wavelength infrared (SWIR) (1.4--3 $μm$), medium wavelength infrared (MWIR) (3-8 $μm$), or thermal infrared (8-15 $μm$) [@fig-RS8]. Sensors record either imaging or non imaging (i.e average) spectral radiance values which need to be converted to reflectance before conducting any crop disease monitoring task.
 
 ![source: @delponte2024](imgs/RS-8.png){#fig-RS8}
 
@@ -80,7 +80,7 @@ In a recent chapter of Agrio's Plant Pathology, @delponte2024 highlights the imp
 
 ### Scopes of disease sensing
 
-The quantification of typical disease symptoms (disease severity) and assessment of leaves infected by several pathogens are relatively simple for imaging systems but may become a challenge for nonimaging sensors and sensors with inadequate spatial resolution [@oerke2020].
+The quantification of typical disease symptoms (disease severity) and assessment of leaves infected by several pathogens are relatively simple for imaging systems but may become a challenge for nonimaging sensors and sensors with inadequate spatial resolution [@oerke2020]. Systematic monitoring of a crop by remote sensors can allow farmers to take preventive actions if infections are detected early.  Remote sensing sensors & processing techniques need to be carefully selected to be capable of (a) detecting a deviation in the crop's health status brought about by pathogens, (b) identifying the disease, and (c) quantifying the severity of the disease.  Remote sensing can also be effectively used in (d) food quality control [@fig-RS10].
 
 ![Source: [@oerke2020]](imgs/RS-9.png){#fig-RS10}
 
@@ -130,3 +130,508 @@ Sensing of plants for precision disease control is done in large fields or green
 @kouadio2023 undertook a systematic quantitative literature review to summarize existing literature in UAV-based applications for plant disease detection and monitoring. Results reveal a global disparity in research on the topic, with Asian countries being the top contributing countries. World regions such as Oceania and Africa exhibit comparatively lesser representation. To date, research has largely focused on diseases affecting wheat, sugar beet, potato, maize, and grapevine [@fig-RS11]. Multispectral, red-green-blue, and hyperspectral sensors were most often used to detect and identify disease symptoms, with current trends pointing to approaches integrating multiple sensors and the use of machine learning and deep learning techniques. The authors suggest that future research should prioritize (i) development of cost-effective and user-friendly UAVs, (ii) integration with emerging agricultural technologies, (iii) improved data acquisition and processing efficiency (iv) diverse testing scenarios, and (v) ethical considerations through proper regulations.
 
 ![Source: @kouadio2023](imgs/RS-12.png){#fig-RS11 width="488"}
+
+## Disease identification
+
+This section illustrates the use of unmanned aerial vehicle (UAV) remote sensing imagery for identifying banana wilt disease. Fusarium wilt of banana, also known as "banana cancer", threatens banana production areas worldwide. Timely and accurate identification of Fusarium wilt disease is crucial for effective disease control and optimizing agricultural planting structure [@pegg2019].
+
+A common initial symptom of this disease is the appearance of a faint pale yellow streak at the base of the petiole of the oldest leaf. This is followed by leaf chlorosis which progresses from lower to upper leaves, wilting of leaves and longitudinal splitting of their bases. Pseudostem splitting of leaf bases is more common in young, rapidly growing plants [@pegg2019][@fig-RSfw].
+
+![Cavendish plant affected by Race 1 Foc (D. Peasley). Source: [@pegg2019]](https://www.frontiersin.org/files/Articles/469624/fpls-10-01395-HTML/image_m/fpls-10-01395-g006.jpg){#fig-RSfw fig-align="center"}
+
+@ye2020 made publicly available experimental data [@HuichunYE2023] on wilted banana plants collected in a banana plantation located in Long'an County, Guangxi (China). The data set includes UAV multispectral reflectance data and ground survey data on the incidence of banana wilt disease. The paper by @ye2020 reports that the banana Fusarium wilt disease can be easily identified using several vegetation indices (VIs) obtained from this data set. Tested VIs include green chlorophyll index (CIgreen), red-edge chlorophyll index (CIRE), normalized difference vegetation index (NDVI), and normalized difference red-edge index (NDRE). The dataset can be downloaded from [here](https://www.scidb.cn/en/detail?dataSetId=8d77781a1d754db4b8842708a69c2c22).
+
+### Software setup
+
+Let's start by cleaning up R memory:
+
+```{r}
+rm(list=ls())
+```
+
+Then, we need to install several packages (if they are not installed yet):
+
+```{r}
+list.of.packages <- c("terra", 
+                      "tidyterra", 
+                      "stars", 
+                      "sf", 
+                      "leaflet", 
+                      "leafem", 
+                      "dplyr", 
+                      "ggplot2", 
+                      "tidymodels")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+```
+
+Now, let's load all the required packages:
+
+```{r}
+#| warning: false
+#| message: false
+library(terra)
+library(tidyterra)
+library(stars)
+library(sf)
+library(leaflet)
+library(leafem)
+library(dplyr)
+library(ggplot2)
+library(tidymodels)
+```
+
+### Reading the dataset
+
+Next code supposes you have already downloaded the @HuichunYE2023 dataset and unzipped its content under the *data/banana_data* directory.
+
+### File formats
+
+Let's list the files under each subfolder:
+
+```{r}
+list.files("data/banana_data/1_UAV multispectral reflectance")
+```
+
+Note that the *.tif* file contains an orthophotomosaic of surface reflectance. It was created from UAV images taken with a *Micasense Red Edge M* camera which has five narrow spectral bands: Blue (465--485 nm), green (550--570 nm), red (653--673 nm), red edge (712--722 nm), and near-infrared (800--880 nm). We assume here that those images have been radiometrically and geometrically corrected.
+
+```{r}
+list.files("data/banana_data/2_Ground survey data of banana Fusarium wilt")
+```
+
+This is shapefile with 80 points where the plant health status was collected in same date as the images.
+
+```{r}
+list.files("data/banana_data/3_Boundary of banana planting region")
+```
+
+This is a shapefile with one polygon representing the boundary of the study area.
+
+### Read the orthomosaic and the ground data
+
+Now, let's read the orthomosaic using the *terra* package:
+
+```{r}
+# Open the tif 
+tif <- "data/banana_data/1_UAV multispectral reflectance/UAV multispectral reflectance.tif"
+
+
+rrr <- terra::rast(tif)
+```
+
+Let's check what we get:
+
+```{r}
+rrr
+```
+
+Note that this is a 5-band multispectral image with 8 cm pixel size.
+
+Now, let's read the ground data:
+
+```{r}
+shp <- "data/banana_data/2_Ground survey data of banana Fusarium wilt/Ground_survey_data_of_banana_Fusarium_wilt.shp"
+ggg <- sf::st_read(shp)
+```
+
+What we got?
+
+```{r}
+ggg
+```
+
+Note that the attributes are in Chinese language. It seems that we will need to do several changes.
+
+### Visualizing the data
+
+As the orthomosaic is too heavy to visualize, we will need a coarser version of it. Let's use the *terra* package for doing it.
+
+```{r}
+rrr8 <- terra::aggregate(rrr, 8)
+#terra <- resample(elev, template, method='bilinear')
+```
+
+Let's check the output:
+
+```{r}
+rrr8
+```
+
+Note that the pixel size of the aggregated raster is 64 cm. Now, in order to visualize the ground points, we will need a color palette:
+
+```{r}
+pal <- colorFactor(
+  palette = c('green',  'red'),
+  domain = ggg$样点类型
+)
+```
+
+Then, we will use the *leaflet* package to plot the new image and the ground points:
+
+```{r}
+#| warning: false
+#| message: false
+leaflet(data = ggg) |>
+  addProviderTiles("Esri.WorldImagery") |>
+  addRasterImage(rrr8) |>
+  addCircleMarkers(~x_经度, ~y_纬度,
+    radius = 5,
+    label = ~样点类型,
+    fillColor = ~pal(样点类型),  
+    fillOpacity = 1,
+    stroke = F)
+```
+
+### Extracting image values at sampled points
+
+Now we will extract raster values at point locations using the `st_extract()` function from the {stars} library. It is expected that a value per band is extracted at each point.
+
+We need to convert the *raster* object into a *stars* object:
+
+```{r}
+sss <- st_as_stars(rrr)
+```
+
+What we got?
+
+```{r}
+sss
+```
+
+Before conducting the extraction task, it is advisable to collect band values not at a single pixel but at a small window (e.g. 3x3 pixels). Thus, we will start creating 20cm buffers at each site:
+
+```{r}
+poly <- st_buffer(ggg, dist = 0.20)
+```
+
+Now, the extraction task:
+
+```{r}
+# Extract the median value per polygon
+buf_values <- aggregate(sss, poly, FUN = median) |>
+  st_as_sf()
+```
+
+What we got:
+
+```{r}
+buf_values
+```
+
+Note that names of bands are weird:
+
+```{r}
+names(buf_values)
+```
+
+Let's rename band values:
+
+```{r}
+buf_values |> rename(blue = "UAV multispectral reflectance.tif.V1",
+                      red = "UAV multispectral reflectance.tif.V2",
+                      green = "UAV multispectral reflectance.tif.V3",
+                      redge = "UAV multispectral reflectance.tif.V4",
+                      nir = "UAV multispectral reflectance.tif.V5") -> buf_values2
+```
+
+Now, we got shorter names per band:
+
+```{r}
+buf_values2
+```
+
+### Computing vegetation indices
+
+@ye2020 used the following indices [@fig-RS12]:
+
+![](imgs/RS_VIs.png){#fig-RS12 fig-align="center"}
+
+Thus, we will compute several of those indices:
+
+```{r}
+buf_indices <-  buf_values2 |> 
+  mutate(ndvi = (nir - red) / (nir+red),
+         ndre = (nir - redge) / (nir+redge),
+          cire = (nir) / (redge-1),
+          sipi = (nir - blue) / (redge-red)
+  ) |> select(ndvi, ndre, cire, sipi)
+```
+
+What we got:
+
+```{r}
+buf_indices
+```
+
+Note that the health status is missing in *buf_indices*. Therefore, we will need to use a spatial join to link such status:
+
+```{r}
+samples <- st_join(
+  ggg,
+  buf_indices,
+  join = st_intersects)
+```
+
+Let's check the output:
+
+```{r}
+samples
+```
+
+It seems we succeeded.
+
+```{r}
+unique(samples$样点类型)
+```
+
+Let's check it:
+
+```{r}
+samples
+```
+
+Now, we will replace the Chinese words for English words:
+
+```{r}
+samples |> 
+  mutate(score = ifelse(样点类型 == '健康植株', 'healthy', 'wilted')) |>
+  rename(east = x_经度,
+         north = y_纬度 ) |>
+  select(OBJECTID,score, ndvi, ndre, cire, sipi) -> nsamples
+```
+
+Let's check the output:
+
+```{r}
+nsamples
+```
+
+As we will not intend to use the geometry in our model, we can remove it:
+
+```{r}
+st_geometry(nsamples) <- NULL
+```
+
+Let's check the output:
+
+```{r}
+nsamples
+```
+
+As our task is a binary classification (i.e any site can be either healthy or wilted), the variable to estimate is a *factor* (not a character).
+
+Let's change the data type of such variable:
+
+```{r}
+nsamples$score = as.factor(nsamples$score) 
+```
+
+Let's check the result:
+
+```{r}
+nsamples
+```
+
+A simple summary of the extracted data can be useful:
+
+```{r}
+nsamples |>
+  group_by(score) |>
+  summarize(n())
+```
+
+This mean the dataset is balanced which is very good.
+
+### Saving the extracted dataset
+
+Now, let's save the *nsamples* object. Just in case R crashes due to lack of memory.
+
+```{r}
+#uncomment if needed
+#st_write(nsamples, "./banana_data/nsamples.csv", overwrite=TRUE)
+```
+
+### Classification of Fusarium wilt using machine learning (ML)
+
+The overall process to classify the crop disease under study will be conducted using the [*tidymodels* framework](https://www.tidymodels.org/) which is an extension of the *tidyverse* suite. It is especially focused towards providing a generalized way to define, run and optimize ML models in R.
+
+#### Exploratory analysis
+
+As a first step in modeling, it's always a good idea to visualize the data. Let's start with a *boxplot* to displays the distribution of a vegetation index. It visualizes five summary statistics (the median, two hinges and two whiskers), and all "outlying" points individually.
+
+```{r}
+p <- ggplot(nsamples, aes(score, ndre))+
+  r4pde::theme_r4pde()
+p + geom_boxplot()
+```
+
+Next, we will do a scatterplot to visualize the indices NDRE and CIRE:
+
+```{r}
+ggplot(nsamples) +
+  aes(x = ndre, y = cire, color = score) +
+  geom_point(shape = 16, size = 4) +
+  labs(x = "NDRE", y = "CIRI") +
+  r4pde::theme_r4pde() +
+  scale_color_manual(values = c("#71b075", "#ba0600"))
+```
+
+#### Splitting the data
+
+Next step is to divide the data into a training and a test set. The `set.seed()` function can be used for reproducibility of the computations that are dependent on random numbers. By default, the training/testing split is 0.75 to 0.25.
+
+```{r}
+set.seed(42)
+data_split <- initial_split(data = nsamples)
+data_train <- training(data_split)
+data_test <- testing(data_split)
+```
+
+Let's check the result:
+
+```{r}
+data_train
+```
+
+#### Defining the model
+
+We will use a logistic regression which is a simple model. It may be useful to have a look at [this explanation](https://mlu-explain.github.io/logistic-regression/) of such a model.
+
+```{r}
+spec_lr <-
+logistic_reg() |> 
+  set_engine("glm") |> 
+  set_mode("classification")
+```
+
+#### Defining the recipe
+
+The `recipe()` function to be used here has two arguments:
+
+-   A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
+
+-   The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so `data = data_train` here.
+
+```{r}
+recipe_lr <-
+  recipe(score ~ ., data_train) |>
+  add_role(OBJECTID, new_role = "id") |>
+  step_zv(all_predictors()) |>
+  step_corr(all_predictors())
+```
+
+#### Evaluating model performance
+
+Next, we need to specify what we would like to see for determining the performance of the model. Different modelling algorithms have different types of metrics. Because we have a binary classification problem (healthy vs. wilted classification), we will chose the AUC - ROC evaluation metric here.
+
+#### Combining model and recipe into a workflow
+
+We will want to use our recipe across several steps as we train and test our model. We will:
+
+-   Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
+
+-   Apply the recipe to the training set: We create the final predictor set on the training set.
+
+-   Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
+
+To simplify this process, we can use a model workflow, which pairs a model and recipe together. This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test workflows. We'll use the workflows package from *tidymodels* to bundle our model with our recipe.
+
+Now we are ready to setup our complete modelling workflow. This workflow contains the model specification and the recipe.
+
+```{r}
+wf_bana_wilt <-
+  workflow(
+    spec = spec_lr,
+    recipe_lr
+    )
+
+wf_bana_wilt
+```
+
+#### Fitting the logistic regression model
+
+Now we use the workflow previously created to fit the model on our training data. We use the training partition of the data.
+
+```{r}
+#| warning: false
+#| message: false
+fit_lr <- wf_bana_wilt  |> 
+  fit(data = data_train)
+```
+
+Let's check the output:
+
+```{r}
+fit_lr
+```
+
+Now, we will use the fitted model to estimate health status in the training data:
+
+```{r}
+rf_training_pred <- 
+  predict(fit_lr, data_train) |> 
+  bind_cols(predict(fit_lr, data_train, type = "prob")) |> 
+  # Add the true outcome data back in
+  bind_cols(data_train |> 
+              select(score))
+```
+
+What we got?
+
+```{r}
+rf_training_pred
+```
+
+Let's estimate the training accuracy:
+
+```{r}
+rf_training_pred |> # training set predictions
+  accuracy(truth = score, .pred_class) -> acc_train
+acc_train
+```
+
+The accuracy of the model on the training data is 0.85 which is above 0.5 (mere chance). This basically means that the model was able to learn predictive patterns from the training data. To see if the model is able to generalize what it learned when exposed to new data, we evaluate the model on our hold-out (or so-called test data). We created a test dataset when splitting the data at the start of the modelling.
+
+#### Evaluating the model on test data
+
+Now, we will use the fitted model to estimate health status in the testing data:
+
+```{r}
+lr_testing_pred <- 
+  predict(fit_lr, data_test) |> 
+  bind_cols(predict(fit_lr, data_test, type = "prob")) |> 
+  bind_cols(data_test |> select(score))
+```
+
+What we got:
+
+```{r}
+lr_testing_pred
+```
+
+Let's compute the testing accuracy:
+
+```{r}
+lr_testing_pred |>                   # test set predictions
+  accuracy(score, .pred_class)
+```
+
+The resulting accuracy is similar to the accuracy on the training data. It is good for a first go and a relatively simple classification model.
+
+```{r}
+## Let's plot the AUC-ROC 
+lr_testing_pred |> 
+  roc_curve(truth = score, .pred_wilted, event_level="second") |> 
+  mutate(model = "Logistic Regression") |>
+  autoplot()
+```
+
+### Conclusions
+
+In this section, we trained and tested a logistic regression model (LGM) using four spectral indices as predictor variables (i.e. NDVI, NDRE, CIRE and SIPI). Compare this section results, in terms of equation and accuracy, with the individual LGMs tested by [@ye2020][@fig-RS13].
+
+![](imgs/RS_logregmodels.png){#fig-RS13 fig-align="center"}
+
+Note that we have not tested other ML algorithms. But there are a lot of them available from the *tidymodels* framework (e.g. random forests, support vector machines, gradient boosting machines).
+
+To conclude, this section illustrated how to use VIs derived from UAV-based multispectral imagery and ground data to develop an identification model for detecting banana Fusarium wilt. The results showed that a simple logistic regression model is able to identify Fusarium wilt of banana from several VIs with a good accuracy. However, before going too optimistic, I would suggest to study the @ye2020 paper and critically evaluate their experiment design, methods and results.
