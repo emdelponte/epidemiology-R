@@ -131,7 +131,7 @@ Sensing of plants for precision disease control is done in large fields or green
 
 ![Source: @kouadio2023](imgs/RS-12.png){#fig-RS11 width="488"}
 
-## Disease identification
+## Disease detection
 
 This section illustrates the use of unmanned aerial vehicle (UAV) remote sensing imagery for identifying banana wilt disease. Fusarium wilt of banana, also known as "banana cancer", threatens banana production areas worldwide. Timely and accurate identification of Fusarium wilt disease is crucial for effective disease control and optimizing agricultural planting structure [@pegg2019].
 
@@ -635,3 +635,839 @@ In this section, we trained and tested a logistic regression model (LGM) using f
 Note that we have not tested other ML algorithms. But there are a lot of them available from the *tidymodels* framework (e.g. random forests, support vector machines, gradient boosting machines).
 
 To conclude, this section illustrated how to use VIs derived from UAV-based multispectral imagery and ground data to develop an identification model for detecting banana Fusarium wilt. The results showed that a simple logistic regression model is able to identify Fusarium wilt of banana from several VIs with a good accuracy. However, before going too optimistic, I would suggest to study the @ye2020 paper and critically evaluate their experiment design, methods and results.
+
+## Disease quantification
+
+### Introduction
+
+This section illustrates the use of UAV multispecral imagery for estimating the severity of cercospora leaf spot (CLS) disease in table beet, the most destructive fungal disease of table beet [@skaracis2010; @tan2023]. The CLS disease causes rapid defoliation and significant crop loss may occur through the inability to harvest with top-pulling machinery. It may also render the produce unsaleable for the fresh market [@skaracis2010].
+
+@Saif2024 recently published on [Mendeley data](https://data.mendeley.com/datasets/v9b7rwrwx9/1) UAV imagery & ground truth CLS data collected a several table beef plots at Cornell AgriTech, Geneva, New York, USA. Note that, in this study, UAV multispectral images were collected using a Micasense Red Edge camera, similar to the one used in the case study for the detection of Fusarium wilt on banana. I have not found any scientific paper estimating CLS severity from this dataset. However, in @saif2023, a similar dataset was used to forecast table beet root yield at Cornell Agritech. While it is just a guess, it is worth visualizing the plots in the latter study.
+
+![Color mosaic of third flight hyperspectral image. The visualization bands are the following: red (639 nm), green (550 nm), and blue (470 nm). The crops in the red boxes in the figure were the plots under study. Source: [@saif2023]](imgs/RS_beetyield.png){#fig-RSbeetyield fig-align="center"}
+
+This section aims at estimating CLS leaf severity using vegetation indices (VIs) derived from the multispectral UAV imagery as spectral covariates. The section comprises two parts: (i) Part 1 creates a spectral covariate table to summarize the complete UAV imagery & ground truth data; and (ii) Part 2 trains and tests a machine learning model to estimate CLS severity.
+
+### CLS severity on leaves
+
+It is very important to visualize how different levels of table beet CLS disease severity look in RGB color leaf images. The figure below is a standard area diagram set (SADs) that is used by raters during the assessment of visual severity to increase their accuracy and reliability of the estimates.
+
+![Standard area diagram set for the severity of table beet cercospora leaf spot. Source: [@delponte2019]](imgs/RS_cls_sev.png){#fig-RS-cls_sev fig-align="center"}
+
+### Software setup
+
+Let's start by cleaning up R memory:
+
+```{r}
+rm(list=ls())
+```
+
+Then, we need to install several packages (if they are not installed yet):
+
+```{r}
+#| warning: true
+list.of.packages <- c("readr","terra", "tidyterra", "stars", "sf", "leaflet", "leafem", "dplyr", "ggplot2", "tidymodels")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+```
+
+Now, let's load all the required packages:
+
+```{r}
+#| warning: false
+#| message: false
+
+library(readr)
+library(terra)
+library(tidyterra)
+library(stars)
+library(sf)
+library(leaflet)
+library(leafem)
+library(dplyr)
+library(ggplot2)
+library(tidymodels)
+```
+
+### Read the dataset
+
+The following code assumes you have already downloaded the [dataset](https://data.mendeley.com/datasets/v9b7rwrwx9/1) and unzipped its content under the *data/cercospora_data* directory. What files are in that folder?
+
+```{r}
+list.files("data/cercospora_data")
+```
+
+Note that there is one CLS_DS.csv file with the CLS ground data and two folders with the UAV multispectral images. We can infer that 2021, 2022, 2023 refer to the image acquisition years. At this point, it is very important to check the README file. I will summarize the following points:
+
+#### File naming convention
+
+Each image file is named according to the plot number and the date of capture, using the format plt_rYYYYMMDD, where:
+
+-   **'plt'** stands for the plot number.
+-   **'YYYYMMDD'** represents the date on which the image was captured (year, month, day).
+
+For example, the file name 5_r20210715 corresponds to an image taken on July 15, 2021, from study plot 5.
+
+#### CLS Severity Data
+
+File named CLS_DS contain visual assessments of CLS disease severity noted for each plot.
+
+### Inspect the format of each file
+
+Let's list the first images under an image folder:
+
+```{r}
+list.files("data/cercospora_data/multispec_2021_2022/")[1:15]
+```
+
+Note that, for 2021, there are six dates of image acquisition: 20210707, 20210715, 20210720,20210726, 20210802,20210825
+
+### Read the orthomosaics
+
+Now, let's read several plot images using the *terra* package:
+
+```{r}
+# Open a tif collected on study plot 5 on  7th July 2021
+tif1 <- "data/cercospora_data/multispec_2021_2022/1_r20210707.tif"
+tif2 <- "data/cercospora_data/multispec_2021_2022/2_r20210707.tif"
+tif3 <- "data/cercospora_data/multispec_2021_2022/3_r20210707.tif"
+tif4 <- "data/cercospora_data/multispec_2021_2022/4_r20210707.tif"
+tif5 <- "data/cercospora_data/multispec_2021_2022/5_r20210707.tif"
+tif6 <- "data/cercospora_data/multispec_2021_2022/6_r20210707.tif"
+tif7 <- "data/cercospora_data/multispec_2021_2022/7_r20210707.tif"
+tif8 <- "data/cercospora_data/multispec_2021_2022/8_r20210707.tif"
+tif9 <- "data/cercospora_data/multispec_2021_2022/9_r20210707.tif"
+tif10 <- "data/cercospora_data/multispec_2021_2022/10_r20210707.tif"
+```
+
+It may be convenient to increase image pixel size (to make the raster lighter):
+
+```{r}
+p01 <- terra::rast(tif1) %>% aggregate(20)
+p02 <- terra::rast(tif2) %>% aggregate(20)
+p03 <- terra::rast(tif3) %>% aggregate(20)
+p04 <- terra::rast(tif4) %>% aggregate(20)
+p05 <- terra::rast(tif5) %>% aggregate(20)
+p06 <- terra::rast(tif6) %>% aggregate(20)
+p07 <- terra::rast(tif7) %>% aggregate(20)
+p08 <- terra::rast(tif8) %>% aggregate(20)
+p09 <- terra::rast(tif9) %>% aggregate(20)
+p10 <- terra::rast(tif10) %>% aggregate(20)
+```
+
+Let's check what we get:
+
+```{r}
+p01
+```
+
+Note that each image has 5 bands with \~21 cm pixel size.
+
+As the images have been split in plots, it may be useful to "mosaic" them.
+
+```{r}
+
+# with many SpatRasters, make a SpatRasterCollection from a list
+rlist <- list(p01, p02, p03, p04, p05, p06, p07, p08, p09, p10)
+rsrc <- sprc(rlist)
+
+m <- merge(rsrc)
+```
+
+What we got?
+
+```{r}
+m
+```
+
+Let's know band names:
+
+```{r}
+names(m)
+```
+
+We will rename band names:
+
+```{r}
+# Rename
+m2 <- m %>%
+  rename(blue = "1_r20210707_1", green = "1_r20210707_2", 
+         red = "1_r20210707_3", redge= "1_r20210707_4",
+         nir = "1_r20210707_5")
+```
+
+Let's get a summary of the mosaic:
+
+```{r}
+summary(m2)
+```
+
+```{r}
+hist(m2)
+```
+
+Let's visualize the mosaic:
+
+```{r}
+ggplot() +
+  geom_spatraster(data = m2) +
+  facet_wrap(~lyr, ncol = 5) +
+   r4pde::theme_r4pde(font_size = 10)+
+  scale_fill_whitebox_c(
+    palette = "muted",
+    labels = scales::label_number(suffix = "%"),
+    n.breaks = 10,
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  labs(
+    fill = "",
+    title = "UAV multispectral mosaic",
+    subtitle = "07.07.2021"
+  )
+```
+
+Let's read all images collected at a later date:
+
+```{r}
+# Open all images collected on  25th August 2021
+tif1 <- "data/cercospora_data/multispec_2021_2022/1_r20210825.tif"
+tif2 <- "data/cercospora_data/multispec_2021_2022/2_r20210825.tif"
+tif3 <- "data/cercospora_data/multispec_2021_2022/3_r20210825.tif"
+tif4 <- "data/cercospora_data/multispec_2021_2022/4_r20210825.tif"
+tif5 <- "data/cercospora_data/multispec_2021_2022/5_r20210825.tif"
+tif6 <- "data/cercospora_data/multispec_2021_2022/6_r20210825.tif"
+tif7 <- "data/cercospora_data/multispec_2021_2022/7_r20210825.tif"
+tif8 <- "data/cercospora_data/multispec_2021_2022/8_r20210825.tif"
+tif9 <- "data/cercospora_data/multispec_2021_2022/9_r20210825.tif"
+tif10 <- "data/cercospora_data/multispec_2021_2022/10_r20210825.tif"
+```
+
+```{r}
+p01 <- terra::rast(tif1) %>% aggregate(20)
+p02 <- terra::rast(tif2) %>% aggregate(20)
+p03 <- terra::rast(tif3) %>% aggregate(20)
+p04 <- terra::rast(tif4) %>% aggregate(20)
+p05 <- terra::rast(tif5) %>% aggregate(20)
+p06 <- terra::rast(tif6) %>% aggregate(20)
+p07 <- terra::rast(tif7) %>% aggregate(20)
+p08 <- terra::rast(tif8) %>% aggregate(20)
+p09 <- terra::rast(tif9) %>% aggregate(20)
+p10 <- terra::rast(tif10) %>% aggregate(20)
+```
+
+```{r}
+# with many SpatRasters, make a SpatRasterCollection from a list
+rlist <- list(p01, p02, p03, p04, p05, p06, p07, p08, p09, p10)
+rsrc <- sprc(rlist)
+
+mm <- merge(rsrc)
+```
+
+```{r}
+names(mm)
+```
+
+```{r}
+# Rename
+mm2 <- mm %>%
+  rename(blue = "1_r20210825_1", green = "1_r20210825_2", 
+         red = "1_r20210825_3", redge= "1_r20210825_4",
+         nir = "1_r20210825_5")
+```
+
+Now, a visualization task:
+
+```{r}
+ggplot() +
+  geom_spatraster(data = mm2) +
+  facet_wrap(~lyr, ncol = 5) +
+  r4pde::theme_r4pde(font_size = 10)+
+  scale_fill_whitebox_c(
+    palette = "muted",
+    labels = scales::label_number(suffix = "%"),
+    n.breaks = 10,
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  labs(
+    fill = "",
+    title = "UAV multispectral mosaic",
+    subtitle = "08.25.2021"
+  )
+```
+
+### Reading severity data
+
+Now, let's read the ground CLS data:
+
+```{r}
+file <- "data/cercospora_data/CLS_DS.csv"
+cls <- readr::read_csv(file, col_names = TRUE, show_col_types = FALSE)
+```
+
+What we got?
+
+```{r}
+cls
+```
+
+Note that columns D0 to D6 refer to the disease severity recorded in percentage at different dates for each study plot. Note also that this object is structured in *wide format* (i.e. each row represents a single plot for each year).
+
+```{r}
+unique(cls$Plot)
+```
+
+Let's know the values stored in the *year* attribute:
+
+```{r}
+unique(cls$year)
+```
+
+### Preparing a set of spectral covariables per plot & date
+
+The 2021 data collection dates are 20210707, 20210715, 20210720, 20210802,and 20210825.
+
+Let's start creating a list of images per date for 2021:
+
+```{r}
+# Create a list .tif files collected at each date:
+# These are the DXfiles
+D0files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210707.tif")
+D1files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210715.tif")
+D2files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210720.tif")
+D3files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210802.tif")
+D4files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210825.tif")
+```
+
+Now, define date variables:
+
+```{r}
+# These are the DX variables
+(D0 <- as.Date('7/7/2021',format='%m/%d/%Y'))
+(D1 <- as.Date('7/15/2021',format='%m/%d/%Y'))
+(D2 <- as.Date('7/20/2021',format='%m/%d/%Y'))
+(D3 <- as.Date('8/02/2021',format='%m/%d/%Y'))
+(D4 <- as.Date('8/25/2021',format='%m/%d/%Y'))
+```
+
+The following block of code should be executed five times (one per each *DXfiles* & each *DX* variable).
+
+The code reads each image included in a given *DXfiles*, computes several vegetation indices (VIs) for such image, and obtain the average value of original bands & VIs per each. All values are stored in a *vector* object.
+
+```{r}
+# Read all files for each date
+lista <- lapply(D0files, function(x) rast(x)) 
+# Compute global statistics
+output <- vector("double", 5)  # 1. output
+for (i in seq_along(lista)) {            # 2. sequence
+  img <- lista[[i]]
+  r <- clamp(img, 0, 1)
+  ndvi <- (r[[5]]-r[[3]])/(r[[5]]+r[[3]])
+  ndre = (r[[5]]-r[[4]]) / (r[[5]]+r[[4]])
+  cire = (r[[5]]) / (r[[4]]-1)
+  sipi = (r[[5]] - r[[1]]) / (r[[4]]-r[[3]])
+  min <- minmax(ndvi)[1]
+  max <- minmax(ndvi)[2]
+  avg <- global(ndvi, fun="mean", na.rm=TRUE)[,1]
+  #dev <- global(ndvi, fun="std")
+  #mndvi <- (ndvi-min)/(max-min)
+  mndvi <- 2 + log((ndvi-avg)/(max-min))
+  nimg <- c(r,ndvi, ndre, cire, sipi, mndvi)
+  output[i] <- global(nimg, fun="mean", na.rm=TRUE) 
+  #output[i] <- global(nimg, mean, na.rm=TRUE) 
+}
+```
+
+The following block of code combine all vectors produced previously into a matrix as a previous step to put all data into a dataframe with meaningful colummn names. It also add colummns storing each plot ID as well as the corresponding data. Note the the code also needs to be executed five times (one per each *DX* variable).
+
+```{r}
+#combine all vectors into a matrix
+mat <- do.call("rbind",output) #combine all vectors into a matrix
+#convert matrix to data frame
+df <- as.data.frame(mat)
+#specify column names
+colnames(df) <- c('blue', 'green', 'red', 'redge', 'nir', 'ndvi', 
+                  'ndre', 'cire', 'sipi', 'mndvi')
+date = D0
+plot <- seq(1:40)
+date <- rep(date,40)
+newdf <- cbind(df,plot,date)
+```
+
+What we got?
+
+```{r}
+newdf
+```
+
+The following block of code writes to disk a *DX_2021.csv* file. Note that the *append* parameter is set to FALSE in order to overwrite any existing data.
+
+```{r}
+write_csv(
+  newdf,
+  "data/cercospora_data/D0_2021.csv",
+  na = "NA",
+  col_names = TRUE,
+  append = FALSE
+)
+```
+
+### Put all covariate data in a single object
+
+Now, we will read all the recently created csv files and put all covariate data values into a single object.
+
+Next code obtains a list with the path of every csv file matching the D\*\_2021.csv expression:
+
+```{r}
+(csv_files <- Sys.glob("data/cercospora_data/D*_2021.csv"))
+```
+
+Now, we will read all files in the list:
+
+```{r}
+(df.2021 <- do.call(rbind,lapply(csv_files,read.csv)))
+```
+
+Then, we will convert the dataframe into a tibble:
+
+```{r}
+covar.2021 <- tibble(df.2021)
+```
+
+Let's check what we got:
+
+```{r}
+covar.2021
+```
+
+Now, we will need to join the CLS severity data to the spectral covariates data.
+
+Let's remind how is structured the CLS data:
+
+```{r}
+cls
+```
+
+Note that the covar.2021 object has a date attribute in a single column and that the cls object has different columns represent dates (i.e. D0 to D5). This means that we need to change the *cls* object structure to be able to join its attributes to the *covar.2021* object. In technical terms, our task is to convert the cls table from *wide* format into *long* format.
+
+We will use the *pivot_longer* function from the *dplyr* package:
+
+```{r}
+cls %>%
+  pivot_longer(
+    cols = starts_with("D"),
+    names_to = "date",
+    values_to = "severity",
+    values_drop_na = TRUE
+  ) -> long_cls
+```
+
+Now, we will do an additional step, we will replace qualitative date values (D0, D1, ...) for actual date values.
+
+```{r}
+change <- tibble(old = c("D0", "D1", "D2", "D3", "D4"),
+                 new = c("2021-07-07", "2021-07-15", "2021-07-20",
+                          "2021-08-02","2021-08-25"))
+```
+
+Let's check what we got:
+
+```{r}
+change
+```
+
+Now, let's do a left join to produce the changes:
+
+```{r}
+(ncls <- left_join(long_cls, change, by = c(date = "old")))
+```
+
+Finally, we can apply a join:
+
+```{r}
+ncovar.2021 <- left_join(ncls, covar.2021, by = c("Plot" = "plot", "new" = "date"))
+```
+
+```{r}
+ncovar.2021
+```
+
+### Change severity percentage to severity categories
+
+Our final step is to convert percentage severity values into ordinal severity levels.
+
+First, let's check the severity histogram
+
+```{r}
+#uncomment if you need to the read the file
+#ncovar.2021 <- read_csv("./data/ncovar_2021.csv", show_col_types = FALSE)
+```
+
+```{r}
+hist(ncovar.2021$severity)
+```
+
+Next code produces four levels of CLS severity:
+
+::: l-body-outset
+| Severity \[%\] | Category |
+|----------------|----------|
+| 0 - 1          | 0        |
+| 1 - 10         | 1        |
+| 10 - 20        | 2        |
+| 20 - 30        | 3        |
+| 30 - 40        | 4        |
+| 40 - 50        | 5        |
+| 50 - 100       | 6        |
+:::
+
+```{r}
+fcovar.2021 <- ncovar.2021 %>% mutate(category=cut(severity, breaks=c(0,1,  10, 20, 30,40, 50, 100), labels=c(0,1,2,3,4,5,6)))
+```
+
+What we got?
+
+```{r}
+summary(fcovar.2021$category)
+```
+
+Note that the distribution of values at each disease level is not balanced.
+
+### Write 2021 csv files
+
+```{r}
+write_csv(
+  ncovar.2021,
+  "data/cercospora_data/ncovar_2021.csv",
+  na = "NA",
+  col_names = TRUE,
+  append = FALSE
+)
+```
+
+```{r}
+write_csv(
+  fcovar.2021,
+  "data/cercospora_data/fcovar_2021.csv",
+  na = "NA",
+  col_names = TRUE,
+  append = FALSE
+)
+```
+
+In this first part we have conducted a very important task: to translate UAV multispectral imagery and CLS severity ground data into a single table storing spectral covariates and severity classes which we will use next for building a prediction model.
+
+### Machine learning model
+
+Now we will train & test a machine learning model to estimate qualitative levels of CLS disease severity using the previously created dataset.
+
+#### Software setup
+
+Let's start by cleaning up R memory:
+
+```{r}
+rm(list=ls())
+```
+
+Then, we need to install several packages (if they are not installed yet):
+
+```{r}
+#| warning: true
+list.of.packages <- c("readr","terra", "tidyterra", "stars", "sf", "leaflet", "leafem", "dplyr", "ggplot2", "tidymodels", "xgboost", "tune")
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
+if(length(new.packages)) install.packages(new.packages)
+```
+
+Now, let's load all the required packages:
+
+```{r}
+#| warning: false
+#| message: false
+library(readr)
+library(terra)
+library(tidyterra)
+library(stars)
+library(sf)
+library(leaflet)
+library(leafem)
+library(dplyr)
+library(ggplot2)
+library(tidymodels)
+library(xgboost)
+library(tune)
+```
+
+What files are in the data folder under the current path:
+
+```{r}
+list.files("data/cercospora_data")
+```
+
+Let's remind that *fcovar_2021.csv* is the file containing the dataset we created previously. We will use the *readr* package to read the data as a tibble:
+
+```{r}
+#| warning: false
+
+covar21 <- read_csv("data/cercospora_data/fcovar_2021.csv", 
+                    col_types = cols(category = col_character())) %>%
+  drop_na()
+```
+
+What we got?
+
+```{r}
+covar21
+```
+
+We will change data type for the *category* column from character to factor:
+
+```{r}
+covar21$category <- as.factor(covar21$category)
+```
+
+Let's see a summary of the dataset:
+
+```{r}
+summary(covar21)
+```
+
+Now, we will filter several columns of this tibble using the *dplyr* package. First, get the column names:
+
+```{r}
+names(covar21)
+```
+
+Now, the selection:
+
+```{r}
+covar21 %>% select(Plot,ndvi,ndre, cire, sipi, mndvi, category) -> covar
+```
+
+Let's check what we get:
+
+```{r}
+covar
+```
+
+#### CLS classification using machine learning (ML)
+
+The overall process to classify the crop disease under study will be conducted using the *tidymodels* framework which is an extension of the *tidyverse* suite. It is especially focused towards providing a generalized way to define, run and optimize ML models in R. See <https://rstudio-connect.hu.nl/caait/>
+
+##### Exploratory analysis
+
+As a first step in modeling, it’s always a good idea to plot the data.
+
+Let's try a boxplot:
+
+```{r}
+plot <- ggplot(covar, aes(x=category, y=mndvi, color = category))+
+     geom_boxplot()+
+     r4pde::theme_r4pde()
+     theme(legend.position = "none" )+
+
+plot
+```
+
+Next, we will do a scatterplot to visualize the relationship between the *ndvi* and *mndvi* indices:
+
+```{r}
+ggplot(covar) +
+  aes(x = ndvi, y = mndvi, color = category) +
+  geom_point(shape = 16, size = 3) +
+  labs(x = "ndvi", y = "mndvi", color = "Severity category") +
+  r4pde::theme_r4pde()+
+    theme(legend.position = "top")
+```
+
+##### Splitting the data
+
+Next step is to divide the data into a training and a test set. The set.seed() function can be used for reproducibility of the computations that are dependent on random numbers. By default, the training/testing split is 0.75 to 0.25.
+
+```{r}
+set.seed(42)
+data_split <- initial_split(data = covar)
+data_train <- training(data_split)
+data_test <- testing(data_split)
+```
+
+Let's check the result:
+
+```{r}
+data_train
+```
+
+##### Defining the model
+
+We will use a [gradient boosting machine](https://uc-r.github.io/gbm_regression) algorithm which seems a robust algorithm for different applications.
+
+```{r}
+spec_lr <-
+boost_tree(
+  mode = "classification",
+  trees=1000,
+  #tree_depth = tune::tune(),
+  #learn_rate = tune::tune(),
+  #loss_reduction = tune::tune()
+  ) %>% 
+  set_engine("xgboost", objective = "multi:softprob", eval_metric = "mlogloss",) 
+```
+
+##### Defining the recipe
+
+The `recipe()` function to be used here has two arguments:
+
+-   A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
+
+-   The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so data = data_train here.
+
+```{r}
+recipe_lr <-
+  recipe(category ~ ., data_train) %>%
+  add_role(Plot, new_role = "id") |>
+  step_zv(all_predictors()) |>
+  step_corr(all_predictors())
+```
+
+##### Model performance metrics
+
+Next, we need to specify what we would like to see for determining the performance of the model. Different modelling algorithms have different types of metrics. Because we have a multiclass classification problem (different categories of severity), we will chose the accuracy evaluation metric here.
+
+##### Combine model specification and recipe into a workflow
+
+We will want to use our recipe across several steps as we train and test our model. We will:
+
+-   Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
+
+-   Apply the recipe to the training set: We create the final predictor set on the training set.
+
+-   Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
+
+To simplify this process, we can use a model workflow, which pairs a model and recipe together. This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test workflows. We’ll use the workflows package from tidymodels to bundle our model with our recipe.
+
+Now we are ready to setup our complete modelling workflow. This workflow contains the model specification and the recipe.
+
+```{r}
+wf_cls_wilt <-
+  workflow(
+    spec = spec_lr,
+    recipe_lr
+    )
+
+wf_cls_wilt
+```
+
+##### Fitting the GBM regression model
+
+Now we use the workflow previously created to fit the model on our training data. We use the training partition of the data.
+
+```{r}
+fit_lr <- wf_cls_wilt  %>% 
+  fit(data = data_train)
+```
+
+Let's check the output:
+
+```{r}
+fit_lr
+```
+
+Now, we will use the fitted model to estimate CLS severity in the training data:
+
+```{r}
+rf_training_pred <- 
+  predict(fit_lr, data_train) %>% 
+  bind_cols(predict(fit_lr, data_train) %>% 
+  # Add the true outcome data back in
+  bind_cols(data_train %>% 
+              select(category)))
+```
+
+What we got?
+
+```{r}
+names(rf_training_pred) <- c (".pred_class_1", ".pred_class_2", "category")
+```
+
+Let's estimate the training accuracy:
+
+```{r}
+rf_training_pred %>%                # training set predictions
+  accuracy(truth = category, .pred_class_1) -> acc_train
+acc_train
+```
+
+The accuracy of the model on the training data is 0.75 which is above 0.5 (mere chance). This basically means that the model was able to learn predictive patterns from the training data. To see if the model is able to generalise what it learned when exposed to new data, we evaluate the model on our hold-out (or so-called test data). We created a test dataset when splitting the data at the start of the modelling.
+
+##### Evaluating the model on the test data
+
+Now, we will use the fitted model to estimate health status in the testing data:
+
+```{r}
+lr_testing_pred <- 
+  predict(fit_lr, data_test) %>% 
+  bind_cols(predict(fit_lr, data_test, type = "prob")) %>% 
+  bind_cols(data_test %>% select(category))
+```
+
+What we got:
+
+```{r}
+lr_testing_pred
+```
+
+Let's compute the testing accuracy:
+
+```{r}
+lr_testing_pred %>%                   # test set predictions
+  accuracy(category, .pred_class)
+```
+
+The resulting accuracy is much lower than the accuracy on the training data. This means that we would need to figure out how to improve our classification model.
+
+```{r}
+## Let's plot the AUC-ROC 
+lr_testing_pred %>% 
+  conf_mat(truth = category, .pred_class) -> cm 
+cm
+```
+
+Note what are the disease categories more difficult to discriminate.
+
+In this section we trained and tested a gradient boosting model (GBM) using three spectral indices as predictor variables (i.e. NDVI, NDRE, CIRE, SIPI, and MNDVI) obtained from imagery and field data. Accuracy metrics show that both data & model need improvement.
+
+Some ideas for further experiments: - Include data collected in 2022 and 2023 - Refine CLS severity categories (see [@delponte2019]) - Compute other vegetation indices as advised in relevant literature - Compute other covariates (e.g. image texture metrics)
+
+This section illustrated how to use VIs derived from UAV-based multispectral imagery and ground data to develop an classification model for estimating CLS in table beet. The results showed that a gradient boosting machine model is unable to estimate severity from several VIs with a good accuracy. We can explore the use of additional covariates to improve accuracy of the initial model.
+
+## Summary
+
+We have completed a journey that hopefully may serve as foundation to apply remote sensing data and techniques to infer information useful for monitoring crop diseases.
+
+Our journey consisted of three stages. In the first section we reviewed basic remote sensing concepts and provided a summary of applications of remote sensing of crop diseases. In the second section we navigated a case study on identification of banana Fusarium wilt from multispectral UAV imagery. In the third section we moved to a case study dealing with estimation of cercospora leaf spot disease severity on table beet. For the two case studies we used datasets publicly available.
+
+Now, it is time to conclude with several reflections about: (i) what we learned in this chapter; (ii) what are the potential and limitations of remote sensing for identification & monitoring crop diseases; and (iii) what are main challenges to overcome to advance the use of remote sensing techniques for identification and quantification of crop diseases.
+
+### Lesson learned in this journey
+
+First of all, we started to become familiar with concepts and techniques that can guide us in future studies focused on the use of remote sensing for crop disease monitoring. Although they are only the tip of the remote sensing iceberg, which we must know in depth, they represent part of the foundation necessary to be successful in any research related to the topic of this chapter.
+
+Along the way, we learned to use some R libraries that allow us to: (i) read, visualize and process multispectral images and geospatial data; (ii) merge raster and vector data and extract spectral covariates related to plant biophysical, biochemical, and functional traits; and (iii) apply machine learning algorithms to infer information useful for plant disease identification and quantification.
+
+The results obtained in our hands-on activities suggest that the application of machine learning algorithms to learning from data is driven by an iterative process: starting from an initial workflow, users need to iteratively modify their workflow, based on previous results, to improve performance.
+
+We have learned that, in order to use data properly, research data needs to be fully described and documented. Otherwise, users may become frustrated or lost in guessing, cleaning, and pre-processing tasks. We have also learned that if the code is well documented, it is feasible to reuse it in future studies.
+
+### Potential and limitations of remote sensing for crop disease monitoring
+
+A variety of remote sensing (RS) devices can be used to obtain data on the spectral response of plants and crops to diseases and insect damage. Processing and analyzing such data allows to estimate information useful for monitoring crops and analysing different stages of plant health. As individual devices have some limitations, multimodal remote sensing data & techniques (i.e. reflectance, fluorescence, thermal, microwave, lidar, multiangular sensing) are increasingly being used in research.
+
+In the multimodal setting, data from different platforms & instruments are used together to obtain a better outcome. Multimodal methods allow for the integration of spectral responses from different & complementary electromagnetic radiation ranges, allowing to quantify different plant responses (e.g. stomatal closure, increased respiration, decreased chlorophyll, altered pigments, modified biochemistry, photosynthetic inhibition, altered growth, modified leaf angle, water content), and analyzing them to obtain a comprehensive understanding of disease progression, including eventual recovery. By using multimodal methods, it is possible to obtain a more accurate and detailed analysis of crop conditions, leading to advanced knowledge, improved decision-making and ultimately, better crop health management.
+
+### Main challenges to overcome
+
+Building more resilient agricultural systems requires concurrent and near-real-time and reliable crop information for effective decision making. Using remote sensing data & techniques for monitoring crop health can become a relevant method to derive crop information at leaf, canopy, field, and farm scales.
+
+In spite of the increasing literature reporting the application of remote sensing for monitoring crop diseases, it seems that there is a lack of open, transparent and reproducible data and methods to ensure a robust evaluation of performance, reliability and generalization of machine learning and deep learning models, a necessary pre-requisite to safely advance the applicability of remote sensing for crop monitoring in the field.
+
+To fully realize the potential of remote sensing for estimating crop health status, there is a need of reliable ground truth data to enable both data calibration (i.e. linking in-situ to remote values) and accuracy assessment of estimations. Since field measurements require a lot of work and time, there is always a risk that the sampling is not correct (e.g. not enough samples, incorrect sample location, or the sampled area does not match the sensor footprint).
+
+Both collaborative research and crowdsourcing could become a solution to overcome the restrictions of ground-truth data accessibility as well as the lack of open, transparent, and reusable remote sensing data & workflows. It is anticipated that joint multidisciplinary research as well as user participation in the complete process of crop monitoring from remote sensing could improve the reliability of crop health information.
