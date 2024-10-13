@@ -8,9 +8,13 @@ bibliography: references.bib
 
 ## Introduction
 
-Plant disease modeling is a crucial tool for predicting disease dynamics and informing management decisions. By leveraging models, researchers and practitioners can anticipate disease outbreaks, assess potential risks, and implement timely interventions to mitigate losses [@savary2018; @rossi2010a].
+As seen in the previous chapter, plant disease modeling is a crucial tool for predicting disease dynamics and informing management decisions when integrated into decision support systems. By leveraging models, researchers and practitioners can anticipate disease outbreaks, assess potential risks, and implement timely interventions to mitigate losses [@savary2018; @rossi2010a].
 
-Plant disease models integrating plant, disease, and environmental - in most cases weather-based variables - factors have been developed since the mid-1900s (See recent review by @gonzález-domínguez2023 ). Dynamic modeling of disease epidemics gained traction in the early 1960s with foundational work by Van der Plank and Zadoks, setting the stage for future advancements. Since then, researchers have contributed extensively to model development [@dewolf2007]. A systematic map by @fedele2022a identified over 750 papers on plant disease models, primarily aimed at understanding system interactions (n = 680). This map revealed that while most models focus on system understanding, fewer are devoted to tactical management (n = 40), strategic planning (n = 38), or scenario analysis (n = 9).
+Mathematical modeling involves representing empirical phenomena and experimental outcomes using mathematical functions. The data used for these models may be collected specifically for modeling purposes or drawn from existing experiments and observations originally conducted to address different research questions, with such data often found in the literature [@hau1990].
+
+Mathematical models integrating plant, disease, and environmental - in most cases weather-based variables - factors have been developed since the mid-1900s (See recent review by @gonzález-domínguez2023 ). Dynamic modeling of disease epidemics gained traction in the early 1960s with foundational work by Vanderplank and Zadoks, setting the stage for future advancements. Since then, researchers have contributed extensively to model development, mainly focusing on the plant disease cycle which outline pathogen development stages, such as dormancy, reproduction, dispersal, and pathogenesis, driven by interactions among host, pathogen, and environmental factors [@dewolf2007].
+
+A systematic map by @fedele2022a identified over 750 papers on plant disease models, primarily aimed at understanding system interactions (n = 680). This map revealed that while most models focus on system understanding, fewer are devoted to tactical management (n = 40), strategic planning (n = 38), or scenario analysis (n = 9).
 
 In terms of model development, we can classify the models into two main groups based on the approach taken [@gonzález-domínguez2023]: Empirical or mechanistic approaches, which differ fundamentally in their basis, complexity and application ([@fig-approaches_modeling]).
 
@@ -27,3 +31,99 @@ In mechanistic modeling, the equations used to predict specific disease componen
 Beyond their practical predictive value, mechanistic models are valuable tools for organizing existing knowledge about a particular disease, helping to identify gaps and guide future research efforts. An example of such work is the extensive collection of comprehensive mechanistic models developed for various plant diseases by the research group led by Prof. Vittorio Rossi in Italy [@rossi2008; @rossi2014; @salotti2023; @salotti2022].
 
 This chapter focuses mainly on empirical modeling. We begin by examining the types of data utilized in model development, focusing on those collected under controlled conditions, such as replicated laboratory or growth chamber experiments, as well as field data collected from several locations and years. We will also analyze real-world case studies, drawing on examples from the literature to replicate and understand model applications. Through these examples, we aim to illustrate the process of fitting models to data and underscore the role of modeling in advancing plant disease management practices.
+
+## Controlled environment
+
+In this section, we will demonstrate, using examples from the literature, how statistical models can be fitted to data that represent various stages of the disease cycle.
+
+Research on disease-environment interactions under controlled conditions - such as laboratory or growth chamber studies - lays the groundwork for building foundational models, including infection-based models and sub-models for specific processes like dormancy, dispersal, infection, and latency [@krause1975; @magarey2005; @dewolf2007].
+
+Growth chambers and phytotrons are essential for testing the effects of individual variables, though these controlled results may not fully replicate field conditions. Anyway, laboratory experiments help clarify specific questions by isolating interactions, unlike complex field trials where host, pathogen, and environment factors interact. Polycyclic or "mini epidemic" experiments enable observation of disease dynamics under targeted conditions [@hau1990; @rotem1988].
+
+Once developed, these sub-models can be incorporated into larger mechanistic models that simulate the entire disease cycle, thereby mimicking disease progression over time [@rossi2008; @salotti2023]. Alternatively, sub-models can also be used in stand-alone predictive systems where the process being modeled - such as infection - is the key factor in determining disease occurrence [@machardy1989]. For example, infection sub-models can be integrated into prediction systems that help schedule crop protection measures by forecasting when infection risk is highest.
+
+### Infection-based models
+
+#### Generalized beta-function
+
+Among several non-linear models that can be fitted to infection responses to temperature, the generalized beta-function is an interesting alternative [@hau1990]. This is a nonlinear model with five parameters. Two of them, namely $b$ and $c$ , have a biological meaning because they are estimates of the minimum and maximum temperature of the biological process under consideration.
+
+We will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the influence of temperature on the symptom development of citrus canker in sweet orange [@dallapria2006]. The data used here is only for severity on the cultivar Hamlin.The data was extracted using the R package digitize as shown [here on this tweet](https://twitter.com/edelponte/status/1580320409794539520?s=20&t=KqjJPmwzFVKm8Gu7Ss-P6A).
+
+Let's enter the data manually. Where $t$ is the temperature and $y$ is the severity on leaves.
+
+```{r}
+temp <- tibble::tribble(
+  ~t, ~y,
+12.0, 0.00,
+15.0, 0.1,
+20.0, 0.5,
+25.0, 1.2,
+30.0, 1.5,
+35.0, 1.2,
+40.0, 0.1
+)
+```
+
+Fit the Beta generalized model [@hau1990]. The model can be written as:
+
+$$
+y = a*((t - b )^d)*((c - t)^e)
+$$
+
+where $b$ and $c$ represent minimum and maximum temperatures, respectively, for the development of the disease, $a$, $d$ and $e$ are parameters to be estimated, $t$ is the temperature and $y$ is disease severity. We need the {minpack.lm} library to avoid parameterization issues.
+
+```{r}
+#| warning: false
+#| message: false
+library(minpack.lm)
+fit_temp <- nlsLM(
+  y ~ a * ((t - b) ^ d) * ((c - t) ^ e),
+  start = list(
+    a = 0,
+    b = 10,
+    c = 40,
+    d = 1.5,
+    e = 1
+  ),
+  algorithm = "port",
+  data = temp
+)
+summary(fit_temp)
+library(modelr)
+modelr::rsquare(fit_temp, temp)
+```
+
+Store the model parameters in objects.
+
+```{r}
+fit_temp$m$getAllPars()
+a <- fit_temp$m$getAllPars()[1]
+b <- fit_temp$m$getAllPars()[2]
+c <- fit_temp$m$getAllPars()[3]
+d <- fit_temp$m$getAllPars()[4]
+e <- fit_temp$m$getAllPars()[5]
+```
+
+Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
+
+```{r}
+t <- seq(10, 45, 0.1)
+y <- a * ((t - b) ^ d) * ((c - t) ^ e)
+dat <- data.frame(t, y)
+```
+
+Plot the observed and predicted data using {ggplot2} package.
+
+```{r}
+#| warning: false
+#| message: false
+library(ggplot2)
+library(r4pde)
+dat |>
+  ggplot(aes(t, y)) +
+  geom_line() +
+  geom_point(data = temp, aes(t, y)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Severity")
+```

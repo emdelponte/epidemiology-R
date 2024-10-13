@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 /* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
@@ -101,6 +135,35 @@ gtag('js', new Date());
 gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 </script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -375,6 +438,13 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">20.1</span> Introduction</a></li>
+  <li><a href="#controlled-environment" id="toc-controlled-environment" class="nav-link" data-scroll-target="#controlled-environment"><span class="header-section-number">20.2</span> Controlled environment</a>
+  <ul>
+  <li><a href="#infection-based-models" id="toc-infection-based-models" class="nav-link" data-scroll-target="#infection-based-models"><span class="header-section-number">20.2.1</span> Infection-based models</a>
+  <ul>
+  <li><a href="#generalized-beta-function" id="toc-generalized-beta-function" class="nav-link" data-scroll-target="#generalized-beta-function"><span class="header-section-number">20.2.1.1</span> Generalized beta-function</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/emdelponte/epidemiology-R/edit/main/prediction-disease-modeling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -402,8 +472,10 @@ gtag('config', 'G-5T7SZYQV79', { 'anonymize_ip': true});
 
 <section id="introduction" class="level2" data-number="20.1">
 <h2 data-number="20.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">20.1</span> Introduction</h2>
-<p>Plant disease modeling is a crucial tool for predicting disease dynamics and informing management decisions. By leveraging models, researchers and practitioners can anticipate disease outbreaks, assess potential risks, and implement timely interventions to mitigate losses <span class="citation" data-cites="savary2018 rossi2010a">(<a href="references.html#ref-rossi2010a" role="doc-biblioref">Rossi et al. 2010</a>; <a href="references.html#ref-savary2018" role="doc-biblioref">Savary et al. 2018</a>)</span>.</p>
-<p>Plant disease models integrating plant, disease, and environmental - in most cases weather-based variables - factors have been developed since the mid-1900s (See recent review by <span class="citation" data-cites="gonzález-domínguez2023">González-Domínguez et al. (<a href="references.html#ref-gonzález-domínguez2023" role="doc-biblioref">2023</a>)</span> ). Dynamic modeling of disease epidemics gained traction in the early 1960s with foundational work by Van der Plank and Zadoks, setting the stage for future advancements. Since then, researchers have contributed extensively to model development <span class="citation" data-cites="dewolf2007">(<a href="references.html#ref-dewolf2007" role="doc-biblioref">De Wolf and Isard 2007</a>)</span>. A systematic map by <span class="citation" data-cites="fedele2022a">Fedele et al. (<a href="references.html#ref-fedele2022a" role="doc-biblioref">2022</a>)</span> identified over 750 papers on plant disease models, primarily aimed at understanding system interactions (n = 680). This map revealed that while most models focus on system understanding, fewer are devoted to tactical management (n = 40), strategic planning (n = 38), or scenario analysis (n = 9).</p>
+<p>As seen in the previous chapter, plant disease modeling is a crucial tool for predicting disease dynamics and informing management decisions when integrated into decision support systems. By leveraging models, researchers and practitioners can anticipate disease outbreaks, assess potential risks, and implement timely interventions to mitigate losses <span class="citation" data-cites="savary2018 rossi2010a">(<a href="references.html#ref-rossi2010a" role="doc-biblioref">Rossi et al. 2010</a>; <a href="references.html#ref-savary2018" role="doc-biblioref">Savary et al. 2018</a>)</span>.</p>
+<p>Mathematical modeling involves representing empirical phenomena and experimental outcomes using mathematical functions. The data used for these models may be collected specifically for modeling purposes or drawn from existing experiments and observations originally conducted to address different research questions, with such data often found in the literature <span class="citation" data-cites="hau1990">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>)</span>.</p>
+<p>Mathematical models integrating plant, disease, and environmental - in most cases weather-based variables - factors have been developed since the mid-1900s (See recent review by <span class="citation" data-cites="gonzález-domínguez2023">González-Domínguez et al. (<a href="references.html#ref-gonzález-domínguez2023" role="doc-biblioref">2023</a>)</span> ). Dynamic modeling of disease epidemics gained traction in the early 1960s with foundational work by Vanderplank and Zadoks, setting the stage for future advancements. Since then, researchers have contributed extensively to model development, mainly focusing on the plant disease cycle which outline pathogen development stages, such as dormancy, reproduction, dispersal, and pathogenesis, driven by interactions among host, pathogen, and environmental factors <span class="citation" data-cites="dewolf2007">(<a href="references.html#ref-dewolf2007" role="doc-biblioref">De Wolf and Isard 2007</a>)</span>.</p>
+<p>A systematic map by <span class="citation" data-cites="fedele2022a">Fedele et al. (<a href="references.html#ref-fedele2022a" role="doc-biblioref">2022</a>)</span> identified over 750 papers on plant disease models, primarily aimed at understanding system interactions (n = 680). This map revealed that while most models focus on system understanding, fewer are devoted to tactical management (n = 40), strategic planning (n = 38), or scenario analysis (n = 9).</p>
 <p>In terms of model development, we can classify the models into two main groups based on the approach taken <span class="citation" data-cites="gonzález-domínguez2023">(<a href="references.html#ref-gonzález-domínguez2023" role="doc-biblioref">González-Domínguez et al. 2023</a>)</span>: Empirical or mechanistic approaches, which differ fundamentally in their basis, complexity and application (<a href="#fig-approaches_modeling" class="quarto-xref">Figure&nbsp;<span>20.1</span></a>).</p>
 <p><strong>Empirical models</strong>, which emerged in the mid-20th century, rely on data-driven statistical relationships between variables collected under varying field or controlled environments. These models often lack cause-effect understanding, making them less robust and requiring rigorous validation and calibration when applied in diverse environments, especially in regions that did not provide data for model construction. The parameters of the model change every time new data are incorporated during model development.</p>
 <p>In contrast, <strong>mechanistic models</strong>, developed from a deep understanding of biological and epidemiological processes, explain disease dynamics based on known system behaviors in response to external variables—a concept-driven approach. These dynamic models quantitatively characterize the state of the pathosystem over time, offering generally more robust predictions by utilizing mathematical equations to describe how epidemics evolve under varying environmental conditions.</p>
@@ -421,9 +493,119 @@ Figure&nbsp;20.1: Steps of model development from data collection to modeling ba
 <p>In mechanistic modeling, the equations used to predict specific disease components—such as infection frequency or the latency period—are often empirically derived from controlled experiments. For example, an infection frequency equation is typically based on data collected under specific environmental conditions, with models fitted to accurately describe observed patterns. These process-based models are then built by integrating empirically-derived equations or rules, which collectively simulate the disease cycle. Data and equations are sourced from published studies or generated from new experiments conducted by researchers.</p>
 <p>Beyond their practical predictive value, mechanistic models are valuable tools for organizing existing knowledge about a particular disease, helping to identify gaps and guide future research efforts. An example of such work is the extensive collection of comprehensive mechanistic models developed for various plant diseases by the research group led by Prof.&nbsp;Vittorio Rossi in Italy <span class="citation" data-cites="rossi2008 rossi2014 salotti2023 salotti2022">(<a href="references.html#ref-rossi2008" role="doc-biblioref">Rossi et al. 2008</a>, <a href="references.html#ref-rossi2014" role="doc-biblioref">2014</a>; <a href="references.html#ref-salotti2022" role="doc-biblioref">Salotti et al. 2022</a>; <a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>)</span>.</p>
 <p>This chapter focuses mainly on empirical modeling. We begin by examining the types of data utilized in model development, focusing on those collected under controlled conditions, such as replicated laboratory or growth chamber experiments, as well as field data collected from several locations and years. We will also analyze real-world case studies, drawing on examples from the literature to replicate and understand model applications. Through these examples, we aim to illustrate the process of fitting models to data and underscore the role of modeling in advancing plant disease management practices.</p>
+</section>
+<section id="controlled-environment" class="level2" data-number="20.2">
+<h2 data-number="20.2" class="anchored" data-anchor-id="controlled-environment"><span class="header-section-number">20.2</span> Controlled environment</h2>
+<p>In this section, we will demonstrate, using examples from the literature, how statistical models can be fitted to data that represent various stages of the disease cycle.</p>
+<p>Research on disease-environment interactions under controlled conditions - such as laboratory or growth chamber studies - lays the groundwork for building foundational models, including infection-based models and sub-models for specific processes like dormancy, dispersal, infection, and latency <span class="citation" data-cites="krause1975 magarey2005 dewolf2007">(<a href="references.html#ref-dewolf2007" role="doc-biblioref">De Wolf and Isard 2007</a>; <a href="references.html#ref-krause1975" role="doc-biblioref">Krause and Massie 1975</a>; <a href="references.html#ref-magarey2005" role="doc-biblioref">Magarey et al. 2005</a>)</span>.</p>
+<p>Growth chambers and phytotrons are essential for testing the effects of individual variables, though these controlled results may not fully replicate field conditions. Anyway, laboratory experiments help clarify specific questions by isolating interactions, unlike complex field trials where host, pathogen, and environment factors interact. Polycyclic or “mini epidemic” experiments enable observation of disease dynamics under targeted conditions <span class="citation" data-cites="hau1990 rotem1988">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>; <a href="references.html#ref-rotem1988" role="doc-biblioref">Rotem 1988</a>)</span>.</p>
+<p>Once developed, these sub-models can be incorporated into larger mechanistic models that simulate the entire disease cycle, thereby mimicking disease progression over time <span class="citation" data-cites="rossi2008 salotti2023">(<a href="references.html#ref-rossi2008" role="doc-biblioref">Rossi et al. 2008</a>; <a href="references.html#ref-salotti2023" role="doc-biblioref">Salotti and Rossi 2023</a>)</span>. Alternatively, sub-models can also be used in stand-alone predictive systems where the process being modeled - such as infection - is the key factor in determining disease occurrence <span class="citation" data-cites="machardy1989">(<a href="references.html#ref-machardy1989" role="doc-biblioref">MacHardy 1989</a>)</span>. For example, infection sub-models can be integrated into prediction systems that help schedule crop protection measures by forecasting when infection risk is highest.</p>
+<section id="infection-based-models" class="level3" data-number="20.2.1">
+<h3 data-number="20.2.1" class="anchored" data-anchor-id="infection-based-models"><span class="header-section-number">20.2.1</span> Infection-based models</h3>
+<section id="generalized-beta-function" class="level4" data-number="20.2.1.1">
+<h4 data-number="20.2.1.1" class="anchored" data-anchor-id="generalized-beta-function"><span class="header-section-number">20.2.1.1</span> Generalized beta-function</h4>
+<p>Among several non-linear models that can be fitted to infection responses to temperature, the generalized beta-function is an interesting alternative <span class="citation" data-cites="hau1990">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>)</span>. This is a nonlinear model with five parameters. Two of them, namely <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span> , have a biological meaning because they are estimates of the minimum and maximum temperature of the biological process under consideration.</p>
+<p>We will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the influence of temperature on the symptom development of citrus canker in sweet orange <span class="citation" data-cites="dallapria2006">(<a href="references.html#ref-dallapria2006" role="doc-biblioref">Dalla Pria et al. 2006</a>)</span>. The data used here is only for severity on the cultivar Hamlin.The data was extracted using the R package digitize as shown <a href="https://twitter.com/edelponte/status/1580320409794539520?s=20&amp;t=KqjJPmwzFVKm8Gu7Ss-P6A">here on this tweet</a>.</p>
+<p>Let’s enter the data manually. Where <span class="math inline">\(t\)</span> is the temperature and <span class="math inline">\(y\)</span> is the severity on leaves.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>temp <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="sc">~</span>t, <span class="sc">~</span>y,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fl">12.0</span>, <span class="fl">0.00</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fl">15.0</span>, <span class="fl">0.1</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fl">20.0</span>, <span class="fl">0.5</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fl">25.0</span>, <span class="fl">1.2</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fl">30.0</span>, <span class="fl">1.5</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fl">35.0</span>, <span class="fl">1.2</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fl">40.0</span>, <span class="fl">0.1</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Fit the Beta generalized model <span class="citation" data-cites="hau1990">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>)</span>. The model can be written as:</p>
+<p><span class="math display">\[
+y = a*((t - b )^d)*((c - t)^e)
+\]</span></p>
+<p>where <span class="math inline">\(b\)</span> and <span class="math inline">\(c\)</span> represent minimum and maximum temperatures, respectively, for the development of the disease, <span class="math inline">\(a\)</span>, <span class="math inline">\(d\)</span> and <span class="math inline">\(e\)</span> are parameters to be estimated, <span class="math inline">\(t\)</span> is the temperature and <span class="math inline">\(y\)</span> is disease severity. We need the {minpack.lm} library to avoid parameterization issues.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(minpack.lm)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>fit_temp <span class="ot">&lt;-</span> <span class="fu">nlsLM</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  y <span class="sc">~</span> a <span class="sc">*</span> ((t <span class="sc">-</span> b) <span class="sc">^</span> d) <span class="sc">*</span> ((c <span class="sc">-</span> t) <span class="sc">^</span> e),</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">list</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">a =</span> <span class="dv">0</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">b =</span> <span class="dv">10</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">c =</span> <span class="dv">40</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">d =</span> <span class="fl">1.5</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">e =</span> <span class="dv">1</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  ),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"port"</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> temp</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Formula: y ~ a * ((t - b)^d) * ((c - t)^e)
+
+Parameters:
+   Estimate Std. Error t value Pr(&gt;|t|)    
+a  0.001303   0.006295   0.207    0.855    
+b 11.999999   4.875414   2.461    0.133    
+c 40.137236   0.346763 115.748 7.46e-05 ***
+d  1.760101   1.193017   1.475    0.278    
+e  0.830868   0.445213   1.866    0.203    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.1121 on 2 degrees of freedom
+
+Algorithm "port", convergence message: Relative error between `par' and the solution is at most `ptol'.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelr)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>modelr<span class="sc">::</span><span class="fu">rsquare</span>(fit_temp, temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9898275</code></pre>
+</div>
+</div>
+<p>Store the model parameters in objects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          a           b           c           d           e 
+ 0.00130259 11.99999931 40.13723602  1.76010097  0.83086798 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">1</span>]</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">2</span>]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">3</span>]</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">4</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>e <span class="ot">&lt;-</span> fit_temp<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">45</span>, <span class="fl">0.1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> a <span class="sc">*</span> ((t <span class="sc">-</span> b) <span class="sc">^</span> d) <span class="sc">*</span> ((c <span class="sc">-</span> t) <span class="sc">^</span> e)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(t, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plot the observed and predicted data using {ggplot2} package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>dat <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> temp, <span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Temperature"</span>, <span class="at">y =</span> <span class="st">"Severity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-dallapria2006" class="csl-entry" role="listitem">
+Dalla Pria, M., Christiano, R. C. S., Furtado, E. L., Amorim, L., and Bergamin Filho, A. 2006. Effect of temperature and leaf wetness duration on infection of sweet oranges by Asiatic citrus canker. Plant Pathology 55:657–663. <a href="https://doi.org/10.1111/j.1365-3059.2006.01393.x">https://doi.org/10.1111/j.1365-3059.2006.01393.x</a>.
+</div>
 <div id="ref-dewolf2007" class="csl-entry" role="listitem">
 De Wolf, E. D., and Isard, S. A. 2007. Disease Cycle Approach to Plant Disease Prediction. Annual Review of Phytopathology 45:203–220. <a href="https://doi.org/10.1146/annurev.phyto.44.070505.143329">https://doi.org/10.1146/annurev.phyto.44.070505.143329</a>.
 </div>
@@ -433,6 +615,18 @@ Fedele, G., Brischetto, C., Rossi, V., and Gonzalez-Dominguez, E. 2022. A System
 <div id="ref-gonzález-domínguez2023" class="csl-entry" role="listitem">
 González-Domínguez, E., Caffi, T., Rossi, V., Salotti, I., and Fedele, G. 2023. Plant Disease Models and Forecasting: Changes in Principles and Applications over the Last 50 Years. Phytopathology® 113:678–693. <a href="https://doi.org/10.1094/phyto-10-22-0362-kd">https://doi.org/10.1094/phyto-10-22-0362-kd</a>.
 </div>
+<div id="ref-hau1990" class="csl-entry" role="listitem">
+Hau, B., and Kranz, J. 1990. Mathematics and statistics for analyses in epidemiology. In Springer Berlin Heidelberg, pp. 12–52. <a href="https://doi.org/10.1007/978-3-642-75398-5_2">https://doi.org/10.1007/978-3-642-75398-5_2</a>.
+</div>
+<div id="ref-krause1975" class="csl-entry" role="listitem">
+Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology 13:31–47. <a href="https://doi.org/10.1146/annurev.py.13.090175.000335">https://doi.org/10.1146/annurev.py.13.090175.000335</a>.
+</div>
+<div id="ref-machardy1989" class="csl-entry" role="listitem">
+MacHardy, W. E. 1989. A revision of mills’s criteria for predicting apple scab infection periods. Phytopathology 79:304. <a href="https://doi.org/10.1094/phyto-79-304">https://doi.org/10.1094/phyto-79-304</a>.
+</div>
+<div id="ref-magarey2005" class="csl-entry" role="listitem">
+Magarey, R. D., Sutton, T. B., and Thayer, C. L. 2005. A Simple Generic Infection Model for Foliar Fungal Plant Pathogens. Phytopathology® 95:92–100. <a href="https://doi.org/10.1094/phyto-95-0092">https://doi.org/10.1094/phyto-95-0092</a>.
+</div>
 <div id="ref-rossi2008" class="csl-entry" role="listitem">
 Rossi, V., Caffi, T., Giosuè, S., and Bugiani, R. 2008. A mechanistic model simulating primary infections of downy mildew in grapevine. Ecological Modelling 212:480–491. <a href="https://doi.org/10.1016/j.ecolmodel.2007.10.046">https://doi.org/10.1016/j.ecolmodel.2007.10.046</a>.
 </div>
@@ -441,6 +635,9 @@ Rossi, V., Giosuè, S., and Caffi, T. 2010. Modelling Plant Diseases for Decisio
 </div>
 <div id="ref-rossi2014" class="csl-entry" role="listitem">
 Rossi, V., Onesti, G., Legler, S. E., and Caffi, T. 2014. Use of systems analysis to develop plant disease models based on literature data: grape black-rot as a case-study. European Journal of Plant Pathology 141:427–444. <a href="https://doi.org/10.1007/s10658-014-0553-z">https://doi.org/10.1007/s10658-014-0553-z</a>.
+</div>
+<div id="ref-rotem1988" class="csl-entry" role="listitem">
+Rotem, J. 1988. Techniques of Controlled-Condition Experiments. In Springer Berlin Heidelberg, pp. 19–31. <a href="https://doi.org/10.1007/978-3-642-95534-1_3">https://doi.org/10.1007/978-3-642-95534-1_3</a>.
 </div>
 <div id="ref-salotti2022" class="csl-entry" role="listitem">
 Salotti, I., Bove, F., and Rossi, V. 2022. Development and validation of a mechanistic, weather-based model for predicting puccinia graminis f. Sp. Tritici infections and stem rust progress in wheat. Frontiers in Plant Science 13. <a href="https://doi.org/10.3389/fpls.2022.897680">https://doi.org/10.3389/fpls.2022.897680</a>.
@@ -452,6 +649,8 @@ Salotti, I., and Rossi, V. 2023. A Mechanistic Model Accounting for the Effect o
 Savary, S., Nelson, A. D., Djurle, A., Esker, P. D., Sparks, A., Amorim, L., Bergamin Filho, A., Caffi, T., Castilla, N., Garrett, K., McRoberts, N., Rossi, V., Yuen, J., and Willocquet, L. 2018. Concepts, approaches, and avenues for modelling crop health and crop losses. European Journal of Agronomy 100:4–18. <a href="https://doi.org/10.1016/j.eja.2018.04.003">https://doi.org/10.1016/j.eja.2018.04.003</a>.
 </div>
 </div>
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->
