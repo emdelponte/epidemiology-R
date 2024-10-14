@@ -24,7 +24,6 @@ In terms of model development, we can classify the models into two main groups b
 
 In contrast, **mechanistic models**, developed from a deep understanding of biological and epidemiological processes, explain disease dynamics based on known system behaviors in response to external variables---a concept-driven approach. These dynamic models quantitatively characterize the state of the pathosystem over time, offering generally more robust predictions by utilizing mathematical equations to describe how epidemics evolve under varying environmental conditions.
 
-
 Both empirical and mechanistic approaches are valid methodologies extensively used in plant pathology research. The choice between these approaches depends on several factors, including data availability, urgency in model development, and, frequently, the researcher's experience or preference. Empirical models focus on statistical relationships derived directly from data, whereas mechanistic models aim to represent the biological processes of disease progression through linked mathematical equations.
 
 In mechanistic modeling, the equations used to predict specific disease components---such as infection frequency or the latency period---are often empirically derived from controlled experiments. For example, an infection frequency equation is typically based on data collected under specific environmental conditions, with models fitted to accurately describe observed patterns. These process-based models are then built by integrating empirically-derived equations or rules, which collectively simulate the disease cycle. Data and equations are sourced from published studies or generated from new experiments conducted by researchers.
@@ -51,7 +50,9 @@ Once developed, these sub-models can be incorporated into larger mechanistic mod
 
 Among several non-linear models that can be fitted to infection responses to temperature, the generalized beta-function is an interesting alternative [@hau1990]. This is a nonlinear model with five parameters. Two of them, namely $b$ and $c$ , have a biological meaning because they are estimates of the minimum and maximum temperature of the biological process under consideration.
 
-We will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the influence of temperature on the symptom development of citrus canker in sweet orange [@dallapria2006]. The data used here is only for severity on the cultivar Hamlin.The data was extracted using the R package digitize as shown [here on this tweet](https://twitter.com/edelponte/status/1580320409794539520?s=20&t=KqjJPmwzFVKm8Gu7Ss-P6A).
+We will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the influence of temperature on the symptom development of citrus canker in sweet orange [@dallapria2006]. The data used here is only for severity on the cultivar Hamlin (plot a in @fig-temperature). The data was extracted using the R package {digitize} as shown [here on this tweet](https://twitter.com/edelponte/status/1580320409794539520?s=20&t=KqjJPmwzFVKm8Gu7Ss-P6A).
+
+![Effect of temperature (12, 15, 20, 25, 30, 35 or 40°C) on disease severity of citrus canker on sweet orange cvs Hamlin (a), Natal (b), Pera (c) and Valencia (d) with a leaf wetness duration of 24 h. Each point represents the mean of three repetitions. Vertical bars represent standard errors. Lines show the generalized beta function fitted to data. Source: @dallapria2006](imgs/modeling-fig_temperature.gif){#fig-temperature fig-align="center" width="441"}
 
 Let's enter the data manually. Where $t$ is the temperature and $y$ is the severity on leaves.
 
@@ -146,7 +147,7 @@ where
 
 $T_{eq} = \frac{T - T_{\text{min}}}{T_{\text{max}} - T_{\text{min}}}$
 
-$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve. 
+$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve.
 
 Let's rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.
 
@@ -202,7 +203,6 @@ y <- (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c
 dat2 <- data.frame(t, y)
 ```
 
-
 And now we can plot the observed and predicted data using {ggplot2} package.
 
 ```{r}
@@ -215,6 +215,273 @@ dat2 |>
   geom_line() +
   geom_point(data = temp, aes(t, yscaled)) +
   theme_r4pde(font_size = 16) +
-  labs(x = "Temperature", y = "Severity", 
+  labs(x = "Temperature", y = "Scaled severity", 
        title = "Analytis beta function")
+```
+
+#### Moisture effects
+
+##### Monomolecular model
+
+For this example, we will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the effects of moisture duration on the symptom development of citrus canker in sweet orange [@dallapria2006]. As in the previous example for temperature effects, the data used here is only for severity on the cultivar Hamlin (plot a in @fig-moisture). The data was also extracted using the R package digitize.
+
+Let's look at the original data and the predictions by the model fitted in the paper.
+
+![Effect of leaf wetness duration (0, 4, 8, 12, 16, 20 or 24 h) on disease severity of citrus canker on sweet orange cvs Hamlin (a), Natal (b), Pera (c) and Valencia (d) at 30°C. Each point represents the mean of three repetitions. Vertical bars represent standard errors. Lines show the monomolecular model fitted to data. Source: @dallapria2006](imgs/modeling-fig2.gif){#fig-moisture fig-align="center" width="516"}
+
+For this pattern in the data, we will fit a three-parameter asymptotic regression model. These models describe a limited growth, where y approaches an horizontal asymptote as x tends to infinity. This equation is also known as Monomolecular Growth, Mitscherlich law or von Bertalanffy law. See [this tutorial](https://www.statforbiology.com/nonlinearregression/usefulequations) for comprehensive information about fitting several non-linear regression models in R.
+
+Again, we enter the data manually. The 𝑥x is wetness duration in hours and 𝑦y is severity.
+
+```{r}
+wet <- tibble::tribble(~ x, ~ y,
+                       0 ,  0,
+                       4 ,  0.50,
+                       8 ,  0.81,
+                       12,  1.50,
+                       16,  1.26,
+                       20,  2.10,
+                       24,  1.45)
+```
+
+The model can be written as:
+
+$y = c1 + (d1-c1)*(1-exp(-x/e1))$
+
+where $c$ is the lower limit (at $x = 0$), the parameter $d$ is the upper limit and the parameter $e$ (greater than 0) is determining the steepness of the increase as $x$.
+
+We will solve the model again using the `nlsLM` function. We should provide initial values for the three parameters.
+
+```{r}
+fit_wet <- nlsLM(y ~ c1 + (d1 - c1) * (1 - exp(-x / e1)),
+                 start = list(c1 = 0.5,
+                              d1 = 3,
+                              e1 = 1),
+                 data = wet)
+
+summary(fit_wet)
+
+modelr::rsquare(fit_wet, wet)
+```
+
+Store the value of the parameters in the respective object.
+
+```{r}
+HW <- seq(0, 24, 0.1)
+c1 <-  fit_wet$m$getAllPars()[1]
+d1 <- fit_wet$m$getAllPars()[2]
+e1 <- fit_wet$m$getAllPars()[3]
+y <-  (c1 + (d1 - c1) * (1 - exp(-HW / e1)))
+dat2 <- data.frame(HW, y)
+```
+
+Now we can plot the predictions and the original data.
+
+```{r}
+dat2 |>
+  ggplot(aes(HW, y)) +
+  geom_line() +
+  geom_point(data = wet, aes(x, y)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Wetness duration", y = "Severity")
+```
+
+##### Weibull model
+
+In the study by [@ji2021; @ji2023a], a Weibull model was fitted to the re-scaled data (0 to 1) on the effect of moisture duration on spore germination or infection. Let's keep working with the re-scaled data on the citrus canker.
+
+The model is given by:
+
+$y = 1 - \exp(-(a \cdot x)^b)$
+
+where $y$ is the response variable, $x$ is the moist duration, $a$ is the scale parameter influencing the rate of infection and $b$ is the shape parameter affecting the curve's shape and acceleration
+
+```{r}
+wet$yscaled <- rescale(wet$y) 
+wet
+
+```
+
+```{r}
+fit_wet2 <- nlsLM(
+  yscaled ~ 1 - exp(-(a * x)^b),
+  data = wet,
+  start = list(a = 1, b = 2),  # Initial guesses for parameters a and b
+  )
+summary(fit_wet2)
+modelr::rsquare(fit_wet2, wet)
+
+```
+
+Set the value of the parameters in the respective objects
+
+```{r}
+x <- seq(0, 24, 0.1)
+a <-  fit_wet2$m$getAllPars()[1]
+b <- fit_wet2$m$getAllPars()[2]
+y <-  1 - exp(-(a * x)^b)
+dat3 <- data.frame(x, y)
+```
+
+```{r}
+dat3 |>
+  ggplot(aes(x, y)) +
+  geom_line() +
+  geom_point(data = wet, aes(x, yscaled)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Wetness duration", y = "Scaled severity")
+```
+
+#### Integrating temperature and wetness effects
+
+The equations developed for the separate effects can be integrated to create a surface response curve or a simple contour plot. Let's first integrate the generalized beta and the monomolecular models for the original severity data for the citrus canker experiment.
+
+First, we need a data frame for the interaction between temperature $t$ and hours of wetness $hw$. Then, we obtain the disease value for each combination of $t$ and $hw$.
+
+```{r}
+t <- rep(1:40, 40)
+hw <- rep(1:40, each = 40)
+
+# let's fit the two models again and store the parameters in objects
+# Temperature effects
+fit_temp <- nlsLM(
+  y ~ a * ((t - b) ^ d) * ((c - t) ^ e),
+  start = list(
+    a = 0,
+    b = 10,
+    c = 40,
+    d = 1.5,
+    e = 1
+  ),
+  algorithm = "port",
+  data = temp
+)
+fit_temp$m$getAllPars()
+a <- fit_temp$m$getAllPars()[1]
+b <- fit_temp$m$getAllPars()[2]
+c <- fit_temp$m$getAllPars()[3]
+d <- fit_temp$m$getAllPars()[4]
+e <- fit_temp$m$getAllPars()[5]
+
+## Moist duration effects
+fit_wet <- nlsLM(y ~ c1 + (d1 - c1) * (1 - exp(-x / e1)),
+                 start = list(c1 = 0.5,
+                              d1 = 3,
+                              e1 = 1),
+                 data = wet)
+
+c1 <-  fit_wet$m$getAllPars()[1]
+d1 <- fit_wet$m$getAllPars()[2]
+e1 <- fit_wet$m$getAllPars()[3]
+
+dis <-
+  (a * (t - b) ^ d) * ((c - t) ^ e) * (c1 + (d1 - c1) * (1 - exp(- hw / e1)))
+validation <- data.frame(t, hw, dis)
+```
+
+Now the contour plot can be visualized using {ggplot2} and {geomtextpath} packages.
+
+```{r}
+#| warning: false
+#| message: false
+#| 
+
+library(geomtextpath)
+ggplot(validation, aes(t, hw, z = dis)) +
+  geom_contour_filled(bins = 8, alpha = 0.7) +
+  geom_textcontour(bins = 8,
+                   size = 2.5,
+                   padding = unit(0.05, "in")) +
+  theme_light(base_size = 10) +
+  theme(legend.position = "right") +
+  ylim(0, 40) +
+  labs(y = "Wetness duration (hours)",
+       fill = "Severity",
+       x = "Temperature (Celcius)",
+       title = "Integrating generalized beta and monomolecular")
+```
+
+In the second example, let's integrate the Analytis beta and the Weibull model:
+
+```{r}
+# Define the minimum and maximum temperatures
+
+
+fit_temp2 <- nlsLM(
+  yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
+  data = temp,
+  start = list(a = 1, b = 2, c = 3), # Initial guesses for parameters
+  algorithm = "port" 
+)
+
+fit_temp2$m$getAllPars()
+a2 <- fit_temp2$m$getAllPars()[1]
+b2 <- fit_temp2$m$getAllPars()[2]
+c2 <- fit_temp2$m$getAllPars()[3]
+
+
+fit_wet2 <- nlsLM(
+  yscaled ~ 1 - exp(-(d * x)^e),
+  data = wet,
+  start = list(d = 1, e = 2),  # Initial guesses for parameters a and b
+  )
+
+d2 <-  fit_wet2$m$getAllPars()[1]
+e2 <- fit_wet2$m$getAllPars()[2]
+
+Tmin <- 12
+Tmax <- 40
+dis2 <-  (a2 * ((t - Tmin) / (Tmax - Tmin))^b2 * (1 - ((t - Tmin) / (Tmax - Tmin))))^c2 * 1 - exp(-(d2 * hw)^e2)
+
+t <- rep(1:40, 40)
+hw <- rep(1:40, each = 40)
+validation2 <- data.frame(t, hw, dis2)
+validation2 <- validation2 |> 
+  filter(dis2 != "NaN") |> 
+  mutate(dis2 = case_when(dis2 < 0 ~ 0,
+                          TRUE ~ dis2))
+
+```
+
+Now the plot
+
+```{r}
+ggplot(validation2, aes(t, hw, z = dis2)) +
+  geom_contour_filled(bins = 7, alpha = 0.7) +
+  geom_textcontour(bins = 7,
+                   size = 2.5,
+                   padding = unit(0.05, "in")) +
+  theme_light(base_size = 10) +
+  theme(legend.position = "right") +
+  ylim(0, 40) +
+  labs(y = "Wetness duration (hours)",
+       fill = "Severity",
+       x = "Temperature (Celcius)",
+       title = "Integrating generalized beta and monomolecular")
+```
+
+We can create a 3D surface plot to visualize the predictions, as was used in the original papers. Note that In `plot_ly`, a 3D surface plot requires a matrix or grid format for the `z` values, with corresponding vectors for `x` and `y` values that define the axes. If the data frame (`validation2`) has three columns (`t`, `hw`, and `dis2`), we'll need to convert `dis2` into a matrix format that `plot_ly` can interpret for a surface plot.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(plotly)
+library(reshape2)  # or use tidyr for pivoting
+z_matrix <- acast(validation2, hw ~ t, value.var = "dis2")
+x_vals <- sort(unique(validation2$t))  # Temperature axis
+y_vals <- sort(unique(validation2$hw)) # Wetness duration axis
+
+# Create the 3D surface plot
+plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |> 
+    config(displayModeBar = FALSE) |> 
+  layout(
+    scene = list(
+      xaxis = list(title = "Temperature (°C)", nticks = 10),
+      yaxis = list(title = "Wetness Duration (hours)", range = c(0, 40)),
+      zaxis = list(title = "Severity"),
+      aspectratio = list(x = 1, y = 1, z = 1)  # Adjust as needed
+    ),
+    title = "Integrating Generalized Beta and Monomolecular"
+  )
 ```
