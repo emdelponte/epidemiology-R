@@ -18,11 +18,12 @@ A systematic map by @fedele2022a identified over 750 papers on plant disease mod
 
 In terms of model development, we can classify the models into two main groups based on the approach taken [@gonzález-domínguez2023]: Empirical or mechanistic approaches, which differ fundamentally in their basis, complexity and application ([@fig-approaches_modeling]).
 
+![Steps of model development from data collection to modeling based on statistical relationships (data-driven) between data collected from field or controlled environment to mechanistic approach based on the elements of the disease cycles (concept-driven).](imgs/modeling-fig1.png){#fig-approaches_modeling fig-align="center"}
+
 **Empirical models**, which emerged in the mid-20th century, rely on data-driven statistical relationships between variables collected under varying field or controlled environments. These models often lack cause-effect understanding, making them less robust and requiring rigorous validation and calibration when applied in diverse environments, especially in regions that did not provide data for model construction. The parameters of the model change every time new data are incorporated during model development.
 
 In contrast, **mechanistic models**, developed from a deep understanding of biological and epidemiological processes, explain disease dynamics based on known system behaviors in response to external variables---a concept-driven approach. These dynamic models quantitatively characterize the state of the pathosystem over time, offering generally more robust predictions by utilizing mathematical equations to describe how epidemics evolve under varying environmental conditions.
 
-![Steps of model development from data collection to modeling based on statistical relationships (data-driven) between data collected from field or controlled environment to mechanistic approach based on the elements of the disease cycles (concept-driven).](imgs/modeling-fig1.png){#fig-approaches_modeling fig-align="center"}
 
 Both empirical and mechanistic approaches are valid methodologies extensively used in plant pathology research. The choice between these approaches depends on several factors, including data availability, urgency in model development, and, frequently, the researcher's experience or preference. Empirical models focus on statistical relationships derived directly from data, whereas mechanistic models aim to represent the biological processes of disease progression through linked mathematical equations.
 
@@ -44,7 +45,9 @@ Once developed, these sub-models can be incorporated into larger mechanistic mod
 
 ### Infection-based models
 
-#### Generalized beta-function
+#### Temperature effects
+
+##### Generalized beta-function
 
 Among several non-linear models that can be fitted to infection responses to temperature, the generalized beta-function is an interesting alternative [@hau1990]. This is a nonlinear model with five parameters. Two of them, namely $b$ and $c$ , have a biological meaning because they are estimates of the minimum and maximum temperature of the biological process under consideration.
 
@@ -131,11 +134,11 @@ dat |>
        title = "Generalized beta-function")
 ```
 
-#### Analytis beta function
+##### Analytis beta function
 
-In a recent publication @ji2023a tested and compared various mathematical equations to describe the response of mycelial growth for several fungi associated with Grapevine trunk diseases (GTDs) to temperature. The authors found that a beta equation [@analytis1977] provided the smallest AIC values and, therefore, was considered the most suitable for all fungi.
+@ji2023a tested and compared various mathematical equations to describe the response of mycelial growth to temperature for several fungi associated with Grapevine trunk diseases. The authors found that the beta equation [@analytis1977] provided the best fit and, therefore, was considered the most suitable for all fungi.
 
-The model equation for rescaled severity (0 to 1) as a function of temperature is given by:
+The model equation for re-scaled severity (0 to 1) as a function of temperature is given by:
 
 $Y = \left( a \cdot T_{eq}^b \cdot (1 - T_{eq}) \right)^c \quad ; \quad \text{if } Y > 1, \text{ then } Y = 1$
 
@@ -143,7 +146,9 @@ where
 
 $T_{eq} = \frac{T - T_{\text{min}}}{T_{\text{max}} - T_{\text{min}}}$
 
-$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve. Let's rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.
+$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve. 
+
+Let's rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.
 
 ```{r}
 library(scales)
@@ -166,18 +171,18 @@ fit_temp2 <- nlsLM(
   yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
   data = temp,
   start = list(a = 1, b = 2, c = 3), # Initial guesses for parameters
-  lower = c(0, 0, 0), # Lower bounds for the parameters
-  algorithm = "port" # "port" algorithm allows for bounds
+  algorithm = "port" 
 )
 
 # Print the summary of the fit
 summary(fit_temp2)
+
 # Rsquare of the model fit
 modelr::rsquare(fit_temp2, temp)
 
 ```
 
-Store the model parameters in objects.
+Lets's store the model parameters in objects.
 
 ```{r}
 fit_temp2$m$getAllPars()
@@ -187,7 +192,7 @@ c <- fit_temp2$m$getAllPars()[3]
 
 ```
 
-Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
+Again, we create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
 
 ```{r}
 Tmin <- 12
@@ -198,7 +203,7 @@ dat2 <- data.frame(t, y)
 ```
 
 
-Plot the observed and predicted data using {ggplot2} package.
+And now we can plot the observed and predicted data using {ggplot2} package.
 
 ```{r}
 #| warning: false
