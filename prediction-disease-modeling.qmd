@@ -96,7 +96,6 @@ fit_temp <- nlsLM(
 )
 summary(fit_temp)
 
-# Rsquare of the model fit
 modelr::rsquare(fit_temp, temp)
 ```
 
@@ -175,10 +174,8 @@ fit_temp2 <- nlsLM(
   algorithm = "port" 
 )
 
-# Print the summary of the fit
 summary(fit_temp2)
 
-# Rsquare of the model fit
 modelr::rsquare(fit_temp2, temp)
 
 ```
@@ -465,12 +462,11 @@ We can create a 3D surface plot to visualize the predictions, as [it was used in
 #| message: false
 
 library(plotly)
-library(reshape2)  # or use tidyr for pivoting
+library(reshape2)  
 z_matrix <- acast(validation2, hw ~ t, value.var = "dis2")
-x_vals <- sort(unique(validation2$t))  # Temperature axis
-y_vals <- sort(unique(validation2$hw)) # Wetness duration axis
+x_vals <- sort(unique(validation2$t))  
+y_vals <- sort(unique(validation2$hw)) 
 
-# Create the 3D surface plot
 plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |> 
     config(displayModeBar = FALSE) |> 
   layout(
@@ -478,7 +474,7 @@ plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |>
       xaxis = list(title = "Temperature (°C)", nticks = 10),
       yaxis = list(title = "Wetness Duration (hours)", range = c(0, 40)),
       zaxis = list(title = "Severity"),
-      aspectratio = list(x = 1, y = 1, z = 1)  # Adjust as needed
+      aspectratio = list(x = 1, y = 1, z = 1)  
     ),
     title = "Integrating Generalized Beta and Monomolecular"
   )
