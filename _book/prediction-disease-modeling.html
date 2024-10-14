@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.53">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -443,6 +443,7 @@ window.Quarto = {
   <li><a href="#infection-based-models" id="toc-infection-based-models" class="nav-link" data-scroll-target="#infection-based-models"><span class="header-section-number">20.2.1</span> Infection-based models</a>
   <ul>
   <li><a href="#generalized-beta-function" id="toc-generalized-beta-function" class="nav-link" data-scroll-target="#generalized-beta-function"><span class="header-section-number">20.2.1.1</span> Generalized beta-function</a></li>
+  <li><a href="#analytis-beta-function" id="toc-analytis-beta-function" class="nav-link" data-scroll-target="#analytis-beta-function"><span class="header-section-number">20.2.1.2</span> Analytis beta function</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -519,7 +520,7 @@ Figure&nbsp;20.1: Steps of model development from data collection to modeling ba
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fl">40.0</span>, <span class="fl">0.1</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Fit the Beta generalized model <span class="citation" data-cites="hau1990">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>)</span>. The model can be written as:</p>
+<p>Fit the generalized beta-function <span class="citation" data-cites="hau1990">(<a href="references.html#ref-hau1990" role="doc-biblioref">Hau and Kranz 1990</a>)</span>. The model can be written as:</p>
 <p><span class="math display">\[
 y = a*((t - b )^d)*((c - t)^e)
 \]</span></p>
@@ -546,7 +547,7 @@ Formula: y ~ a * ((t - b)^d) * ((c - t)^e)
 Parameters:
    Estimate Std. Error t value Pr(&gt;|t|)    
 a  0.001303   0.006295   0.207    0.855    
-b 11.999999   4.875414   2.461    0.133    
+b 11.999999   4.875412   2.461    0.133    
 c 40.137236   0.346763 115.748 7.46e-05 ***
 d  1.760101   1.193017   1.475    0.278    
 e  0.830868   0.445213   1.866    0.203    
@@ -557,7 +558,7 @@ Residual standard error: 0.1121 on 2 degrees of freedom
 
 Algorithm "port", convergence message: Relative error between `par' and the solution is at most `ptol'.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(modelr)</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rsquare of the model fit</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>modelr<span class="sc">::</span><span class="fu">rsquare</span>(fit_temp, temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.9898275</code></pre>
@@ -591,7 +592,8 @@ Algorithm "port", convergence message: Relative error between `par' and the solu
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> temp, <span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Temperature"</span>, <span class="at">y =</span> <span class="st">"Severity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Temperature"</span>, <span class="at">y =</span> <span class="st">"Severity"</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Generalized beta-function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -600,9 +602,116 @@ Algorithm "port", convergence message: Relative error between `par' and the solu
 </div>
 </div>
 </div>
+</section>
+<section id="analytis-beta-function" class="level4" data-number="20.2.1.2">
+<h4 data-number="20.2.1.2" class="anchored" data-anchor-id="analytis-beta-function"><span class="header-section-number">20.2.1.2</span> Analytis beta function</h4>
+<p>In a recent publication <span class="citation" data-cites="ji2023a">Ji et al. (<a href="references.html#ref-ji2023a" role="doc-biblioref">2023</a>)</span> tested and compared various mathematical equations to describe the response of mycelial growth for several fungi associated with Grapevine trunk diseases (GTDs) to temperature. The authors found that a beta equation <span class="citation" data-cites="analytis1977">(<a href="references.html#ref-analytis1977" role="doc-biblioref">Analytis 1977</a>)</span> provided the smallest AIC values and, therefore, was considered the most suitable for all fungi.</p>
+<p>The model equation for rescaled severity (0 to 1) as a function of temperature is given by:</p>
+<p><span class="math inline">\(Y = \left( a \cdot T_{eq}^b \cdot (1 - T_{eq}) \right)^c \quad ; \quad \text{if } Y &gt; 1, \text{ then } Y = 1\)</span></p>
+<p>where</p>
+<p><span class="math inline">\(T_{eq} = \frac{T - T_{\text{min}}}{T_{\text{max}} - T_{\text{min}}}\)</span></p>
+<p><span class="math inline">\(T\)</span> is the temperature in degrees Celsius. <span class="math inline">\(T_{\text{min}}\)</span> is the minimum temperature, <span class="math inline">\(T_{\text{max}}\)</span> is the maximum temperature for severity. The <span class="math inline">\(a\)</span> , <span class="math inline">\(b\)</span> , and <span class="math inline">\(c\)</span> are parameters that define the top, symmetry, and size of the unimodal curve. Let’s rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>temp<span class="sc">$</span>yscaled <span class="ot">&lt;-</span> <span class="fu">rescale</span>(temp<span class="sc">$</span>y)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 7 × 3
+      t     y yscaled
+  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1    12   0    0     
+2    15   0.1  0.0667
+3    20   0.5  0.333 
+4    25   1.2  0.8   
+5    30   1.5  1     
+6    35   1.2  0.8   
+7    40   0.1  0.0667</code></pre>
+</div>
+</div>
+<p>Now we can fit the model using the same <code>nlsLM</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the minimum and maximum temperatures</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>Tmin <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>Tmax <span class="ot">&lt;-</span> <span class="dv">40</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(minpack.lm)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>fit_temp2 <span class="ot">&lt;-</span> <span class="fu">nlsLM</span>(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  yscaled <span class="sc">~</span> (a <span class="sc">*</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))<span class="sc">^</span>b <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))))<span class="sc">^</span>c,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> temp,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>), <span class="co"># Initial guesses for parameters</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">lower =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>), <span class="co"># Lower bounds for the parameters</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"port"</span> <span class="co"># "port" algorithm allows for bounds</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the summary of the fit</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_temp2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Formula: yscaled ~ (a * ((t - Tmin)/(Tmax - Tmin))^b * (1 - ((t - Tmin)/(Tmax - 
+    Tmin))))^c
+
+Parameters:
+  Estimate Std. Error t value Pr(&gt;|t|)    
+a   6.7625     0.3218  21.013 3.03e-05 ***
+b   1.9648     0.1030  19.072 4.45e-05 ***
+c   1.1607     0.1507   7.701  0.00153 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.03955 on 4 degrees of freedom
+
+Algorithm "port", convergence message: Relative error in the sum of squares is at most `ftol'.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rsquare of the model fit</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>modelr<span class="sc">::</span><span class="fu">rsquare</span>(fit_temp2, temp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.9948325</code></pre>
+</div>
+</div>
+<p>Store the model parameters in objects.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       a        b        c 
+6.762509 1.964817 1.160702 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">1</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">2</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">3</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>Tmin <span class="ot">&lt;-</span> <span class="dv">12</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>Tmax <span class="ot">&lt;-</span> <span class="dv">40</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>t <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">45</span>, <span class="fl">0.1</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> (a <span class="sc">*</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))<span class="sc">^</span>b <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))))<span class="sc">^</span>c</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(t, y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Plot the observed and predicted data using {ggplot2} package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(t, y)) <span class="sc">+</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> temp, <span class="fu">aes</span>(t, yscaled)) <span class="sc">+</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Temperature"</span>, <span class="at">y =</span> <span class="st">"Severity"</span>, </span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Analytis beta function"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list" style="display: none">
+<div id="ref-analytis1977" class="csl-entry" role="listitem">
+Analytis, S. 1977. Über die Relation zwischen biologischer Entwicklung und Temperatur bei phytopathogenen Pilzen. Journal of Phytopathology 90:64–76. <a href="https://doi.org/10.1111/j.1439-0434.1977.tb02886.x">https://doi.org/10.1111/j.1439-0434.1977.tb02886.x</a>.
+</div>
 <div id="ref-dallapria2006" class="csl-entry" role="listitem">
 Dalla Pria, M., Christiano, R. C. S., Furtado, E. L., Amorim, L., and Bergamin Filho, A. 2006. Effect of temperature and leaf wetness duration on infection of sweet oranges by Asiatic citrus canker. Plant Pathology 55:657–663. <a href="https://doi.org/10.1111/j.1365-3059.2006.01393.x">https://doi.org/10.1111/j.1365-3059.2006.01393.x</a>.
 </div>
@@ -617,6 +726,9 @@ González-Domínguez, E., Caffi, T., Rossi, V., Salotti, I., and Fedele, G. 2023
 </div>
 <div id="ref-hau1990" class="csl-entry" role="listitem">
 Hau, B., and Kranz, J. 1990. Mathematics and statistics for analyses in epidemiology. In Springer Berlin Heidelberg, pp. 12–52. <a href="https://doi.org/10.1007/978-3-642-75398-5_2">https://doi.org/10.1007/978-3-642-75398-5_2</a>.
+</div>
+<div id="ref-ji2023a" class="csl-entry" role="listitem">
+Ji, T., Salotti, I., Altieri, V., Li, M., and Rossi, V. 2023. Temperature-Dependent Growth and Spore Germination of Fungi Causing Grapevine Trunk Diseases: Quantitative Analysis of Literature Data. Plant Disease 107:1386–1398. <a href="https://doi.org/10.1094/pdis-09-22-2249-re">https://doi.org/10.1094/pdis-09-22-2249-re</a>.
 </div>
 <div id="ref-krause1975" class="csl-entry" role="listitem">
 Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology 13:31–47. <a href="https://doi.org/10.1146/annurev.py.13.090175.000335">https://doi.org/10.1146/annurev.py.13.090175.000335</a>.

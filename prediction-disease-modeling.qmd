@@ -63,9 +63,10 @@ temp <- tibble::tribble(
 35.0, 1.2,
 40.0, 0.1
 )
+
 ```
 
-Fit the Beta generalized model [@hau1990]. The model can be written as:
+Fit the generalized beta-function [@hau1990]. The model can be written as:
 
 $$
 y = a*((t - b )^d)*((c - t)^e)
@@ -90,7 +91,8 @@ fit_temp <- nlsLM(
   data = temp
 )
 summary(fit_temp)
-library(modelr)
+
+# Rsquare of the model fit
 modelr::rsquare(fit_temp, temp)
 ```
 
@@ -125,5 +127,89 @@ dat |>
   geom_line() +
   geom_point(data = temp, aes(t, y)) +
   theme_r4pde(font_size = 16) +
-  labs(x = "Temperature", y = "Severity")
+  labs(x = "Temperature", y = "Severity",
+       title = "Generalized beta-function")
+```
+
+#### Analytis beta function
+
+In a recent publication @ji2023a tested and compared various mathematical equations to describe the response of mycelial growth for several fungi associated with Grapevine trunk diseases (GTDs) to temperature. The authors found that a beta equation [@analytis1977] provided the smallest AIC values and, therefore, was considered the most suitable for all fungi.
+
+The model equation for rescaled severity (0 to 1) as a function of temperature is given by:
+
+$Y = \left( a \cdot T_{eq}^b \cdot (1 - T_{eq}) \right)^c \quad ; \quad \text{if } Y > 1, \text{ then } Y = 1$
+
+where
+
+$T_{eq} = \frac{T - T_{\text{min}}}{T_{\text{max}} - T_{\text{min}}}$
+
+$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve. Let's rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.
+
+```{r}
+library(scales)
+temp$yscaled <- rescale(temp$y)
+temp
+```
+
+Now we can fit the model using the same `nlsLM` function.
+
+```{r}
+#| warning: false
+#| message: false
+
+# Define the minimum and maximum temperatures
+Tmin <- 12
+Tmax <- 40
+
+library(minpack.lm)
+fit_temp2 <- nlsLM(
+  yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
+  data = temp,
+  start = list(a = 1, b = 2, c = 3), # Initial guesses for parameters
+  lower = c(0, 0, 0), # Lower bounds for the parameters
+  algorithm = "port" # "port" algorithm allows for bounds
+)
+
+# Print the summary of the fit
+summary(fit_temp2)
+# Rsquare of the model fit
+modelr::rsquare(fit_temp2, temp)
+
+```
+
+Store the model parameters in objects.
+
+```{r}
+fit_temp2$m$getAllPars()
+a <- fit_temp2$m$getAllPars()[1]
+b <- fit_temp2$m$getAllPars()[2]
+c <- fit_temp2$m$getAllPars()[3]
+
+```
+
+Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
+
+```{r}
+Tmin <- 12
+Tmax <- 40
+t <- seq(10, 45, 0.1)
+y <- (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c
+dat2 <- data.frame(t, y)
+```
+
+
+Plot the observed and predicted data using {ggplot2} package.
+
+```{r}
+#| warning: false
+#| message: false
+library(ggplot2)
+library(r4pde)
+dat2 |>
+  ggplot(aes(t, y)) +
+  geom_line() +
+  geom_point(data = temp, aes(t, yscaled)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Severity", 
+       title = "Analytis beta function")
 ```
