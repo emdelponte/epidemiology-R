@@ -974,17 +974,14 @@ Achieved convergence tolerance: 1.49e-08</code></pre>
 </div>
 <p>In the second example, let’s integrate the Analytis beta and the Weibull model:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the minimum and maximum temperatures</span></span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>fit_temp2 <span class="ot">&lt;-</span> <span class="fu">nlsLM</span>(</span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  yscaled <span class="sc">~</span> (a <span class="sc">*</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))<span class="sc">^</span>b <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))))<span class="sc">^</span>c,</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> temp,</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>), <span class="co"># Initial guesses for parameters</span></span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"port"</span> </span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>fit_temp2 <span class="ot">&lt;-</span> <span class="fu">nlsLM</span>(</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  yscaled <span class="sc">~</span> (a <span class="sc">*</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))<span class="sc">^</span>b <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">-</span> ((t <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Tmin))))<span class="sc">^</span>c,</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> temp,</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">start =</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="dv">1</span>, <span class="at">b =</span> <span class="dv">2</span>, <span class="at">c =</span> <span class="dv">3</span>), <span class="co"># Initial guesses for parameters</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">algorithm =</span> <span class="st">"port"</span> </span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>fit_temp2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>       a        b        c 
 6.762509 1.964817 1.160702 </code></pre>
@@ -1015,7 +1012,7 @@ Achieved convergence tolerance: 1.49e-08</code></pre>
 <span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">dis2 =</span> <span class="fu">case_when</span>(dis2 <span class="sc">&lt;</span> <span class="dv">0</span> <span class="sc">~</span> <span class="dv">0</span>,</span>
 <span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>                          <span class="cn">TRUE</span> <span class="sc">~</span> dis2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Now the plot</p>
+<p>Now the plot.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(validation2, <span class="fu">aes</span>(t, hw, <span class="at">z =</span> dis2)) <span class="sc">+</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_contour_filled</span>(<span class="at">bins =</span> <span class="dv">7</span>, <span class="at">alpha =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
@@ -1037,7 +1034,7 @@ Achieved convergence tolerance: 1.49e-08</code></pre>
 </div>
 </div>
 </div>
-<p>We can create a 3D surface plot to visualize the predictions, as was used in the original papers. Note that In <code>plot_ly</code>, a 3D surface plot requires a matrix or grid format for the <code>z</code> values, with corresponding vectors for <code>x</code> and <code>y</code> values that define the axes. If the data frame (<code>validation2</code>) has three columns (<code>t</code>, <code>hw</code>, and <code>dis2</code>), we’ll need to convert <code>dis2</code> into a matrix format that <code>plot_ly</code> can interpret for a surface plot.</p>
+<p>We can create a 3D surface plot to visualize the predictions, as <a href="https://bsppjournals.onlinelibrary.wiley.com/cms/asset/0acf45ce-bad8-4a49-9a17-181836aa9876/ppa_1393_f3.gif">it was used in the original paper</a>. Note that In <code>plot_ly</code>, a 3D surface plot requires a matrix or grid format for the <code>z</code> values, with corresponding vectors for <code>x</code> and <code>y</code> values that define the axes. If the data frame (<code>validation2</code>) has three columns (<code>t</code>, <code>hw</code>, and <code>dis2</code>), we’ll need to convert <code>dis2</code> into a matrix format that <code>plot_ly</code> can interpret for a surface plot.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(plotly)</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)  <span class="co"># or use tidyr for pivoting</span></span>

@@ -404,8 +404,6 @@ ggplot(validation, aes(t, hw, z = dis)) +
 In the second example, let's integrate the Analytis beta and the Weibull model:
 
 ```{r}
-# Define the minimum and maximum temperatures
-
 
 fit_temp2 <- nlsLM(
   yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
@@ -443,7 +441,7 @@ validation2 <- validation2 |>
 
 ```
 
-Now the plot
+Now the plot.
 
 ```{r}
 ggplot(validation2, aes(t, hw, z = dis2)) +
@@ -460,7 +458,7 @@ ggplot(validation2, aes(t, hw, z = dis2)) +
        title = "Integrating generalized beta and monomolecular")
 ```
 
-We can create a 3D surface plot to visualize the predictions, as was used in the original papers. Note that In `plot_ly`, a 3D surface plot requires a matrix or grid format for the `z` values, with corresponding vectors for `x` and `y` values that define the axes. If the data frame (`validation2`) has three columns (`t`, `hw`, and `dis2`), we'll need to convert `dis2` into a matrix format that `plot_ly` can interpret for a surface plot.
+We can create a 3D surface plot to visualize the predictions, as [it was used in the original paper](https://bsppjournals.onlinelibrary.wiley.com/cms/asset/0acf45ce-bad8-4a49-9a17-181836aa9876/ppa_1393_f3.gif). Note that In `plot_ly`, a 3D surface plot requires a matrix or grid format for the `z` values, with corresponding vectors for `x` and `y` values that define the axes. If the data frame (`validation2`) has three columns (`t`, `hw`, and `dis2`), we'll need to convert `dis2` into a matrix format that `plot_ly` can interpret for a surface plot.
 
 ```{r}
 #| warning: false
