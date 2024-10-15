@@ -677,7 +677,7 @@ Wmax <- 12
 # Apply the TMRF function to the data
 data$infection_severity <- mapply(TMRF, data$mean_temp, data$wetness_hours, MoreArgs = list(Tmin = Tmin, Topt = Topt, Tmax = Tmax, Wmin = Wmin, Wmax = Wmax))
 
-data
+knitr::kable(head(data, 15))
 ```
 
 We can then visualize the risk for each day of the month.
@@ -686,7 +686,9 @@ We can then visualize the risk for each day of the month.
 
 data |>  
   ggplot(aes(date, infection_severity))+
+  geom_area(fill = "darkorange")+
   geom_line()+
+  geom_point()+
   theme_r4pde(font_size = 12)+
   labs(x = "Date", y = "Infection severity index",
        title = "Soybean rust risk based on the TMRF model",
