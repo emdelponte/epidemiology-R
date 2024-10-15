@@ -18,7 +18,7 @@ A systematic map by @fedele2022a identified over 750 papers on plant disease mod
 
 In terms of model development, we can classify the models into two main groups based on the approach taken [@gonzález-domínguez2023]: Empirical or mechanistic approaches, which differ fundamentally in their basis, complexity and application ([@fig-approaches_modeling]).
 
-![Steps of model development from data collection to modeling based on statistical relationships (data-driven) between data collected from field or controlled environment to mechanistic approach based on the elements of the disease cycles (concept-driven).](imgs/modeling-fig1.png){#fig-approaches_modeling fig-align="center"}
+![Steps of model development from data collection to modeling based on statistical relationships (data-driven) between data collected from field or controlled environment to mechanistic approach based on the elements of the disease cycles (concept-driven).](imgs/modeling-fig1.png){#fig-approaches_modeling fig-align="center" width="614"}
 
 **Empirical models**, which emerged in the mid-20th century, rely on data-driven statistical relationships between variables collected under varying field or controlled environments. These models often lack cause-effect understanding, making them less robust and requiring rigorous validation and calibration when applied in diverse environments, especially in regions that did not provide data for model construction. The parameters of the model change every time new data are incorporated during model development.
 
@@ -40,9 +40,27 @@ Research on disease-environment interactions under controlled conditions - such 
 
 Growth chambers and phytotrons are essential for testing the effects of individual variables, though these controlled results may not fully replicate field conditions. Anyway, laboratory experiments help clarify specific questions by isolating interactions, unlike complex field trials where host, pathogen, and environment factors interact. Polycyclic or "mini epidemic" experiments enable observation of disease dynamics under targeted conditions [@hau1990; @rotem1988].
 
-Once developed, these sub-models can be incorporated into larger mechanistic models that simulate the entire disease cycle, thereby mimicking disease progression over time [@rossi2008; @salotti2023]. Alternatively, sub-models can also be used in stand-alone predictive systems where the process being modeled - such as infection - is the key factor in determining disease occurrence [@machardy1989]. For example, infection sub-models can be integrated into prediction systems that help schedule crop protection measures by forecasting when infection risk is highest.
+Once developed, these sub-models can be incorporated into larger mechanistic models that simulate the entire disease cycle, thereby mimicking disease progression over time [@rossi2008; @salotti2023]. Alternatively, sub-models can also be used in stand-alone predictive systems where the process being modeled - such as infection - is the key factor in determining disease occurrence [@machardy1989; @magarey2007]. For example, infection sub-models can be integrated into prediction systems that help schedule crop protection measures by forecasting when infection risk is highest.
 
 ### Infection-based models
+
+To model infection potential based on environmental factors, simple rules can be used with daily weather data, such as temperature and rainfall thresholds [@magarey2002]. Simple decision aids, such as charts and graphs, also exist to help model infection potential by using combinations of daily average temperature and hours of wetness. These tools offer a straightforward approach to evaluate infection risks based on readily available weather data, supporting decision-making without complex modeling [@seem1984]. However, for many pathogens, hourly data is needed, requiring complex models that track favorable conditions hour by hour. These models start with specific triggers and can reset due to conditions like dryness or low humidity, simulating a biological clock for infection risk assessment [@magarey2007].
+
+Modeling approaches vary based on available data and model goals. A common method is the matrix approach, like the Wallin potato late blight model, which uses rows for temperature and columns for moisture duration to estimate disease severity [@krause1975] (see previous chapter on [warning systems](https://r4pde.net/prediction-warning-systems)). Bailey enhanced this with an interactive matrix that combines temperature, relative humidity, and duration to assess infection risk across pathogens, making it versatile for various modeling needs [@bailey1999].
+
+When infection responses are measured at various temperature and wetness combinations, regression models can be developed to predict infection rates. These models often use polynomial, logistic, or complex three-dimensional response surface equations to represent the relationship between environmental conditions and infection potential. In an excellent review title "*How to create and deploy infection models for plant pathogen*s" @magarey2007 discusses that many modeling approaches lack biological foundations and are not generic, making them unsuitable for developing a unified set of disease forecast models. While three-dimensional response surfaces, such as those created with sufficient temperature-moisture observations, offer detailed infection responses, they are often too complex and data-intensive for widespread use (seeTable 1 adapted from @magarey2007).
+
+| Approach                                                               | Strengths                                                                                                          | Weaknesses                                                                               |
+|------------------|---------------------------------|---------------------|
+| Matrix [@krause1975; @mills1944; @windels1998]                         | Easy; converts moisture/temperature combinations into severity values or risk categories. Tried and true approach. | Data to populate matrix may not be readily available.                                    |
+| Regression:<br>-- Polynomial [@evans1992]<br>-- Logistic [@bulger1987] | Widely used in plant pathology. Available for many economically important pathogens.                               | Parameters not biologically based. Requires dataset for development.                     |
+| Three-dimensional response surface [@duthie1997]                       | Describes infection response in detail.                                                                            | Parameters not biologically based. Complex, requires extensive data and processing time. |
+| Degree wet hours [@pfender2003]                                        | Simple; based on degree hours, commonly used in entomology. Requires only Tmin and Tmax                            | Recently developed; assumes linear thermal response.                                     |
+| Temperature-moisture response function [@magarey2005]                  | Simple; based on crop modeling functions, requires only Tmin, Topt and Tmax                                        | Recently developed.                                                                      |
+
+: Comparison of different infection modeling approaches. Source: @magarey2007
+
+In the following sections, I will demonstrate how various biologically meaningful models fit infection data, using temperature, wetness duration, or a combination of both as predictors.
 
 #### Temperature effects
 
@@ -384,7 +402,7 @@ Now the contour plot can be visualized using {ggplot2} and {geomtextpath} packag
 ```{r}
 #| warning: false
 #| message: false
-#| 
+
 
 library(geomtextpath)
 ggplot(validation, aes(t, hw, z = dis)) +
@@ -486,7 +504,7 @@ plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |>
 
 #### Magarey model
 
-Magarey and collaborators [@magarey2005] proposed a generic infection model for foliar fungal pathogens, designed to predict infection periods based on limited data on temperature and wetness requirements. The model uses cardinal temperatures (minimum, optimum, maximum) and the minimum wetness duration (Wmin) necessary for infection. The model can incorporate inputs based on estimated cardinal temperatures and surface wetness durations. These values are available for numerous pathogens (See table 2 of the paper by @magarey2005). 
+In the early 2000s, Magarey and collaborators [@magarey2005] proposed a generic infection model for foliar fungal pathogens, designed to predict infection periods based on limited data on temperature and wetness requirements. The model uses cardinal temperatures (minimum, optimum, maximum) and the minimum wetness duration (Wmin) necessary for infection. The model can incorporate inputs based on estimated cardinal temperatures and surface wetness duration. These values are available for numerous pathogens and can be consulted in the literature (See table 2 of the paper by @magarey2005).
 
 The model utilizes a temperature response function, which is adjusted to the pathogen's minimum and optimum wetness duration needs, allowing it to be broadly applicable even with limited data on specific pathogens. The model was validated with data from 53 studies, showing good accuracy and adaptability, even for pathogens lacking comprehensive data [@magarey2005].
 
@@ -505,7 +523,6 @@ where $W_{\text{min}}$ is the minimum wetness duration requirement, and $W_{\tex
 Let's write the functions for estimating the required wetness duration at each temperature.
 
 ```{r}
-## Define the temperature response function
 temp_response <- function(T, Tmin, Topt, Tmax) {
   if (T < Tmin || T > Tmax) {
     return(0)
@@ -543,17 +560,10 @@ Wmax <- 40.5
 # Calculate wetness duration required at each temperature
 W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
 
-temperature_data <- data.frame(
+temperature_data_applescab <- data.frame(
   Temperature = T,
   Wetness_Duration = W_T
 )
-
-applescab <- ggplot(temperature_data, aes(x = Temperature, y = Wetness_Duration)) +
-  geom_line(color = "black", linewidth = 1, linetype =1) +
-  theme_r4pde(font_size = 14)+
-  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
-       subtitle = "Venturia inaequalis")+
-  theme(plot.subtitle = element_text(face = "italic"))
 
 ```
 
@@ -571,24 +581,115 @@ Wmax <- 12
 # Calculate wetness duration required at each temperature
 W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
 
-temperature_data <- data.frame(
+temperature_data_soyrust <- data.frame(
   Temperature = T,
   Wetness_Duration = W_T)
 
-soyrust <- ggplot(temperature_data, aes(x = Temperature, y = Wetness_Duration)) +
+
+```
+
+We can produce the plots for each pathogen.
+
+```{r}
+
+applescab <- ggplot(temperature_data_applescab, aes(x = Temperature, y = Wetness_Duration)) +
+  geom_line(color = "black", linewidth = 1, linetype =1) +
+  theme_r4pde(font_size = 14)+
+  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
+       subtitle = "Venturia inaequalis")+
+  theme(plot.subtitle = element_text(face = "italic"))
+
+soyrust <- ggplot(temperature_data_soyrust, aes(x = Temperature, y = Wetness_Duration)) +
   geom_line(color = "black", linewidth = 1, linetype =1) +
   theme_r4pde(font_size = 14)+
   labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
        subtitle = "Phakopsora pachyrizhi")+ 
   theme(plot.subtitle = element_text(face = "italic"))
 
+library(patchwork)
+applescab | soyrust
+
 ```
 
-Visualize the plots
+The model was further adapted to predict "infection severity" values (a daily severity value or a risk index that is an arbitrary value which defines the predicted disease favorability for each day and is usually accumulated over time [@krause1975], and it was called temperature-moisture response function (TMRF) [@magarey2007] that uses cardinal temperatures and minimum wetness duration as inputs.
+
+Let's produce a function to calculate the infection severity value (constrained between 0 and 1) given the input of daily temperature and moisture duration.
+
+```{r}
+TMRF <- function(T, W, Tmin, Topt, Tmax, Wmin, Wmax) {
+  if (W < Wmin) {
+    return(0)
+  }
+  fT = (Tmax - T) / (Tmax - Topt) * ((T - Tmin) / (Topt - Tmin)) ^ ((Topt - Tmin) / (Tmax - Topt))
+  fT = max(fT, 0)
+  WT = Wmin / fT
+  WT = min(WT, Wmax)
+  
+  # Adjust infection severity by wetness hours
+  infection_severity = (W / WT) * fT
+  infection_severity = min(infection_severity, 1) # Constrain between 0 and 1
+  return(infection_severity)
+}
+```
+
+Let's download hourly weather data using the {nasapower} package for the location of Viçosa, MG, Brazil and the month of January of 2024.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(nasapower)
+weather <- get_power(
+  community = "ag",
+  lonlat = c(-42.8800, -20.7561),
+  pars = c("RH2M", "T2M"),
+  dates = c("2024-04-01", "2024-04-30"),
+  temporal_api = "hourly"
+)
+
+# Process the weather data
+weather2 <- weather %>%
+  group_by(YEAR, MO, DY) %>%
+  mutate(LW = case_when(RH2M > 90 ~ 1, 
+                        TRUE ~ 0)) %>%
+  summarise(mean_temp = mean(T2M, 
+                             na.rm = TRUE),
+            wetness_hours = sum(LW))
+
+weather3 <- weather2 %>%
+  mutate(date = as.Date(sprintf('%04d-%02d-%02d', YEAR, MO, DY)))
+
+# Use processed data: mean temperature and hours of wetness recorded per day
+data <- weather3
+```
+
+Let's set the parameters for the soybean rust pathogen.
+
+```{r}
+              
+Tmin <- 10                  
+Topt <- 23                 
+Tmax <- 28                
+Wmin <- 8  
+Wmax <- 12    
+      
+# Apply the TMRF function to the data
+data$infection_severity <- mapply(TMRF, data$mean_temp, data$wetness_hours, MoreArgs = list(Tmin = Tmin, Topt = Topt, Tmax = Tmax, Wmin = Wmin, Wmax = Wmax))
+
+data
+```
+
+We can then visualize the risk for each day of the month.
 
 ```{r}
 
-library(patchwork)
-applescab | soyrust
+data |>  
+  ggplot(aes(date, infection_severity))+
+  geom_line()+
+  theme_r4pde(font_size = 12)+
+  labs(x = "Date", y = "Infection severity index",
+       title = "Soybean rust risk based on the TMRF model",
+       subtitle = "Viçosa, MG, Brazil")
 
 ```
