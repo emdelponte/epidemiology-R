@@ -57,6 +57,7 @@ We will use a subset of the data obtained from a study conducted under controlle
 Let's enter the data manually. Where $t$ is the temperature and $y$ is the severity on leaves.
 
 ```{r}
+
 temp <- tibble::tribble(
   ~t, ~y,
 12.0, 0.00,
@@ -81,6 +82,8 @@ where $b$ and $c$ represent minimum and maximum temperatures, respectively, for 
 ```{r}
 #| warning: false
 #| message: false
+
+library(tidyverse)
 library(minpack.lm)
 fit_temp <- nlsLM(
   y ~ a * ((t - b) ^ d) * ((c - t) ^ e),
@@ -431,6 +434,7 @@ dis2 <-  (a2 * ((t - Tmin) / (Tmax - Tmin))^b2 * (1 - ((t - Tmin) / (Tmax - Tmin
 t <- rep(1:40, 40)
 hw <- rep(1:40, each = 40)
 validation2 <- data.frame(t, hw, dis2)
+
 validation2 <- validation2 |> 
   filter(dis2 != "NaN") |> 
   mutate(dis2 = case_when(dis2 < 0 ~ 0,
@@ -478,4 +482,113 @@ plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |>
     ),
     title = "Integrating Generalized Beta and Monomolecular"
   )
+```
+
+#### Magarey model
+
+Magarey and collaborators [@magarey2005] proposed a generic infection model for foliar fungal pathogens, designed to predict infection periods based on limited data on temperature and wetness requirements. The model uses cardinal temperatures (minimum, optimum, maximum) and the minimum wetness duration (Wmin) necessary for infection. The model can incorporate inputs based on estimated cardinal temperatures and surface wetness durations. These values are either available for numerous pathogens (See table 2 of the paper by @magarey2005). 
+
+The model utilizes a temperature response function, which is adjusted to the pathogen's minimum and optimum wetness duration needs, allowing it to be broadly applicable even with limited data on specific pathogens. The model was validated with data from 53 studies, showing good accuracy and adaptability, even for pathogens lacking comprehensive data [@magarey2005].
+
+The function is given by
+
+$f(T) = \left( \frac{T_{\text{max}} - T}{T_{\text{max}} - T_{\text{opt}}} \right)^{\frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}}} \times \left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^{\frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}}}$
+
+where $T$ is the temperature, $T_{\text{min}}$ is the minimum temperature, $T_{\text{opt}}$ is the optimum temperature, and $T_{\text{max}}$ is the maximum temperature for infection.
+
+The wetness duration requirement is given by
+
+$W(T) = \frac{W_{\text{min}}}{f(T)} \leq W_{\text{max}}$
+
+where $W_{\text{min}}$ is the minimum wetness duration requirement, and $W_{\text{max}}$ is an optional upper limit on $W(T)$.
+
+Let's write the functions for estimating the required wetness duration at each temperature.
+
+```{r}
+## Define the temperature response function
+temp_response <- function(T, Tmin, Topt, Tmax) {
+  if (T < Tmin || T > Tmax) {
+    return(0)
+  } else {
+    ((Tmax - T) / (Tmax - Topt))^((Topt - Tmin) / (Tmax - Topt)) * 
+    ((T - Tmin) / (Topt - Tmin))^((Topt - Tmin) / (Topt - Tmin))
+  }
+}
+
+# Define the function to calculate wetness duration requirement W(T)
+wetness_duration <- function(T, Wmin, Tmin, Topt, Tmax, Wmax = Inf) {
+  f_T <- temp_response(T, Tmin, Topt, Tmax)
+  if (f_T == 0) {
+    return(0)  # Infinite duration required if outside temperature range
+  }
+  W <- Wmin / f_T
+  return(min(W, Wmax))  # Apply Wmax as an upper limit if specified
+}
+
+
+```
+
+Let's set the parameters for the fungus *Venturia inaequalis*, the cause of apple scab.
+
+```{r}
+
+# Parameters for Venturia inaequalis (apple scab)
+T <- seq(0, 35, by = 0.5) 
+Wmin <- 6                  
+Tmin <- 1                  
+Topt <- 20                 
+Tmax <- 35                 
+Wmax <- 40.5                
+
+# Calculate wetness duration required at each temperature
+W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
+
+temperature_data <- data.frame(
+  Temperature = T,
+  Wetness_Duration = W_T
+)
+
+applescab <- ggplot(temperature_data, aes(x = Temperature, y = Wetness_Duration)) +
+  geom_line(color = "black", linewidth = 1, linetype =1) +
+  theme_r4pde(font_size = 14)+
+  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
+       subtitle = "Venturia inaequalis")+
+  theme(plot.subtitle = element_text(face = "italic"))
+
+```
+
+And now the parameters for the fungus *Phakopsora pachyrhizi*, the cause of soybean rust in soybean.
+
+```{r}
+# Parameters for Phakposora pachyrhizi
+T <- seq(0, 35, by = 0.5)  
+Wmin <- 8                
+Tmin <- 10                  
+Topt <- 23                 
+Tmax <- 28                
+Wmax <- 12                 
+
+# Calculate wetness duration required at each temperature
+W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
+
+temperature_data <- data.frame(
+  Temperature = T,
+  Wetness_Duration = W_T)
+
+soyrust <- ggplot(temperature_data, aes(x = Temperature, y = Wetness_Duration)) +
+  geom_line(color = "black", linewidth = 1, linetype =1) +
+  theme_r4pde(font_size = 14)+
+  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
+       subtitle = "Phakopsora pachyrizhi")+ 
+  theme(plot.subtitle = element_text(face = "italic"))
+
+```
+
+Visualize the plots
+
+```{r}
+
+library(patchwork)
+applescab | soyrust
+
 ```
