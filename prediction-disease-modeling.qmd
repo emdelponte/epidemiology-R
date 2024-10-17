@@ -611,86 +611,117 @@ applescab | soyrust
 
 ```
 
-The model was further adapted to predict "infection severity" values (a daily severity value or a risk index that is an arbitrary value which defines the predicted disease favorability for each day and is usually accumulated over time [@krause1975], and it was called temperature-moisture response function (TMRF) [@magarey2007] that uses cardinal temperatures and minimum wetness duration as inputs.
+### Latency period
 
-Let's produce a function to calculate the infection severity value (constrained between 0 and 1) given the input of daily temperature and moisture duration.
+The latent period can be defined as "the length of time between the start of the infection process by a unit of inoculum and the start of production of infectious units" [@madden2007]. The latent period, analogous to the reproductive maturity age of nonparasitic organisms, defines the generation time between infections and is a key factor in pathogen development and epidemic progress in plant disease epidemiology [@plantdi1963]. As a critical trait of aggressiveness, especially in polycyclic diseases, it largely determines the potential number of infection cycles within a season, impacting the overall epidemic intensity [@lannou2012].
+
+#### Models for latency period
+
+The effects of temperature on the length of the incubation and latent periods of hawthorn powdery mildew, caused by *Podosphaera clandestina*, were studied by @xu2000. In that work, the authors inoculated the leaves and, each day after inoculation, the upper surface of each leaf was examined for mildew colonies and conidiophores using a pen-microscope (×50) without damaging the leaf. Sporulation was recorded at the leaf level, noting the number of colonies and the first appearance dates of colonies and sporulation for each leaf.
+
+The latent period (LP) was the time from inoculation to the first day of observed sporulation on the leaf. Due to the skewed distribution of LP across temperatures and inoculations, medians were used to summarize LP rather than means [@xu2000].
+
+Let's look at two plots extracted from the paper. The first, on the left, is the original number of days of the latent period of each evaluated temperature (note: the solid symbol is for constant temperature while the open circle is for fluctuating temperature). On the right-hand side, the relationship between temperature and rates of development of hawthorn powdery mildew under constant temperature during the latent periods; solid line indicates the fitted model. The rate of fungal development was calculated as the reciprocal of the corresponding observed incubation (in hours) and latent periods.
+
+![Source: @xu2000](imgs/modeling-latent.png){#fig-latent fig-align="center"}
+
+The data from the figure above was extracted using the {digitize} R package.
 
 ```{r}
-TMRF <- function(T, W, Tmin, Topt, Tmax, Wmin, Wmax) {
-  if (W < Wmin) {
-    return(0)
-  }
-  fT = (Tmax - T) / (Tmax - Topt) * ((T - Tmin) / (Topt - Tmin)) ^ ((Topt - Tmin) / (Tmax - Topt))
-  fT = max(fT, 0)
-  WT = Wmin / fT
-  WT = min(WT, Wmax)
-  
-  # Adjust infection severity by wetness hours
-  infection_severity = (W / WT) * fT
-  infection_severity = min(infection_severity, 1) # Constrain between 0 and 1
-  return(infection_severity)
-}
+latent <- tibble::tribble(
+   ~T, ~days,
+  10L,   13L,
+  11L,   16L,
+  13L,    8L,
+  14L,    9L,
+  15L,    7L,
+  16L,    7L,
+  17L,    6L,
+  18L,    6L,
+  19L,    6L,
+  20L,    6L,
+  21L,    5L,
+  22L,    5L,
+  23L,    6L,
+  24L,    6L,
+  25L,    5L,
+  26L,    7L,
+  27L,    7L,
+  28L,   10L
+  )
+
 ```
 
-Let's download hourly weather data using the {nasapower} package for the location of Viçosa, MG, Brazil and the month of January of 2024.
+Let's reproduce the two plots using the datapoints.
 
 ```{r}
-#| warning: false
-#| message: false
+library(ggplot2)
+library(r4pde)
 
-library(tidyverse)
-library(nasapower)
-weather <- get_power(
-  community = "ag",
-  lonlat = c(-42.8800, -20.7561),
-  pars = c("RH2M", "T2M"),
-  dates = c("2024-01-01", "2024-04-30"),
-  temporal_api = "hourly"
+p_latent <- latent |> 
+  ggplot(aes(T, days))+
+  geom_point()+
+  theme_r4pde()
+
+latent_rate <- data.frame(
+  T = latent$T,  # Scale temperature
+  R = 1/latent$days/24
 )
 
-# Process the weather data
-weather2 <- weather %>%
-  group_by(YEAR, MO, DY) %>%
-  mutate(LW = case_when(RH2M > 90 ~ 1, 
-                        TRUE ~ 0)) %>%
-  summarise(mean_temp = mean(T2M, 
-                             na.rm = TRUE),
-            wetness_hours = sum(LW))
+p_latent_rate <- latent_rate |> 
+  ggplot(aes(T, R))+
+  geom_point()+
+  theme_r4pde()
 
-weather3 <- weather2 %>%
-  mutate(date = as.Date(sprintf('%04d-%02d-%02d', YEAR, MO, DY)))
+library(patchwork)
+p_latent | p_latent_rate
 
-# Use processed data: mean temperature and hours of wetness recorded per day
-data <- weather3
 ```
 
-Let's set the parameters for the soybean rust pathogen.
-
-```{r}
-              
-Tmin <- 10                  
-Topt <- 23                 
-Tmax <- 28                
-Wmin <- 8  
-Wmax <- 12    
-      
-# Apply the TMRF function to the data
-data$infection_severity <- mapply(TMRF, data$mean_temp, data$wetness_hours, MoreArgs = list(Tmin = Tmin, Topt = Topt, Tmax = Tmax, Wmin = Wmin, Wmax = Wmax))
-
-knitr::kable(head(data, 15))
-```
-
-We can then visualize the risk for each day of the month.
+We will fit the equation proposed by @bernard2013 which predicts a thermal response curve, which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the shortest latent period.
 
 ```{r}
 
-data |>  
-  ggplot(aes(date, infection_severity))+
-  geom_area(fill = "grey70")+
-  geom_line()+
-  theme_r4pde(font_size = 12)+
-  labs(x = "Date", y = "Infection severity index",
-       title = "Soybean rust risk based on the TMRF model",
-       subtitle = "Viçosa, MG, Brazil")
+# Load necessary package
+#library(minpack.lm)
+
+# Define the model formula
+#model_formula <- R ~ (a + b * T)^(c * T)
+LPmin <- 5 # minimum latent period
+Topt <- 21 # Optimal temperature
+model_formula2 <- R ~ k / (LPmin + a * (T - Topt)^2)
+
+# Set initial parameter estimates
+#start_values <- list(a = 0.1, b = 0.01, c = 0.01)
+start_values2 <- list(a = 0.1, k = 1)
+# Fit the model
+#fit_rate <- nlsLM(model_formula, data = latent_rate, start = start_values)
+fit_rate2 <- nls(model_formula2, data = latent_rate, start = start_values2)
+
+# View the summary of the fit
+summary(fit_rate2)
+
+fit_rate2$m$getAllPars()
+a <- fit_rate2$m$getAllPars()[1]
+k <- fit_rate2$m$getAllPars()[2]
+
+```
+
+Now we reproduce the plot with the fitted data. Note that the curve is not the same shown in the paper because we used a different equation.
+
+```{r}
+T <- seq(10, 29, 0.1)
+#R <- (a + b * T)^(c * T)
+R <- k / (LPmin + a * (T - Topt)^2)
+dat2 <- data.frame(T, R)
+
+dat2 |>
+  ggplot(aes(T, R)) +
+  geom_line() +
+  geom_point(data = latent_rate, aes(T, R)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Inverse of the latent period (hour -1)", 
+       title = "")
+
 
 ```

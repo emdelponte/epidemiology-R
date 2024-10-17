@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.53">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -460,6 +460,10 @@ window.Quarto = {
   </ul></li>
   <li><a href="#integrating-temperature-and-wetness-effects" id="toc-integrating-temperature-and-wetness-effects" class="nav-link" data-scroll-target="#integrating-temperature-and-wetness-effects"><span class="header-section-number">20.2.1.3</span> Integrating temperature and wetness effects</a></li>
   <li><a href="#magarey-model" id="toc-magarey-model" class="nav-link" data-scroll-target="#magarey-model"><span class="header-section-number">20.2.1.4</span> Magarey model</a></li>
+  </ul></li>
+  <li><a href="#latency-period" id="toc-latency-period" class="nav-link" data-scroll-target="#latency-period"><span class="header-section-number">20.2.2</span> Latency period</a>
+  <ul>
+  <li><a href="#models-for-latency-period" id="toc-models-for-latency-period" class="nav-link" data-scroll-target="#models-for-latency-period"><span class="header-section-number">20.2.2.1</span> Models for latency period</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -1208,235 +1212,138 @@ Achieved convergence tolerance: 1.49e-08</code></pre>
 </div>
 </div>
 </div>
-<p>The model was further adapted to predict “infection severity” values (a daily severity value or a risk index that is an arbitrary value which defines the predicted disease favorability for each day and is usually accumulated over time <span class="citation" data-cites="krause1975">(<a href="references.html#ref-krause1975" role="doc-biblioref">Krause and Massie 1975</a>)</span>, and it was called temperature-moisture response function (TMRF) <span class="citation" data-cites="magarey2007">(<a href="references.html#ref-magarey2007" role="doc-biblioref">Magarey and Sutton 2007</a>)</span> that uses cardinal temperatures and minimum wetness duration as inputs.</p>
-<p>Let’s produce a function to calculate the infection severity value (constrained between 0 and 1) given the input of daily temperature and moisture duration.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>TMRF <span class="ot">&lt;-</span> <span class="cf">function</span>(T, W, Tmin, Topt, Tmax, Wmin, Wmax) {</span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (W <span class="sc">&lt;</span> Wmin) {</span>
-<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="dv">0</span>)</span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  fT <span class="ot">=</span> (Tmax <span class="sc">-</span> T) <span class="sc">/</span> (Tmax <span class="sc">-</span> Topt) <span class="sc">*</span> ((T <span class="sc">-</span> Tmin) <span class="sc">/</span> (Topt <span class="sc">-</span> Tmin)) <span class="sc">^</span> ((Topt <span class="sc">-</span> Tmin) <span class="sc">/</span> (Tmax <span class="sc">-</span> Topt))</span>
-<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  fT <span class="ot">=</span> <span class="fu">max</span>(fT, <span class="dv">0</span>)</span>
-<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  WT <span class="ot">=</span> Wmin <span class="sc">/</span> fT</span>
-<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  WT <span class="ot">=</span> <span class="fu">min</span>(WT, Wmax)</span>
-<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adjust infection severity by wetness hours</span></span>
-<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  infection_severity <span class="ot">=</span> (W <span class="sc">/</span> WT) <span class="sc">*</span> fT</span>
-<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  infection_severity <span class="ot">=</span> <span class="fu">min</span>(infection_severity, <span class="dv">1</span>) <span class="co"># Constrain between 0 and 1</span></span>
-<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(infection_severity)</span>
-<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="latency-period" class="level3" data-number="20.2.2">
+<h3 data-number="20.2.2" class="anchored" data-anchor-id="latency-period"><span class="header-section-number">20.2.2</span> Latency period</h3>
+<p>The latent period can be defined as “the length of time between the start of the infection process by a unit of inoculum and the start of production of infectious units” <span class="citation" data-cites="madden2007">(<a href="references.html#ref-madden2007" role="doc-biblioref">Madden et al. 2007</a>)</span>. The latent period, analogous to the reproductive maturity age of nonparasitic organisms, defines the generation time between infections and is a key factor in pathogen development and epidemic progress in plant disease epidemiology <span class="citation" data-cites="plantdi1963">(<a href="references.html#ref-plantdi1963" role="doc-biblioref">Vanderplank 1963</a>)</span>. As a critical trait of aggressiveness, especially in polycyclic diseases, it largely determines the potential number of infection cycles within a season, impacting the overall epidemic intensity <span class="citation" data-cites="lannou2012">(<a href="references.html#ref-lannou2012" role="doc-biblioref">Lannou 2012</a>)</span>.</p>
+<section id="models-for-latency-period" class="level4" data-number="20.2.2.1">
+<h4 data-number="20.2.2.1" class="anchored" data-anchor-id="models-for-latency-period"><span class="header-section-number">20.2.2.1</span> Models for latency period</h4>
+<p>The effects of temperature on the length of the incubation and latent periods of hawthorn powdery mildew, caused by <em>Podosphaera clandestina</em>, were studied by <span class="citation" data-cites="xu2000">Xu and Robinson (<a href="references.html#ref-xu2000" role="doc-biblioref">2000</a>)</span>. In that work, the authors inoculated the leaves and, each day after inoculation, the upper surface of each leaf was examined for mildew colonies and conidiophores using a pen-microscope (×50) without damaging the leaf. Sporulation was recorded at the leaf level, noting the number of colonies and the first appearance dates of colonies and sporulation for each leaf.</p>
+<p>The latent period (LP) was the time from inoculation to the first day of observed sporulation on the leaf. Due to the skewed distribution of LP across temperatures and inoculations, medians were used to summarize LP rather than means <span class="citation" data-cites="xu2000">(<a href="references.html#ref-xu2000" role="doc-biblioref">Xu and Robinson 2000</a>)</span>.</p>
+<p>Let’s look at two plots extracted from the paper. The first, on the left, is the original number of days of the latent period of each evaluated temperature (note: the solid symbol is for constant temperature while the open circle is for fluctuating temperature). On the right-hand side, the relationship between temperature and rates of development of hawthorn powdery mildew under constant temperature during the latent periods; solid line indicates the fitted model. The rate of fungal development was calculated as the reciprocal of the corresponding observed incubation (in hours) and latent periods.</p>
+<div id="fig-latent" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-latent-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="imgs/modeling-latent.png" class="img-fluid quarto-figure quarto-figure-center figure-img">
 </div>
-<p>Let’s download hourly weather data using the {nasapower} package for the location of Viçosa, MG, Brazil and the month of January of 2024.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nasapower)</span>
-<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>weather <span class="ot">&lt;-</span> <span class="fu">get_power</span>(</span>
-<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">community =</span> <span class="st">"ag"</span>,</span>
-<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">lonlat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">42.8800</span>, <span class="sc">-</span><span class="fl">20.7561</span>),</span>
-<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"RH2M"</span>, <span class="st">"T2M"</span>),</span>
-<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">dates =</span> <span class="fu">c</span>(<span class="st">"2024-01-01"</span>, <span class="st">"2024-04-30"</span>),</span>
-<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">temporal_api =</span> <span class="st">"hourly"</span></span>
-<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Process the weather data</span></span>
-<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>weather2 <span class="ot">&lt;-</span> weather <span class="sc">%&gt;%</span></span>
-<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(YEAR, MO, DY) <span class="sc">%&gt;%</span></span>
-<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">LW =</span> <span class="fu">case_when</span>(RH2M <span class="sc">&gt;</span> <span class="dv">90</span> <span class="sc">~</span> <span class="dv">1</span>, </span>
-<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>                        <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span></span>
-<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_temp =</span> <span class="fu">mean</span>(T2M, </span>
-<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>                             <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">wetness_hours =</span> <span class="fu">sum</span>(LW))</span>
-<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>weather3 <span class="ot">&lt;-</span> weather2 <span class="sc">%&gt;%</span></span>
-<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">date =</span> <span class="fu">as.Date</span>(<span class="fu">sprintf</span>(<span class="st">'%04d-%02d-%02d'</span>, YEAR, MO, DY)))</span>
-<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Use processed data: mean temperature and hours of wetness recorded per day</span></span>
-<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> weather3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-latent-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;20.4: Source: <span class="citation" data-cites="xu2000">Xu and Robinson (<a href="references.html#ref-xu2000" role="doc-biblioref">2000</a>)</span>
+</figcaption>
+</figure>
 </div>
-<p>Let’s set the parameters for the soybean rust pathogen.</p>
+<p>The data from the figure above was extracted using the {digitize} R package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>Tmin <span class="ot">&lt;-</span> <span class="dv">10</span>                  </span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>Topt <span class="ot">&lt;-</span> <span class="dv">23</span>                 </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>Tmax <span class="ot">&lt;-</span> <span class="dv">28</span>                </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>Wmin <span class="ot">&lt;-</span> <span class="dv">8</span>  </span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>Wmax <span class="ot">&lt;-</span> <span class="dv">12</span>    </span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>      </span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the TMRF function to the data</span></span>
-<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>infection_severity <span class="ot">&lt;-</span> <span class="fu">mapply</span>(TMRF, data<span class="sc">$</span>mean_temp, data<span class="sc">$</span>wetness_hours, <span class="at">MoreArgs =</span> <span class="fu">list</span>(<span class="at">Tmin =</span> Tmin, <span class="at">Topt =</span> Topt, <span class="at">Tmax =</span> Tmax, <span class="at">Wmin =</span> Wmin, <span class="at">Wmax =</span> Wmax))</span>
-<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(data, <span class="dv">15</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>latent <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tribble</span>(</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>   <span class="sc">~</span>T, <span class="sc">~</span>days,</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>  <span class="dv">10</span>L,   <span class="dv">13</span>L,</span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>  <span class="dv">11</span>L,   <span class="dv">16</span>L,</span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>  <span class="dv">13</span>L,    <span class="dv">8</span>L,</span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>  <span class="dv">14</span>L,    <span class="dv">9</span>L,</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a>  <span class="dv">15</span>L,    <span class="dv">7</span>L,</span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a>  <span class="dv">16</span>L,    <span class="dv">7</span>L,</span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a>  <span class="dv">17</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>  <span class="dv">18</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">19</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a>  <span class="dv">20</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a>  <span class="dv">21</span>L,    <span class="dv">5</span>L,</span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a>  <span class="dv">22</span>L,    <span class="dv">5</span>L,</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>  <span class="dv">23</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>  <span class="dv">24</span>L,    <span class="dv">6</span>L,</span>
+<span id="cb54-17"><a href="#cb54-17" aria-hidden="true" tabindex="-1"></a>  <span class="dv">25</span>L,    <span class="dv">5</span>L,</span>
+<span id="cb54-18"><a href="#cb54-18" aria-hidden="true" tabindex="-1"></a>  <span class="dv">26</span>L,    <span class="dv">7</span>L,</span>
+<span id="cb54-19"><a href="#cb54-19" aria-hidden="true" tabindex="-1"></a>  <span class="dv">27</span>L,    <span class="dv">7</span>L,</span>
+<span id="cb54-20"><a href="#cb54-20" aria-hidden="true" tabindex="-1"></a>  <span class="dv">28</span>L,   <span class="dv">10</span>L</span>
+<span id="cb54-21"><a href="#cb54-21" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s reproduce the two plots using the datapoints.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>p_latent <span class="ot">&lt;-</span> latent <span class="sc">|&gt;</span> </span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(T, days))<span class="sc">+</span></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>latent_rate <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">T =</span> latent<span class="sc">$</span>T,  <span class="co"># Scale temperature</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">R =</span> <span class="dv">1</span><span class="sc">/</span>latent<span class="sc">$</span>days<span class="sc">/</span><span class="dv">24</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>p_latent_rate <span class="ot">&lt;-</span> latent_rate <span class="sc">|&gt;</span> </span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(T, R))<span class="sc">+</span></span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>()</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(patchwork)</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>p_latent <span class="sc">|</span> p_latent_rate</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 7%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 15%">
-<col style="width: 21%">
-<col style="width: 16%">
-<col style="width: 29%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: right;">YEAR</th>
-<th style="text-align: right;">MO</th>
-<th style="text-align: right;">DY</th>
-<th style="text-align: right;">mean_temp</th>
-<th style="text-align: right;">wetness_hours</th>
-<th style="text-align: left;">date</th>
-<th style="text-align: right;">infection_severity</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">19.89125</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: left;">2024-01-01</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">22.10667</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: left;">2024-01-02</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">23.08917</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: left;">2024-01-03</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">23.45750</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: left;">2024-01-04</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">23.62042</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: left;">2024-01-05</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">23.91042</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: left;">2024-01-06</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: right;">24.08083</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: left;">2024-01-07</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: right;">25.04542</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">2024-01-08</td>
-<td style="text-align: right;">0.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">24.51917</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">2024-01-09</td>
-<td style="text-align: right;">0.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">10</td>
-<td style="text-align: right;">24.93875</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: left;">2024-01-10</td>
-<td style="text-align: right;">0.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: right;">26.06792</td>
-<td style="text-align: right;">7</td>
-<td style="text-align: left;">2024-01-11</td>
-<td style="text-align: right;">0.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">12</td>
-<td style="text-align: right;">26.88417</td>
-<td style="text-align: right;">8</td>
-<td style="text-align: left;">2024-01-12</td>
-<td style="text-align: right;">0.293584</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: right;">24.51708</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: left;">2024-01-13</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="even">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">23.77083</td>
-<td style="text-align: right;">13</td>
-<td style="text-align: left;">2024-01-14</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-<tr class="odd">
-<td style="text-align: right;">2024</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">24.19833</td>
-<td style="text-align: right;">11</td>
-<td style="text-align: left;">2024-01-15</td>
-<td style="text-align: right;">1.000000</td>
-</tr>
-</tbody>
-</table>
+<div>
+<figure class="figure">
+<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>We can then visualize the risk for each day of the month.</p>
+</div>
+<p>We will fit the equation proposed by <span class="citation" data-cites="bernard2013">Bernard et al. (<a href="references.html#ref-bernard2013" role="doc-biblioref">2013</a>)</span> which predicts a thermal response curve, which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the shortest latent period.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">|&gt;</span>  </span>
-<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(date, infection_severity))<span class="sc">+</span></span>
-<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_area</span>(<span class="at">fill =</span> <span class="st">"grey70"</span>)<span class="sc">+</span></span>
-<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>()<span class="sc">+</span></span>
-<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
-<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Date"</span>, <span class="at">y =</span> <span class="st">"Infection severity index"</span>,</span>
-<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">"Soybean rust risk based on the TMRF model"</span>,</span>
-<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"Viçosa, MG, Brazil"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load necessary package</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="co">#library(minpack.lm)</span></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the model formula</span></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="co">#model_formula &lt;- R ~ (a + b * T)^(c * T)</span></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>LPmin <span class="ot">&lt;-</span> <span class="dv">5</span> <span class="co"># minimum latent period</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>Topt <span class="ot">&lt;-</span> <span class="dv">21</span> <span class="co"># Optimal temperature</span></span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>model_formula2 <span class="ot">&lt;-</span> R <span class="sc">~</span> k <span class="sc">/</span> (LPmin <span class="sc">+</span> a <span class="sc">*</span> (T <span class="sc">-</span> Topt)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Set initial parameter estimates</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a><span class="co">#start_values &lt;- list(a = 0.1, b = 0.01, c = 0.01)</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>start_values2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">a =</span> <span class="fl">0.1</span>, <span class="at">k =</span> <span class="dv">1</span>)</span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit the model</span></span>
+<span id="cb56-14"><a href="#cb56-14" aria-hidden="true" tabindex="-1"></a><span class="co">#fit_rate &lt;- nlsLM(model_formula, data = latent_rate, start = start_values)</span></span>
+<span id="cb56-15"><a href="#cb56-15" aria-hidden="true" tabindex="-1"></a>fit_rate2 <span class="ot">&lt;-</span> <span class="fu">nls</span>(model_formula2, <span class="at">data =</span> latent_rate, <span class="at">start =</span> start_values2)</span>
+<span id="cb56-16"><a href="#cb56-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-17"><a href="#cb56-17" aria-hidden="true" tabindex="-1"></a><span class="co"># View the summary of the fit</span></span>
+<span id="cb56-18"><a href="#cb56-18" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_rate2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Formula: R ~ k/(LPmin + a * (T - Topt)^2)
+
+Parameters:
+  Estimate Std. Error t value Pr(&gt;|t|)    
+a 0.060274   0.010705    5.63 3.76e-05 ***
+k 0.039520   0.001464   26.99 9.05e-15 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.0006936 on 16 degrees of freedom
+
+Number of iterations to convergence: 6 
+Achieved convergence tolerance: 3.183e-06</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>fit_rate2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         a          k 
+0.06027417 0.03952035 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> fit_rate2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">1</span>]</span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> fit_rate2<span class="sc">$</span>m<span class="sc">$</span><span class="fu">getAllPars</span>()[<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we reproduce the plot with the fitted data. Note that the curve is not the same shown in the paper because we used a different equation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>T <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">10</span>, <span class="dv">29</span>, <span class="fl">0.1</span>)</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="co">#R &lt;- (a + b * T)^(c * T)</span></span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> k <span class="sc">/</span> (LPmin <span class="sc">+</span> a <span class="sc">*</span> (T <span class="sc">-</span> Topt)<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>dat2 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(T, R)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>dat2 <span class="sc">|&gt;</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(T, R)) <span class="sc">+</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> latent_rate, <span class="fu">aes</span>(T, R)) <span class="sc">+</span></span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Temperature"</span>, <span class="at">y =</span> <span class="st">"Inverse of the latent period (hour -1)"</span>, </span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">title =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1453,6 +1360,9 @@ Analytis, S. 1977. Über die Relation zwischen biologischer Entwicklung und Temp
 </div>
 <div id="ref-bailey1999" class="csl-entry" role="listitem">
 Bailey, J. E. 1999. Integrated Method of Organizing, Computing, and Deploying Weather-Based Disease Advisories for Selected Peanut Disease. Peanut Science 26:74–80. <a href="https://doi.org/10.3146/i0095-3679-26-2-3">https://doi.org/10.3146/i0095-3679-26-2-3</a>.
+</div>
+<div id="ref-bernard2013" class="csl-entry" role="listitem">
+Bernard, F., Sache, I., Suffert, F., and Chelle, M. 2013. The development of a foliar fungal pathogen does react to leaf temperature! New Phytologist 198:232–240. <a href="https://doi.org/10.1111/nph.12134">https://doi.org/10.1111/nph.12134</a>.
 </div>
 <div id="ref-bulger1987" class="csl-entry" role="listitem">
 Bulger, M. A. 1987. Influence of temperature and wetness duration on infection of strawberry flowers by<span><em>Botrytis cinerea</em></span>and disease incidence of fruit originating from infected flowers. Phytopathology 77:1225. <a href="https://doi.org/10.1094/phyto-77-1225">https://doi.org/10.1094/phyto-77-1225</a>.
@@ -1487,8 +1397,14 @@ Ji, T., Salotti, I., Altieri, V., Li, M., and Rossi, V. 2023. Temperature-Depend
 <div id="ref-krause1975" class="csl-entry" role="listitem">
 Krause, R. A., and Massie, L. B. 1975. Predictive Systems: Modern Approaches to Disease Control. Annual Review of Phytopathology 13:31–47. <a href="https://doi.org/10.1146/annurev.py.13.090175.000335">https://doi.org/10.1146/annurev.py.13.090175.000335</a>.
 </div>
+<div id="ref-lannou2012" class="csl-entry" role="listitem">
+Lannou, C. 2012. Variation and Selection of Quantitative Traits in Plant Pathogens. Annual Review of Phytopathology 50:319–338. <a href="https://doi.org/10.1146/annurev-phyto-081211-173031">https://doi.org/10.1146/annurev-phyto-081211-173031</a>.
+</div>
 <div id="ref-machardy1989" class="csl-entry" role="listitem">
 MacHardy, W. E. 1989. A revision of mills’s criteria for predicting apple scab infection periods. Phytopathology 79:304. <a href="https://doi.org/10.1094/phyto-79-304">https://doi.org/10.1094/phyto-79-304</a>.
+</div>
+<div id="ref-madden2007" class="csl-entry" role="listitem">
+Madden, L. V., Hughes, G., and van den Bosch, F. 2007. <em>The study of plant disease epidemics</em>. The American Phytopathological Society. <a href="https://doi.org/10.1094/9780890545058">https://doi.org/10.1094/9780890545058</a>.
 </div>
 <div id="ref-magarey2007" class="csl-entry" role="listitem">
 Magarey, R. D., and Sutton, T. B. 2007. How to Create and Deploy Infection Models for Plant Pathogens. In Springer Netherlands, pp. 3–25. <a href="https://doi.org/10.1007/978-1-4020-6061-8_1">https://doi.org/10.1007/978-1-4020-6061-8_1</a>.
@@ -1529,8 +1445,14 @@ Savary, S., Nelson, A. D., Djurle, A., Esker, P. D., Sparks, A., Amorim, L., Ber
 <div id="ref-seem1984" class="csl-entry" role="listitem">
 Seem, R. C. 1984. Simple decision aids for practical control of pests. Plant Disease 68:656. <a href="https://doi.org/10.1094/pd-69-656">https://doi.org/10.1094/pd-69-656</a>.
 </div>
+<div id="ref-plantdi1963" class="csl-entry" role="listitem">
+Vanderplank, J. 1963. <em>Plant disease epidemics and control</em>. Elsevier. <a href="https://doi.org/10.1016/c2013-0-11642-x">https://doi.org/10.1016/c2013-0-11642-x</a>.
+</div>
 <div id="ref-windels1998" class="csl-entry" role="listitem">
 Windels, C. E., Lamey, H. A., Hilde, D., Widner, J., and Knudsen, T. 1998. A Cerospora Leaf Spot Model for Sugar Beet: In Practice by an Industry. Plant Disease 82:716–726. <a href="https://doi.org/10.1094/pdis.1998.82.7.716">https://doi.org/10.1094/pdis.1998.82.7.716</a>.
+</div>
+<div id="ref-xu2000" class="csl-entry" role="listitem">
+Xu, X.-M., and Robinson, J. D. 2000. Effects of temperature on the incubation and latent periods of hawthorn powdery mildew (<span><em>Podosphaera clandestina</em></span>). Plant Pathology 49:791–797. <a href="https://doi.org/10.1046/j.1365-3059.2000.00520.x">https://doi.org/10.1046/j.1365-3059.2000.00520.x</a>.
 </div>
 </div>
 </section>
