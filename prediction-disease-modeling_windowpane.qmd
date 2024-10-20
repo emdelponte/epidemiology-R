@@ -1,0 +1,444 @@
+---
+title: "correl"
+format: html
+---
+
+```{r}
+library(gsheet)
+library(tidyverse)
+library(nasapower)
+library(lubridate)
+library(progress)
+library(r4pde)
+# Load data from Google Sheets
+```
+
+## load the data
+
+```{r}
+trials <- BlastWheat
+# Data preparation
+trials2 <- trials |>
+#filter(study %in% c(1, 2, 3, 4)) |>
+  mutate(
+    heading = as.Date(heading, format = "%d-%m-%Y")  # Convert to Date format
+  )
+
+
+```
+
+## Get weather
+
+
+
+```{r}
+# Example usage with a specified number of days around a date
+weather_data <- get_nasapower(
+  data = trials2,
+  days_around = 28,
+  date_col = "heading"
+)
+
+trials3 <- full_join(trials2, weather_data)
+head(trials3)
+
+
+```
+
+
+## windowpane single variable and window
+
+```{r}
+wp_all <- windowpane(
+  data = trials3,
+  end_date_col = heading,
+  date_col = YYYYMMDD,
+  variable = RH2M,  # Example variable
+  summary_type = "mean",
+  threshold = NULL,
+  window_lengths = c(28),
+  direction = "backward",
+  group_by_cols = "study", # Grouping by 'study'
+)
+
+
+wp_all <- wp_all |> 
+  mutate(inc = trials$inc_mean,
+         inc2 = case_when(inc > 25 ~ 1,
+                          TRUE ~ 0))
+
+```
+
+
+## window pane multiple variables
+
+```{r}
+## By multiple variables
+
+# Define the variables you want to analyze
+variables <- c("T2M", "T2M_MIN", "T2M_MAX", "RH2M")  # Add more variables as needed
+
+# Apply the function to each variable and combine the results
+wp_means <- map(variables, function(var) {
+  windowpane(
+    data = trials3,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = !!sym(var),   # Example variable
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", # Grouping by 'study'
+  )
+})
+
+# View the results
+head(wp_means)
+
+wp_means_df <- reduce(wp_means, left_join, by = c("study", "heading"))  # Replace with your grouping columns
+
+
+# sum rainfall
+
+wp_sums_df <- windowpane(
+    data = trials3,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = PRECTOTCORR,   # Example variable
+    summary_type = "sum",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", # Grouping by 'study'
+  )
+
+
+wp_sums_df <- wp_sums_df |> 
+  select(-heading, -study)
+
+
+wp_all <- cbind(wp_means_df, wp_sums_df)
+
+
+wp_all <- wp_all |> 
+  mutate(inc = trials$inc_mean,
+         inc2 = case_when(inc > 25 ~ 1,
+                          TRUE ~ 0))
+
+
+```
+
+
+## function for bootsrapping correlations and simes method
+
+```{r}
+
+
+# function for bootsrapping correlations and simes method
+
+
+
+# Define the function for correlation-based variable selection
+variable_selection <- function(data, response_var, corr_type = "spearman", num_bootstraps = 100) {
+  # Define predictors and response
+  predictors <- setdiff(names(data), response_var)
+  response <- data[[response_var]]
+  
+  # Ensure predictors are numeric
+  data[predictors] <- lapply(data[predictors], as.numeric)
+  
+  # Initialize a matrix to store bootstrap correlations
+  bootstrap_correlations <- matrix(NA, nrow = num_bootstraps, ncol = length(predictors))
+  colnames(bootstrap_correlations) <- predictors
+  
+  set.seed(123)  # For reproducibility
+  
+  # Bootstrapping loop
+  for (i in 1:num_bootstraps) {
+    # Resample data with replacement
+    sample_indices <- sample(seq_len(nrow(data)), size = nrow(data), replace = TRUE)
+    sample_data <- data[sample_indices, ]
+    
+    # Loop through each predictor
+    for (var in predictors) {
+      # Ensure the variable is numeric and not constant
+      if (is.numeric(sample_data[[var]]) && length(unique(sample_data[[var]])) > 1) {
+        # Check if enough complete cases exist
+        complete_cases <- complete.cases(sample_data[[var]], sample_data[[response_var]])
+        if (sum(complete_cases) > 2) {
+          # Extract complete cases only
+          var_data <- sample_data[[var]][complete_cases]
+          response_data <- sample_data[[response_var]][complete_cases]
+          
+          # Compute the specified type of correlation
+          corr <- cor(var_data, response_data, method = corr_type)
+          
+          # Store the correlation in the matrix
+          bootstrap_correlations[i, var] <- corr
+        } else {
+          # Not enough complete cases
+          bootstrap_correlations[i, var] <- NA
+        }
+      } else {
+        # If the variable is not numeric or is constant
+        bootstrap_correlations[i, var] <- NA
+      }
+    }
+  }
+  
+  # Initialize the results data frame
+  results <- data.frame(variable = predictors, mean_corr = NA, p_value = NA)
+  
+  # Calculate mean correlations and p-values
+  for (var in predictors) {
+    corrs <- bootstrap_correlations[, var]
+    
+    # Skip if all correlations are NA
+    if (all(is.na(corrs))) next
+    
+    # Calculate mean correlation, ignoring NA values
+    mean_corr <- mean(corrs, na.rm = TRUE)
+    
+    # Calculate the empirical p-value
+    if (!is.na(mean_corr)) {
+      # Ensure there are non-NA correlations
+      non_na_corrs <- corrs[!is.na(corrs)]
+      if (length(non_na_corrs) > 0) {
+        # Two-tailed test: count how many correlations are at least as extreme as mean_corr
+        p_value <- (sum(abs(non_na_corrs) >= abs(mean_corr)) + 1) / (length(non_na_corrs) + 1)
+      } else {
+        p_value <- NA
+      }
+    } else {
+      p_value <- NA
+    }
+    
+    # Store results
+    results[results$variable == var, c('mean_corr', 'p_value')] <- c(mean_corr, p_value)
+  }
+  
+  # Apply Simes method
+  results <- results %>%
+    arrange(p_value) %>%
+    mutate(rank = row_number(),
+           m = n(),
+           alpha = 0.05,
+           threshold = alpha * rank / m,
+           significant_simes = p_value <= threshold)
+  
+  # Select significant variables by Simes
+  selected_simes_variables <- results %>%
+    filter(significant_simes == TRUE) %>%
+    pull(variable)
+  
+  # Apply Benjamini-Hochberg FDR correction
+  results <- results %>%
+    mutate(fdr_threshold = p.adjust(p_value, method = "BH"),
+           significant_fdr = fdr_threshold < 0.05)
+  
+  # Select significant variables by FDR
+  selected_fdr_variables <- results %>%
+    filter(significant_fdr == TRUE) %>%
+    pull(variable)
+  
+  # Return the results data frame and selected variables
+  return(list(
+    results = results,
+    selected_simes = selected_simes_variables,
+    selected_fdr = selected_fdr_variables
+  ))
+}
+
+# Example usage
+data <- wp_all |> select(-study, -heading, -inc)
+response_var <- 'inc2'
+
+# Call the function
+results <- variable_selection(data, response_var, corr_type = "kendall", num_bootstraps = 100)
+
+results$results
+# Print the results
+print(results$results)
+cat("Selected variables by Simes method:", results$selected_simes, "\n")
+cat("Selected variables by FDR method:", results$selected_fdr, "\n")
+
+```
+
+
+## Elastic net 
+
+
+```{r}
+# Elastic net
+library(glmnet)   # For Elastic Net model
+library(caret)    # For data splitting and cross-validation
+
+# Load your dataset
+data <- wp_all |> select(-study, -heading)
+
+# Define predictors and response (now 'inc2' for binary response)
+response_var <- 'inc2'
+predictors <- setdiff(names(data), response_var)
+response <- data[[response_var]]
+
+# Convert predictors to numeric matrix
+X <- as.matrix(data[predictors])
+y <- as.numeric(response)
+
+# Remove rows with missing values
+complete_cases <- complete.cases(X, y)
+X <- X[complete_cases, ]
+y <- y[complete_cases]
+
+set.seed(123)  # For reproducibility
+
+# Create training and testing sets
+train_index <- createDataPartition(y, p = 0.8, list = FALSE)
+X_train <- X[train_index, ]
+y_train <- y[train_index]
+X_test <- X[-train_index, ]
+y_test <- y[-train_index]
+
+# Define the range of alpha to explore
+alpha_values <- seq(0, 1, by = 0.1)  # Alpha ranges from 0 (Ridge) to 1 (Lasso)
+
+# Initialize storage for results
+cv_results <- list()
+
+# Perform cross-validation for each alpha
+for (alpha in alpha_values) {
+  cv_fit <- cv.glmnet(X_train, y_train, alpha = alpha, 
+                      family = "binomial",       # For binary response
+                      nfolds = 10,               # 10-fold cross-validation
+                      type.measure = "class")    # Classification error
+  
+  cv_results[[paste0("alpha_", alpha)]] <- cv_fit
+}
+
+# Find the best alpha and lambda based on cross-validation
+best_alpha <- 0
+best_lambda <- Inf
+min_error <- Inf
+
+for (alpha in names(cv_results)) {
+  fit <- cv_results[[alpha]]
+  if (min(fit$cvm) < min_error) {
+    min_error <- min(fit$cvm)
+    best_alpha <- as.numeric(gsub("alpha_", "", alpha))
+    best_lambda <- fit$lambda.min
+  }
+}
+
+cat("Best alpha:", best_alpha, "\n")
+cat("Best lambda:", best_lambda, "\n")
+
+# Fit the final Elastic Net model with optimal alpha and lambda
+final_fit <- glmnet(X_train, y_train, 
+                    alpha = best_alpha, 
+                    lambda = best_lambda, 
+                    family = "binomial")
+
+# Print the coefficients of the selected variables
+selected_coefficients <- coef(final_fit, s = best_lambda)
+
+# Convert to a matrix for easier subsetting
+selected_coefficients <- as.matrix(selected_coefficients)
+
+# Extract the names of the variables with non-zero coefficients
+selected_variables <- rownames(selected_coefficients)[selected_coefficients != 0]
+
+# Remove the intercept from the selected variables
+selected_variables <- selected_variables[selected_variables != "(Intercept)"]
+
+cat("Selected variables by Elastic Net:", selected_variables, "\n")
+
+# Predict on the test set (probabilities)
+y_pred_prob <- predict(final_fit, newx = X_test, s = best_lambda, type = "response")
+
+# Convert probabilities to binary predictions
+y_pred <- ifelse(y_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(y_pred == y_test)
+cat("Accuracy on Test Set:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = y_pred, Actual = y_test)
+print(conf_matrix)
+
+# Calculate AUC
+library(pROC)
+roc_obj <- roc(y_test, y_pred_prob)
+auc <- auc(roc_obj)
+cat("AUC on Test Set:", auc, "\n")
+
+# Plot ROC curve
+plot(roc_obj, main = "ROC Curve for Logistic Elastic Net Model")
+
+
+```
+
+## best glm
+
+```{r}
+
+## Best glm
+# Load the necessary libraries
+library(bestglm)
+
+# Prepare the data frame for bestglm
+data_subset <- data.frame(data[, selected_variables], inc2 = response)
+
+# Remove rows with missing values
+data_subset <- na.omit(data_subset)
+data_subset <- data_subset |> select(-inc)
+names(data_subset)
+# Convert the response variable to a factor for logistic regression
+data_subset$inc2 <- as.factor(data_subset$inc2)
+
+
+# Fit the Best Subset Selection model with bestglm
+bestglm_fit <- bestglm(
+  data_subset,
+  family = binomial,   # Logistic regression
+  IC = "BIC"           # Use BIC as the information criterion
+)
+
+# Print the summary of the best model
+summary(bestglm_fit)
+
+# Extract the names of the selected variables
+selected_bestglm_variables <- names(coef(bestglm_fit$BestModel))[-1]  # Exclude intercept
+
+cat("Variables selected by Best Subset Selection (bestglm):", selected_bestglm_variables, "\n")
+
+# Predict probabilities on the training set
+y_pred_prob <- predict(bestglm_fit$BestModel, type = "response")
+
+# Convert probabilities to binary predictions
+y_pred <- ifelse(y_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(y_pred == data_subset$inc2)
+cat("Accuracy of Best Subset Model:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = y_pred, Actual = data_subset$inc2)
+print(conf_matrix)
+
+# Calculate AUC
+library(pROC)
+roc_obj <- roc(data_subset$inc2, y_pred_prob)
+auc <- auc(roc_obj)
+cat("AUC of Best Subset Model:", auc, "\n")
+
+# Plot ROC curve
+plot(roc_obj, main = "ROC Curve for Best Subset Logistic Model")
+
+
+```
+
+
+
+
