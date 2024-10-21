@@ -239,7 +239,7 @@ dat2 |>
 
 #### Moisture effects
 
-##### Monomolecular model
+##### Monomolecular function
 
 For this example, we will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the effects of moisture duration on the symptom development of citrus canker in sweet orange [@dallapria2006]. As in the previous example for temperature effects, the data used here is only for severity on the cultivar Hamlin (plot a in @fig-moisture). The data was also extracted using the R package digitize.
 
@@ -304,7 +304,7 @@ dat2 |>
   labs(x = "Wetness duration", y = "Severity")
 ```
 
-##### Weibull model
+##### Weibull function
 
 In the study by [@ji2021; @ji2023a], a Weibull model was fitted to the re-scaled data (0 to 1) on the effect of moisture duration on spore germination or infection. Let's keep working with the re-scaled data on the citrus canker.
 
@@ -502,7 +502,7 @@ plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |>
   )
 ```
 
-#### Magarey model
+#### Magarey's generic infection model
 
 In the early 2000s, Magarey and collaborators [@magarey2005] proposed a generic infection model for foliar fungal pathogens, designed to predict infection periods based on limited data on temperature and wetness requirements. The model uses cardinal temperatures (minimum, optimum, maximum) and the minimum wetness duration (Wmin) necessary for infection. The model can incorporate inputs based on estimated cardinal temperatures and surface wetness duration. These values are available for numerous pathogens and can be consulted in the literature (See table 2 of the paper by @magarey2005).
 
@@ -611,21 +611,21 @@ applescab | soyrust
 
 ```
 
-### Latency period
+### Latency period models
 
 The latent period can be defined as "the length of time between the start of the infection process by a unit of inoculum and the start of production of infectious units" [@madden2007]. The latent period, analogous to the reproductive maturity age of nonparasitic organisms, defines the generation time between infections and is a key factor in pathogen development and epidemic progress in plant disease epidemiology [@plantdi1963]. As a critical trait of aggressiveness, especially in polycyclic diseases, it largely determines the potential number of infection cycles within a season, impacting the overall epidemic intensity [@lannou2012].
 
-#### Models for latency period
+#### Parabolic function
 
-The effects of temperature on the length of the incubation and latent periods of hawthorn powdery mildew, caused by *Podosphaera clandestina*, were studied by @xu2000. In that work, the authors inoculated the leaves and, each day after inoculation, the upper surface of each leaf was examined for mildew colonies and conidiophores using a pen-microscope (×50) without damaging the leaf. Sporulation was recorded at the leaf level, noting the number of colonies and the first appearance dates of colonies and sporulation for each leaf.
+The effects of temperature on the length of the incubation and latent periods of hawthorn powdery mildew, caused by *Podosphaera clandestina*, were studied by @xu2000. In that work, the authors inoculated the leaves and, each day after inoculation, the upper surface of each leaf was examined for mildew colonies and conidiophores using a pen-microscope (×50). Sporulation was recorded at the leaf level, noting the number of colonies and the first appearance dates of colonies and sporulation for each leaf.
 
-The latent period (LP) was the time from inoculation to the first day of observed sporulation on the leaf. Due to the skewed distribution of LP across temperatures and inoculations, medians were used to summarize LP rather than means [@xu2000].
+The latent period (LP) was defined as the time from inoculation to the first day of observed sporulation on the leaf. Due to the skewed distribution of LP across temperatures and inoculations, medians were used to summarize LP rather than means [@xu2000].
 
-Let's look at two plots extracted from the paper. The first, on the left, is the original number of days of the latent period of each evaluated temperature (note: the solid symbol is for constant temperature while the open circle is for fluctuating temperature). On the right-hand side, the relationship between temperature and rates of development of hawthorn powdery mildew under constant temperature during the latent periods; solid line indicates the fitted model. The rate of fungal development was calculated as the reciprocal of the corresponding observed incubation (in hours) and latent periods.
+Let's look at two plots extracted from the paper. The first, on the left-hand side, is the original number of days of the latent period of each evaluated temperature (note: the solid symbol is for constant temperature while the open circle is for fluctuating temperature). On the right-hand side, the relationship between temperature and rates of development of powdery mildew under constant temperature during the latent periods; the solid line indicates the fitted model. The rate of fungal development was calculated as the reciprocal of the corresponding observed incubation (in hours) and latent periods.
 
 ![Source: @xu2000](imgs/modeling-latent.png){#fig-latent fig-align="center"}
 
-The data from the figure above was extracted using the {digitize} R package.
+The latent period data in days for the solid black circle (constant temperature) above was extracted using the {digitize} R package.
 
 ```{r}
 latent <- tibble::tribble(
@@ -655,6 +655,8 @@ latent <- tibble::tribble(
 Let's reproduce the two plots using the datapoints.
 
 ```{r}
+#|fig-width: 10
+#|fig-height: 4
 library(ggplot2)
 library(r4pde)
 
@@ -678,7 +680,7 @@ p_latent | p_latent_rate
 
 ```
 
-We will fit the parabolic function proposed by @bernard2013 which predicts a thermal response curve (developmental rate R), which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the minimum latent period. The model is given by:
+We will fit the parabolic function proposed by @bernard2013 which predicts a thermal response curve (developmental rate, R), which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the minimum latent period. The model is given by:
 
 $R(T) = \frac{k}{\text{LP}_{\text{min}} + \text{a} \times (T - T_{\text{opt}})^2}$
 
@@ -688,7 +690,7 @@ $R(T) = \frac{k}{\text{LP}_{\text{min}} + \text{a} \times (T - T_{\text{opt}})^2
 #library(minpack.lm)
 
 # Define the model formula
-#model_formula <- R ~ (a + b * T)^(c * T)
+# model_formula <- R ~ (a + b * T)^(c * T)
 LPmin <- 5 # minimum latent period
 Topt <- 21 # Optimal temperature
 model_formula2 <- R ~ k / (LPmin + a * (T - Topt)^2)
@@ -728,4 +730,10 @@ dat2 |>
 
 ```
 
+## Field data
 
+Although pathogen inoculum and host resistance levels are sometimes considered in combination with weather in empirically derived models using field data [@shah2013; @cao2015], with a few examples of models using non-weather factors [@mehra2016; @paul2004], most of these data-driven models primarily rely on weather variables as predictors [@gonzález-domínguez2023]. This emphasis is due to the significant influence of weather on key processes in the disease cycle, including pathogen survival and dispersal, host infection, and pathogen reproduction [@dewolf2007]. As a result, a central task for plant epidemiologists is to identify and quantify the relationships between weather conditions and a measure of disease intensity [@shah2019; @eljarroudi2017; @pietravalle2003; @coakley1988; @delponte2006; @shah2013; @coakley1988a].
+
+In modeling efforts, the disease variable can be represented either as a continuous measure (e.g., incidence or severity) or as categorical data, which may be binary (e.g., non-epidemic vs. epidemic) or multinomial (e.g., low, moderate, and high severity). This variability in response types informs the selection of suitable modeling techniques, ensuring that the model accurately captures the nature of the data and the relationships between weather variables and disease outcomes.
+
+In this section, I will demonstrate several modeling approaches that can be applied when field data is available. These examples will cover a range of techniques, starting with variable construction, which involves transforming raw weather data into summary measures that can effectively represent conditions relevant to disease outcomes. Next, variable selection methods will be explored to identify the most influential predictors, ensuring that models are both accurate and interpretable. The focus will then shift to model fitting, showing how different models, such as linear and logistic regression, can be used to capture relationships between weather variables and disease endpoints. Finally, model evaluation will be addressed, emphasizing metrics like accuracy, sensitivity, and area under the curve (AUC), which are crucial for assessing the predictive performance and reliability of the models developed.
