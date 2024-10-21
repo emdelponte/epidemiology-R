@@ -1,6 +1,8 @@
 ---
 title: "correl"
 format: html
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r}
@@ -38,11 +40,17 @@ weather_data <- get_nasapower(
   days_around = 28,
   date_col = "heading"
 )
+```
 
+## Join trial and weaather
+
+```{r}
 trials3 <- full_join(trials2, weather_data)
 head(trials3)
+```
 
 
+```{r}
 ```
 
 
@@ -53,19 +61,20 @@ wp_all <- windowpane(
   data = trials3,
   end_date_col = heading,
   date_col = YYYYMMDD,
-  variable = RH2M,  # Example variable
+  variable = T2M,  # Example variable
   summary_type = "mean",
   threshold = NULL,
-  window_lengths = c(28),
+  window_lengths = c(7, 28),
   direction = "backward",
   group_by_cols = "study", # Grouping by 'study'
 )
-
 
 wp_all <- wp_all |> 
   mutate(inc = trials$inc_mean,
          inc2 = case_when(inc > 25 ~ 1,
                           TRUE ~ 0))
+
+
 
 ```
 
@@ -76,7 +85,7 @@ wp_all <- wp_all |>
 ## By multiple variables
 
 # Define the variables you want to analyze
-variables <- c("T2M", "T2M_MIN", "T2M_MAX", "RH2M")  # Add more variables as needed
+variables <- c("T2M", "T2M_MIN", "T2M_MAX", "RH2M", "T2MDEW")  # Add more variables as needed
 
 # Apply the function to each variable and combine the results
 wp_means <- map(variables, function(var) {
@@ -93,8 +102,6 @@ wp_means <- map(variables, function(var) {
   )
 })
 
-# View the results
-head(wp_means)
 
 wp_means_df <- reduce(wp_means, left_join, by = c("study", "heading"))  # Replace with your grouping columns
 
@@ -118,29 +125,47 @@ wp_sums_df <- wp_sums_df |>
   select(-heading, -study)
 
 
-wp_all <- cbind(wp_means_df, wp_sums_df)
+## count 
 
+wp_count_df <- windowpane(
+    data = trials3,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   # Example variable
+    summary_type = "below_threshold",
+    threshold = 15,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", # Grouping by 'study'
+  )
+
+
+wp_count_df <- wp_count_df |> 
+  select(-heading, -study)
+
+
+
+wp_all <- cbind(wp_means_df, wp_sums_df, wp_count_df)
+
+duplicated(names(wp_all))
 
 wp_all <- wp_all |> 
   mutate(inc = trials$inc_mean,
-         inc2 = case_when(inc > 25 ~ 1,
+         inc2 = case_when(inc > 20 ~ 1,
                           TRUE ~ 0))
 
 
 ```
 
 
-## function for bootsrapping correlations and simes method
+## function correlations and simes method
 
 ```{r}
 
 
-# function for bootsrapping correlations and simes method
 
-
-
-# Define the function for correlation-based variable selection
-variable_selection <- function(data, response_var, corr_type = "spearman", num_bootstraps = 100) {
+# Define the simplified function for correlation analysis
+variable_selection <- function(data, response_var, corr_type = "spearman", alpha = 0.05) {
   # Define predictors and response
   predictors <- setdiff(names(data), response_var)
   response <- data[[response_var]]
@@ -148,100 +173,57 @@ variable_selection <- function(data, response_var, corr_type = "spearman", num_b
   # Ensure predictors are numeric
   data[predictors] <- lapply(data[predictors], as.numeric)
   
-  # Initialize a matrix to store bootstrap correlations
-  bootstrap_correlations <- matrix(NA, nrow = num_bootstraps, ncol = length(predictors))
-  colnames(bootstrap_correlations) <- predictors
-  
-  set.seed(123)  # For reproducibility
-  
-  # Bootstrapping loop
-  for (i in 1:num_bootstraps) {
-    # Resample data with replacement
-    sample_indices <- sample(seq_len(nrow(data)), size = nrow(data), replace = TRUE)
-    sample_data <- data[sample_indices, ]
-    
-    # Loop through each predictor
-    for (var in predictors) {
-      # Ensure the variable is numeric and not constant
-      if (is.numeric(sample_data[[var]]) && length(unique(sample_data[[var]])) > 1) {
-        # Check if enough complete cases exist
-        complete_cases <- complete.cases(sample_data[[var]], sample_data[[response_var]])
-        if (sum(complete_cases) > 2) {
-          # Extract complete cases only
-          var_data <- sample_data[[var]][complete_cases]
-          response_data <- sample_data[[response_var]][complete_cases]
-          
-          # Compute the specified type of correlation
-          corr <- cor(var_data, response_data, method = corr_type)
-          
-          # Store the correlation in the matrix
-          bootstrap_correlations[i, var] <- corr
-        } else {
-          # Not enough complete cases
-          bootstrap_correlations[i, var] <- NA
-        }
-      } else {
-        # If the variable is not numeric or is constant
-        bootstrap_correlations[i, var] <- NA
-      }
-    }
-  }
-  
   # Initialize the results data frame
-  results <- data.frame(variable = predictors, mean_corr = NA, p_value = NA)
+  results <- data.frame(variable = predictors, correlation = NA, p_value = NA)
   
-  # Calculate mean correlations and p-values
+  # Loop through each predictor
   for (var in predictors) {
-    corrs <- bootstrap_correlations[, var]
+    var_data <- data[[var]]
     
-    # Skip if all correlations are NA
-    if (all(is.na(corrs))) next
-    
-    # Calculate mean correlation, ignoring NA values
-    mean_corr <- mean(corrs, na.rm = TRUE)
-    
-    # Calculate the empirical p-value
-    if (!is.na(mean_corr)) {
-      # Ensure there are non-NA correlations
-      non_na_corrs <- corrs[!is.na(corrs)]
-      if (length(non_na_corrs) > 0) {
-        # Two-tailed test: count how many correlations are at least as extreme as mean_corr
-        p_value <- (sum(abs(non_na_corrs) >= abs(mean_corr)) + 1) / (length(non_na_corrs) + 1)
-      } else {
-        p_value <- NA
+    # Ensure the variable is numeric and not constant
+    if (is.numeric(var_data) && length(unique(var_data)) > 1) {
+      # Check if enough complete cases exist
+      complete_cases <- complete.cases(var_data, response)
+      if (sum(complete_cases) > 2) {
+        # Extract complete cases only
+        var_data <- var_data[complete_cases]
+        response_data <- response[complete_cases]
+        
+        # Compute the specified type of correlation
+        corr <- cor(var_data, response_data, method = corr_type)
+        
+        # Compute the p-value using cor.test()
+        p_value <- cor.test(var_data, response_data, method = corr_type)$p.value
+        
+        # Store the correlation and p-value in the results data frame
+        results[results$variable == var, c('correlation', 'p_value')] <- c(corr, p_value)
       }
-    } else {
-      p_value <- NA
     }
-    
-    # Store results
-    results[results$variable == var, c('mean_corr', 'p_value')] <- c(mean_corr, p_value)
   }
-  
+
   # Apply Simes method
   results <- results %>%
     arrange(p_value) %>%
     mutate(rank = row_number(),
            m = n(),
-           alpha = 0.05,
            threshold = alpha * rank / m,
            significant_simes = p_value <= threshold)
-  
+
   # Select significant variables by Simes
   selected_simes_variables <- results %>%
     filter(significant_simes == TRUE) %>%
     pull(variable)
-  
+
   # Apply Benjamini-Hochberg FDR correction
   results <- results %>%
     mutate(fdr_threshold = p.adjust(p_value, method = "BH"),
-           significant_fdr = fdr_threshold < 0.05)
-  
+           significant_fdr = fdr_threshold < alpha)
+
   # Select significant variables by FDR
   selected_fdr_variables <- results %>%
     filter(significant_fdr == TRUE) %>%
     pull(variable)
-  
+
   # Return the results data frame and selected variables
   return(list(
     results = results,
@@ -251,17 +233,278 @@ variable_selection <- function(data, response_var, corr_type = "spearman", num_b
 }
 
 # Example usage
-data <- wp_all |> select(-study, -heading, -inc)
+data <- wp_all |> select(-study, -heading, -inc)  # Example data selection
 response_var <- 'inc2'
 
-# Call the function
-results <- variable_selection(data, response_var, corr_type = "kendall", num_bootstraps = 100)
+# Call the simplified function
+results <- variable_selection(data, response_var, corr_type = "spearman", alpha = 0.05)
 
-results$results
 # Print the results
 print(results$results)
 cat("Selected variables by Simes method:", results$selected_simes, "\n")
 cat("Selected variables by FDR method:", results$selected_fdr, "\n")
+
+# Example usage
+names(wp_all)
+data <- wp_all |> select(-study, -heading, -inc, - `T2M_MIN_0_-27`)
+response_var <- 'inc2'
+
+# Call the function
+results <- variable_selection(data, response_var, corr_type = "kendall")
+
+view(results$results)
+# Print the results
+print(results$results)
+cat("Selected variables by Simes method:", results$selected_simes, "\n")
+cat("Selected variables by FDR method:", results$selected_fdr, "\n")
+
+```
+
+## Function bootstrapping correlations
+
+```{r}
+
+# Define the function for bootstrapping correlation analysis with refined Simes method
+variable_selection_with_refined_simes <- function(data, response_var, corr_type = "spearman", R = 1000, global_alpha = 0.05, individual_alpha = 0.005) {
+  # Define predictors and response
+  predictors <- setdiff(names(data), response_var)
+  response <- data[[response_var]]
+  
+  # Ensure predictors are numeric
+  data[predictors] <- lapply(data[predictors], as.numeric)
+
+  # Initialize the results data frame
+  results <- data.frame(variable = predictors, correlation = NA, p_value = NA, 
+                        mean_corr = NA, sd_corr = NA, median_corr = NA)
+
+  # Define the internal function for bootstrapping
+  calc_correlation <- function(data, indices, var, response_var) {
+    # Subset data for bootstrap sample
+    sample_data <- data[indices, ]
+    var_data <- sample_data[[var]]
+    response_data <- sample_data[[response_var]]
+
+    # Calculate correlation for the given sample
+    corr_result <- cor.test(var_data, response_data, method = corr_type)
+    
+    # Return the correlation estimate and p-value
+    return(c(as.numeric(corr_result$estimate), corr_result$p.value))
+  }
+
+  # Loop through each predictor
+  for (var in predictors) {
+    var_data <- data[[var]]
+    
+    # Ensure the variable is numeric and not constant
+    if (is.numeric(var_data) && length(unique(var_data)) > 1) {
+      # Check if enough complete cases exist
+      complete_cases <- complete.cases(var_data, response)
+      if (sum(complete_cases) > 5) {  # Minimum sample size of 5
+        # Prepare data for bootstrapping
+        data_boot <- data.frame(var_data = var_data[complete_cases], response = response[complete_cases])
+        
+        # Run the bootstrap (using boot package)
+        boot_result <- boot(data = data_boot, statistic = function(data, indices) {
+          calc_correlation(data, indices, "var_data", "response")
+        }, R = R)
+        
+        # Prepare bootstrap summary
+        bootstrap_df <- as.data.frame(boot_result$t)
+        colnames(bootstrap_df) <- c("correlation", "p_value")
+        
+        # Calculate mean, standard deviation, and median of the correlation estimates
+        mean_corr <- mean(bootstrap_df$correlation, na.rm = TRUE)
+        sd_corr <- sd(bootstrap_df$correlation, na.rm = TRUE)
+        median_corr <- median(bootstrap_df$correlation, na.rm = TRUE)
+
+        # Extract the initial correlation and p-value from the bootstrap
+        corr <- boot_result$t0[1]
+        p_value <- boot_result$t0[2]
+        
+        # Store results
+        results[results$variable == var, c('correlation', 'p_value', 'mean_corr', 'sd_corr', 'median_corr')] <- 
+          c(corr, p_value, mean_corr, sd_corr, median_corr)
+      }
+    }
+  }
+
+  # Apply Simes method to adjust for multiple testing
+  results <- results %>%
+    arrange(p_value) %>%
+    mutate(rank = row_number(),
+           m = n(),
+           simes_threshold = global_alpha * rank / m,
+           significant_simes = p_value <= simes_threshold,
+           individual_significant = p_value <= individual_alpha)  # Use individual_alpha = 0.005
+
+  # Calculate the global p-value (Pg) as the minimum of the Simes-adjusted p-values
+  Pg <- min(results$p_value / (results$rank / results$m), na.rm = TRUE)
+
+  # Determine global significance
+  global_significant <- Pg < global_alpha
+
+  # Select significant variables by refined Simes method
+  selected_simes_variables <- results %>%
+    filter(significant_simes == TRUE) %>%
+    pull(variable)
+
+  # Select significant variables by individual alpha threshold (0.005)
+  selected_individual_variables <- results %>%
+    filter(individual_significant == TRUE) %>%
+    pull(variable)
+
+  # Return the results data frame and selected variables
+  return(list(
+    results = results,
+    selected_simes = selected_simes_variables,
+    selected_individual = selected_individual_variables,
+    global_significant = global_significant,
+    Pg = Pg
+  ))
+}
+
+# Example usage
+data <- wp_all |> select(-study, -heading, -inc2)  # Example data selection
+response_var <- 'inc'
+
+library(boot)
+# Call the function with refined Simes adjustment
+results <- variable_selection_with_refined_simes(data, response_var, corr_type = "spearman", R = 1000, global_alpha = 0.05, individual_alpha = 0.005)
+
+# Print the results
+view(results$results)
+cat("Selected variables by Simes method:", results$selected_simes, "\n")
+cat("Selected variables by individual significance (alpha=0.005):", results$selected_individual, "\n")
+cat("Global significance (Pg):", results$Pg, "\n")
+cat("Is globally significant?", results$global_significant, "\n")
+
+```
+
+## bootstraping correlation simes in table
+
+```{r}
+T2M_7 <- wp_all |> 
+  select(starts_with("length7_T2M_mean"))
+```
+
+
+```{r}
+variable_selection_with_refined_simes_table <- function(data, response_var, corr_type = "spearman", R = 1000, global_alpha = 0.05, individual_alpha = 0.005) {
+  # Define predictors and response
+  predictors <- setdiff(names(data), response_var)
+  response <- data[[response_var]]
+
+  # Ensure predictors are numeric
+  data[predictors] <- lapply(data[predictors], as.numeric)
+
+  # Initialize the results data frame
+  results <- data.frame(variable = predictors, 
+                        correlation = NA, 
+                        p_value = NA, 
+                        mean_corr = NA, 
+                        sd_corr = NA, 
+                        median_corr = NA)
+
+  # Define the internal function for bootstrapping
+  calc_correlation <- function(data, indices, var, response_var) {
+    # Subset data for bootstrap sample
+    sample_data <- data[indices, ]
+    var_data <- sample_data[[var]]
+    response_data <- sample_data[[response_var]]
+
+    # Calculate correlation for the given sample
+    corr_result <- cor.test(var_data, response_data, method = corr_type)
+    
+    # Return the correlation estimate and p-value
+    return(c(as.numeric(corr_result$estimate), corr_result$p.value))
+  }
+
+  # Loop through each predictor
+  for (var in predictors) {
+    var_data <- data[[var]]
+    
+    # Ensure the variable is numeric and not constant
+    if (is.numeric(var_data) && length(unique(var_data)) > 1) {
+      # Check if enough complete cases exist
+      complete_cases <- complete.cases(var_data, response)
+      if (sum(complete_cases) > 5) {  # Minimum sample size of 5
+        # Prepare data for bootstrapping
+        data_boot <- data.frame(var_data = var_data[complete_cases], response = response[complete_cases])
+        
+        # Run the bootstrap (using boot package)
+        boot_result <- boot(data = data_boot, statistic = function(data, indices) {
+          calc_correlation(data, indices, "var_data", "response")
+        }, R = R)
+        
+        # Prepare bootstrap summary
+        bootstrap_df <- as.data.frame(boot_result$t)
+        colnames(bootstrap_df) <- c("correlation", "p_value")
+
+        # Calculate mean, standard deviation, and median of the correlation estimates
+        mean_corr <- mean(bootstrap_df$correlation, na.rm = TRUE)
+        sd_corr <- sd(bootstrap_df$correlation, na.rm = TRUE)
+        median_corr <- median(bootstrap_df$correlation, na.rm = TRUE)
+
+        # Extract the initial correlation and p-value from the bootstrap
+        corr <- boot_result$t0[1]
+        p_value <- boot_result$t0[2]
+
+        # Store results
+        results[results$variable == var, c('correlation', 'p_value', 'mean_corr', 'sd_corr', 'median_corr')] <- 
+          c(corr, p_value, mean_corr, sd_corr, median_corr)
+      }
+    }
+  }
+
+  # Apply Simes method to adjust for multiple testing
+  results <- results %>%
+    arrange(p_value) %>%
+    mutate(rank = row_number(),
+           m = n(),
+           simes_threshold = global_alpha * rank / m,
+           significant_simes = p_value <= simes_threshold,
+           individual_significant = p_value <= individual_alpha)  # Use individual_alpha = 0.005
+
+  # Calculate the global p-value (Pg) as the minimum of the Simes-adjusted p-values
+  Pg <- min(results$p_value / (results$rank / results$m), na.rm = TRUE)
+
+  # Determine global significance
+  global_significant <- Pg < global_alpha
+
+  # Find the maximum correlation
+  max_correlation <- max(results$correlation, na.rm = TRUE)
+
+  # Add global Pg and max correlation as a separate row
+  summary_table <- data.frame(
+    Metric = c("Global P-value (Pg)", "Max Correlation"),
+    Value = c(Pg, max_correlation)
+  )
+
+  # Return the results data frame and summary table
+  return(list(
+    results = results,
+    summary_table = summary_table,
+    global_significant = global_significant
+  ))
+}
+
+# Example usage
+data <- T2M_7
+data$inc <- trials$inc_mean
+response_var <- 'inc'
+
+library(boot)
+
+# Call the function with refined Simes adjustment
+results <- variable_selection_with_refined_simes_table(data, response_var, corr_type = "spearman", R = 1000)
+
+# View the results
+
+options(custom_digits = 1)
+print(format(results$summary_table, scientific = TRUE, digits = 15))
+view(results$results)
+print(results$summary_table)
+cat("Is globally significant?", results$global_significant, "\n")
 
 ```
 
@@ -275,7 +518,7 @@ library(glmnet)   # For Elastic Net model
 library(caret)    # For data splitting and cross-validation
 
 # Load your dataset
-data <- wp_all |> select(-study, -heading)
+data <- wp_all |> select(-study, -heading, -inc)
 
 # Define predictors and response (now 'inc2' for binary response)
 response_var <- 'inc2'
@@ -392,7 +635,7 @@ data_subset <- data.frame(data[, selected_variables], inc2 = response)
 
 # Remove rows with missing values
 data_subset <- na.omit(data_subset)
-data_subset <- data_subset |> select(-inc)
+data_subset <- data_subset 
 names(data_subset)
 # Convert the response variable to a factor for logistic regression
 data_subset$inc2 <- as.factor(data_subset$inc2)
@@ -439,6 +682,115 @@ plot(roc_obj, main = "ROC Curve for Best Subset Logistic Model")
 
 ```
 
+## plot window pane
+
+```{r}
+# Load the required library
+library(ggplot2)
+
+# Define total days and window lengths
+max_days <- 28
+window_lengths <- c(7, 14, 21, 28)
+
+# Create an empty data frame for all sliding windows
+window_data <- data.frame()
+
+# Populate the data frame with start and end points for each window
+for (length in window_lengths) {
+  for (start_day in 0:(max_days - length)) {
+    end_day <- start_day + length
+    window_data <- rbind(
+      window_data,
+      data.frame(
+        start = start_day,
+        end = end_day,
+        window_length = length
+      )
+    )
+  }
+}
+
+# Order the data by the start day (ascending) and create a new variable ID
+window_data <- window_data %>%
+  arrange(start, window_length) %>%
+  mutate(var_id = row_number())
+
+# Convert window_length to a factor for correct ordering in the legend
+window_data$window_length <- factor(window_data$window_length, levels = sort(unique(window_data$window_length)))
+
+# Plotting the sliding windows using ggplot2
+ggplot(window_data, aes(x = start, xend = end, y = var_id, yend = var_id, color = window_length)) +
+  geom_segment(size = 1.5) +  # Line segments for each window
+  scale_x_continuous(breaks = 0:max_days, limits = c(0, max_days)) +
+  scale_y_continuous(breaks = 1:nrow(window_data)) +
+  labs(
+    title = "Sliding Windows: Y-axis Ordered by Start Day",
+    x = "Days",
+    y = "Variable ID (Ordered by Start Day)",
+    color = "Window Length (days)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    legend.position = "top"
+  )
+
+```
+
+```{r}
+# Load the required library
+library(ggplot2)
+
+# Define total days and window lengths
+max_days <- 28
+window_lengths <- c(7, 14, 21, 28)
+
+# Create an empty data frame for all sliding windows
+window_data <- data.frame()
+
+# Populate the data frame with start and end points for each window
+var_id <- 1  # Variable ID for each window
+for (length in sort(window_lengths)) {  # Sort window lengths from shortest to longest
+  for (start_day in 0:(max_days - length)) {
+    end_day <- start_day + length
+    window_data <- rbind(
+      window_data,
+      data.frame(
+        start = start_day,
+        end = end_day,
+        var_id = var_id,
+        window_length = length
+      )
+    )
+    var_id <- var_id + 1  # Increment variable ID
+  }
+}
+
+# Convert window_length to a factor for correct ordering in the legend
+window_data$window_length <- factor(window_data$window_length, levels = sort(unique(window_data$window_length)))
+
+# Plotting the sliding windows using ggplot2
+ggplot(window_data, aes(x = start, xend = end, y = var_id, yend = var_id, color = window_length)) +
+  geom_segment(size = 1.5) +  # Line segments for each window
+  scale_x_continuous(breaks = 0:max_days, limits = c(0, max_days)) +
+  scale_y_continuous(breaks = 1:var_id) +
+  labs(
+    title = "Sliding Windows: Each Variable Over 28 Days (Ordered by Length)",
+    x = "Days",
+    y = "Variable ID",
+    color = "Window Length (days)"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10),
+    plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
+    legend.position = "top"
+  )
+
+```
 
 
 
