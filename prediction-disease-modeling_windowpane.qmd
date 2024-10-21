@@ -42,7 +42,7 @@ weather_data <- get_nasapower(
 )
 ```
 
-## Join trial and weaather
+## Join trial and weather
 
 ```{r}
 trials3 <- full_join(trials2, weather_data)
@@ -50,14 +50,10 @@ head(trials3)
 ```
 
 
-```{r}
-```
-
-
 ## windowpane single variable and window
 
 ```{r}
-wp_all <- windowpane(
+wp1 <- windowpane(
   data = trials3,
   end_date_col = heading,
   date_col = YYYYMMDD,
@@ -65,17 +61,15 @@ wp_all <- windowpane(
   summary_type = "mean",
   threshold = NULL,
   window_lengths = c(7, 28),
-  direction = "backward",
-  group_by_cols = "study", # Grouping by 'study'
+  direction = "both",
+  group_by_cols = 
+    "study", # Grouping by 'study'
 )
 
-wp_all <- wp_all |> 
+wp_1 <- wp_1 |> 
   mutate(inc = trials$inc_mean,
-         inc2 = case_when(inc > 25 ~ 1,
+         inc2 = case_when(inc > 20 ~ 1,
                           TRUE ~ 0))
-
-
-
 ```
 
 
@@ -85,7 +79,7 @@ wp_all <- wp_all |>
 ## By multiple variables
 
 # Define the variables you want to analyze
-variables <- c("T2M", "T2M_MIN", "T2M_MAX", "RH2M", "T2MDEW")  # Add more variables as needed
+variables <- c("T2M", "T2M_MIN", "T2M_MAX", "RH2M")  # Add more variables as needed
 
 # Apply the function to each variable and combine the results
 wp_means <- map(variables, function(var) {
@@ -97,7 +91,7 @@ wp_means <- map(variables, function(var) {
     summary_type = "mean",
     threshold = NULL,
     window_lengths = c(7, 14, 21, 28),
-    direction = "backward",
+    direction = "both",
     group_by_cols = "study", # Grouping by 'study'
   )
 })
@@ -116,7 +110,7 @@ wp_sums_df <- windowpane(
     summary_type = "sum",
     threshold = NULL,
     window_lengths = c(7, 14, 21, 28),
-    direction = "backward",
+    direction = "both",
     group_by_cols = "study", # Grouping by 'study'
   )
 
@@ -135,7 +129,7 @@ wp_count_df <- windowpane(
     summary_type = "below_threshold",
     threshold = 15,
     window_lengths = c(7, 14, 21, 28),
-    direction = "backward",
+    direction = "both",
     group_by_cols = "study", # Grouping by 'study'
   )
 
@@ -150,6 +144,12 @@ wp_all <- cbind(wp_means_df, wp_sums_df, wp_count_df)
 duplicated(names(wp_all))
 
 wp_all <- wp_all |> 
+  mutate(inc = trials$inc_mean,
+         inc2 = case_when(inc > 20 ~ 1,
+                          TRUE ~ 0))
+
+T2M_7day <- wp_all |> 
+  select(starts_with("length7_T2M_mean")) |> 
   mutate(inc = trials$inc_mean,
          inc2 = case_when(inc > 20 ~ 1,
                           TRUE ~ 0))
@@ -383,8 +383,8 @@ cat("Is globally significant?", results$global_significant, "\n")
 ## bootstraping correlation simes in table
 
 ```{r}
-T2M_7 <- wp_all |> 
-  select(starts_with("length7_T2M_mean"))
+T2M_MAX_7 <- wp_all |> 
+  select(starts_with("length7_T2M_MAX_mean"))
 ```
 
 
@@ -489,9 +489,11 @@ variable_selection_with_refined_simes_table <- function(data, response_var, corr
 }
 
 # Example usage
-data <- T2M_7
+data <- T2M_MAX_7   
 data$inc <- trials$inc_mean
 response_var <- 'inc'
+
+
 
 library(boot)
 
@@ -500,8 +502,6 @@ results <- variable_selection_with_refined_simes_table(data, response_var, corr_
 
 # View the results
 
-options(custom_digits = 1)
-print(format(results$summary_table, scientific = TRUE, digits = 15))
 view(results$results)
 print(results$summary_table)
 cat("Is globally significant?", results$global_significant, "\n")
@@ -622,6 +622,127 @@ plot(roc_obj, main = "ROC Curve for Logistic Elastic Net Model")
 
 ```
 
+## Elastic net top 15
+```{r}
+# Elastic net
+library(glmnet)   # For Elastic Net model
+library(caret)    # For data splitting and cross-validation
+
+# Load your dataset
+data <- wp_all |> select(-study, -heading, -inc)
+
+# Define predictors and response (now 'inc2' for binary response)
+response_var <- 'inc2'
+predictors <- setdiff(names(data), response_var)
+response <- data[[response_var]]
+
+# Convert predictors to numeric matrix
+X <- as.matrix(data[predictors])
+y <- as.numeric(response)
+
+# Remove rows with missing values
+complete_cases <- complete.cases(X, y)
+X <- X[complete_cases, ]
+y <- y[complete_cases]
+
+set.seed(123)  # For reproducibility
+
+# Create training and testing sets
+train_index <- createDataPartition(y, p = 0.8, list = FALSE)
+X_train <- X[train_index, ]
+y_train <- y[train_index]
+X_test <- X[-train_index, ]
+y_test <- y[-train_index]
+
+# Define the range of alpha to explore
+alpha_values <- seq(0, 1, by = 0.1)
+
+# Initialize storage for results
+cv_results <- list()
+
+# Perform cross-validation for each alpha
+for (alpha in alpha_values) {
+  cv_fit <- cv.glmnet(X_train, y_train, alpha = alpha, 
+                      family = "binomial",       
+                      nfolds = 10,               
+                      type.measure = "class")    
+  
+  cv_results[[paste0("alpha_", alpha)]] <- cv_fit
+}
+
+# Find the best alpha and lambda based on cross-validation
+best_alpha <- 0
+best_lambda <- Inf
+min_error <- Inf
+
+for (alpha in names(cv_results)) {
+  fit <- cv_results[[alpha]]
+  if (min(fit$cvm) < min_error) {
+    min_error <- min(fit$cvm)
+    best_alpha <- as.numeric(gsub("alpha_", "", alpha))
+    best_lambda <- fit$lambda.min
+  }
+}
+
+cat("Best alpha:", best_alpha, "\n")
+cat("Best lambda:", best_lambda, "\n")
+
+# Fit the final Elastic Net model with optimal alpha and lambda
+final_fit <- glmnet(X_train, y_train, 
+                    alpha = best_alpha, 
+                    lambda = best_lambda, 
+                    family = "binomial")
+
+# Extract coefficients of the final model
+selected_coefficients <- coef(final_fit, s = best_lambda)
+
+# Convert coefficients to a matrix for easier manipulation
+selected_coefficients <- as.matrix(selected_coefficients)
+
+# Remove the intercept from the selected coefficients
+selected_coefficients <- selected_coefficients[-1, , drop = FALSE]
+
+# Select the top 15 variables with the highest absolute coefficients
+top_15_indices <- order(abs(selected_coefficients), decreasing = TRUE)[1:15]
+top_15_variables <- rownames(selected_coefficients)[top_15_indices]
+
+cat("Top 15 selected variables:", top_15_variables, "\n")
+
+# Refit the model using only the top 15 predictors
+X_train_top15 <- X_train[, top_15_variables]
+X_test_top15 <- X_test[, top_15_variables]
+
+final_fit_top15 <- glmnet(X_train_top15, y_train, 
+                          alpha = best_alpha, 
+                          lambda = best_lambda, 
+                          family = "binomial")
+
+# Predict on the test set (probabilities)
+y_pred_prob <- predict(final_fit_top15, newx = X_test_top15, s = best_lambda, type = "response")
+
+# Convert probabilities to binary predictions
+y_pred <- ifelse(y_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(y_pred == y_test)
+cat("Accuracy on Test Set:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = y_pred, Actual = y_test)
+print(conf_matrix)
+
+# Calculate AUC
+library(pROC)
+roc_obj <- roc(y_test, y_pred_prob)
+auc <- auc(roc_obj)
+cat("AUC on Test Set:", auc, "\n")
+
+# Plot ROC curve
+plot(roc_obj, main = "ROC Curve for Logistic Elastic Net Model with Top 15 Predictors")
+
+```
+
+
 ## best glm
 
 ```{r}
@@ -631,7 +752,7 @@ plot(roc_obj, main = "ROC Curve for Logistic Elastic Net Model")
 library(bestglm)
 
 # Prepare the data frame for bestglm
-data_subset <- data.frame(data[, selected_variables], inc2 = response)
+data_subset <- data.frame(data[, top_15_variables], inc2 = response)
 
 # Remove rows with missing values
 data_subset <- na.omit(data_subset)
@@ -645,7 +766,8 @@ data_subset$inc2 <- as.factor(data_subset$inc2)
 bestglm_fit <- bestglm(
   data_subset,
   family = binomial,   # Logistic regression
-  IC = "BIC"           # Use BIC as the information criterion
+  IC = "BIC"  ,
+  method = "exhaustive"# Use BIC as the information criterion
 )
 
 # Print the summary of the best model
@@ -681,6 +803,245 @@ plot(roc_obj, main = "ROC Curve for Best Subset Logistic Model")
 
 
 ```
+
+## Logistic after bestglm
+
+```{r}
+# Get the selected variables from the bestglm model
+selected_vars <- names(bestglm_fit$BestModel$coefficients)[-1]  # Exclude intercept
+cat("Selected variables by bestglm:", selected_vars, "\n")
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+train_index <- createDataPartition(data_subset$inc2, p = 0.8, list = FALSE)
+train_data <- data_subset[train_index, ]
+test_data <- data_subset[-train_index, ]
+
+# Fit a logistic regression model using the selected variables
+formula <- as.formula(paste("inc2 ~", paste(selected_vars, collapse = " + ")))
+logistic_model <- glm(formula, data = train_data, family = binomial)
+
+# Print model summary
+summary(logistic_model)
+
+# Predict probabilities on the test set
+y_pred_prob <- predict(logistic_model, newdata = test_data, type = "response")
+
+# Convert probabilities to binary predictions
+y_pred <- ifelse(y_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(y_pred == as.numeric(test_data$inc2) - 1)
+cat("Accuracy on Test Set:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = y_pred, Actual = as.numeric(test_data$inc2) - 1)
+print(conf_matrix)
+
+# Calculate AUC
+roc_obj <- roc(as.numeric(test_data$inc2) - 1, y_pred_prob)
+auc <- auc(roc_obj)
+cat("AUC on Test Set:", auc, "\n")
+
+# Plot ROC curve
+plot(roc_obj, main = "ROC Curve for Logistic Regression Model")
+
+
+## Youden vallue
+
+# Load the pROC package
+library(pROC)
+
+# Ensure 'rf_pred_prob' is numeric and 'actual_binary' is binary (0 and 1)
+rf_pred_prob <- as.numeric(y_pred_prob)
+actual_binary <- as.numeric(as.factor(test_data$inc2)) - 1
+
+
+
+# Calculate the ROC curve
+roc_obj <- roc(actual_binary, rf_pred_prob, levels = c(0, 1), direction = "<")
+
+
+
+# Find the threshold that maximizes Youden's Index (sensitivity + specificity - 1)
+optimal_coords <- coords(roc_obj, "best", best.method = "youden", ret = "threshold")
+
+# Apply the optimal threshold to generate binary predictions
+optimal_pred <- ifelse(rf_pred_prob >= as.numeric(optimal_coords), 1, 0)
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = optimal_pred, Actual = actual_binary)
+
+
+print(conf_matrix)
+
+# Calculate sensitivity and specificity
+sensitivity <- sum(optimal_pred == 1 & actual_binary == 1) / sum(actual_binary == 1)
+specificity <- sum(optimal_pred == 0 & actual_binary == 0) / sum(actual_binary == 0)
+cat("Sensitivity:", sensitivity, "\n")
+cat("Specificity:", specificity, "\n")
+
+# Calculate the AUC
+auc_value <- auc(roc_obj)
+cat("AUC on Test Set:", auc_value, "\n")
+
+# Plot the ROC curve
+plot(roc_obj, main = "ROC Curve with Optimal Threshold (Youden's Index)")
+abline(v = optimal_coords, col = "red", lty = 2)  # Add vertical line for optimal threshold
+
+
+
+# Convert vectors to factors to use with confusionMatrix()
+optimal_pred_factor <- as.factor(optimal_pred)
+actual_binary_factor <- as.factor(actual_binary)
+
+# Create a confusion matrix and calculate all statistics
+conf_matrix <- confusionMatrix(data = optimal_pred_factor, 
+                               reference = actual_binary_factor, 
+                               positive = "1",  # Set the positive class as "1"
+                               mode = "everything")
+
+# Print the confusion matrix
+print(conf_matrix)
+
+
+## Using ROCR
+
+library(ROCR)
+
+# Create prediction object
+pred_obj <- prediction(y_pred_prob, actual_binary)
+
+# Calculate performance for sensitivity + specificity (Youden's Index)
+perf_obj <- performance(pred_obj, measure = "tpr", x.measure = "fpr")
+
+# Calculate Youden's Index and find the optimal threshold
+youden_index <- perf_obj@y.values[[1]] + (1 - perf_obj@x.values[[1]]) - 1
+optimal_threshold_rocr <- pred_obj@cutoffs[[1]][which.max(youden_index)]
+cat("Optimal threshold (ROCR):", optimal_threshold_rocr, "\n")
+
+# Generate binary predictions based on the optimal threshold
+optimal_pred <- ifelse(rf_pred_prob >= optimal_threshold_rocr, 1, 0)
+
+# Calculate confusion matrix using caret
+conf_matrix <- confusionMatrix(as.factor(optimal_pred), as.factor(actual_binary), positive = "1")
+print(conf_matrix)
+
+```
+
+
+## Random forest model
+
+```{r}
+
+library(randomForest)  # For Random Forest model
+library(caret)         # For data partitioning and model evaluation
+library(pROC)  
+# Subset the data to include only the top 15 variables
+data_rf <- data.frame(data[selected_variables], inc2 = as.factor(data$inc2))
+
+# Split the data into training and testing sets
+set.seed(123)  # For reproducibility
+train_index <- createDataPartition(data_rf$inc2, p = 0.8, list = FALSE)
+train_data <- data_rf[train_index, ]
+test_data <- data_rf[-train_index, ]
+
+# Fit a Random Forest model using the training data
+rf_model <- randomForest(inc2 ~ ., data = train_data, 
+                         ntree = 500,          # Number of trees
+                         mtry = sqrt(length(top_15_variables)),  # Number of variables tried at each split
+                         importance = TRUE)    # Measure variable importance
+
+# Print the Random Forest model summary
+print(rf_model)
+
+# Plot variable importance
+varImpPlot(rf_model, main = "Variable Importance in Random Forest Model")
+
+# Predict on the test set
+rf_pred_prob <- predict(rf_model, newdata = test_data, type = "prob")[,2]
+rf_pred <- ifelse(rf_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(rf_pred == as.numeric(test_data$inc2) - 1)
+cat("Accuracy on Test Set:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- confusionMatrix(data = as.factor(rf_pred), 
+                               reference = as.factor(as.numeric(test_data$inc2) - 1), 
+                               mode = "everything")
+print(conf_matrix)
+
+
+
+
+
+
+
+
+
+## using PRROC
+
+library(PRROC)
+
+# Convert 'actual_binary' to numeric if necessary
+actual_binary <- as.numeric(as.factor(test_data$inc2)) - 1
+
+# Create an ROC curve using PRROC
+prroc_obj <- roc.curve(scores.class0 = rf_pred_prob, weights.class0 = actual_binary, curve = TRUE)
+
+# Print AUC
+cat("AUC on Test Set (PRROC):", prroc_obj$auc, "\n")
+
+# Plot the ROC curve
+plot(prroc_obj, main = "ROC Curve for Random Forest Model (PRROC)")
+
+
+## using ROCCR
+
+# Install ROCR package if not already installed
+# install.packages("ROCR")
+
+library(ROCR)
+
+# Convert predicted probabilities to a prediction object
+pred_obj <- prediction(rf_pred_prob, actual_binary)
+
+# Calculate the ROC curve
+perf_obj <- performance(pred_obj, "tpr", "fpr")
+
+# Calculate the AUC
+auc_value <- performance(pred_obj, "auc")@y.values[[1]]
+cat("AUC on Test Set (ROCR):", auc_value, "\n")
+
+# Plot the ROC curve
+plot(perf_obj, main = "ROC Curve for Random Forest Model (ROCR)")
+
+
+
+```
+
+## Boruta
+```{r}
+library(Boruta)
+boruta.bank_train <- Boruta(inc2 ~., data = data_rf, doTrace = 2)
+print(boruta.bank_train)
+boruta.bank <- TentativeRoughFix(boruta.bank_train)
+print(boruta.bank)
+plot(boruta.bank, xlab = "", xaxt = "n")
+lz<-lapply(1:ncol(boruta.bank$ImpHistory),function(i)
+boruta.bank$ImpHistory[is.finite(boruta.bank$ImpHistory[,i]),i])
+names(lz) <- colnames(boruta.bank$ImpHistory)
+Labels <- sort(sapply(lz,median))
+axis(side = 1,las=2,labels = names(Labels),
+at = 1:ncol(boruta.bank$ImpHistory), cex.axis = 0.4)
+
+
+boruta_selected <- getSelectedAttributes(boruta.bank, withTentative = F)[1:5]
+boruta_selected
+```
+
+
 
 ## plot window pane
 
