@@ -765,8 +765,10 @@ Let's create a code in R to demonstrate how the windows are defined in an exampl
 -   28-day window: 1 variable
 
 ```{r}
-#| fig-width: 10
-#| fig-height: 8
+#| warning: false
+#| message: false
+#| code-fold: true
+
 library(dplyr)
 library(ggplot2)
 
@@ -799,7 +801,12 @@ for (length in sort(window_lengths)) {  # Sort window lengths from shortest to l
 # Convert window_length to a factor for correct ordering in the legend
 window_data$window_length <- factor(window_data$window_length, levels = sort(unique(window_data$window_length)))
 
-# Plotting the sliding windows using ggplot2
+```
+
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
 
 window_data |> 
   ggplot(aes(x = start, xend = end, y = var_id, yend = var_id, color = window_length)) +
@@ -817,5 +824,8 @@ window_data |>
   scale_color_grey(start = 0.2, end = 0.8)+
   theme(legend.position = "right"
   )
+```
 
+
+```{r}
 ```

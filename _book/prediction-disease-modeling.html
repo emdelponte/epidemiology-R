@@ -1386,6 +1386,8 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 <li><p>28-day window: 1 variable</p></li>
 </ul>
 <div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1416,30 +1418,30 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 <span id="cb62-28"><a href="#cb62-28" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb62-29"><a href="#cb62-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb62-30"><a href="#cb62-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert window_length to a factor for correct ordering in the legend</span></span>
-<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>window_data<span class="sc">$</span>window_length <span class="ot">&lt;-</span> <span class="fu">factor</span>(window_data<span class="sc">$</span>window_length, <span class="at">levels =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(window_data<span class="sc">$</span>window_length)))</span>
-<span id="cb62-32"><a href="#cb62-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-33"><a href="#cb62-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting the sliding windows using ggplot2</span></span>
-<span id="cb62-34"><a href="#cb62-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-35"><a href="#cb62-35" aria-hidden="true" tabindex="-1"></a>window_data <span class="sc">|&gt;</span> </span>
-<span id="cb62-36"><a href="#cb62-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> var_id, <span class="at">yend =</span> var_id, <span class="at">color =</span> window_length)) <span class="sc">+</span></span>
-<span id="cb62-37"><a href="#cb62-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span>  <span class="co"># Line segments for each window</span></span>
-<span id="cb62-38"><a href="#cb62-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span>max_days, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, max_days)) <span class="sc">+</span></span>
-<span id="cb62-39"><a href="#cb62-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span>var_id) <span class="sc">+</span></span>
-<span id="cb62-40"><a href="#cb62-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb62-41"><a href="#cb62-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Window-pane"</span>,</span>
-<span id="cb62-42"><a href="#cb62-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Each variable over 28 days"</span>,</span>
-<span id="cb62-43"><a href="#cb62-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Days"</span>,</span>
-<span id="cb62-44"><a href="#cb62-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Variable ID"</span>,</span>
-<span id="cb62-45"><a href="#cb62-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Window Length (days)"</span></span>
-<span id="cb62-46"><a href="#cb62-46" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb62-47"><a href="#cb62-47" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
-<span id="cb62-48"><a href="#cb62-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_grey</span>(<span class="at">start =</span> <span class="fl">0.2</span>, <span class="at">end =</span> <span class="fl">0.8</span>)<span class="sc">+</span></span>
-<span id="cb62-49"><a href="#cb62-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span></span>
-<span id="cb62-50"><a href="#cb62-50" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb62-31"><a href="#cb62-31" aria-hidden="true" tabindex="-1"></a>window_data<span class="sc">$</span>window_length <span class="ot">&lt;-</span> <span class="fu">factor</span>(window_data<span class="sc">$</span>window_length, <span class="at">levels =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(window_data<span class="sc">$</span>window_length)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>window_data <span class="sc">|&gt;</span> </span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> start, <span class="at">xend =</span> end, <span class="at">y =</span> var_id, <span class="at">yend =</span> var_id, <span class="at">color =</span> window_length)) <span class="sc">+</span></span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="at">linewidth =</span> <span class="fl">1.5</span>) <span class="sc">+</span>  <span class="co"># Line segments for each window</span></span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="dv">0</span><span class="sc">:</span>max_days, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, max_days)) <span class="sc">+</span></span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks =</span> <span class="dv">1</span><span class="sc">:</span>var_id) <span class="sc">+</span></span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Window-pane"</span>,</span>
+<span id="cb63-8"><a href="#cb63-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">subtitle =</span> <span class="st">"Each variable over 28 days"</span>,</span>
+<span id="cb63-9"><a href="#cb63-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Days"</span>,</span>
+<span id="cb63-10"><a href="#cb63-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Variable ID"</span>,</span>
+<span id="cb63-11"><a href="#cb63-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Window Length (days)"</span></span>
+<span id="cb63-12"><a href="#cb63-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb63-13"><a href="#cb63-13" aria-hidden="true" tabindex="-1"></a>  r4pde<span class="sc">::</span><span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">14</span>) <span class="sc">+</span></span>
+<span id="cb63-14"><a href="#cb63-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_grey</span>(<span class="at">start =</span> <span class="fl">0.2</span>, <span class="at">end =</span> <span class="fl">0.8</span>)<span class="sc">+</span></span>
+<span id="cb63-15"><a href="#cb63-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"right"</span></span>
+<span id="cb63-16"><a href="#cb63-16" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="960"></p>
+<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="960"></p>
 </figure>
 </div>
 </div>
