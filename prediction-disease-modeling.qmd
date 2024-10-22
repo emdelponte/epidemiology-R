@@ -798,25 +798,18 @@ window_data$window_length <- factor(window_data$window_length, levels = sort(uni
 
 
 ```{r}
-#| fig-width: 10
+#| fig-width: 8
 #| fig-height: 8
-
 window_data |> 
-  ggplot(aes(x = start, xend = end, y = var_id, yend = var_id, color = window_length)) +
-  geom_segment(linewidth = 1.5) +  # Line segments for each window
+  ggplot(aes(x = start, xend = end, y = var_id, yend = var_id)) +
+  geom_segment(linewidth = 2) +  # Line segments for each window
   scale_x_continuous(breaks = 0:max_days, limits = c(0, max_days)) +
   scale_y_continuous(breaks = 1:var_id) +
-  labs(
-    title = "Window-pane",
-    subtitle = "Each variable over 28 days",
-    x = "Days",
-    y = "Variable ID",
-    color = "Window Length (days)"
-  ) +
+  labs(title = "Window-pane",
+    subtitle = "Each variable of 7, 14, 21 and 28 days length over 28 days",
+    x = "Days", y = "Variable ID", color = "Window Length (days)") +
   r4pde::theme_r4pde(font_size = 14) +
-  scale_color_grey(start = 0.2, end = 0.8)+
-  theme(legend.position = "right"
-  )
+  theme(legend.position = "right")
 ```
 
 
