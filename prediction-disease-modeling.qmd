@@ -1,12 +1,5 @@
 ---
 title: "Disease modeling"
-editor: visual
-format:
-  html:
-    mermaid:
-      theme: forest
-editor_options: 
-  chunk_output_type: inline
 bibliography: references.bib
 ---
 
@@ -795,8 +788,6 @@ window_data$window_length <- factor(window_data$window_length, levels = sort(uni
 
 ```
 
-
-
 ```{r}
 #| fig-width: 8
 #| fig-height: 8
@@ -812,6 +803,78 @@ window_data |>
   theme(legend.position = "right")
 ```
 
+The window pane analysis requires a specific algorithm that facilitates the creation of sliding windows at defined starting and ending times. In the seminal work, software was programmed in the Fortran language and named WINDOW [@coakley1985]. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane [@pietravalle2003; @tebeest2008a]. More recently, window pane analysis has been conducted in R using custom-made scripts [@gouache2015a; @dallalana2021].
+
+Here, I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window pane principles.
+
+Let's first load a dataset that contains information on the disease and also metadata including a key date that will be used as starting point for windows creation. The `BlastWheat` dataset that is included in the {r4pde} package was made available by @decól2024.
 
 ```{r}
+library(r4pde)
+trials <- BlastWheat
+glimpse(trials)
+
 ```
+
+We can note that the heading date, which will be used as reference date in our analysis, is not defined as date object, which needs correction.
+
+```{r}
+trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
+glimpse(trials$heading)
+```
+
+The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the get_power() function from the {nasapower} package was created, included in {r4pde}, and named get_nasapower(). This function allows for the download of data over a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.
+
+
+```{r}
+#| eval: FALSE
+weather_data <- get_nasapower(
+  data = trials,
+  days_around = 28,
+  date_col = "heading"
+)
+
+
+# save the data for faster rendering
+write_csv(weather_data, "data/weather_windowpane.csv")
+```
+
+Now we can see the weather data and join the two dataframes.
+
+```{r}
+#| warning: false
+#| message: false
+
+# read the data
+weather_data <- read_csv("data/weather_windowpane.csv")
+
+glimpse(weather_data)
+
+# apply a full join
+trials_weather <- full_join(trials, weather_data) 
+
+```
+
+We are now ready to use the `windowpane` function to create the new variables. In the function, there are a few arguments. Note two date variables, the `end_date` which should be our reference for sliding the windows and the `date_col` which is the date for each day in the time series. The `summary_type` is the statistics to calculate. The `direction` is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the `group_by` is the index variable for the study or trial.  
+
+Let's create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths defined in `window_length` argument.
+
+```{r}
+wp <- windowpane(
+  data = trials_weather,
+  end_date_col = heading,
+  date_col = YYYYMMDD,
+  variable = T2M,  # Example variable
+  summary_type = "mean",
+  threshold = NULL,
+  window_lengths = c(7, 14, 21, 28),
+  direction = "backward",
+  group_by_cols = 
+    "study", # Grouping by 'study'
+)
+
+head(wp)
+```
+
+
+

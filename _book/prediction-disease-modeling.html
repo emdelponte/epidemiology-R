@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.5.53">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -1432,6 +1432,111 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 <p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="768"></p>
 </figure>
 </div>
+</div>
+</div>
+<p>The window pane analysis requires a specific algorithm that facilitates the creation of sliding windows at defined starting and ending times. In the seminal work, software was programmed in the Fortran language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
+<p>Here, I will demonstrate the <code>windowpane()</code> function of the {r4pde} package developed to facilitate the creation of variables using the window pane principles.</p>
+<p>Let’s first load a dataset that contains information on the disease and also metadata including a key date that will be used as starting point for windows creation. The <code>BlastWheat</code> dataset that is included in the {r4pde} package was made available by <span class="citation" data-cites="decól2024">De Cól et al. (<a href="references.html#ref-decól2024" role="doc-biblioref">2024</a>)</span>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>trials <span class="ot">&lt;-</span> BlastWheat</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(trials)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 143
+Columns: 10
+$ study      &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, …
+$ year       &lt;dbl&gt; 2012, 2012, 2012, 2012, 2012, 2013, 2013, 2013, 2013, 2014,…
+$ location   &lt;chr&gt; "Dourados", "Palotina", "Londrina", "Planaltina", "Itaberá"…
+$ state      &lt;chr&gt; "MS", "PR", "PR", "DF", "SP", "MS", "MG", "DF", "SP", "MG",…
+$ latitude   &lt;dbl&gt; -22.27516, -24.35483, -23.35916, -15.60387, -24.06832, -22.…
+$ longitude  &lt;dbl&gt; -54.81640, -53.75794, -51.16476, -47.71381, -49.15575, -54.…
+$ heading    &lt;chr&gt; "10-05-2012", "09-06-2012", "01-06-2012", "03-05-2012", "15…
+$ inc_mean   &lt;dbl&gt; 93.30, 40.50, 100.00, 35.50, 7.71, 48.70, 22.00, 46.50, 68.…
+$ index_mean &lt;dbl&gt; 68.65, 11.73, 92.86, 6.36, 0.35, 9.17, 2.91, 10.41, 41.86, …
+$ yld_mean   &lt;dbl&gt; 1097.00, 1219.38, 495.12, 1747.44, 2148.31, 506.00, 1562.75…</code></pre>
+</div>
+</div>
+<p>We can note that the heading date, which will be used as reference date in our analysis, is not defined as date object, which needs correction.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>trials<span class="sc">$</span>heading <span class="ot">=</span> <span class="fu">as.Date</span>(trials<span class="sc">$</span>heading, <span class="at">format =</span> <span class="st">"%d-%m-%Y"</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(trials<span class="sc">$</span>heading)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Date[1:143], format: "2012-05-10" "2012-06-09" "2012-06-01" "2012-05-03" "2012-04-15" ...</code></pre>
+</div>
+</div>
+<p>The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the get_power() function from the {nasapower} package was created, included in {r4pde}, and named get_nasapower(). This function allows for the download of data over a period “around” the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">get_nasapower</span>(</span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials,</span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">days_around =</span> <span class="dv">28</span>,</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_col =</span> <span class="st">"heading"</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="co"># save the data for faster rendering</span></span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(weather_data, <span class="st">"data/weather_windowpane.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can see the weather data and join the two dataframes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read the data</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/weather_windowpane.csv"</span>)</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(weather_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 8,151
+Columns: 14
+$ LON         &lt;dbl&gt; -54.8164, -54.8164, -54.8164, -54.8164, -54.8164, -54.8164…
+$ LAT         &lt;dbl&gt; -22.27516, -22.27516, -22.27516, -22.27516, -22.27516, -22…
+$ YEAR        &lt;dbl&gt; 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012, 2012…
+$ MM          &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5…
+$ DD          &lt;dbl&gt; 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26…
+$ DOY         &lt;dbl&gt; 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114…
+$ YYYYMMDD    &lt;date&gt; 2012-04-12, 2012-04-13, 2012-04-14, 2012-04-15, 2012-04-1…
+$ T2M         &lt;dbl&gt; 24.31, 25.83, 24.99, 24.15, 22.72, 23.33, 23.76, 24.83, 24…
+$ RH2M        &lt;dbl&gt; 83.69, 77.62, 81.69, 82.69, 74.62, 74.44, 70.19, 67.75, 77…
+$ PRECTOTCORR &lt;dbl&gt; 0.02, 1.13, 11.00, 0.06, 0.00, 0.04, 0.00, 0.03, 24.08, 20…
+$ T2M_MAX     &lt;dbl&gt; 28.61, 31.01, 30.01, 29.43, 30.33, 30.69, 31.51, 32.49, 30…
+$ T2M_MIN     &lt;dbl&gt; 20.82, 20.43, 21.11, 19.04, 16.31, 17.37, 17.15, 17.69, 20…
+$ T2MDEW      &lt;dbl&gt; 21.19, 21.23, 21.38, 20.75, 17.47, 18.01, 17.29, 17.85, 20…
+$ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># apply a full join</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>trials_weather <span class="ot">&lt;-</span> <span class="fu">full_join</span>(trials, weather_data) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We are now ready to use the <code>windowpane</code> function to create the new variables. In the function, there are a few arguments. Note two date variables, the <code>end_date</code> which should be our reference for sliding the windows and the <code>date_col</code> which is the date for each day in the time series. The <code>summary_type</code> is the statistics to calculate. The <code>direction</code> is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the <code>group_by</code> is the index variable for the study or trial.</p>
+<p>Let’s create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths defined in <code>window_length</code> argument.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>wp <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> T2M,  <span class="co"># Example variable</span></span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> </span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">"study"</span>, <span class="co"># Grouping by 'study'</span></span>
+<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 48
+  `length7_T2M_mean_0_-6` `length7_T2M_mean_-1_-7` `length7_T2M_mean_-2_-8`
+                    &lt;dbl&gt;                    &lt;dbl&gt;                    &lt;dbl&gt;
+1                    20.1                     19.4                     18.4
+2                    12.7                     13.7                     15.1
+3                    19.4                     19.1                     18.6
+4                    21.8                     22.1                     22.3
+5                    22.5                     22.5                     22.8
+6                    20.8                     21.0                     21.1
+# ℹ 45 more variables: `length7_T2M_mean_-3_-9` &lt;dbl&gt;,
+#   `length7_T2M_mean_-4_-10` &lt;dbl&gt;, `length7_T2M_mean_-5_-11` &lt;dbl&gt;,
+#   `length7_T2M_mean_-6_-12` &lt;dbl&gt;, `length7_T2M_mean_-7_-13` &lt;dbl&gt;,
+#   `length7_T2M_mean_-8_-14` &lt;dbl&gt;, `length7_T2M_mean_-9_-15` &lt;dbl&gt;,
+#   `length7_T2M_mean_-10_-16` &lt;dbl&gt;, `length7_T2M_mean_-11_-17` &lt;dbl&gt;,
+#   `length7_T2M_mean_-12_-18` &lt;dbl&gt;, `length7_T2M_mean_-13_-19` &lt;dbl&gt;,
+#   `length7_T2M_mean_-14_-20` &lt;dbl&gt;, `length7_T2M_mean_-15_-21` &lt;dbl&gt;, …</code></pre>
 </div>
 </div>
 
