@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.53">
+<meta name="generator" content="quarto-1.5.57">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -1376,7 +1376,7 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 <p>In addition, data mining techniques are employed to systematically explore time-series data and identify potential weather-disease relationships <span class="citation" data-cites="shah2019 pietravalle2003 coakley1988">(<a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-shah2019" role="doc-biblioref">Shah et al. 2019</a>)</span>. These techniques involve creating lagged variables, moving averages, or window-based summaries that capture delayed or cumulative effects of weather on disease outcomes. By integrating system knowledge with data mining, researchers aim to construct variables that are both biologically meaningful and statistically robust, improving the chances of identifying predictors that enhance model accuracy and interpretability.</p>
 <section id="window-pane" class="level4" data-number="20.3.1.1">
 <h4 data-number="20.3.1.1" class="anchored" data-anchor-id="window-pane"><span class="header-section-number">20.3.1.1</span> Window-pane</h4>
-<p>With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>, has been widely used in modeling studies in plant pathology <span class="citation" data-cites="pietravalle2003 kriss2010 calverojr1996 tebeest2008a gouache2015a coakley1988 dallalana2021 coakley1988a">(<a href="references.html#ref-calverojr1996" role="doc-biblioref">Calvero Jr et al. 1996</a>; <a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-coakley1988a" role="doc-biblioref">Coakley 1988</a>; <a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>; <a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g.&nbsp;daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.</p>
+<p>With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>, has been widely used in modeling studies in plant pathology <span class="citation" data-cites="pietravalle2003 calverojr1996 tebeest2008a gouache2015a coakley1988 kriss2010 dallalana2021 coakley1988a">(<a href="references.html#ref-calverojr1996" role="doc-biblioref">Calvero Jr et al. 1996</a>; <a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-coakley1988a" role="doc-biblioref">Coakley 1988</a>; <a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>; <a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g.&nbsp;daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.</p>
 <p>The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs.&nbsp;high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.</p>
 <p>Here’s an R code that demonstrates how the windows are defined over a 28-day period using four fixed window lengths (7, 14, 21, and 28 days), generating a total of 46 variables.</p>
 <div class="cell">
@@ -1434,7 +1434,7 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 </div>
 </div>
 </div>
-<p>The window pane analysis requires a specific algorithm that facilitates the creation of sliding windows at defined starting and ending times. In the seminal work, software was programmed in the Fortran language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
+<p>The window pane analysis requires a spreadsheet program <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span> or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
 <p>Here, I will demonstrate the <code>windowpane()</code> function of the {r4pde} package developed to facilitate the creation of variables using the window pane principles.</p>
 <p>Let’s first load a dataset that contains information on the disease and also metadata including a key date that will be used as starting point for windows creation. The <code>BlastWheat</code> dataset that is included in the {r4pde} package was made available by <span class="citation" data-cites="decól2024">De Cól et al. (<a href="references.html#ref-decól2024" role="doc-biblioref">2024</a>)</span>.</p>
 <div class="cell">
@@ -1472,9 +1472,8 @@ $ yld_mean   &lt;dbl&gt; 1097.00, 1219.38, 495.12, 1747.44, 2148.31, 506.00, 156
 <span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_col =</span> <span class="st">"heading"</span></span>
 <span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="co"># save the data for faster rendering</span></span>
-<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(weather_data, <span class="st">"data/weather_windowpane.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a><span class="co"># save the data for faster rendering</span></span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(weather_data, <span class="st">"data/weather_windowpane.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Now we can see the weather data and join the two dataframes.</p>
 <div class="cell">
@@ -1504,7 +1503,7 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>trials_weather <span class="ot">&lt;-</span> <span class="fu">full_join</span>(trials, weather_data) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We are now ready to use the <code>windowpane</code> function to create the new variables. In the function, there are a few arguments. Note two date variables, the <code>end_date</code> which should be our reference for sliding the windows and the <code>date_col</code> which is the date for each day in the time series. The <code>summary_type</code> is the statistics to calculate. The <code>direction</code> is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the <code>group_by</code> is the index variable for the study or trial.</p>
-<p>Let’s create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths defined in <code>window_length</code> argument.</p>
+<p>Let’s create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths (7, 14, 21 and 28) defined in <code>window_length</code> argument. We will create only variables at an earlier time relative to heading date and for this we use “backward” in <code>direction</code> argument.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>wp <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
 <span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials_weather,</span>
@@ -1518,7 +1517,8 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
 <span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the intuitive names of the variables</span></span>
+<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 48
   `length7_T2M_mean_0_-6` `length7_T2M_mean_-1_-7` `length7_T2M_mean_-2_-8`
@@ -1536,6 +1536,1393 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 #   `length7_T2M_mean_-10_-16` &lt;dbl&gt;, `length7_T2M_mean_-11_-17` &lt;dbl&gt;,
 #   `length7_T2M_mean_-12_-18` &lt;dbl&gt;, `length7_T2M_mean_-13_-19` &lt;dbl&gt;,
 #   `length7_T2M_mean_-14_-20` &lt;dbl&gt;, `length7_T2M_mean_-15_-21` &lt;dbl&gt;, …</code></pre>
+</div>
+</div>
+<p>To automate the creation of new variables based on multiple weather variables, we can use the <code>map()</code> function of {purrr}. Let’s continue summarizing the mean value for three other variables of temperature and relative humidity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"T2M_MIN"</span>, <span class="st">"T2M_MAX"</span>, <span class="st">"RH2M"</span>)  <span class="co"># Add more variables as needed</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to each variable and combine the results</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>wp1 <span class="ot">&lt;-</span> <span class="fu">map</span>(variables, <span class="cf">function</span>(var) {</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">windowpane</span>(</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> <span class="sc">!!</span><span class="fu">sym</span>(var),   <span class="co"># Example variable</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, <span class="co"># Grouping by 'study'</span></span>
+<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a><span class="co"># To reduce a list to a dataframe </span></span>
+<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a>wp1_df <span class="ot">&lt;-</span> <span class="fu">reduce</span>(wp1, left_join, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"study"</span>, <span class="st">"heading"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For rainfall, we will summarize the cumulative rainfall within each window using the “sum” in the <code>summary_type</code> argument.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>wp3 <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> PRECTOTCORR,   <span class="co"># Example variable</span></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"sum"</span>,</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, <span class="co"># Grouping by 'study'</span></span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the heading and study variables to avoid duplication </span></span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>wp3 <span class="ot">&lt;-</span> wp3 <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>heading, <span class="sc">-</span>study)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Finally, we will create a variable based on the count of events below a threshold. For this, we will count the number of days with T2M_MIN lower than 15 degree Celsius.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>wp4 <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> T2M_MIN,   <span class="co"># Example variable</span></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"below_threshold"</span>,</span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="dv">15</span>,</span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, <span class="co"># Grouping by 'study'</span></span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a><span class="co"># remove to avoid duplication</span></span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>wp_4 <span class="ot">&lt;-</span> wp4 <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>heading, <span class="sc">-</span>study)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can join all data frames using <code>cbind()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>wp_all <span class="ot">&lt;-</span> <span class="fu">cbind</span>(wp1, wp1_df, wp3, wp4)</span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wp_all)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  length7_T2M_MIN_mean_0_-6 length7_T2M_MIN_mean_-1_-7
+1                 13.858571                   13.26714
+2                  7.831429                    9.08000
+3                 15.524286                   15.10000
+4                 16.705714                   16.99857
+5                 18.464286                   18.39857
+6                 16.345714                   16.46857
+  length7_T2M_MIN_mean_-2_-8 length7_T2M_MIN_mean_-3_-9
+1                   12.22000                   11.06286
+2                   10.84429                   12.71571
+3                   14.72286                   14.13857
+4                   17.62000                   17.79143
+5                   18.20286                   18.07571
+6                   16.59286                   16.65143
+  length7_T2M_MIN_mean_-4_-10 length7_T2M_MIN_mean_-5_-11
+1                    10.23143                    10.05857
+2                    14.44286                    16.10571
+3                    13.48571                    12.90000
+4                    17.74714                    17.49286
+5                    17.90429                    17.58429
+6                    16.07286                    15.08286
+  length7_T2M_MIN_mean_-6_-12 length7_T2M_MIN_mean_-7_-13
+1                    10.48429                    10.83857
+2                    17.24857                    16.72571
+3                    12.85429                    12.64429
+4                    17.05714                    16.51000
+5                    17.21000                    16.67429
+6                    14.61571                    13.75143
+  length7_T2M_MIN_mean_-8_-14 length7_T2M_MIN_mean_-9_-15
+1                    11.84857                    13.70000
+2                    16.32143                    16.20143
+3                    12.35143                    12.01000
+4                    16.28286                    16.30714
+5                    16.13571                    15.77286
+6                    12.30000                    10.92857
+  length7_T2M_MIN_mean_-10_-16 length7_T2M_MIN_mean_-11_-17
+1                    15.117143                     15.86429
+2                    16.064286                     15.60571
+3                    11.925714                     11.96143
+4                    16.382857                     16.41714
+5                    15.411429                     14.33286
+6                     9.907143                     10.11571
+  length7_T2M_MIN_mean_-12_-18 length7_T2M_MIN_mean_-13_-19
+1                     16.24857                     16.56429
+2                     15.07857                     14.33143
+3                     12.20286                     12.39429
+4                     16.59714                     16.62714
+5                     13.91286                     14.43000
+6                     11.30714                     12.55000
+  length7_T2M_MIN_mean_-14_-20 length7_T2M_MIN_mean_-15_-21
+1                     17.39143                     17.41857
+2                     14.02143                     14.07571
+3                     13.29000                     13.92714
+4                     16.90143                     16.89143
+5                     14.87714                     15.22571
+6                     13.79571                     14.94000
+  length7_T2M_MIN_mean_-16_-22 length7_T2M_MIN_mean_-17_-23
+1                     17.18857                     17.36286
+2                     13.87714                     13.44286
+3                     14.02571                     14.34000
+4                     16.96571                     17.01714
+5                     15.43286                     15.93000
+6                     16.12143                     16.86714
+  length7_T2M_MIN_mean_-18_-24 length7_T2M_MIN_mean_-19_-25
+1                     17.72429                     18.22143
+2                     13.49429                     13.53571
+3                     14.48429                     14.28143
+4                     16.99429                     17.19429
+5                     17.01143                     17.30286
+6                     17.37571                     17.28286
+  length7_T2M_MIN_mean_-20_-26 length7_T2M_MIN_mean_-21_-27
+1                     18.48857                     18.44286
+2                     13.28286                     13.16571
+3                     14.00714                     13.59429
+4                     17.77000                     18.01571
+5                     16.81429                     16.40429
+6                     17.02000                     16.68714
+  length14_T2M_MIN_mean_0_-13 length14_T2M_MIN_mean_-1_-14
+1                    12.34857                     12.55786
+2                    12.27857                     12.70071
+3                    14.08429                     13.72571
+4                    16.60786                     16.64071
+5                    17.56929                     17.26714
+6                    15.04857                     14.38429
+  length14_T2M_MIN_mean_-2_-15 length14_T2M_MIN_mean_-3_-16
+1                     12.96000                     13.09000
+2                     13.52286                     14.39000
+3                     13.36643                     13.03214
+4                     16.96357                     17.08714
+5                     16.98786                     16.74357
+6                     13.76071                     13.27929
+  length14_T2M_MIN_mean_-4_-17 length14_T2M_MIN_mean_-5_-18
+1                     13.04786                     13.15357
+2                     15.02429                     15.59214
+3                     12.72357                     12.55143
+4                     17.08214                     17.04500
+5                     16.11857                     15.74857
+6                     13.09429                     13.19500
+  length14_T2M_MIN_mean_-6_-19 length14_T2M_MIN_mean_-7_-20
+1                     13.52429                     14.11500
+2                     15.79000                     15.37357
+3                     12.62429                     12.96714
+4                     16.84214                     16.70571
+5                     15.82000                     15.77571
+6                     13.58286                     13.77357
+  length14_T2M_MIN_mean_-8_-21 length14_T2M_MIN_mean_-9_-22
+1                     14.63357                     15.44429
+2                     15.19857                     15.03929
+3                     13.13929                     13.01786
+4                     16.58714                     16.63643
+5                     15.68071                     15.60286
+6                     13.62000                     13.52500
+  length14_T2M_MIN_mean_-10_-23 length14_T2M_MIN_mean_-11_-24
+1                      16.24000                      16.79429
+2                      14.75357                      14.55000
+3                      13.13286                      13.22286
+4                      16.70000                      16.70571
+5                      15.67071                      15.67214
+6                      13.38714                      13.74571
+  length14_T2M_MIN_mean_-12_-25 length14_T2M_MIN_mean_-13_-26
+1                      17.23500                      17.52643
+2                      14.30714                      13.80714
+3                      13.24214                      13.20071
+4                      16.89571                      17.19857
+5                      15.60786                      15.62214
+6                      14.29500                      14.78500
+  length14_T2M_MIN_mean_-14_-27 length21_T2M_MIN_mean_0_-20
+1                      17.91714                    14.02952
+2                      13.59357                    12.85952
+3                      13.44214                    13.81952
+4                      17.45857                    16.70571
+5                      15.64071                    16.67190
+6                      15.24143                    14.63095
+  length21_T2M_MIN_mean_-1_-21 length21_T2M_MIN_mean_-2_-22
+1                     14.17810                     14.36952
+2                     13.15905                     13.64095
+3                     13.79286                     13.58619
+4                     16.72429                     16.96429
+5                     16.58667                     16.46952
+6                     14.56952                     14.54762
+  length21_T2M_MIN_mean_-3_-23 length21_T2M_MIN_mean_-4_-24
+1                     14.51429                     14.60667
+2                     14.07429                     14.51429
+3                     13.46810                     13.31048
+4                     17.06381                     17.05286
+5                     16.47238                     16.41619
+6                     14.47524                     14.52143
+  length21_T2M_MIN_mean_-5_-25 length21_T2M_MIN_mean_-6_-26
+1                     14.84286                     15.17905
+2                     14.90667                     14.95429
+3                     13.12810                     13.08524
+4                     17.09476                     17.15143
+5                     16.26667                     16.15143
+6                     14.55762                     14.72857
+  length21_T2M_MIN_mean_-7_-27 length28_T2M_MIN_mean_0_-27 study    heading
+1                     15.55762                    15.13286     1 2012-05-10
+2                     14.63762                    12.93607     2 2012-06-09
+3                     13.17619                    13.76321     3 2012-06-01
+4                     17.14238                    17.03321     4 2012-05-03
+5                     15.98524                    16.60500     5 2012-04-15
+6                     14.74476                    15.14500     6 2013-05-22
+  length7_T2M_MAX_mean_0_-6 length7_T2M_MAX_mean_-1_-7
+1                  27.48857                   26.86571
+2                  18.16714                   19.01714
+3                  24.40429                   24.05714
+4                  27.89000                   28.01000
+5                  28.67286                   28.76429
+6                  25.99571                   26.31714
+  length7_T2M_MAX_mean_-2_-8 length7_T2M_MAX_mean_-3_-9
+1                   26.05571                   24.86286
+2                   20.02714                   21.64143
+3                   23.33429                   22.92571
+4                   27.75571                   27.65429
+5                   29.32714                   29.68857
+6                   26.40429                   26.55571
+  length7_T2M_MAX_mean_-4_-10 length7_T2M_MAX_mean_-5_-11
+1                    23.76429                    22.84000
+2                    23.15143                    25.06714
+3                    22.47286                    22.38000
+4                    27.62143                    27.53143
+5                    29.86143                    30.33286
+6                    26.77857                    27.09429
+  length7_T2M_MAX_mean_-6_-12 length7_T2M_MAX_mean_-7_-13
+1                    22.29143                    21.90857
+2                    26.05143                    25.89857
+3                    22.66143                    22.81857
+4                    27.43857                    27.26857
+5                    30.89714                    31.23000
+6                    27.22714                    27.66000
+  length7_T2M_MAX_mean_-8_-14 length7_T2M_MAX_mean_-9_-15
+1                    22.27143                    23.10286
+2                    25.38857                    25.02000
+3                    22.92571                    23.34714
+4                    27.35000                    27.57143
+5                    30.97857                    30.50286
+6                    26.83571                    26.02429
+  length7_T2M_MAX_mean_-10_-16 length7_T2M_MAX_mean_-11_-17
+1                     24.40143                     25.60000
+2                     24.59000                     23.85714
+3                     23.28000                     23.12429
+4                     27.84286                     27.90429
+5                     30.08429                     29.55000
+6                     25.30857                     24.64714
+  length7_T2M_MAX_mean_-12_-18 length7_T2M_MAX_mean_-13_-19
+1                     26.43143                     26.81429
+2                     23.63571                     23.43714
+3                     22.92429                     22.74000
+4                     27.94286                     27.91000
+5                     28.92857                     28.19000
+6                     24.91714                     25.54714
+  length7_T2M_MAX_mean_-14_-20 length7_T2M_MAX_mean_-15_-21
+1                     27.76429                     28.57000
+2                     23.58429                     23.81429
+3                     23.13429                     23.56857
+4                     27.90429                     27.79000
+5                     28.49571                     28.61000
+6                     26.37000                     27.46143
+  length7_T2M_MAX_mean_-16_-22 length7_T2M_MAX_mean_-17_-23
+1                     29.07429                     29.49714
+2                     24.15143                     24.27000
+3                     24.09571                     24.40429
+4                     27.79000                     27.30143
+5                     28.66571                     28.19714
+6                     28.63571                     29.67857
+  length7_T2M_MAX_mean_-18_-24 length7_T2M_MAX_mean_-19_-25
+1                     29.89429                     30.26571
+2                     24.55429                     24.25286
+3                     24.88143                     25.18000
+4                     26.88857                     26.45714
+5                     28.60429                     29.32857
+6                     30.14286                     30.07000
+  length7_T2M_MAX_mean_-20_-26 length7_T2M_MAX_mean_-21_-27
+1                     30.71714                     30.78143
+2                     24.04714                     23.30857
+3                     25.31571                     25.31286
+4                     26.25286                     26.50857
+5                     30.08571                     29.84429
+6                     29.79714                     29.19714
+  length14_T2M_MAX_mean_0_-13 length14_T2M_MAX_mean_-1_-14
+1                    24.69857                     24.56857
+2                    22.03286                     22.20286
+3                    23.61143                     23.49143
+4                    27.57929                     27.68000
+5                    29.95143                     29.87143
+6                    26.82786                     26.57643
+  length14_T2M_MAX_mean_-2_-15 length14_T2M_MAX_mean_-3_-16
+1                     24.57929                     24.63214
+2                     22.52357                     23.11571
+3                     23.34071                     23.10286
+4                     27.66357                     27.74857
+5                     29.91500                     29.88643
+6                     26.21429                     25.93214
+  length14_T2M_MAX_mean_-4_-17 length14_T2M_MAX_mean_-5_-18
+1                     24.68214                     24.63571
+2                     23.50429                     24.35143
+3                     22.79857                     22.65214
+4                     27.76286                     27.73714
+5                     29.70571                     29.63071
+6                     25.71286                     26.00571
+  length14_T2M_MAX_mean_-6_-19 length14_T2M_MAX_mean_-7_-20
+1                     24.55286                     24.83643
+2                     24.74429                     24.74143
+3                     22.70071                     22.97643
+4                     27.67429                     27.58643
+5                     29.54357                     29.86286
+6                     26.38714                     27.01500
+  length14_T2M_MAX_mean_-8_-21 length14_T2M_MAX_mean_-9_-22
+1                     25.42071                     26.08857
+2                     24.60143                     24.58571
+3                     23.24714                     23.72143
+4                     27.57000                     27.68071
+5                     29.79429                     29.58429
+6                     27.14857                     27.33000
+  length14_T2M_MAX_mean_-10_-23 length14_T2M_MAX_mean_-11_-24
+1                      26.94929                      27.74714
+2                      24.43000                      24.20571
+3                      23.84214                      24.00286
+4                      27.57214                      27.39643
+5                      29.14071                      29.07714
+6                      27.49357                      27.39500
+  length14_T2M_MAX_mean_-12_-25 length14_T2M_MAX_mean_-13_-26
+1                      28.34857                      28.76571
+2                      23.94429                      23.74214
+3                      24.05214                      24.02786
+4                      27.20000                      27.08143
+5                      29.12857                      29.13786
+6                      27.49357                      27.67214
+  length14_T2M_MAX_mean_-14_-27 length21_T2M_MAX_mean_0_-20
+1                      29.27286                    25.72048
+2                      23.44643                    22.55000
+3                      24.22357                    23.45238
+4                      27.20643                    27.68762
+5                      29.17000                    29.46619
+6                      27.78357                    26.67524
+  length21_T2M_MAX_mean_-1_-21 length21_T2M_MAX_mean_-2_-22
+1                     25.90238                     26.07762
+2                     22.74000                     23.06619
+3                     23.51714                     23.59238
+4                     27.71667                     27.70571
+5                     29.45095                     29.49857
+6                     26.87143                     27.02143
+  length21_T2M_MAX_mean_-3_-23 length21_T2M_MAX_mean_-4_-24
+1                     26.25381                     26.41952
+2                     23.50048                     23.85429
+3                     23.53667                     23.49286
+4                     27.59952                     27.47143
+5                     29.32333                     29.33857
+6                     27.18095                     27.18952
+  length21_T2M_MAX_mean_-5_-25 length21_T2M_MAX_mean_-6_-26
+1                     26.51238                     26.60762
+2                     24.31857                     24.51190
+3                     23.49476                     23.57238
+4                     27.31048                     27.20048
+5                     29.53000                     29.72429
+6                     27.36048                     27.52381
+  length21_T2M_MAX_mean_-7_-27 length28_T2M_MAX_mean_0_-27 study    heading
+1                     26.81810                    26.98571     1 2012-05-10
+2                     24.26381                    22.73964     2 2012-06-09
+3                     23.75524                    23.91750     3 2012-06-01
+4                     27.22714                    27.39286     4 2012-05-03
+5                     29.85667                    29.56071     5 2012-04-15
+6                     27.74238                    27.30571     6 2013-05-22
+  length7_RH2M_mean_0_-6 length7_RH2M_mean_-1_-7 length7_RH2M_mean_-2_-8
+1               76.33857                77.95571                78.35714
+2               84.78571                85.58000                85.35714
+3               86.92714                86.81857                86.82714
+4               76.49857                76.62429                78.00000
+5               81.76857                81.81286                79.34000
+6               85.73286                85.59000                85.84857
+  length7_RH2M_mean_-3_-9 length7_RH2M_mean_-4_-10 length7_RH2M_mean_-5_-11
+1                77.92857                 77.90143                 78.71429
+2                87.48286                 88.69714                 88.84857
+3                86.10429                 85.02429                 82.89143
+4                78.78571                 80.32143                 80.00000
+5                78.10714                 76.92857                 74.55429
+6                85.83000                 84.32143                 82.22286
+  length7_RH2M_mean_-6_-12 length7_RH2M_mean_-7_-13 length7_RH2M_mean_-8_-14
+1                 80.24000                 80.41000                 81.54429
+2                 88.94714                 88.99143                 87.75143
+3                 81.32000                 80.91000                 79.56286
+4                 78.22286                 77.30286                 77.27571
+5                 72.18714                 70.95571                 70.07143
+6                 80.99143                 78.54429                 77.09857
+  length7_RH2M_mean_-9_-15 length7_RH2M_mean_-10_-16 length7_RH2M_mean_-11_-17
+1                 82.99143                  83.76857                  84.09143
+2                 88.45571                  89.09000                  88.34000
+3                 77.78571                  77.92857                  78.29429
+4                 77.18571                  76.46143                  76.23000
+5                 70.91143                  71.47429                  71.68857
+6                 75.42857                  73.71429                  76.00000
+  length7_RH2M_mean_-12_-18 length7_RH2M_mean_-13_-19 length7_RH2M_mean_-14_-20
+1                  83.34143                  83.17286                  82.85000
+2                  86.48286                  84.45571                  82.39429
+3                  79.37429                  80.95571                  82.25000
+4                  75.51571                  75.95429                  76.23143
+5                  72.00000                  74.95571                  75.21429
+6                  77.32143                  78.29429                  78.83857
+  length7_RH2M_mean_-15_-21 length7_RH2M_mean_-16_-22 length7_RH2M_mean_-17_-23
+1                  79.68857                  77.37571                  76.64429
+2                  81.32286                  79.39429                  77.16143
+3                  82.48143                  81.23143                  80.47286
+4                  76.67857                  76.61571                  78.18714
+5                  75.63429                  75.82143                  77.11571
+6                  78.85571                  78.99000                  79.36571
+  length7_RH2M_mean_-18_-24 length7_RH2M_mean_-19_-25 length7_RH2M_mean_-20_-26
+1                  75.96429                  76.53571                  75.50000
+2                  76.23286                  77.12571                  78.38429
+3                  80.09857                  79.42857                  77.93714
+4                  79.58000                  82.24143                  84.06143
+5                  77.34714                  76.09714                  72.85571
+6                  78.20429                  78.02571                  78.07857
+  length7_RH2M_mean_-21_-27 length14_RH2M_mean_0_-13 length14_RH2M_mean_-1_-14
+1                  75.57143                 78.37429                  79.75000
+2                  78.21429                 86.88857                  86.66571
+3                  76.40143                 83.91857                  83.19071
+4                  84.33000                 76.90071                  76.95000
+5                  72.57000                 76.36214                  75.94214
+6                  78.45429                 82.13857                  81.34429
+  length14_RH2M_mean_-2_-15 length14_RH2M_mean_-3_-16 length14_RH2M_mean_-4_-17
+1                  80.67429                  80.84857                  80.99643
+2                  86.90643                  88.28643                  88.51857
+3                  82.30643                  82.01643                  81.65929
+4                  77.59286                  77.62357                  78.27571
+5                  75.12571                  74.79071                  74.30857
+6                  80.63857                  79.77214                  80.16071
+  length14_RH2M_mean_-5_-18 length14_RH2M_mean_-6_-19 length14_RH2M_mean_-7_-20
+1                  81.02786                  81.70643                  81.63000
+2                  87.66571                  86.70143                  85.69286
+3                  81.13286                  81.13786                  81.58000
+4                  77.75786                  77.08857                  76.76714
+5                  73.27714                  73.57143                  73.08500
+6                  79.77214                  79.64286                  78.69143
+  length14_RH2M_mean_-8_-21 length14_RH2M_mean_-9_-22
+1                  80.61643                  80.18357
+2                  84.53714                  83.92500
+3                  81.02214                  79.50857
+4                  76.97714                  76.90071
+5                  72.85286                  73.36643
+6                  77.97714                  77.20929
+  length14_RH2M_mean_-10_-23 length14_RH2M_mean_-11_-24
+1                   80.20643                   80.02786
+2                   83.12571                   82.28643
+3                   79.20071                   79.19643
+4                   77.32429                   77.90500
+5                   74.29500                   74.51786
+6                   76.54000                   77.10214
+  length14_RH2M_mean_-12_-25 length14_RH2M_mean_-13_-26
+1                   79.93857                   79.33643
+2                   81.80429                   81.42000
+3                   79.40143                   79.44643
+4                   78.87857                   80.00786
+5                   74.04857                   73.90571
+6                   77.67357                   78.18643
+  length14_RH2M_mean_-14_-27 length21_RH2M_mean_0_-20 length21_RH2M_mean_-1_-21
+1                   79.21071                 79.86619                  79.72952
+2                   80.30429                 85.39048                  84.88476
+3                   79.32571                 83.36238                  82.95429
+4                   80.28071                 76.67762                  76.85952
+5                   73.89214                 75.97952                  75.83952
+6                   78.64643                 81.03857                  80.51476
+  length21_RH2M_mean_-2_-22 length21_RH2M_mean_-3_-23 length21_RH2M_mean_-4_-24
+1                  79.57476                  79.44714                  79.31905
+2                  84.40238                  84.57810                  84.42333
+3                  81.94810                  81.50190                  81.13905
+4                  77.26714                  77.81143                  78.71048
+5                  75.35762                  75.56571                  75.32143
+6                  80.08905                  79.63667                  79.50857
+  length21_RH2M_mean_-5_-25 length21_RH2M_mean_-6_-26 length21_RH2M_mean_-7_-27
+1                  79.53048                  79.63762                  79.61048
+2                  84.15238                  83.92905                  83.20000
+3                  80.56476                  80.07095                  79.85381
+4                  79.25238                  79.41286                  79.28810
+5                  74.21714                  73.33286                  72.91333
+6                  79.19000                  79.12143                  78.61238
+  length28_RH2M_mean_0_-27 study    heading length7_T2M_MIN_mean_0_-6
+1                 78.79250     1 2012-05-10                 13.858571
+2                 83.59643     2 2012-06-09                  7.831429
+3                 81.62214     3 2012-06-01                 15.524286
+4                 78.59071     4 2012-05-03                 16.705714
+5                 75.12714     5 2012-04-15                 18.464286
+6                 80.39250     6 2013-05-22                 16.345714
+  length7_T2M_MIN_mean_-1_-7 length7_T2M_MIN_mean_-2_-8
+1                   13.26714                   12.22000
+2                    9.08000                   10.84429
+3                   15.10000                   14.72286
+4                   16.99857                   17.62000
+5                   18.39857                   18.20286
+6                   16.46857                   16.59286
+  length7_T2M_MIN_mean_-3_-9 length7_T2M_MIN_mean_-4_-10
+1                   11.06286                    10.23143
+2                   12.71571                    14.44286
+3                   14.13857                    13.48571
+4                   17.79143                    17.74714
+5                   18.07571                    17.90429
+6                   16.65143                    16.07286
+  length7_T2M_MIN_mean_-5_-11 length7_T2M_MIN_mean_-6_-12
+1                    10.05857                    10.48429
+2                    16.10571                    17.24857
+3                    12.90000                    12.85429
+4                    17.49286                    17.05714
+5                    17.58429                    17.21000
+6                    15.08286                    14.61571
+  length7_T2M_MIN_mean_-7_-13 length7_T2M_MIN_mean_-8_-14
+1                    10.83857                    11.84857
+2                    16.72571                    16.32143
+3                    12.64429                    12.35143
+4                    16.51000                    16.28286
+5                    16.67429                    16.13571
+6                    13.75143                    12.30000
+  length7_T2M_MIN_mean_-9_-15 length7_T2M_MIN_mean_-10_-16
+1                    13.70000                    15.117143
+2                    16.20143                    16.064286
+3                    12.01000                    11.925714
+4                    16.30714                    16.382857
+5                    15.77286                    15.411429
+6                    10.92857                     9.907143
+  length7_T2M_MIN_mean_-11_-17 length7_T2M_MIN_mean_-12_-18
+1                     15.86429                     16.24857
+2                     15.60571                     15.07857
+3                     11.96143                     12.20286
+4                     16.41714                     16.59714
+5                     14.33286                     13.91286
+6                     10.11571                     11.30714
+  length7_T2M_MIN_mean_-13_-19 length7_T2M_MIN_mean_-14_-20
+1                     16.56429                     17.39143
+2                     14.33143                     14.02143
+3                     12.39429                     13.29000
+4                     16.62714                     16.90143
+5                     14.43000                     14.87714
+6                     12.55000                     13.79571
+  length7_T2M_MIN_mean_-15_-21 length7_T2M_MIN_mean_-16_-22
+1                     17.41857                     17.18857
+2                     14.07571                     13.87714
+3                     13.92714                     14.02571
+4                     16.89143                     16.96571
+5                     15.22571                     15.43286
+6                     14.94000                     16.12143
+  length7_T2M_MIN_mean_-17_-23 length7_T2M_MIN_mean_-18_-24
+1                     17.36286                     17.72429
+2                     13.44286                     13.49429
+3                     14.34000                     14.48429
+4                     17.01714                     16.99429
+5                     15.93000                     17.01143
+6                     16.86714                     17.37571
+  length7_T2M_MIN_mean_-19_-25 length7_T2M_MIN_mean_-20_-26
+1                     18.22143                     18.48857
+2                     13.53571                     13.28286
+3                     14.28143                     14.00714
+4                     17.19429                     17.77000
+5                     17.30286                     16.81429
+6                     17.28286                     17.02000
+  length7_T2M_MIN_mean_-21_-27 length14_T2M_MIN_mean_0_-13
+1                     18.44286                    12.34857
+2                     13.16571                    12.27857
+3                     13.59429                    14.08429
+4                     18.01571                    16.60786
+5                     16.40429                    17.56929
+6                     16.68714                    15.04857
+  length14_T2M_MIN_mean_-1_-14 length14_T2M_MIN_mean_-2_-15
+1                     12.55786                     12.96000
+2                     12.70071                     13.52286
+3                     13.72571                     13.36643
+4                     16.64071                     16.96357
+5                     17.26714                     16.98786
+6                     14.38429                     13.76071
+  length14_T2M_MIN_mean_-3_-16 length14_T2M_MIN_mean_-4_-17
+1                     13.09000                     13.04786
+2                     14.39000                     15.02429
+3                     13.03214                     12.72357
+4                     17.08714                     17.08214
+5                     16.74357                     16.11857
+6                     13.27929                     13.09429
+  length14_T2M_MIN_mean_-5_-18 length14_T2M_MIN_mean_-6_-19
+1                     13.15357                     13.52429
+2                     15.59214                     15.79000
+3                     12.55143                     12.62429
+4                     17.04500                     16.84214
+5                     15.74857                     15.82000
+6                     13.19500                     13.58286
+  length14_T2M_MIN_mean_-7_-20 length14_T2M_MIN_mean_-8_-21
+1                     14.11500                     14.63357
+2                     15.37357                     15.19857
+3                     12.96714                     13.13929
+4                     16.70571                     16.58714
+5                     15.77571                     15.68071
+6                     13.77357                     13.62000
+  length14_T2M_MIN_mean_-9_-22 length14_T2M_MIN_mean_-10_-23
+1                     15.44429                      16.24000
+2                     15.03929                      14.75357
+3                     13.01786                      13.13286
+4                     16.63643                      16.70000
+5                     15.60286                      15.67071
+6                     13.52500                      13.38714
+  length14_T2M_MIN_mean_-11_-24 length14_T2M_MIN_mean_-12_-25
+1                      16.79429                      17.23500
+2                      14.55000                      14.30714
+3                      13.22286                      13.24214
+4                      16.70571                      16.89571
+5                      15.67214                      15.60786
+6                      13.74571                      14.29500
+  length14_T2M_MIN_mean_-13_-26 length14_T2M_MIN_mean_-14_-27
+1                      17.52643                      17.91714
+2                      13.80714                      13.59357
+3                      13.20071                      13.44214
+4                      17.19857                      17.45857
+5                      15.62214                      15.64071
+6                      14.78500                      15.24143
+  length21_T2M_MIN_mean_0_-20 length21_T2M_MIN_mean_-1_-21
+1                    14.02952                     14.17810
+2                    12.85952                     13.15905
+3                    13.81952                     13.79286
+4                    16.70571                     16.72429
+5                    16.67190                     16.58667
+6                    14.63095                     14.56952
+  length21_T2M_MIN_mean_-2_-22 length21_T2M_MIN_mean_-3_-23
+1                     14.36952                     14.51429
+2                     13.64095                     14.07429
+3                     13.58619                     13.46810
+4                     16.96429                     17.06381
+5                     16.46952                     16.47238
+6                     14.54762                     14.47524
+  length21_T2M_MIN_mean_-4_-24 length21_T2M_MIN_mean_-5_-25
+1                     14.60667                     14.84286
+2                     14.51429                     14.90667
+3                     13.31048                     13.12810
+4                     17.05286                     17.09476
+5                     16.41619                     16.26667
+6                     14.52143                     14.55762
+  length21_T2M_MIN_mean_-6_-26 length21_T2M_MIN_mean_-7_-27
+1                     15.17905                     15.55762
+2                     14.95429                     14.63762
+3                     13.08524                     13.17619
+4                     17.15143                     17.14238
+5                     16.15143                     15.98524
+6                     14.72857                     14.74476
+  length28_T2M_MIN_mean_0_-27 study    heading length7_T2M_MAX_mean_0_-6
+1                    15.13286     1 2012-05-10                  27.48857
+2                    12.93607     2 2012-06-09                  18.16714
+3                    13.76321     3 2012-06-01                  24.40429
+4                    17.03321     4 2012-05-03                  27.89000
+5                    16.60500     5 2012-04-15                  28.67286
+6                    15.14500     6 2013-05-22                  25.99571
+  length7_T2M_MAX_mean_-1_-7 length7_T2M_MAX_mean_-2_-8
+1                   26.86571                   26.05571
+2                   19.01714                   20.02714
+3                   24.05714                   23.33429
+4                   28.01000                   27.75571
+5                   28.76429                   29.32714
+6                   26.31714                   26.40429
+  length7_T2M_MAX_mean_-3_-9 length7_T2M_MAX_mean_-4_-10
+1                   24.86286                    23.76429
+2                   21.64143                    23.15143
+3                   22.92571                    22.47286
+4                   27.65429                    27.62143
+5                   29.68857                    29.86143
+6                   26.55571                    26.77857
+  length7_T2M_MAX_mean_-5_-11 length7_T2M_MAX_mean_-6_-12
+1                    22.84000                    22.29143
+2                    25.06714                    26.05143
+3                    22.38000                    22.66143
+4                    27.53143                    27.43857
+5                    30.33286                    30.89714
+6                    27.09429                    27.22714
+  length7_T2M_MAX_mean_-7_-13 length7_T2M_MAX_mean_-8_-14
+1                    21.90857                    22.27143
+2                    25.89857                    25.38857
+3                    22.81857                    22.92571
+4                    27.26857                    27.35000
+5                    31.23000                    30.97857
+6                    27.66000                    26.83571
+  length7_T2M_MAX_mean_-9_-15 length7_T2M_MAX_mean_-10_-16
+1                    23.10286                     24.40143
+2                    25.02000                     24.59000
+3                    23.34714                     23.28000
+4                    27.57143                     27.84286
+5                    30.50286                     30.08429
+6                    26.02429                     25.30857
+  length7_T2M_MAX_mean_-11_-17 length7_T2M_MAX_mean_-12_-18
+1                     25.60000                     26.43143
+2                     23.85714                     23.63571
+3                     23.12429                     22.92429
+4                     27.90429                     27.94286
+5                     29.55000                     28.92857
+6                     24.64714                     24.91714
+  length7_T2M_MAX_mean_-13_-19 length7_T2M_MAX_mean_-14_-20
+1                     26.81429                     27.76429
+2                     23.43714                     23.58429
+3                     22.74000                     23.13429
+4                     27.91000                     27.90429
+5                     28.19000                     28.49571
+6                     25.54714                     26.37000
+  length7_T2M_MAX_mean_-15_-21 length7_T2M_MAX_mean_-16_-22
+1                     28.57000                     29.07429
+2                     23.81429                     24.15143
+3                     23.56857                     24.09571
+4                     27.79000                     27.79000
+5                     28.61000                     28.66571
+6                     27.46143                     28.63571
+  length7_T2M_MAX_mean_-17_-23 length7_T2M_MAX_mean_-18_-24
+1                     29.49714                     29.89429
+2                     24.27000                     24.55429
+3                     24.40429                     24.88143
+4                     27.30143                     26.88857
+5                     28.19714                     28.60429
+6                     29.67857                     30.14286
+  length7_T2M_MAX_mean_-19_-25 length7_T2M_MAX_mean_-20_-26
+1                     30.26571                     30.71714
+2                     24.25286                     24.04714
+3                     25.18000                     25.31571
+4                     26.45714                     26.25286
+5                     29.32857                     30.08571
+6                     30.07000                     29.79714
+  length7_T2M_MAX_mean_-21_-27 length14_T2M_MAX_mean_0_-13
+1                     30.78143                    24.69857
+2                     23.30857                    22.03286
+3                     25.31286                    23.61143
+4                     26.50857                    27.57929
+5                     29.84429                    29.95143
+6                     29.19714                    26.82786
+  length14_T2M_MAX_mean_-1_-14 length14_T2M_MAX_mean_-2_-15
+1                     24.56857                     24.57929
+2                     22.20286                     22.52357
+3                     23.49143                     23.34071
+4                     27.68000                     27.66357
+5                     29.87143                     29.91500
+6                     26.57643                     26.21429
+  length14_T2M_MAX_mean_-3_-16 length14_T2M_MAX_mean_-4_-17
+1                     24.63214                     24.68214
+2                     23.11571                     23.50429
+3                     23.10286                     22.79857
+4                     27.74857                     27.76286
+5                     29.88643                     29.70571
+6                     25.93214                     25.71286
+  length14_T2M_MAX_mean_-5_-18 length14_T2M_MAX_mean_-6_-19
+1                     24.63571                     24.55286
+2                     24.35143                     24.74429
+3                     22.65214                     22.70071
+4                     27.73714                     27.67429
+5                     29.63071                     29.54357
+6                     26.00571                     26.38714
+  length14_T2M_MAX_mean_-7_-20 length14_T2M_MAX_mean_-8_-21
+1                     24.83643                     25.42071
+2                     24.74143                     24.60143
+3                     22.97643                     23.24714
+4                     27.58643                     27.57000
+5                     29.86286                     29.79429
+6                     27.01500                     27.14857
+  length14_T2M_MAX_mean_-9_-22 length14_T2M_MAX_mean_-10_-23
+1                     26.08857                      26.94929
+2                     24.58571                      24.43000
+3                     23.72143                      23.84214
+4                     27.68071                      27.57214
+5                     29.58429                      29.14071
+6                     27.33000                      27.49357
+  length14_T2M_MAX_mean_-11_-24 length14_T2M_MAX_mean_-12_-25
+1                      27.74714                      28.34857
+2                      24.20571                      23.94429
+3                      24.00286                      24.05214
+4                      27.39643                      27.20000
+5                      29.07714                      29.12857
+6                      27.39500                      27.49357
+  length14_T2M_MAX_mean_-13_-26 length14_T2M_MAX_mean_-14_-27
+1                      28.76571                      29.27286
+2                      23.74214                      23.44643
+3                      24.02786                      24.22357
+4                      27.08143                      27.20643
+5                      29.13786                      29.17000
+6                      27.67214                      27.78357
+  length21_T2M_MAX_mean_0_-20 length21_T2M_MAX_mean_-1_-21
+1                    25.72048                     25.90238
+2                    22.55000                     22.74000
+3                    23.45238                     23.51714
+4                    27.68762                     27.71667
+5                    29.46619                     29.45095
+6                    26.67524                     26.87143
+  length21_T2M_MAX_mean_-2_-22 length21_T2M_MAX_mean_-3_-23
+1                     26.07762                     26.25381
+2                     23.06619                     23.50048
+3                     23.59238                     23.53667
+4                     27.70571                     27.59952
+5                     29.49857                     29.32333
+6                     27.02143                     27.18095
+  length21_T2M_MAX_mean_-4_-24 length21_T2M_MAX_mean_-5_-25
+1                     26.41952                     26.51238
+2                     23.85429                     24.31857
+3                     23.49286                     23.49476
+4                     27.47143                     27.31048
+5                     29.33857                     29.53000
+6                     27.18952                     27.36048
+  length21_T2M_MAX_mean_-6_-26 length21_T2M_MAX_mean_-7_-27
+1                     26.60762                     26.81810
+2                     24.51190                     24.26381
+3                     23.57238                     23.75524
+4                     27.20048                     27.22714
+5                     29.72429                     29.85667
+6                     27.52381                     27.74238
+  length28_T2M_MAX_mean_0_-27 length7_RH2M_mean_0_-6 length7_RH2M_mean_-1_-7
+1                    26.98571               76.33857                77.95571
+2                    22.73964               84.78571                85.58000
+3                    23.91750               86.92714                86.81857
+4                    27.39286               76.49857                76.62429
+5                    29.56071               81.76857                81.81286
+6                    27.30571               85.73286                85.59000
+  length7_RH2M_mean_-2_-8 length7_RH2M_mean_-3_-9 length7_RH2M_mean_-4_-10
+1                78.35714                77.92857                 77.90143
+2                85.35714                87.48286                 88.69714
+3                86.82714                86.10429                 85.02429
+4                78.00000                78.78571                 80.32143
+5                79.34000                78.10714                 76.92857
+6                85.84857                85.83000                 84.32143
+  length7_RH2M_mean_-5_-11 length7_RH2M_mean_-6_-12 length7_RH2M_mean_-7_-13
+1                 78.71429                 80.24000                 80.41000
+2                 88.84857                 88.94714                 88.99143
+3                 82.89143                 81.32000                 80.91000
+4                 80.00000                 78.22286                 77.30286
+5                 74.55429                 72.18714                 70.95571
+6                 82.22286                 80.99143                 78.54429
+  length7_RH2M_mean_-8_-14 length7_RH2M_mean_-9_-15 length7_RH2M_mean_-10_-16
+1                 81.54429                 82.99143                  83.76857
+2                 87.75143                 88.45571                  89.09000
+3                 79.56286                 77.78571                  77.92857
+4                 77.27571                 77.18571                  76.46143
+5                 70.07143                 70.91143                  71.47429
+6                 77.09857                 75.42857                  73.71429
+  length7_RH2M_mean_-11_-17 length7_RH2M_mean_-12_-18 length7_RH2M_mean_-13_-19
+1                  84.09143                  83.34143                  83.17286
+2                  88.34000                  86.48286                  84.45571
+3                  78.29429                  79.37429                  80.95571
+4                  76.23000                  75.51571                  75.95429
+5                  71.68857                  72.00000                  74.95571
+6                  76.00000                  77.32143                  78.29429
+  length7_RH2M_mean_-14_-20 length7_RH2M_mean_-15_-21 length7_RH2M_mean_-16_-22
+1                  82.85000                  79.68857                  77.37571
+2                  82.39429                  81.32286                  79.39429
+3                  82.25000                  82.48143                  81.23143
+4                  76.23143                  76.67857                  76.61571
+5                  75.21429                  75.63429                  75.82143
+6                  78.83857                  78.85571                  78.99000
+  length7_RH2M_mean_-17_-23 length7_RH2M_mean_-18_-24 length7_RH2M_mean_-19_-25
+1                  76.64429                  75.96429                  76.53571
+2                  77.16143                  76.23286                  77.12571
+3                  80.47286                  80.09857                  79.42857
+4                  78.18714                  79.58000                  82.24143
+5                  77.11571                  77.34714                  76.09714
+6                  79.36571                  78.20429                  78.02571
+  length7_RH2M_mean_-20_-26 length7_RH2M_mean_-21_-27 length14_RH2M_mean_0_-13
+1                  75.50000                  75.57143                 78.37429
+2                  78.38429                  78.21429                 86.88857
+3                  77.93714                  76.40143                 83.91857
+4                  84.06143                  84.33000                 76.90071
+5                  72.85571                  72.57000                 76.36214
+6                  78.07857                  78.45429                 82.13857
+  length14_RH2M_mean_-1_-14 length14_RH2M_mean_-2_-15 length14_RH2M_mean_-3_-16
+1                  79.75000                  80.67429                  80.84857
+2                  86.66571                  86.90643                  88.28643
+3                  83.19071                  82.30643                  82.01643
+4                  76.95000                  77.59286                  77.62357
+5                  75.94214                  75.12571                  74.79071
+6                  81.34429                  80.63857                  79.77214
+  length14_RH2M_mean_-4_-17 length14_RH2M_mean_-5_-18 length14_RH2M_mean_-6_-19
+1                  80.99643                  81.02786                  81.70643
+2                  88.51857                  87.66571                  86.70143
+3                  81.65929                  81.13286                  81.13786
+4                  78.27571                  77.75786                  77.08857
+5                  74.30857                  73.27714                  73.57143
+6                  80.16071                  79.77214                  79.64286
+  length14_RH2M_mean_-7_-20 length14_RH2M_mean_-8_-21 length14_RH2M_mean_-9_-22
+1                  81.63000                  80.61643                  80.18357
+2                  85.69286                  84.53714                  83.92500
+3                  81.58000                  81.02214                  79.50857
+4                  76.76714                  76.97714                  76.90071
+5                  73.08500                  72.85286                  73.36643
+6                  78.69143                  77.97714                  77.20929
+  length14_RH2M_mean_-10_-23 length14_RH2M_mean_-11_-24
+1                   80.20643                   80.02786
+2                   83.12571                   82.28643
+3                   79.20071                   79.19643
+4                   77.32429                   77.90500
+5                   74.29500                   74.51786
+6                   76.54000                   77.10214
+  length14_RH2M_mean_-12_-25 length14_RH2M_mean_-13_-26
+1                   79.93857                   79.33643
+2                   81.80429                   81.42000
+3                   79.40143                   79.44643
+4                   78.87857                   80.00786
+5                   74.04857                   73.90571
+6                   77.67357                   78.18643
+  length14_RH2M_mean_-14_-27 length21_RH2M_mean_0_-20 length21_RH2M_mean_-1_-21
+1                   79.21071                 79.86619                  79.72952
+2                   80.30429                 85.39048                  84.88476
+3                   79.32571                 83.36238                  82.95429
+4                   80.28071                 76.67762                  76.85952
+5                   73.89214                 75.97952                  75.83952
+6                   78.64643                 81.03857                  80.51476
+  length21_RH2M_mean_-2_-22 length21_RH2M_mean_-3_-23 length21_RH2M_mean_-4_-24
+1                  79.57476                  79.44714                  79.31905
+2                  84.40238                  84.57810                  84.42333
+3                  81.94810                  81.50190                  81.13905
+4                  77.26714                  77.81143                  78.71048
+5                  75.35762                  75.56571                  75.32143
+6                  80.08905                  79.63667                  79.50857
+  length21_RH2M_mean_-5_-25 length21_RH2M_mean_-6_-26 length21_RH2M_mean_-7_-27
+1                  79.53048                  79.63762                  79.61048
+2                  84.15238                  83.92905                  83.20000
+3                  80.56476                  80.07095                  79.85381
+4                  79.25238                  79.41286                  79.28810
+5                  74.21714                  73.33286                  72.91333
+6                  79.19000                  79.12143                  78.61238
+  length28_RH2M_mean_0_-27 length7_PRECTOTCORR_sum_0_6
+1                 78.79250                       12.25
+2                 83.59643                        5.04
+3                 81.62214                        0.09
+4                 78.59071                       46.38
+5                 75.12714                       16.39
+6                 80.39250                        0.04
+  length7_PRECTOTCORR_sum_1_7 length7_PRECTOTCORR_sum_2_8
+1                       12.26                       35.21
+2                        0.51                        0.59
+3                        7.17                       28.23
+4                       46.38                       26.02
+5                       16.96                       30.79
+6                        0.06                        0.06
+  length7_PRECTOTCORR_sum_3_9 length7_PRECTOTCORR_sum_4_10
+1                       44.71                        44.65
+2                        0.20                         0.20
+3                       28.64                        29.34
+4                       16.82                        15.38
+5                       37.77                        37.81
+6                        0.04                        16.36
+  length7_PRECTOTCORR_sum_5_11 length7_PRECTOTCORR_sum_6_12
+1                        44.68                        45.35
+2                         7.43                        41.34
+3                        29.34                        29.34
+4                         8.18                         8.96
+5                        32.66                        26.82
+6                        34.13                        34.21
+  length7_PRECTOTCORR_sum_7_13 length7_PRECTOTCORR_sum_8_14
+1                        50.38                        65.96
+2                        41.79                        42.13
+3                        29.28                        22.20
+4                         9.71                         9.71
+5                        21.47                        20.95
+6                        34.22                        34.21
+  length7_PRECTOTCORR_sum_9_15 length7_PRECTOTCORR_sum_10_16
+1                        42.32                         44.95
+2                        59.02                         59.92
+3                         1.11                          0.70
+4                         9.71                          7.35
+5                         7.14                          0.16
+6                        34.21                         34.21
+  length7_PRECTOTCORR_sum_11_17 length7_PRECTOTCORR_sum_12_18
+1                         46.37                         46.35
+2                         59.95                         52.90
+3                          0.00                          0.00
+4                          6.85                          6.96
+5                          0.14                          1.04
+6                         17.89                          1.01
+  length7_PRECTOTCORR_sum_13_19 length7_PRECTOTCORR_sum_14_20
+1                         45.65                         40.62
+2                         28.47                         34.70
+3                          0.09                         27.28
+4                          6.61                          8.86
+5                          1.05                          1.03
+6                         32.32                         41.00
+  length7_PRECTOTCORR_sum_15_21 length7_PRECTOTCORR_sum_16_22
+1                         25.04                         24.62
+2                         36.42                         24.46
+3                         32.26                         32.31
+4                          8.88                         10.42
+5                         12.63                         12.86
+6                         42.75                         45.24
+  length7_PRECTOTCORR_sum_17_23 length7_PRECTOTCORR_sum_18_24
+1                          1.51                          0.09
+2                         46.73                         48.21
+3                         44.65                         45.09
+4                         12.15                         12.15
+5                         23.66                         29.12
+6                         45.25                         45.27
+  length7_PRECTOTCORR_sum_19_25 length7_PRECTOTCORR_sum_20_26
+1                          0.08                          0.07
+2                         48.77                         39.29
+3                         45.10                         45.21
+4                         11.12                          6.58
+5                         28.45                         29.10
+6                         45.90                         14.61
+  length7_PRECTOTCORR_sum_21_27 length14_PRECTOTCORR_sum_0_13
+1                          0.07                         62.63
+2                         32.66                         46.83
+3                         42.61                         29.37
+4                          3.32                         56.09
+5                         31.15                         37.86
+6                          9.67                         34.26
+  length14_PRECTOTCORR_sum_1_14 length14_PRECTOTCORR_sum_2_15
+1                         78.22                         77.53
+2                         42.64                         59.61
+3                         29.37                         29.34
+4                         56.09                         35.73
+5                         37.91                         37.93
+6                         34.27                         34.27
+  length14_PRECTOTCORR_sum_3_16 length14_PRECTOTCORR_sum_4_17
+1                         89.66                         91.02
+2                         60.12                         60.15
+3                         29.34                         29.34
+4                         24.17                         22.23
+5                         37.93                         37.95
+6                         34.25                         34.25
+  length14_PRECTOTCORR_sum_5_18 length14_PRECTOTCORR_sum_6_19
+1                         91.03                         91.00
+2                         60.33                         69.81
+3                         29.34                         29.43
+4                         15.14                         15.57
+5                         33.70                         27.87
+6                         35.14                         66.53
+  length14_PRECTOTCORR_sum_7_20 length14_PRECTOTCORR_sum_8_21
+1                         91.00                         91.00
+2                         76.49                         78.55
+3                         56.56                         54.46
+4                         18.57                         18.59
+5                         22.50                         33.58
+6                         75.22                         76.96
+  length14_PRECTOTCORR_sum_9_22 length14_PRECTOTCORR_sum_10_23
+1                         66.94                          46.46
+2                         83.48                         106.65
+3                         33.42                          45.35
+4                         20.13                          19.50
+5                         20.00                          23.82
+6                         79.45                          79.46
+  length14_PRECTOTCORR_sum_11_24 length14_PRECTOTCORR_sum_12_25
+1                          46.46                          46.43
+2                         108.16                         101.67
+3                          45.09                          45.10
+4                          19.00                          18.08
+5                          29.26                          29.49
+6                          63.16                          46.91
+  length14_PRECTOTCORR_sum_13_26 length14_PRECTOTCORR_sum_14_27
+1                          45.72                          40.69
+2                          67.76                          67.36
+3                          45.30                          69.89
+4                          13.19                          12.18
+5                          30.15                          32.18
+6                          46.93                          50.67
+  length21_PRECTOTCORR_sum_0_20 length21_PRECTOTCORR_sum_1_21
+1                        103.25                        103.26
+2                         81.53                         79.06
+3                         56.65                         61.63
+4                         64.95                         64.97
+5                         38.89                         50.54
+6                         75.26                         77.02
+  length21_PRECTOTCORR_sum_2_22 length21_PRECTOTCORR_sum_3_23
+1                        102.15                         91.17
+2                         84.07                        106.85
+3                         61.65                         73.99
+4                         46.15                         36.32
+5                         50.79                         61.59
+6                         79.51                         79.50
+  length21_PRECTOTCORR_sum_4_24 length21_PRECTOTCORR_sum_5_25
+1                         91.11                         91.11
+2                        108.36                        109.10
+3                         74.43                         74.44
+4                         34.38                         26.26
+5                         67.07                         62.15
+6                         79.52                         81.04
+  length21_PRECTOTCORR_sum_6_26 length21_PRECTOTCORR_sum_7_27
+1                         91.07                         91.07
+2                        109.10                        109.15
+3                         74.64                         99.17
+4                         22.15                         21.89
+5                         56.97                         53.65
+6                         81.14                         84.89
+  length28_PRECTOTCORR_sum_0_27 length7_T2M_MIN_below_threshold_0_-6
+1                        103.32                                    7
+2                        114.19                                    6
+3                         99.26                                    2
+4                         68.27                                    1
+5                         70.04                                    0
+6                         84.93                                    2
+  length7_T2M_MIN_below_threshold_-1_-7 length7_T2M_MIN_below_threshold_-2_-8
+1                                     7                                     7
+2                                     5                                     4
+3                                     3                                     4
+4                                     1                                     0
+5                                     0                                     0
+6                                     2                                     2
+  length7_T2M_MIN_below_threshold_-3_-9 length7_T2M_MIN_below_threshold_-4_-10
+1                                     7                                      7
+2                                     3                                      2
+3                                     5                                      6
+4                                     0                                      0
+5                                     0                                      0
+6                                     2                                      3
+  length7_T2M_MIN_below_threshold_-5_-11 length7_T2M_MIN_below_threshold_-6_-12
+1                                      7                                      6
+2                                      1                                      0
+3                                      7                                      7
+4                                      0                                      1
+5                                      0                                      1
+6                                      4                                      4
+  length7_T2M_MIN_below_threshold_-7_-13 length7_T2M_MIN_below_threshold_-8_-14
+1                                      6                                      5
+2                                      1                                      2
+3                                      7                                      7
+4                                      2                                      2
+5                                      2                                      3
+6                                      4                                      5
+  length7_T2M_MIN_below_threshold_-9_-15
+1                                      4
+2                                      3
+3                                      7
+4                                      2
+5                                      3
+6                                      6
+  length7_T2M_MIN_below_threshold_-10_-16
+1                                       3
+2                                       3
+3                                       7
+4                                       2
+5                                       3
+6                                       7
+  length7_T2M_MIN_below_threshold_-11_-17
+1                                       3
+2                                       4
+3                                       7
+4                                       2
+5                                       4
+6                                       6
+  length7_T2M_MIN_below_threshold_-12_-18
+1                                       2
+2                                       5
+3                                       7
+4                                       2
+5                                       5
+6                                       5
+  length7_T2M_MIN_below_threshold_-13_-19
+1                                       2
+2                                       6
+3                                       7
+4                                       2
+5                                       4
+6                                       4
+  length7_T2M_MIN_below_threshold_-14_-20
+1                                       1
+2                                       6
+3                                       6
+4                                       1
+5                                       3
+6                                       3
+  length7_T2M_MIN_below_threshold_-15_-21
+1                                       1
+2                                       6
+3                                       5
+4                                       1
+5                                       2
+6                                       2
+  length7_T2M_MIN_below_threshold_-16_-22
+1                                       1
+2                                       6
+3                                       5
+4                                       1
+5                                       2
+6                                       1
+  length7_T2M_MIN_below_threshold_-17_-23
+1                                       1
+2                                       7
+3                                       5
+4                                       1
+5                                       2
+6                                       0
+  length7_T2M_MIN_below_threshold_-18_-24
+1                                       0
+2                                       7
+3                                       5
+4                                       1
+5                                       1
+6                                       0
+  length7_T2M_MIN_below_threshold_-19_-25
+1                                       0
+2                                       7
+3                                       5
+4                                       1
+5                                       0
+6                                       0
+  length7_T2M_MIN_below_threshold_-20_-26
+1                                       0
+2                                       7
+3                                       5
+4                                       0
+5                                       0
+6                                       0
+  length7_T2M_MIN_below_threshold_-21_-27
+1                                       0
+2                                       7
+3                                       6
+4                                       0
+5                                       1
+6                                       1
+  length14_T2M_MIN_below_threshold_0_-13
+1                                     13
+2                                      7
+3                                      9
+4                                      3
+5                                      2
+6                                      6
+  length14_T2M_MIN_below_threshold_-1_-14
+1                                      12
+2                                       7
+3                                      10
+4                                       3
+5                                       3
+6                                       7
+  length14_T2M_MIN_below_threshold_-2_-15
+1                                      11
+2                                       7
+3                                      11
+4                                       2
+5                                       3
+6                                       8
+  length14_T2M_MIN_below_threshold_-3_-16
+1                                      10
+2                                       6
+3                                      12
+4                                       2
+5                                       3
+6                                       9
+  length14_T2M_MIN_below_threshold_-4_-17
+1                                      10
+2                                       6
+3                                      13
+4                                       2
+5                                       4
+6                                       9
+  length14_T2M_MIN_below_threshold_-5_-18
+1                                       9
+2                                       6
+3                                      14
+4                                       2
+5                                       5
+6                                       9
+  length14_T2M_MIN_below_threshold_-6_-19
+1                                       8
+2                                       6
+3                                      14
+4                                       3
+5                                       5
+6                                       8
+  length14_T2M_MIN_below_threshold_-7_-20
+1                                       7
+2                                       7
+3                                      13
+4                                       3
+5                                       5
+6                                       7
+  length14_T2M_MIN_below_threshold_-8_-21
+1                                       6
+2                                       8
+3                                      12
+4                                       3
+5                                       5
+6                                       7
+  length14_T2M_MIN_below_threshold_-9_-22
+1                                       5
+2                                       9
+3                                      12
+4                                       3
+5                                       5
+6                                       7
+  length14_T2M_MIN_below_threshold_-10_-23
+1                                        4
+2                                       10
+3                                       12
+4                                        3
+5                                        5
+6                                        7
+  length14_T2M_MIN_below_threshold_-11_-24
+1                                        3
+2                                       11
+3                                       12
+4                                        3
+5                                        5
+6                                        6
+  length14_T2M_MIN_below_threshold_-12_-25
+1                                        2
+2                                       12
+3                                       12
+4                                        3
+5                                        5
+6                                        5
+  length14_T2M_MIN_below_threshold_-13_-26
+1                                        2
+2                                       13
+3                                       12
+4                                        2
+5                                        4
+6                                        4
+  length14_T2M_MIN_below_threshold_-14_-27
+1                                        1
+2                                       13
+3                                       12
+4                                        1
+5                                        4
+6                                        4
+  length21_T2M_MIN_below_threshold_0_-20
+1                                     14
+2                                     13
+3                                     15
+4                                      4
+5                                      5
+6                                      9
+  length21_T2M_MIN_below_threshold_-1_-21
+1                                      13
+2                                      13
+3                                      15
+4                                       4
+5                                       5
+6                                       9
+  length21_T2M_MIN_below_threshold_-2_-22
+1                                      12
+2                                      13
+3                                      16
+4                                       3
+5                                       5
+6                                       9
+  length21_T2M_MIN_below_threshold_-3_-23
+1                                      11
+2                                      13
+3                                      17
+4                                       3
+5                                       5
+6                                       9
+  length21_T2M_MIN_below_threshold_-4_-24
+1                                      10
+2                                      13
+3                                      18
+4                                       3
+5                                       5
+6                                       9
+  length21_T2M_MIN_below_threshold_-5_-25
+1                                       9
+2                                      13
+3                                      19
+4                                       3
+5                                       5
+6                                       9
+  length21_T2M_MIN_below_threshold_-6_-26
+1                                       8
+2                                      13
+3                                      19
+4                                       3
+5                                       5
+6                                       8
+  length21_T2M_MIN_below_threshold_-7_-27
+1                                       7
+2                                      14
+3                                      19
+4                                       3
+5                                       6
+6                                       8
+  length28_T2M_MIN_below_threshold_0_-27 study    heading
+1                                     14     1 2012-05-10
+2                                     20     2 2012-06-09
+3                                     21     3 2012-06-01
+4                                      4     4 2012-05-03
+5                                      6     5 2012-04-15
+6                                     10     6 2013-05-22</code></pre>
 </div>
 </div>
 
