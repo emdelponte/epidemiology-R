@@ -823,8 +823,7 @@ trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
 glimpse(trials$heading)
 ```
 
-The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the get_power() function from the {nasapower} package was created, included in {r4pde}, and named get_nasapower(). This function allows for the download of data over a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.
-
+The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the `get_power()` function from the {nasapower} package was created, included in {r4pde}, and named `get_nasapower()`. This function allows for the download of data over a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.
 
 ```{r}
 #| eval: FALSE
@@ -855,7 +854,7 @@ trials_weather <- full_join(trials, weather_data)
 
 ```
 
-We are now ready to use the `windowpane` function to create the new variables. In the function, there are a few arguments. Note two date variables, the `end_date` which should be our reference for sliding the windows and the `date_col` which is the date for each day in the time series. The `summary_type` is the statistics to calculate. The `direction` is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the `group_by` is the index variable for the study or trial.  
+We are now ready to use the `windowpane` function to create the new variables. In the function, there are a few arguments. Note two date variables, the `end_date` which should be our reference for sliding the windows and the `date_col` which is the date for each day in the time series. The `summary_type` is the statistics to calculate. The `direction` is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the `group_by` is the index variable for the study or trial.
 
 Let's create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths defined in `window_length` argument.
 
@@ -875,6 +874,3 @@ wp <- windowpane(
 
 head(wp)
 ```
-
-
-
