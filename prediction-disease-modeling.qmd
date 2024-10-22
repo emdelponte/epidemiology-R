@@ -1,6 +1,10 @@
 ---
 title: "Disease modeling"
 editor: visual
+format:
+  html:
+    mermaid:
+      theme: forest
 editor_options: 
   chunk_output_type: inline
 bibliography: references.bib
@@ -732,8 +736,86 @@ dat2 |>
 
 ## Field data
 
-Although pathogen inoculum and host resistance levels are sometimes considered in combination with weather in empirically derived models using field data [@shah2013; @cao2015], with a few examples of models using non-weather factors [@mehra2016; @paul2004], most of these data-driven models primarily rely on weather variables as predictors [@gonzález-domínguez2023]. This emphasis is due to the significant influence of weather on key processes in the disease cycle, including pathogen survival and dispersal, host infection, and pathogen reproduction [@dewolf2007]. As a result, a central task for plant epidemiologists is to identify and quantify the relationships between weather conditions and a measure of disease intensity [@shah2019; @eljarroudi2017; @pietravalle2003; @coakley1988; @delponte2006; @shah2013; @coakley1988a].
+Although pathogen inoculum, host resistance and agronomic factors are sometimes considered in combination with weather in empirically derived models using field data [@shah2013; @cao2015; @mehra2017], with a few examples of models using non-weather factors [@mehra2016; @paul2004], most of these data-driven models primarily rely on weather variables as predictors [@gonzález-domínguez2023]. This emphasis is due to the significant influence of weather on key processes in the disease cycle, including pathogen survival and dispersal, host infection, and pathogen reproduction [@dewolf2007]. As a result, a central task for plant epidemiologists is to identify and quantify the relationships between weather conditions and a measure of disease intensity [@shah2019; @eljarroudi2017; @pietravalle2003; @coakley1988; @delponte2006; @shah2013; @coakley1988a].
 
 In modeling efforts, the disease variable can be represented either as a continuous measure (e.g., incidence or severity) or as categorical data, which may be binary (e.g., non-epidemic vs. epidemic) or multinomial (e.g., low, moderate, and high severity). This variability in response types informs the selection of suitable modeling techniques, ensuring that the model accurately captures the nature of the data and the relationships between weather variables and disease outcomes.
 
 In this section, I will demonstrate several modeling approaches that can be applied when field data is available. These examples will cover a range of techniques, starting with variable construction, which involves transforming raw weather data into summary measures that can effectively represent conditions relevant to disease outcomes. Next, variable selection methods will be explored to identify the most influential predictors, ensuring that models are both accurate and interpretable. The focus will then shift to model fitting, showing how different models, such as linear and logistic regression, can be used to capture relationships between weather variables and disease endpoints. Finally, model evaluation will be addressed, emphasizing metrics like accuracy, sensitivity, and area under the curve (AUC), which are crucial for assessing the predictive performance and reliability of the models developed.
+
+### Variable construction
+
+Variable construction, especially when weather-related variables are concerned, relies not only on data transformation methods but also on the knowledge of the system, such as understanding how the disease responds to specific weather conditions that are likely to occur at specific growth stages [@decól2024; @dewolf2003]. This approach ensures that the derived variables accurately reflect biologically relevant processes, like the influence of temperature, humidity, or rainfall on disease dynamics.
+
+In addition, data mining techniques are employed to systematically explore time-series data and identify potential weather-disease relationships [@shah2019; @pietravalle2003; @coakley1988]. These techniques involve creating lagged variables, moving averages, or window-based summaries that capture delayed or cumulative effects of weather on disease outcomes. By integrating system knowledge with data mining, researchers aim to construct variables that are both biologically meaningful and statistically robust, improving the chances of identifying predictors that enhance model accuracy and interpretability.
+
+#### Window-pane
+
+With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s [@coakley1985], has been widely used in modeling studies in plant pathology [@pietravalle2003; @kriss2010; @calverojr1996; @tebeest2008a; @gouache2015a; @coakley1988; @dallalana2021; @coakley1988a]. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g. daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.
+
+The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs. high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.
+
+Let's create a code in R to demonstrate how the windows are defined in an example where four fixed lengths are defined over a 28-day period. The lengths are 7, 21, 14 and 28 consecutive days. In this case, there are 46 variables. Here is how it is calculated:
+
+-   7-day windows: 22 variables = 28 - 7 + 1
+
+-   14-day windows: 15 variables = 28 - 15 + 1
+
+-   21-day windows: 8 variables = 28 - 21 + 1
+
+-   28-day window: 1 variable
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+library(dplyr)
+library(ggplot2)
+
+# Define total days and window lengths
+max_days <- 28
+window_lengths <- c(7, 14, 21, 28)
+
+# Create an empty data frame for all sliding windows
+window_data <- data.frame()
+
+# Populate the data frame with start and end points for each window
+var_id <- 1  # Variable ID for each window
+
+for (length in sort(window_lengths)) {  # Sort window lengths from shortest to longest
+  for (start_day in 0:(max_days - length)) {
+    end_day <- start_day + length
+    window_data <- rbind(
+      window_data,
+      data.frame(
+        start = start_day,
+        end = end_day,
+        var_id = var_id,
+        window_length = length
+      )
+    )
+    var_id <- var_id + 1  # Increment variable ID
+  }
+}
+
+# Convert window_length to a factor for correct ordering in the legend
+window_data$window_length <- factor(window_data$window_length, levels = sort(unique(window_data$window_length)))
+
+# Plotting the sliding windows using ggplot2
+
+window_data |> 
+  ggplot(aes(x = start, xend = end, y = var_id, yend = var_id, color = window_length)) +
+  geom_segment(linewidth = 1.5) +  # Line segments for each window
+  scale_x_continuous(breaks = 0:max_days, limits = c(0, max_days)) +
+  scale_y_continuous(breaks = 1:var_id) +
+  labs(
+    title = "Window-pane",
+    subtitle = "Each variable over 28 days",
+    x = "Days",
+    y = "Variable ID",
+    color = "Window Length (days)"
+  ) +
+  r4pde::theme_r4pde(font_size = 14) +
+  scale_color_grey(start = 0.2, end = 0.8)+
+  theme(legend.position = "right"
+  )
+
+```
