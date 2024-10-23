@@ -470,7 +470,11 @@ window.Quarto = {
   <ul>
   <li><a href="#variable-construction" id="toc-variable-construction" class="nav-link" data-scroll-target="#variable-construction"><span class="header-section-number">20.3.1</span> Variable construction</a>
   <ul>
-  <li><a href="#window-pane" id="toc-window-pane" class="nav-link" data-scroll-target="#window-pane"><span class="header-section-number">20.3.1.1</span> Window-pane</a></li>
+  <li><a href="#window-pane" id="toc-window-pane" class="nav-link" data-scroll-target="#window-pane"><span class="header-section-number">20.3.1.1</span> Window-pane</a>
+  <ul class="collapse">
+  <li><a href="#variable-construction-1" id="toc-variable-construction-1" class="nav-link" data-scroll-target="#variable-construction-1"><span class="header-section-number">20.3.1.1.1</span> Variable construction</a></li>
+  <li><a href="#correlations-and-multiple-hypothesis-test" id="toc-correlations-and-multiple-hypothesis-test" class="nav-link" data-scroll-target="#correlations-and-multiple-hypothesis-test"><span class="header-section-number">20.3.1.1.2</span> Correlations and multiple hypothesis test</a></li>
+  </ul></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -1376,6 +1380,8 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 <p>In addition, data mining techniques are employed to systematically explore time-series data and identify potential weather-disease relationships <span class="citation" data-cites="shah2019 pietravalle2003 coakley1988">(<a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-shah2019" role="doc-biblioref">Shah et al. 2019</a>)</span>. These techniques involve creating lagged variables, moving averages, or window-based summaries that capture delayed or cumulative effects of weather on disease outcomes. By integrating system knowledge with data mining, researchers aim to construct variables that are both biologically meaningful and statistically robust, improving the chances of identifying predictors that enhance model accuracy and interpretability.</p>
 <section id="window-pane" class="level4" data-number="20.3.1.1">
 <h4 data-number="20.3.1.1" class="anchored" data-anchor-id="window-pane"><span class="header-section-number">20.3.1.1</span> Window-pane</h4>
+<section id="variable-construction-1" class="level5" data-number="20.3.1.1.1">
+<h5 data-number="20.3.1.1.1" class="anchored" data-anchor-id="variable-construction-1"><span class="header-section-number">20.3.1.1.1</span> Variable construction</h5>
 <p>With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>, has been widely used in modeling studies in plant pathology <span class="citation" data-cites="pietravalle2003 calverojr1996 tebeest2008a gouache2015a coakley1988 kriss2010 dallalana2021 coakley1988a">(<a href="references.html#ref-calverojr1996" role="doc-biblioref">Calvero Jr et al. 1996</a>; <a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-coakley1988a" role="doc-biblioref">Coakley 1988</a>; <a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>; <a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g.&nbsp;daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.</p>
 <p>The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs.&nbsp;high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.</p>
 <p>Here’s an R code that demonstrates how the windows are defined over a 28-day period using four fixed window lengths (7, 14, 21, and 28 days), generating a total of 46 variables.</p>
@@ -1435,12 +1441,12 @@ Achieved convergence tolerance: 3.183e-06</code></pre>
 </div>
 </div>
 <p>The window pane analysis requires a spreadsheet program <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span> or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
-<p>Here, I will demonstrate the <code>windowpane()</code> function of the {r4pde} package developed to facilitate the creation of variables using the window pane principles.</p>
-<p>Let’s first load a dataset that contains information on the disease and also metadata including a key date that will be used as starting point for windows creation. The <code>BlastWheat</code> dataset that is included in the {r4pde} package was made available by <span class="citation" data-cites="decól2024">De Cól et al. (<a href="references.html#ref-decól2024" role="doc-biblioref">2024</a>)</span>.</p>
+<p>I will demonstrate the <code>windowpane()</code> function of the {r4pde} package developed to facilitate the creation of variables using the window pane approach. First, let’s load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by <span class="citation" data-cites="decól2024">De Cól et al. (<a href="references.html#ref-decól2024" role="doc-biblioref">2024</a>)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
-<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>trials <span class="ot">&lt;-</span> BlastWheat</span>
-<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(trials)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>trials <span class="ot">&lt;-</span> BlastWheat</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(trials)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 143
 Columns: 10
@@ -1464,7 +1470,7 @@ $ yld_mean   &lt;dbl&gt; 1097.00, 1219.38, 495.12, 1747.44, 2148.31, 506.00, 156
 <pre><code> Date[1:143], format: "2012-05-10" "2012-06-09" "2012-06-01" "2012-05-03" "2012-04-15" ...</code></pre>
 </div>
 </div>
-<p>The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the <code>get_power()</code> function from the {nasapower} package was created, included in {r4pde}, and named <code>get_nasapower()</code>. This function allows for the download of data over a period “around” the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.</p>
+<p>The weather data for our analysis will be downloaded from NASA POWER. Since we have multiple trials with different heading dates, a wrapper function for the get_power() function from the {nasapower} package was created, included in {r4pde}, and named get_nasapower(). This function enables the download of data for a period “around” the key date, which can be defined by the user. In our case, we will download data from 28 days before and 28 days after the heading date.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">get_nasapower</span>(</span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials,</span>
@@ -1478,7 +1484,7 @@ $ yld_mean   &lt;dbl&gt; 1097.00, 1219.38, 495.12, 1747.44, 2148.31, 506.00, 156
 <p>Now we can see the weather data and join the two dataframes.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read the data</span></span>
-<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"data/weather_windowpane.csv"</span>)</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data/weather_windowpane.csv"</span>)</span>
 <span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(weather_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1502,101 +1508,140 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># apply a full join</span></span>
 <span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>trials_weather <span class="ot">&lt;-</span> <span class="fu">full_join</span>(trials, weather_data) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We are now ready to use the <code>windowpane</code> function to create the new variables. In the function, there are a few arguments. Note two date variables, the <code>end_date</code> which should be our reference for sliding the windows and the <code>date_col</code> which is the date for each day in the time series. The <code>summary_type</code> is the statistics to calculate. The <code>direction</code> is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the <code>group_by</code> is the index variable for the study or trial.</p>
-<p>Let’s create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths (7, 14, 21 and 28) defined in <code>window_length</code> argument. We will create only variables at an earlier time relative to heading date and for this we use “backward” in <code>direction</code> argument.</p>
+<p>We are now ready to use the windowpane function to create new variables. The function has several arguments. Note the two date variables: <code>end_date</code>, which serves as the reference for sliding the windows, and <code>date_col</code>, which represents the date for each day in the time series. The <code>summary_type</code> specifies the statistic to be calculated, while the <code>direction</code> determines whether the sliding windows will move backward, forward, or in both directions relative to the end date. Lastly, the <code>group_by</code> argument specifies the index variable for the epidemic or study.</p>
+<p>We will create new variables based on the mean daily temperature (T2M), with each variable representing the mean value over one of the four window lengths (7, 14, 21, and 28 days) defined in the <code>window_length</code> argument. We will only generate variables that cover periods before the heading date, using “backward” in the <code>direction</code> argument.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>wp <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials_weather,</span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date_col =</span> heading,</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_col =</span> YYYYMMDD,</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> T2M,  </span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
-<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
-<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
-<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the intuitive names of the variables</span></span>
-<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 6 × 48
-  `length7_T2M_mean_0_-6` `length7_T2M_mean_-1_-7` `length7_T2M_mean_-2_-8`
-                    &lt;dbl&gt;                    &lt;dbl&gt;                    &lt;dbl&gt;
-1                    20.1                     19.4                     18.4
-2                    12.7                     13.7                     15.1
-3                    19.4                     19.1                     18.6
-4                    21.8                     22.1                     22.3
-5                    22.5                     22.5                     22.8
-6                    20.8                     21.0                     21.1
-# ℹ 45 more variables: `length7_T2M_mean_-3_-9` &lt;dbl&gt;,
-#   `length7_T2M_mean_-4_-10` &lt;dbl&gt;, `length7_T2M_mean_-5_-11` &lt;dbl&gt;,
-#   `length7_T2M_mean_-6_-12` &lt;dbl&gt;, `length7_T2M_mean_-7_-13` &lt;dbl&gt;,
-#   `length7_T2M_mean_-8_-14` &lt;dbl&gt;, `length7_T2M_mean_-9_-15` &lt;dbl&gt;,
-#   `length7_T2M_mean_-10_-16` &lt;dbl&gt;, `length7_T2M_mean_-11_-17` &lt;dbl&gt;,
-#   `length7_T2M_mean_-12_-18` &lt;dbl&gt;, `length7_T2M_mean_-13_-19` &lt;dbl&gt;,
-#   `length7_T2M_mean_-14_-20` &lt;dbl&gt;, `length7_T2M_mean_-15_-21` &lt;dbl&gt;, …</code></pre>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create window variables separated for each weather variable</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>wp_T2M <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> T2M,  </span>
+<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb72-9"><a href="#cb72-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-10"><a href="#cb72-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-11"><a href="#cb72-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb72-12"><a href="#cb72-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-13"><a href="#cb72-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb72-14"><a href="#cb72-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-15"><a href="#cb72-15" aria-hidden="true" tabindex="-1"></a>wpT2M_MIN_15 <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-16"><a href="#cb72-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-17"><a href="#cb72-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-18"><a href="#cb72-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-19"><a href="#cb72-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> T2M_MIN,   </span>
+<span id="cb72-20"><a href="#cb72-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"below_threshold"</span>,</span>
+<span id="cb72-21"><a href="#cb72-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="dv">15</span>,</span>
+<span id="cb72-22"><a href="#cb72-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-23"><a href="#cb72-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb72-24"><a href="#cb72-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-25"><a href="#cb72-25" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-26"><a href="#cb72-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-27"><a href="#cb72-27" aria-hidden="true" tabindex="-1"></a>wpT2M_MIN <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-28"><a href="#cb72-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-29"><a href="#cb72-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-30"><a href="#cb72-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-31"><a href="#cb72-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> T2M_MIN,   </span>
+<span id="cb72-32"><a href="#cb72-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb72-33"><a href="#cb72-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-34"><a href="#cb72-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-35"><a href="#cb72-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb72-36"><a href="#cb72-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-37"><a href="#cb72-37" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-38"><a href="#cb72-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-39"><a href="#cb72-39" aria-hidden="true" tabindex="-1"></a>wpT2M_MAX <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-40"><a href="#cb72-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-41"><a href="#cb72-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-42"><a href="#cb72-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-43"><a href="#cb72-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> T2M_MAX,   </span>
+<span id="cb72-44"><a href="#cb72-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb72-45"><a href="#cb72-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-46"><a href="#cb72-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-47"><a href="#cb72-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
+<span id="cb72-48"><a href="#cb72-48" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-49"><a href="#cb72-49" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-50"><a href="#cb72-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-51"><a href="#cb72-51" aria-hidden="true" tabindex="-1"></a>wpPREC <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-52"><a href="#cb72-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-53"><a href="#cb72-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-54"><a href="#cb72-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-55"><a href="#cb72-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> PRECTOTCORR,   </span>
+<span id="cb72-56"><a href="#cb72-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"sum"</span>,</span>
+<span id="cb72-57"><a href="#cb72-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-58"><a href="#cb72-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-59"><a href="#cb72-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
+<span id="cb72-60"><a href="#cb72-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-61"><a href="#cb72-61" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-62"><a href="#cb72-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-63"><a href="#cb72-63" aria-hidden="true" tabindex="-1"></a>wpRH2M <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
+<span id="cb72-64"><a href="#cb72-64" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
+<span id="cb72-65"><a href="#cb72-65" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
+<span id="cb72-66"><a href="#cb72-66" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
+<span id="cb72-67"><a href="#cb72-67" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> RH2M,   </span>
+<span id="cb72-68"><a href="#cb72-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
+<span id="cb72-69"><a href="#cb72-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
+<span id="cb72-70"><a href="#cb72-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
+<span id="cb72-71"><a href="#cb72-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
+<span id="cb72-72"><a href="#cb72-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
+<span id="cb72-73"><a href="#cb72-73" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb72-74"><a href="#cb72-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb72-75"><a href="#cb72-75" aria-hidden="true" tabindex="-1"></a><span class="co"># combine all datasets</span></span>
+<span id="cb72-76"><a href="#cb72-76" aria-hidden="true" tabindex="-1"></a>wp_all <span class="ot">&lt;-</span> <span class="fu">cbind</span>(wp_T2M, wpT2M_MIN_15, wpT2M_MIN, wpT2M_MAX, wpPREC, wpRH2M)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</div>
-<p>To automate the creation of new variables based on multiple weather variables, we can use the <code>map()</code> function of {purrr}. Let’s continue summarizing the mean value for three other variables of temperature and relative humidity.</p>
+</section>
+<section id="correlations-and-multiple-hypothesis-test" class="level5" data-number="20.3.1.1.2">
+<h5 data-number="20.3.1.1.2" class="anchored" data-anchor-id="correlations-and-multiple-hypothesis-test"><span class="header-section-number">20.3.1.1.2</span> Correlations and multiple hypothesis test</h5>
+<p>The window pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman’s rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>.</p>
+<p>In a recent study, <span class="citation" data-cites="dallalana2021">Dalla Lana et al. (<a href="references.html#ref-dallalana2021" role="doc-biblioref">2021</a>)</span>, differing from <span class="citation" data-cites="kriss2010">Kriss et al. (<a href="references.html#ref-kriss2010" role="doc-biblioref">2010</a>)</span>, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g.&nbsp;1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.</p>
+<p>The window-pane analysis involves numerous tests, as each time window generates a separate test statistic. Because many tests are conducted, the global significance level becomes higher than the critical significance level set for individual tests, increasing the risk of false positives <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>. Additionally, the correlations among test statistics are influenced by overlapping time windows, shared data, and large-scale climatic patterns. To address this issue, <span class="citation" data-cites="kriss2010">Kriss et al. (<a href="references.html#ref-kriss2010" role="doc-biblioref">2010</a>)</span> proposed the use of the Simes’ method, which tests the global null hypothesis that none of the individual correlations are significant. Simes’ method orders p-values and rejects the global null hypothesis if any adjusted p-value meets a specific threshold.</p>
+<p>While this method indicates whether at least one correlation is significant, it does not provide significance for individual correlations. Therefore, the authors proposed that the individual correlation coefficients should be compared against a more stringent significance level (α = 0.005 instead of 0.05), reducing the likelihood of false positives but increasing false negatives. Although this adjustment is independent of the Simes’ method, there was a general alignment: significant global results often corresponded to significant individual correlations, and non-significant global results typically lacked significant individual correlations <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>.</p>
+<p>Let’s calculate the bootstrapped correlation coefficients combined with the Sime’s method. First, we need to subset our variables to the specific combination of weather and window.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>variables <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"T2M_MIN"</span>, <span class="st">"T2M_MAX"</span>, <span class="st">"RH2M"</span>)  <span class="co"># Add more variables as needed</span></span>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>  T2M_MIN_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_T2M_MIN_mean"</span>))</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>  T2M_MIN_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_T2M_MIN_mean"</span>))</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>  T2M_MIN_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_T2M_MIN_mean"</span>))</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>  T2M_MIN_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_T2M_MIN_mean"</span>))</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>  T2M_MAX_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_T2M_MAX_mean"</span>))</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>  T2M_MAX_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_T2M_MAX_mean"</span>))</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>  T2M_MAX_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_T2M_MAX_mean"</span>))</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a>  T2M_MAX_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_T2M_MAX_mean"</span>))</span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-11"><a href="#cb73-11" aria-hidden="true" tabindex="-1"></a>  T2M_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_T2M_mean"</span>))</span>
+<span id="cb73-12"><a href="#cb73-12" aria-hidden="true" tabindex="-1"></a>  T2M_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_T2M_mean"</span>))</span>
+<span id="cb73-13"><a href="#cb73-13" aria-hidden="true" tabindex="-1"></a>  T2M_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_T2M_mean"</span>))</span>
+<span id="cb73-14"><a href="#cb73-14" aria-hidden="true" tabindex="-1"></a>  T2M_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_T2M_mean"</span>))</span>
+<span id="cb73-15"><a href="#cb73-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-16"><a href="#cb73-16" aria-hidden="true" tabindex="-1"></a>  RH2M_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_RH2M_mean"</span>))</span>
+<span id="cb73-17"><a href="#cb73-17" aria-hidden="true" tabindex="-1"></a>  RH2M_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_RH2M_mean"</span>))</span>
+<span id="cb73-18"><a href="#cb73-18" aria-hidden="true" tabindex="-1"></a>  RH2_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_RH2M_mean"</span>))</span>
+<span id="cb73-19"><a href="#cb73-19" aria-hidden="true" tabindex="-1"></a>  RH2_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_RH2M_mean"</span>))</span>
+<span id="cb73-20"><a href="#cb73-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-21"><a href="#cb73-21" aria-hidden="true" tabindex="-1"></a>  PRECTOTCORR_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_PRECTOTCORR"</span>))</span>
+<span id="cb73-22"><a href="#cb73-22" aria-hidden="true" tabindex="-1"></a>  PRECTOTCORR_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_PRECTOTCORR"</span>))</span>
+<span id="cb73-23"><a href="#cb73-23" aria-hidden="true" tabindex="-1"></a>  PRECTOTCORR_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_PRECTOTCORR"</span>))</span>
+<span id="cb73-24"><a href="#cb73-24" aria-hidden="true" tabindex="-1"></a>  PRECTOTCORR_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_PRECTOTCORR"</span>))</span>
+<span id="cb73-25"><a href="#cb73-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb73-26"><a href="#cb73-26" aria-hidden="true" tabindex="-1"></a>  T2M_MINb_7 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length7_T2M_MIN_below"</span>))</span>
+<span id="cb73-27"><a href="#cb73-27" aria-hidden="true" tabindex="-1"></a>  T2M_MINb_14 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length14_T2M_MIN_below"</span>))</span>
+<span id="cb73-28"><a href="#cb73-28" aria-hidden="true" tabindex="-1"></a>  T2M_MINb_21 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length21_T2M_MIN_below"</span>))</span>
+<span id="cb73-29"><a href="#cb73-29" aria-hidden="true" tabindex="-1"></a>  T2M_MINb_28 <span class="ot">=</span> wp_all <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">starts_with</span>(<span class="st">"length28_T2M_MIN_below"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Under construction!</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the correlation and multiplicity for each window separately</span></span>
 <span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Apply the function to each variable and combine the results</span></span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>wp1 <span class="ot">&lt;-</span> <span class="fu">map</span>(variables, <span class="cf">function</span>(var) {</span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">windowpane</span>(</span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
-<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
-<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> <span class="sc">!!</span><span class="fu">sym</span>(var),   </span>
-<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
-<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
-<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
-<span id="cb74-14"><a href="#cb74-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
-<span id="cb74-15"><a href="#cb74-15" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb74-16"><a href="#cb74-16" aria-hidden="true" tabindex="-1"></a>})</span>
-<span id="cb74-17"><a href="#cb74-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb74-18"><a href="#cb74-18" aria-hidden="true" tabindex="-1"></a><span class="co"># To reduce a list to a dataframe </span></span>
-<span id="cb74-19"><a href="#cb74-19" aria-hidden="true" tabindex="-1"></a>wp1_df <span class="ot">&lt;-</span> <span class="fu">reduce</span>(wp1, left_join, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"study"</span>, <span class="st">"heading"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>For rainfall, we will summarize the cumulative rainfall within each window using the “sum” in the <code>summary_type</code> argument.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>wp3 <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
-<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
-<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
-<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
-<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> PRECTOTCORR,   </span>
-<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"sum"</span>,</span>
-<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
-<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
-<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
-<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove the heading and study variables to avoid duplication </span></span>
-<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a>wp3 <span class="ot">&lt;-</span> wp3 <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>heading, <span class="sc">-</span>study)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Finally, we will create a variable based on the count of events below a threshold. For this, we will count the number of days with T2M_MIN lower than 15 degree Celsius.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a>wp4 <span class="ot">&lt;-</span> <span class="fu">windowpane</span>(</span>
-<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> trials_weather,</span>
-<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">end_date_col =</span> heading,</span>
-<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">date_col =</span> YYYYMMDD,</span>
-<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">variable =</span> T2M_MIN,   </span>
-<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"below_threshold"</span>,</span>
-<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="dv">15</span>,</span>
-<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
-<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
-<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a><span class="co"># remove to avoid duplication</span></span>
-<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>wp_4 <span class="ot">&lt;-</span> wp4 <span class="sc">|&gt;</span> <span class="fu">select</span>(<span class="sc">-</span>heading, <span class="sc">-</span>study)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Now we can join all data frames using <code>cbind()</code> function.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a>wp_all <span class="ot">&lt;-</span> <span class="fu">cbind</span>(wp1, wp1_df, wp3, wp4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span>  T2M_MINb_14 <span class="co"># enter the weather and window length</span></span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean</span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span></span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
+<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-9"><a href="#cb74-9" aria-hidden="true" tabindex="-1"></a><span class="co">#results &lt;- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)</span></span>
+<span id="cb74-10"><a href="#cb74-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-11"><a href="#cb74-11" aria-hidden="true" tabindex="-1"></a><span class="co">#results_df &lt;- results$results</span></span>
+<span id="cb74-12"><a href="#cb74-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-13"><a href="#cb74-13" aria-hidden="true" tabindex="-1"></a><span class="co"># head(results_df)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
@@ -1758,6 +1803,7 @@ Windels, C. E., Lamey, H. A., Hilde, D., Widner, J., and Knudsen, T. 1998. A Cer
 Xu, X.-M., and Robinson, J. D. 2000. Effects of temperature on the incubation and latent periods of hawthorn powdery mildew (<span><em>Podosphaera clandestina</em></span>). Plant Pathology 49:791–797. <a href="https://doi.org/10.1046/j.1365-3059.2000.00520.x">https://doi.org/10.1046/j.1365-3059.2000.00520.x</a>.
 </div>
 </div>
+</section>
 </section>
 </section>
 </section>

@@ -743,6 +743,8 @@ In addition, data mining techniques are employed to systematically explore time-
 
 #### Window-pane
 
+##### Variable construction
+
 With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s [@coakley1985], has been widely used in modeling studies in plant pathology [@pietravalle2003; @calverojr1996; @tebeest2008a; @gouache2015a; @coakley1988; @kriss2010; @dallalana2021; @coakley1988a]. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g. daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.
 
 The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs. high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.
@@ -805,12 +807,13 @@ window_data |>
 
 The window pane analysis requires a spreadsheet program [@kriss2010] or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW [@coakley1985]. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane [@pietravalle2003; @tebeest2008a]. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts [@gouache2015a; @dallalana2021].
 
-Here, I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window pane principles.
-
-Let's first load a dataset that contains information on the disease and also metadata including a key date that will be used as starting point for windows creation. The `BlastWheat` dataset that is included in the {r4pde} package was made available by @decól2024.
+I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window pane approach. First, let's load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by @decól2024.
 
 ```{r}
+#| warning: false
+#| message: false
 library(r4pde)
+library(dplyr)
 trials <- BlastWheat
 glimpse(trials)
 
@@ -823,7 +826,7 @@ trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
 glimpse(trials$heading)
 ```
 
-The weather data for our analysis will be downloaded from NASA POWER. Because we have multiple trials with different heading dates, a wrapper function for the `get_power()` function from the {nasapower} package was created, included in {r4pde}, and named `get_nasapower()`. This function allows for the download of data over a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and after the heading date.
+The weather data for our analysis will be downloaded from NASA POWER. Since we have multiple trials with different heading dates, a wrapper function for the get_power() function from the {nasapower} package was created, included in {r4pde}, and named get_nasapower(). This function enables the download of data for a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and 28 days after the heading date.
 
 ```{r}
 #| eval: FALSE
@@ -844,7 +847,7 @@ Now we can see the weather data and join the two dataframes.
 #| message: false
 
 # read the data
-weather_data <- read_csv("data/weather_windowpane.csv")
+weather_data <- readr::read_csv("data/weather_windowpane.csv")
 
 glimpse(weather_data)
 
@@ -853,12 +856,15 @@ trials_weather <- full_join(trials, weather_data)
 
 ```
 
-We are now ready to use the `windowpane` function to create the new variables. In the function, there are a few arguments. Note two date variables, the `end_date` which should be our reference for sliding the windows and the `date_col` which is the date for each day in the time series. The `summary_type` is the statistics to calculate. The `direction` is whether the sliding windows will be backward, forward or both directions relative to the end date. Finally, the `group_by` is the index variable for the study or trial.
+We are now ready to use the windowpane function to create new variables. The function has several arguments. Note the two date variables: `end_date`, which serves as the reference for sliding the windows, and `date_col`, which represents the date for each day in the time series. The `summary_type` specifies the statistic to be calculated, while the `direction` determines whether the sliding windows will move backward, forward, or in both directions relative to the end date. Lastly, the `group_by` argument specifies the index variable for the epidemic or study.
 
-Let's create the new variables based on the mean daily temperature (T2M). Each new variable will be the mean value over each of the four window lengths (7, 14, 21 and 28) defined in `window_length` argument. We will create only variables at an earlier time relative to heading date and for this we use "backward" in `direction` argument.
+We will create new variables based on the mean daily temperature (T2M), with each variable representing the mean value over one of the four window lengths (7, 14, 21, and 28 days) defined in the `window_length` argument. We will only generate variables that cover periods before the heading date, using "backward" in the `direction` argument.
 
 ```{r}
-wp <- windowpane(
+
+# Create window variables separated for each weather variable
+
+wp_T2M <- windowpane(
   data = trials_weather,
   end_date_col = heading,
   date_col = YYYYMMDD,
@@ -870,57 +876,7 @@ wp <- windowpane(
   group_by_cols = "study", 
 )
 
-# Check the intuitive names of the variables
-head(wp)
-```
-
-To automate the creation of new variables based on multiple weather variables, we can use the `map()` function of {purrr}. Let's continue summarizing the mean value for three other variables of temperature and relative humidity.
-
-```{r}
-variables <- c("T2M_MIN", "T2M_MAX", "RH2M")  # Add more variables as needed
-
-# Apply the function to each variable and combine the results
-wp1 <- map(variables, function(var) {
-  windowpane(
-    data = trials_weather,
-    end_date_col = heading,
-    date_col = YYYYMMDD,
-    variable = !!sym(var),   
-    summary_type = "mean",
-    threshold = NULL,
-    window_lengths = c(7, 14, 21, 28),
-    direction = "backward",
-    group_by_cols = "study", 
-  )
-})
-
-# To reduce a list to a dataframe 
-wp1_df <- reduce(wp1, left_join, by = c("study", "heading"))
-```
-
-For rainfall, we will summarize the cumulative rainfall within each window using the "sum" in the `summary_type` argument.
-
-```{r}
-wp3 <- windowpane(
-    data = trials_weather,
-    end_date_col = heading,
-    date_col = YYYYMMDD,
-    variable = PRECTOTCORR,   
-    summary_type = "sum",
-    threshold = NULL,
-    window_lengths = c(7, 14, 21, 28),
-    direction = "backwards",
-    group_by_cols = "study", 
-  )
-
-# Remove the heading and study variables to avoid duplication 
-wp3 <- wp3 |> select(-heading, -study)
-```
-
-Finally, we will create a variable based on the count of events below a threshold. For this, we will count the number of days with T2M_MIN lower than 15 degree Celsius. 
-
-```{r}
-wp4 <- windowpane(
+wpT2M_MIN_15 <- windowpane(
     data = trials_weather,
     end_date_col = heading,
     date_col = YYYYMMDD,
@@ -932,24 +888,122 @@ wp4 <- windowpane(
     group_by_cols = "study", 
   )
 
-# remove to avoid duplication
-wp_4 <- wp4 |> select(-heading, -study)
+wpT2M_MIN <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpT2M_MAX <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MAX,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpPREC <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = PRECTOTCORR,   
+    summary_type = "sum",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backwards",
+    group_by_cols = "study", 
+  )
+
+wpRH2M <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = RH2M,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backwards",
+    group_by_cols = "study", 
+  )
+
+# combine all datasets
+wp_all <- cbind(wp_T2M, wpT2M_MIN_15, wpT2M_MIN, wpT2M_MAX, wpPREC, wpRH2M)
+
 ```
 
-Now we can join all data frames using `cbind()` function.
+##### Correlations and multiple hypothesis test
+
+The window pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman's rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal [@kriss2010].
+
+In a recent study, @dallalana2021, differing from @kriss2010, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g. 1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.
+
+The window-pane analysis involves numerous tests, as each time window generates a separate test statistic. Because many tests are conducted, the global significance level becomes higher than the critical significance level set for individual tests, increasing the risk of false positives [@kriss2010]. Additionally, the correlations among test statistics are influenced by overlapping time windows, shared data, and large-scale climatic patterns. To address this issue, @kriss2010 proposed the use of the Simes' method, which tests the global null hypothesis that none of the individual correlations are significant. Simes' method orders p-values and rejects the global null hypothesis if any adjusted p-value meets a specific threshold.
+
+While this method indicates whether at least one correlation is significant, it does not provide significance for individual correlations. Therefore, the authors proposed that the individual correlation coefficients should be compared against a more stringent significance level (α = 0.005 instead of 0.05), reducing the likelihood of false positives but increasing false negatives. Although this adjustment is independent of the Simes' method, there was a general alignment: significant global results often corresponded to significant individual correlations, and non-significant global results typically lacked significant individual correlations [@kriss2010].
+
+Let's calculate the bootstrapped correlation coefficients combined with the Sime's method. First, we need to subset our variables to the specific combination of weather and window.
 
 ```{r}
-wp_all <- cbind(wp1, wp1_df, wp3, wp4)
+
+  T2M_MIN_7 = wp_all %>% select(starts_with("length7_T2M_MIN_mean"))
+  T2M_MIN_14 = wp_all %>% select(starts_with("length14_T2M_MIN_mean"))
+  T2M_MIN_21 = wp_all %>% select(starts_with("length21_T2M_MIN_mean"))
+  T2M_MIN_28 = wp_all %>% select(starts_with("length28_T2M_MIN_mean"))
+ 
+  T2M_MAX_7 = wp_all %>% select(starts_with("length7_T2M_MAX_mean"))
+  T2M_MAX_14 = wp_all %>% select(starts_with("length14_T2M_MAX_mean"))
+  T2M_MAX_21 = wp_all %>% select(starts_with("length21_T2M_MAX_mean"))
+  T2M_MAX_28 = wp_all %>% select(starts_with("length28_T2M_MAX_mean"))
+  
+  T2M_7 = wp_all %>% select(starts_with("length7_T2M_mean"))
+  T2M_14 = wp_all %>% select(starts_with("length14_T2M_mean"))
+  T2M_21 = wp_all %>% select(starts_with("length21_T2M_mean"))
+  T2M_28 = wp_all %>% select(starts_with("length28_T2M_mean"))
+  
+  RH2M_7 = wp_all %>% select(starts_with("length7_RH2M_mean"))
+  RH2M_14 = wp_all %>% select(starts_with("length14_RH2M_mean"))
+  RH2_21 = wp_all %>% select(starts_with("length21_RH2M_mean"))
+  RH2_28 = wp_all %>% select(starts_with("length28_RH2M_mean"))
+  
+  PRECTOTCORR_7 = wp_all %>% select(starts_with("length7_PRECTOTCORR"))
+  PRECTOTCORR_14 = wp_all %>% select(starts_with("length14_PRECTOTCORR"))
+  PRECTOTCORR_21 = wp_all %>% select(starts_with("length21_PRECTOTCORR"))
+  PRECTOTCORR_28 = wp_all %>% select(starts_with("length28_PRECTOTCORR"))
+  
+  T2M_MINb_7 = wp_all %>% select(starts_with("length7_T2M_MIN_below"))
+  T2M_MINb_14 = wp_all %>% select(starts_with("length14_T2M_MIN_below"))
+  T2M_MINb_21 = wp_all %>% select(starts_with("length21_T2M_MIN_below"))
+  T2M_MINb_28 = wp_all %>% select(starts_with("length28_T2M_MIN_below"))
+  
 
 ```
 
+Under construction!
 
+```{r}
 
+# Run the correlation and multiplicity for each window separately
 
+data <-  T2M_MINb_14 # enter the weather and window length
+data$inc <- trials$inc_mean
+response_var <- 'inc'
 
+library(boot)
 
+#results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
 
+#results_df <- results$results
 
+# head(results_df)
 
-
-
+```

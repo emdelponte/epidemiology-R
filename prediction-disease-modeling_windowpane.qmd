@@ -389,7 +389,7 @@ T2M_MAX_7 <- wp_all |>
 
 
 ```{r}
-variable_selection_with_refined_simes_table <- function(data, response_var, corr_type = "spearman", R = 1000, global_alpha = 0.05, individual_alpha = 0.005) {
+windowpane_tests <- function(data, response_var, corr_type = "spearman", R = 1000, global_alpha = 0.05, individual_alpha = 0.005) {
   # Define predictors and response
   predictors <- setdiff(names(data), response_var)
   response <- data[[response_var]]
@@ -413,7 +413,8 @@ variable_selection_with_refined_simes_table <- function(data, response_var, corr
     response_data <- sample_data[[response_var]]
 
     # Calculate correlation for the given sample
-    corr_result <- cor.test(var_data, response_data, method = corr_type)
+    corr_result <- cor.test(var_data, response_data, 
+                            method = corr_type)
     
     # Return the correlation estimate and p-value
     return(c(as.numeric(corr_result$estimate), corr_result$p.value))
@@ -505,6 +506,56 @@ results <- variable_selection_with_refined_simes_table(data, response_var, corr_
 view(results$results)
 print(results$summary_table)
 cat("Is globally significant?", results$global_significant, "\n")
+
+
+
+
+
+# Define a function to identify clusters of significant correlations
+windowpane_clusters <- function(results_df, min_cluster_size = 5) {
+  # Create a logical vector indicating whether each correlation is significant
+  is_significant <- results_df$individual_significant
+  
+  # Initialize variables to track clusters
+  cluster_starts <- c()
+  cluster_ends <- c()
+  current_cluster_size <- 0
+  cluster_start <- NULL
+  
+  # Loop through the significance vector
+  for (i in seq_along(is_significant)) {
+    if (is_significant[i]) {
+      # Start or extend a cluster
+      if (current_cluster_size == 0) {
+        cluster_start <- i
+      }
+      current_cluster_size <- current_cluster_size + 1
+    } else {
+      # End a cluster
+      if (current_cluster_size >= min_cluster_size) {
+        cluster_starts <- c(cluster_starts, cluster_start)
+        cluster_ends <- c(cluster_ends, i - 1)
+      }
+      # Reset cluster size
+      current_cluster_size <- 0
+    }
+  }
+  
+  # Check if the last cluster was not closed
+  if (current_cluster_size >= min_cluster_size) {
+    cluster_starts <- c(cluster_starts, cluster_start)
+    cluster_ends <- c(cluster_ends, length(is_significant))
+  }
+  
+  # Create a data frame to summarize clusters
+  clusters_df <- data.frame(
+    Cluster_Start = cluster_starts,
+    Cluster_End = cluster_ends,
+    Cluster_Size = cluster_ends - cluster_starts + 1
+  )
+  
+  return(clusters_df)
+}
 
 ```
 
