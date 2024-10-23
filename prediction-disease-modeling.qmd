@@ -988,22 +988,19 @@ Let's calculate the bootstrapped correlation coefficients combined with the Sime
 
 ```
 
-Under construction!
+Now, we can use the `windowpane_tests()` function from the {r4pde} package to analyze each of the datasets created above. This function will compute the bootstrapped correlation coefficients for the variables of interest and apply the Simes' procedure to account for multiple testing, providing adjusted p-values for more robust statistical inference.
 
 ```{r}
-
-# Run the correlation and multiplicity for each window separately
-
-data <-  T2M_MINb_14 # enter the weather and window length
-data$inc <- trials$inc_mean
-response_var <- 'inc'
-
 library(boot)
+data <- T2M_MINb_14 # enter the dataset
+data$inc <- trials$inc_mean # create the incidence variable
+response_var <- 'inc'  # define the response variable for the function
 
-#results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
+results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
 
-#results_df <- results$results
+results
 
-# head(results_df)
 
 ```
+
+The `windowpane_tests()` results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
