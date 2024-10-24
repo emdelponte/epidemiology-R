@@ -540,9 +540,9 @@ Figure&nbsp;20.1: Steps of model development from data collection to modeling ba
 <table class="caption-top table">
 <caption>Comparison of different infection modeling approaches. Source: <span class="citation" data-cites="magarey2007">Magarey and Sutton (<a href="references.html#ref-magarey2007" role="doc-biblioref">2007</a>)</span></caption>
 <colgroup>
-<col style="width: 25%">
+<col style="width: 26%">
 <col style="width: 41%">
-<col style="width: 32%">
+<col style="width: 31%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1569,7 +1569,7 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <span id="cb72-56"><a href="#cb72-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"sum"</span>,</span>
 <span id="cb72-57"><a href="#cb72-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
 <span id="cb72-58"><a href="#cb72-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb72-59"><a href="#cb72-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
+<span id="cb72-59"><a href="#cb72-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
 <span id="cb72-60"><a href="#cb72-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
 <span id="cb72-61"><a href="#cb72-61" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb72-62"><a href="#cb72-62" aria-hidden="true" tabindex="-1"></a></span>
@@ -1581,7 +1581,7 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <span id="cb72-68"><a href="#cb72-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">summary_type =</span> <span class="st">"mean"</span>,</span>
 <span id="cb72-69"><a href="#cb72-69" aria-hidden="true" tabindex="-1"></a>    <span class="at">threshold =</span> <span class="cn">NULL</span>,</span>
 <span id="cb72-70"><a href="#cb72-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">window_lengths =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">14</span>, <span class="dv">21</span>, <span class="dv">28</span>),</span>
-<span id="cb72-71"><a href="#cb72-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backwards"</span>,</span>
+<span id="cb72-71"><a href="#cb72-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">direction =</span> <span class="st">"backward"</span>,</span>
 <span id="cb72-72"><a href="#cb72-72" aria-hidden="true" tabindex="-1"></a>    <span class="at">group_by_cols =</span> <span class="st">"study"</span>, </span>
 <span id="cb72-73"><a href="#cb72-73" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb72-74"><a href="#cb72-74" aria-hidden="true" tabindex="-1"></a></span>
@@ -1630,74 +1630,119 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <p>Now, we can use the <code>windowpane_tests()</code> function from the {r4pde} package to analyze each of the datasets created above. This function will compute the bootstrapped correlation coefficients for the variables of interest and apply the Simes’ procedure to account for multiple testing, providing adjusted p-values for more robust statistical inference.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(boot)</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> T2M_MINb_14 <span class="co"># enter the dataset</span></span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean <span class="co"># create the incidence variable</span></span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span>  <span class="co"># define the response variable for the function</span></span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">windowpane_tests</span>(data, response_var, <span class="at">corr_type =</span> <span class="st">"spearman"</span>, <span class="at">R =</span> <span class="dv">1000</span>)</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>$results
-                                   variable correlation      p_value  mean_corr
-1  length14_T2M_MIN_below_threshold_-10_-23  -0.5613779 3.024347e-13 -0.5616183
-2  length14_T2M_MIN_below_threshold_-11_-24  -0.5591607 3.918776e-13 -0.5578037
-3   length14_T2M_MIN_below_threshold_-9_-22  -0.5531803 7.807759e-13 -0.5473919
-4   length14_T2M_MIN_below_threshold_-8_-21  -0.5470701 1.557083e-12 -0.5450717
-5  length14_T2M_MIN_below_threshold_-12_-25  -0.5424451 2.601534e-12 -0.5389195
-6   length14_T2M_MIN_below_threshold_-3_-16  -0.5300162 9.947747e-12 -0.5259588
-7   length14_T2M_MIN_below_threshold_-1_-14  -0.5293597 1.066204e-11 -0.5271054
-8   length14_T2M_MIN_below_threshold_-7_-20  -0.5290880 1.097194e-11 -0.5286576
-9  length14_T2M_MIN_below_threshold_-13_-26  -0.5285916 1.156080e-11 -0.5256963
-10   length14_T2M_MIN_below_threshold_0_-13  -0.5285474 1.161470e-11 -0.5263610
-11 length14_T2M_MIN_below_threshold_-14_-27  -0.5284331 1.175519e-11 -0.5270657
-12  length14_T2M_MIN_below_threshold_-2_-15  -0.5281574 1.210088e-11 -0.5263355
-13  length14_T2M_MIN_below_threshold_-4_-17  -0.5204561 2.690971e-11 -0.5189824
-14  length14_T2M_MIN_below_threshold_-5_-18  -0.5125523 5.986667e-11 -0.5099248
-15  length14_T2M_MIN_below_threshold_-6_-19  -0.4969010 2.748834e-10 -0.4962862
-      sd_corr median_corr rank  m simes_threshold significant_simes
-1  0.06022356  -0.5632944    1 15     0.003333333              TRUE
-2  0.05964331  -0.5618962    2 15     0.006666667              TRUE
-3  0.05932453  -0.5491169    3 15     0.010000000              TRUE
-4  0.06026084  -0.5466928    4 15     0.013333333              TRUE
-5  0.05938267  -0.5401558    5 15     0.016666667              TRUE
-6  0.06372195  -0.5316024    6 15     0.020000000              TRUE
-7  0.05944945  -0.5304466    7 15     0.023333333              TRUE
-8  0.06033631  -0.5333300    8 15     0.026666667              TRUE
-9  0.06070226  -0.5274605    9 15     0.030000000              TRUE
-10 0.06057062  -0.5289232   10 15     0.033333333              TRUE
-11 0.05909141  -0.5289086   11 15     0.036666667              TRUE
-12 0.05943834  -0.5265104   12 15     0.040000000              TRUE
-13 0.05935507  -0.5200197   13 15     0.043333333              TRUE
-14 0.06291798  -0.5140878   14 15     0.046666667              TRUE
-15 0.06215736  -0.4956593   15 15     0.050000000              TRUE
-   individual_significant
-1                    TRUE
-2                    TRUE
-3                    TRUE
-4                    TRUE
-5                    TRUE
-6                    TRUE
-7                    TRUE
-8                    TRUE
-9                    TRUE
-10                   TRUE
-11                   TRUE
-12                   TRUE
-13                   TRUE
-14                   TRUE
-15                   TRUE
-
-$summary_table
-               Metric         Value
-1 Global P-value (Pg)  2.939082e-12
-2     Max Correlation -4.962862e-01
-
-$global_significant
-[1] TRUE</code></pre>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> T2M_MINb_7 </span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>data<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean </span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span>  </span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>results <span class="ot">&lt;-</span> <span class="fu">windowpane_tests</span>(data, response_var, <span class="at">corr_type =</span> <span class="st">"spearman"</span>, <span class="at">R =</span> <span class="dv">1000</span>)</span>
+<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>results_TMINb <span class="ot">&lt;-</span> results<span class="sc">$</span>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The window pane tests results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes’ correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.</p>
+<p>Let’s apply the test function to 7-day long windows for three other variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>data1 <span class="ot">&lt;-</span> RH2M_7 </span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a>data1<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean </span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span>  </span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>results1 <span class="ot">&lt;-</span> <span class="fu">windowpane_tests</span>(data1, response_var, <span class="at">corr_type =</span> <span class="st">"spearman"</span>, <span class="at">R =</span> <span class="dv">1000</span>)</span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a>results_RH <span class="ot">&lt;-</span> results1<span class="sc">$</span>results</span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> PRECTOTCORR_7 </span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a>data2<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean </span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span>  </span>
+<span id="cb75-11"><a href="#cb75-11" aria-hidden="true" tabindex="-1"></a>results2 <span class="ot">&lt;-</span> <span class="fu">windowpane_tests</span>(data2, response_var, <span class="at">corr_type =</span> <span class="st">"spearman"</span>, <span class="at">R =</span> <span class="dv">1000</span>)</span>
+<span id="cb75-12"><a href="#cb75-12" aria-hidden="true" tabindex="-1"></a>results_PREC <span class="ot">&lt;-</span> results2<span class="sc">$</span>results</span>
+<span id="cb75-13"><a href="#cb75-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-14"><a href="#cb75-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-15"><a href="#cb75-15" aria-hidden="true" tabindex="-1"></a>data3 <span class="ot">&lt;-</span> T2M_MAX_7 <span class="co"># enter the dataset</span></span>
+<span id="cb75-16"><a href="#cb75-16" aria-hidden="true" tabindex="-1"></a>data3<span class="sc">$</span>inc <span class="ot">&lt;-</span> trials<span class="sc">$</span>inc_mean </span>
+<span id="cb75-17"><a href="#cb75-17" aria-hidden="true" tabindex="-1"></a>response_var <span class="ot">&lt;-</span> <span class="st">'inc'</span>  </span>
+<span id="cb75-18"><a href="#cb75-18" aria-hidden="true" tabindex="-1"></a>results3 <span class="ot">&lt;-</span> <span class="fu">windowpane_tests</span>(data3, response_var, <span class="at">corr_type =</span> <span class="st">"spearman"</span>, <span class="at">R =</span> <span class="dv">1000</span>)</span>
+<span id="cb75-19"><a href="#cb75-19" aria-hidden="true" tabindex="-1"></a>results_TMAX <span class="ot">&lt;-</span> results3<span class="sc">$</span>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s plot the results of the correlations for the above</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use strcapture to extract components into new columns</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>df_TMINb7 <span class="ot">&lt;-</span> results_TMINb <span class="sc">%&gt;%</span></span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract</span>(variable, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable_prefix"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>), </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">regex =</span> <span class="st">"^(.*)_(-?</span><span class="sc">\\</span><span class="st">d+)_(-?</span><span class="sc">\\</span><span class="st">d+)$"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-7"><a href="#cb76-7" aria-hidden="true" tabindex="-1"></a>df_RH7 <span class="ot">&lt;-</span> results_RH <span class="sc">%&gt;%</span></span>
+<span id="cb76-8"><a href="#cb76-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract</span>(variable, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable_prefix"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>), </span>
+<span id="cb76-9"><a href="#cb76-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">regex =</span> <span class="st">"^(.*)_(-?</span><span class="sc">\\</span><span class="st">d+)_(-?</span><span class="sc">\\</span><span class="st">d+)$"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-10"><a href="#cb76-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-11"><a href="#cb76-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-12"><a href="#cb76-12" aria-hidden="true" tabindex="-1"></a>df_PREC7 <span class="ot">&lt;-</span> results_PREC <span class="sc">%&gt;%</span></span>
+<span id="cb76-13"><a href="#cb76-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract</span>(variable, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable_prefix"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>), </span>
+<span id="cb76-14"><a href="#cb76-14" aria-hidden="true" tabindex="-1"></a>          <span class="at">regex =</span> <span class="st">"^(.*)_(-?</span><span class="sc">\\</span><span class="st">d+)_(-?</span><span class="sc">\\</span><span class="st">d+)$"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-15"><a href="#cb76-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-16"><a href="#cb76-16" aria-hidden="true" tabindex="-1"></a>df_TMAX7 <span class="ot">&lt;-</span> results_TMAX <span class="sc">%&gt;%</span></span>
+<span id="cb76-17"><a href="#cb76-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">extract</span>(variable, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"variable_prefix"</span>, <span class="st">"low"</span>, <span class="st">"high"</span>), </span>
+<span id="cb76-18"><a href="#cb76-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">regex =</span> <span class="st">"^(.*)_(-?</span><span class="sc">\\</span><span class="st">d+)_(-?</span><span class="sc">\\</span><span class="st">d+)$"</span>, <span class="at">convert =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb76-19"><a href="#cb76-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-20"><a href="#cb76-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-21"><a href="#cb76-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-22"><a href="#cb76-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-23"><a href="#cb76-23" aria-hidden="true" tabindex="-1"></a>p_TMIN <span class="ot">&lt;-</span> df_TMINb7 <span class="sc">|&gt;</span> </span>
+<span id="cb76-24"><a href="#cb76-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(low, mean_corr, <span class="at">fill =</span> p_value))<span class="sc">+</span></span>
+<span id="cb76-25"><a href="#cb76-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb76-26"><a href="#cb76-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb76-27"><a href="#cb76-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb76-28"><a href="#cb76-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"N. days TMIN &lt; 15C"</span>,</span>
+<span id="cb76-29"><a href="#cb76-29" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"7-day window"</span>,</span>
+<span id="cb76-30"><a href="#cb76-30" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Spearman's correlation"</span>,</span>
+<span id="cb76-31"><a href="#cb76-31" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Day relative to heading date "</span>)</span>
+<span id="cb76-32"><a href="#cb76-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-33"><a href="#cb76-33" aria-hidden="true" tabindex="-1"></a>p_RH <span class="ot">&lt;-</span> df_RH7 <span class="sc">|&gt;</span> </span>
+<span id="cb76-34"><a href="#cb76-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(low, mean_corr, <span class="at">fill =</span> p_value))<span class="sc">+</span></span>
+<span id="cb76-35"><a href="#cb76-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb76-36"><a href="#cb76-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb76-37"><a href="#cb76-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb76-38"><a href="#cb76-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Relative humidity"</span>, </span>
+<span id="cb76-39"><a href="#cb76-39" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"7-day window"</span>,</span>
+<span id="cb76-40"><a href="#cb76-40" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Spearman's correlation"</span>,</span>
+<span id="cb76-41"><a href="#cb76-41" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Day relative to heading date "</span>)</span>
+<span id="cb76-42"><a href="#cb76-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-43"><a href="#cb76-43" aria-hidden="true" tabindex="-1"></a>p_TMAX <span class="ot">&lt;-</span> df_TMAX7 <span class="sc">|&gt;</span> </span>
+<span id="cb76-44"><a href="#cb76-44" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(low, mean_corr, <span class="at">fill =</span> p_value))<span class="sc">+</span></span>
+<span id="cb76-45"><a href="#cb76-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb76-46"><a href="#cb76-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb76-47"><a href="#cb76-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb76-48"><a href="#cb76-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Max. temperature"</span>, </span>
+<span id="cb76-49"><a href="#cb76-49" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"7-day window"</span>,</span>
+<span id="cb76-50"><a href="#cb76-50" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Spearman's correlation"</span>,</span>
+<span id="cb76-51"><a href="#cb76-51" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Day relative to heading date "</span>)</span>
+<span id="cb76-52"><a href="#cb76-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-53"><a href="#cb76-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-54"><a href="#cb76-54" aria-hidden="true" tabindex="-1"></a>p_PREC <span class="ot">&lt;-</span> df_PREC7 <span class="sc">|&gt;</span> </span>
+<span id="cb76-55"><a href="#cb76-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(low, mean_corr, <span class="at">fill =</span> p_value))<span class="sc">+</span></span>
+<span id="cb76-56"><a href="#cb76-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="sc">-</span><span class="dv">1</span>, <span class="dv">1</span>)<span class="sc">+</span></span>
+<span id="cb76-57"><a href="#cb76-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>()<span class="sc">+</span></span>
+<span id="cb76-58"><a href="#cb76-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_r4pde</span>(<span class="at">font_size =</span> <span class="dv">12</span>)<span class="sc">+</span></span>
+<span id="cb76-59"><a href="#cb76-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Cumulative rainfall"</span>, </span>
+<span id="cb76-60"><a href="#cb76-60" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"7-day window"</span>,</span>
+<span id="cb76-61"><a href="#cb76-61" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Spearman's correlation"</span>,</span>
+<span id="cb76-62"><a href="#cb76-62" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Day relative to heading date "</span>)</span>
+<span id="cb76-63"><a href="#cb76-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb76-64"><a href="#cb76-64" aria-hidden="true" tabindex="-1"></a>scale_common <span class="ot">&lt;-</span> <span class="fu">scale_fill_viridis_c</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), </span>
+<span id="cb76-65"><a href="#cb76-65" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">na.value =</span> <span class="st">"grey90"</span>)</span>
+<span id="cb76-66"><a href="#cb76-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-67"><a href="#cb76-67" aria-hidden="true" tabindex="-1"></a>p_TMIN <span class="ot">&lt;-</span> p_TMIN <span class="sc">+</span> scale_common</span>
+<span id="cb76-68"><a href="#cb76-68" aria-hidden="true" tabindex="-1"></a>p_TMAX <span class="ot">&lt;-</span> p_TMAX <span class="sc">+</span> scale_common</span>
+<span id="cb76-69"><a href="#cb76-69" aria-hidden="true" tabindex="-1"></a>p_RH <span class="ot">&lt;-</span> p_RH <span class="sc">+</span> scale_common</span>
+<span id="cb76-70"><a href="#cb76-70" aria-hidden="true" tabindex="-1"></a>p_PREC <span class="ot">&lt;-</span> p_PREC <span class="sc">+</span> scale_common</span>
+<span id="cb76-71"><a href="#cb76-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb76-72"><a href="#cb76-72" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots using patchwork and collect guides</span></span>
+<span id="cb76-73"><a href="#cb76-73" aria-hidden="true" tabindex="-1"></a>(p_TMIN <span class="sc">|</span> p_TMAX) <span class="sc">/</span> (p_RH <span class="sc">|</span> p_PREC) <span class="sc">+</span> </span>
+<span id="cb76-74"><a href="#cb76-74" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">guides =</span> <span class="st">"collect"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="prediction-disease-modeling_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
-<p>The <code>windowpane_tests()</code> results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes’ correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.</p>
+</div>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list" style="display: none">

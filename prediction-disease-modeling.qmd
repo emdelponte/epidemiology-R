@@ -1,6 +1,8 @@
 ---
 title: "Disease modeling"
 bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
 ---
 
 ## Introduction
@@ -48,7 +50,7 @@ Modeling approaches vary based on available data and model goals. A common metho
 When infection responses are measured at various temperature and wetness combinations, regression models can be developed to predict infection rates. These models often use polynomial, logistic, or complex three-dimensional response surface equations to represent the relationship between environmental conditions and infection potential. In an excellent review title "*How to create and deploy infection models for plant pathogen*s" @magarey2007 discusses that many modeling approaches lack biological foundations and are not generic, making them unsuitable for developing a unified set of disease forecast models. While three-dimensional response surfaces, such as those created with sufficient temperature-moisture observations, offer detailed infection responses, they are often too complex and data-intensive for widespread use (seeTable 1 adapted from @magarey2007).
 
 | Approach                                                               | Strengths                                                                                                          | Weaknesses                                                                               |
-|------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+|-------------------|------------------------------|-----------------------|
 | Matrix [@krause1975; @mills1944; @windels1998]                         | Easy; converts moisture/temperature combinations into severity values or risk categories. Tried and true approach. | Data to populate matrix may not be readily available.                                    |
 | Regression:<br>-- Polynomial [@evans1992]<br>-- Logistic [@bulger1987] | Widely used in plant pathology. Available for many economically important pathogens.                               | Parameters not biologically based. Requires dataset for development.                     |
 | Three-dimensional response surface [@duthie1997]                       | Describes infection response in detail.                                                                            | Parameters not biologically based. Complex, requires extensive data and processing time. |
@@ -920,7 +922,7 @@ wpPREC <- windowpane(
     summary_type = "sum",
     threshold = NULL,
     window_lengths = c(7, 14, 21, 28),
-    direction = "backwards",
+    direction = "backward",
     group_by_cols = "study", 
   )
 
@@ -932,7 +934,7 @@ wpRH2M <- windowpane(
     summary_type = "mean",
     threshold = NULL,
     window_lengths = c(7, 14, 21, 28),
-    direction = "backwards",
+    direction = "backward",
     group_by_cols = "study", 
   )
 
@@ -992,15 +994,120 @@ Now, we can use the `windowpane_tests()` function from the {r4pde} package to an
 
 ```{r}
 library(boot)
-data <- T2M_MINb_14 # enter the dataset
-data$inc <- trials$inc_mean # create the incidence variable
-response_var <- 'inc'  # define the response variable for the function
-
+data <- T2M_MINb_7 
+data$inc <- trials$inc_mean 
+response_var <- 'inc'  
 results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
-
-results
+results_TMINb <- results$results
 
 
 ```
 
-The `windowpane_tests()` results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
+The window pane tests results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
+
+Let's apply the test function to 7-day long windows for three other variables.
+
+```{r}
+data1 <- RH2M_7 
+data1$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results1 <- windowpane_tests(data1, response_var, corr_type = "spearman", R = 1000)
+results_RH <- results1$results
+
+
+data2 <- PRECTOTCORR_7 
+data2$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results2 <- windowpane_tests(data2, response_var, corr_type = "spearman", R = 1000)
+results_PREC <- results2$results
+
+
+data3 <- T2M_MAX_7 # enter the dataset
+data3$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results3 <- windowpane_tests(data3, response_var, corr_type = "spearman", R = 1000)
+results_TMAX <- results3$results
+
+
+
+```
+
+Let's plot the results of the correlations for the above
+
+```{r}
+# Use strcapture to extract components into new columns
+df_TMINb7 <- results_TMINb %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+
+df_RH7 <- results_RH %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+
+df_PREC7 <- results_PREC %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+df_TMAX7 <- results_TMAX %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+
+
+
+p_TMIN <- df_TMINb7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "N. days TMIN < 15C",
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+p_RH <- df_RH7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Relative humidity", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+p_TMAX <- df_TMAX7 |> 
+ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Max. temperature", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+
+p_PREC <- df_PREC7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Cumulative rainfall", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+    
+scale_common <- scale_fill_viridis_c(limits = c(0, 1), 
+                                     na.value = "grey90")
+
+p_TMIN <- p_TMIN + scale_common
+p_TMAX <- p_TMAX + scale_common
+p_RH <- p_RH + scale_common
+p_PREC <- p_PREC + scale_common
+
+# Combine plots using patchwork and collect guides
+(p_TMIN | p_TMAX) / (p_RH | p_PREC) + 
+  plot_layout(guides = "collect")
+
+```
