@@ -1000,14 +1000,17 @@ response_var <- 'inc'
 results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
 results_TMINb <- results$results
 
-
+results
 ```
 
-The window pane tests results indicate strong, statistically significant negative correlations between the response variable and the selected predictors related to minimum temperature thresholds over a 14-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
+The window pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. 
+
+The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
 
 Let's apply the test function to 7-day long windows for three other variables.
 
 ```{r}
+library(r4pde)
 data1 <- RH2M_7 
 data1$inc <- trials$inc_mean 
 response_var <- 'inc'  
@@ -1032,7 +1035,7 @@ results_TMAX <- results3$results
 
 ```
 
-Let's plot the results of the correlations for the above
+The first variable contains the name of the variable. We can extract the number of days from each window using the `extract` function, which allows for regex-based extraction into new columns. In this case, two new columns will be created representing the extreme days of the window. 
 
 ```{r}
 # Use strcapture to extract components into new columns
@@ -1053,10 +1056,11 @@ df_PREC7 <- results_PREC %>%
 df_TMAX7 <- results_TMAX %>%
   extract(variable, into = c("variable_prefix", "low", "high"), 
           regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+```
 
+Now we can plot the mean correlation for the start day of each window.
 
-
-
+```{r}
 p_TMIN <- df_TMINb7 |> 
   ggplot(aes(low, mean_corr, fill = p_value))+
   ylim(-1, 1)+
