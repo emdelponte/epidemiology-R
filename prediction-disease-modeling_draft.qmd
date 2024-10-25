@@ -1,0 +1,1884 @@
+---
+title: "Disease modeling"
+bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
+---
+
+## Introduction
+
+As seen in the previous chapter, plant disease modeling is a crucial tool for predicting disease dynamics and informing management decisions when integrated into decision support systems. By leveraging models, researchers and practitioners can anticipate disease outbreaks, assess potential risks, and implement timely interventions to mitigate losses [@savary2018; @rossi2010a].
+
+Mathematical modeling involves representing empirical phenomena and experimental outcomes using mathematical functions. The data used for these models may be collected specifically for modeling purposes or drawn from existing experiments and observations originally conducted to address different research questions, with such data often found in the literature [@hau1990].
+
+Mathematical models integrating plant, disease, and environmental - in most cases weather-based variables - factors have been developed since the mid-1900s (See recent review by @gonzález-domínguez2023 ). Dynamic modeling of disease epidemics gained traction in the early 1960s with foundational work by Vanderplank and Zadoks, setting the stage for future advancements. Since then, researchers have contributed extensively to model development, mainly focusing on the plant disease cycle which outline pathogen development stages, such as dormancy, reproduction, dispersal, and pathogenesis, driven by interactions among host, pathogen, and environmental factors [@dewolf2007].
+
+A systematic map by @fedele2022a identified over 750 papers on plant disease models, primarily aimed at understanding system interactions (n = 680). This map revealed that while most models focus on system understanding, fewer are devoted to tactical management (n = 40), strategic planning (n = 38), or scenario analysis (n = 9).
+
+In terms of model development, we can classify the models into two main groups based on the approach taken [@gonzález-domínguez2023]: Empirical or mechanistic approaches, which differ fundamentally in their basis, complexity and application ([@fig-approaches_modeling]).
+
+![Steps of model development from data collection to modeling based on statistical relationships (data-driven) between data collected from field or controlled environment to mechanistic approach based on the elements of the disease cycles (concept-driven).](imgs/modeling-fig1.png){#fig-approaches_modeling fig-align="center" width="614"}
+
+**Empirical models**, which emerged in the mid-20th century, rely on data-driven statistical relationships between variables collected under varying field or controlled environments. These models often lack cause-effect understanding, making them less robust and requiring rigorous validation and calibration when applied in diverse environments, especially in regions that did not provide data for model construction. The parameters of the model change every time new data are incorporated during model development.
+
+In contrast, **mechanistic models**, developed from a deep understanding of biological and epidemiological processes, explain disease dynamics based on known system behaviors in response to external variables---a concept-driven approach. These dynamic models quantitatively characterize the state of the pathosystem over time, offering generally more robust predictions by utilizing mathematical equations to describe how epidemics evolve under varying environmental conditions.
+
+Both empirical and mechanistic approaches are valid methodologies extensively used in plant pathology research. The choice between these approaches depends on several factors, including data availability, urgency in model development, and, frequently, the researcher's experience or preference. Empirical models focus on statistical relationships derived directly from data, whereas mechanistic models aim to represent the biological processes of disease progression through linked mathematical equations.
+
+In mechanistic modeling, the equations used to predict specific disease components---such as infection frequency or the latency period---are often empirically derived from controlled experiments. For example, an infection frequency equation is typically based on data collected under specific environmental conditions, with models fitted to accurately describe observed patterns. These process-based models are then built by integrating empirically-derived equations or rules, which collectively simulate the disease cycle. Data and equations are sourced from published studies or generated from new experiments conducted by researchers.
+
+Beyond their practical predictive value, mechanistic models are valuable tools for organizing existing knowledge about a particular disease, helping to identify gaps and guide future research efforts. An example of such work is the extensive collection of comprehensive mechanistic models developed for various plant diseases by the research group led by Prof. Vittorio Rossi in Italy [@rossi2008; @rossi2014; @salotti2023; @salotti2022].
+
+This chapter focuses mainly on empirical modeling. We begin by examining the types of data utilized in model development, focusing on those collected under controlled conditions, such as replicated laboratory or growth chamber experiments, as well as field data collected from several locations and years. We will also analyze real-world case studies, drawing on examples from the literature to replicate and understand model applications. Through these examples, we aim to illustrate the process of fitting models to data and underscore the role of modeling in advancing plant disease management practices.
+
+## Controlled environment
+
+In this section, we will demonstrate, using examples from the literature, how statistical models can be fitted to data that represent various stages of the disease cycle.
+
+Research on disease-environment interactions under controlled conditions - such as laboratory or growth chamber studies - lays the groundwork for building foundational models, including infection-based models and sub-models for specific processes like dormancy, dispersal, infection, and latency [@krause1975; @magarey2005; @dewolf2007].
+
+Growth chambers and phytotrons are essential for testing the effects of individual variables, though these controlled results may not fully replicate field conditions. Anyway, laboratory experiments help clarify specific questions by isolating interactions, unlike complex field trials where host, pathogen, and environment factors interact. Polycyclic or "mini epidemic" experiments enable observation of disease dynamics under targeted conditions [@hau1990; @rotem1988].
+
+Once developed, these sub-models can be incorporated into larger mechanistic models that simulate the entire disease cycle, thereby mimicking disease progression over time [@rossi2008; @salotti2023]. Alternatively, sub-models can also be used in stand-alone predictive systems where the process being modeled - such as infection - is the key factor in determining disease occurrence [@machardy1989; @magarey2007]. For example, infection sub-models can be integrated into prediction systems that help schedule crop protection measures by forecasting when infection risk is highest.
+
+### Infection-based models
+
+To model infection potential based on environmental factors, simple rules can be used with daily weather data, such as temperature and rainfall thresholds [@magarey2002]. Simple decision aids, such as charts and graphs, also exist to help model infection potential by using combinations of daily average temperature and hours of wetness. These tools offer a straightforward approach to evaluate infection risks based on readily available weather data, supporting decision-making without complex modeling [@seem1984]. However, for many pathogens, hourly data is needed, requiring complex models that track favorable conditions hour by hour. These models start with specific triggers and can reset due to conditions like dryness or low humidity, simulating a biological clock for infection risk assessment [@magarey2007].
+
+Modeling approaches vary based on available data and model goals. A common method is the matrix approach, like the Wallin potato late blight model, which uses rows for temperature and columns for moisture duration to estimate disease severity [@krause1975] (see previous chapter on [warning systems](https://r4pde.net/prediction-warning-systems)). Bailey enhanced this with an interactive matrix that combines temperature, relative humidity, and duration to assess infection risk across pathogens, making it versatile for various modeling needs [@bailey1999].
+
+When infection responses are measured at various temperature and wetness combinations, regression models can be developed to predict infection rates. These models often use polynomial, logistic, or complex three-dimensional response surface equations to represent the relationship between environmental conditions and infection potential. In an excellent review title "*How to create and deploy infection models for plant pathogen*s" @magarey2007 discusses that many modeling approaches lack biological foundations and are not generic, making them unsuitable for developing a unified set of disease forecast models. While three-dimensional response surfaces, such as those created with sufficient temperature-moisture observations, offer detailed infection responses, they are often too complex and data-intensive for widespread use (seeTable 1 adapted from @magarey2007).
+
+| Approach                                                               | Strengths                                                                                                          | Weaknesses                                                                               |
+|-------------------|------------------------------|-----------------------|
+| Matrix [@krause1975; @mills1944; @windels1998]                         | Easy; converts moisture/temperature combinations into severity values or risk categories. Tried and true approach. | Data to populate matrix may not be readily available.                                    |
+| Regression:<br>-- Polynomial [@evans1992]<br>-- Logistic [@bulger1987] | Widely used in plant pathology. Available for many economically important pathogens.                               | Parameters not biologically based. Requires dataset for development.                     |
+| Three-dimensional response surface [@duthie1997]                       | Describes infection response in detail.                                                                            | Parameters not biologically based. Complex, requires extensive data and processing time. |
+| Degree wet hours [@pfender2003]                                        | Simple; based on degree hours, commonly used in entomology. Requires only Tmin and Tmax                            | Recently developed; assumes linear thermal response.                                     |
+| Temperature-moisture response function [@magarey2005]                  | Simple; based on crop modeling functions, requires only Tmin, Topt and Tmax                                        | Recently developed.                                                                      |
+
+: Comparison of different infection modeling approaches. Source: @magarey2007
+
+In the following sections, I will demonstrate how various biologically meaningful models fit infection data, using temperature, wetness duration, or a combination of both as predictors.
+
+#### Temperature effects
+
+##### Generalized beta-function
+
+Among several non-linear models that can be fitted to infection responses to temperature, the generalized beta-function is an interesting alternative [@hau1990]. This is a nonlinear model with five parameters. Two of them, namely $b$ and $c$ , have a biological meaning because they are estimates of the minimum and maximum temperature of the biological process under consideration.
+
+We will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the influence of temperature on the symptom development of citrus canker in sweet orange [@dallapria2006]. The data used here is only for severity on the cultivar Hamlin (plot a in @fig-temperature). The data was extracted using the R package {digitize} as shown [here on this tweet](https://twitter.com/edelponte/status/1580320409794539520?s=20&t=KqjJPmwzFVKm8Gu7Ss-P6A).
+
+![Effect of temperature (12, 15, 20, 25, 30, 35 or 40°C) on disease severity of citrus canker on sweet orange cvs Hamlin (a), Natal (b), Pera (c) and Valencia (d) with a leaf wetness duration of 24 h. Each point represents the mean of three repetitions. Vertical bars represent standard errors. Lines show the generalized beta function fitted to data. Source: @dallapria2006](imgs/modeling-fig_temperature.gif){#fig-temperature fig-align="center" width="441"}
+
+Let's enter the data manually. Where $t$ is the temperature and $y$ is the severity on leaves.
+
+```{r}
+
+temp <- tibble::tribble(
+  ~t, ~y,
+12.0, 0.00,
+15.0, 0.1,
+20.0, 0.5,
+25.0, 1.2,
+30.0, 1.5,
+35.0, 1.2,
+40.0, 0.1
+)
+
+```
+
+Fit the generalized beta-function [@hau1990]. The model can be written as:
+
+$$
+y = a*((t - b )^d)*((c - t)^e)
+$$
+
+where $b$ and $c$ represent minimum and maximum temperatures, respectively, for the development of the disease, $a$, $d$ and $e$ are parameters to be estimated, $t$ is the temperature and $y$ is disease severity. We need the {minpack.lm} library to avoid parameterization issues.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(minpack.lm)
+fit_temp <- nlsLM(
+  y ~ a * ((t - b) ^ d) * ((c - t) ^ e),
+  start = list(
+    a = 0,
+    b = 10,
+    c = 40,
+    d = 1.5,
+    e = 1
+  ),
+  algorithm = "port",
+  data = temp
+)
+summary(fit_temp)
+
+modelr::rsquare(fit_temp, temp)
+```
+
+Store the model parameters in objects.
+
+```{r}
+fit_temp$m$getAllPars()
+a <- fit_temp$m$getAllPars()[1]
+b <- fit_temp$m$getAllPars()[2]
+c <- fit_temp$m$getAllPars()[3]
+d <- fit_temp$m$getAllPars()[4]
+e <- fit_temp$m$getAllPars()[5]
+```
+
+Create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
+
+```{r}
+t <- seq(10, 45, 0.1)
+y <- a * ((t - b) ^ d) * ((c - t) ^ e)
+dat <- data.frame(t, y)
+```
+
+Plot the observed and predicted data using {ggplot2} package.
+
+```{r}
+#| warning: false
+#| message: false
+library(ggplot2)
+library(r4pde)
+dat |>
+  ggplot(aes(t, y)) +
+  geom_line() +
+  geom_point(data = temp, aes(t, y)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Severity",
+       title = "Generalized beta-function")
+```
+
+##### Analytis beta function
+
+@ji2023a tested and compared various mathematical equations to describe the response of mycelial growth to temperature for several fungi associated with Grapevine trunk diseases. The authors found that the beta equation [@analytis1977] provided the best fit and, therefore, was considered the most suitable for all fungi.
+
+The model equation for re-scaled severity (0 to 1) as a function of temperature is given by:
+
+$Y = \left( a \cdot T_{eq}^b \cdot (1 - T_{eq}) \right)^c \quad ; \quad \text{if } Y > 1, \text{ then } Y = 1$
+
+where
+
+$T_{eq} = \frac{T - T_{\text{min}}}{T_{\text{max}} - T_{\text{min}}}$
+
+$T$ is the temperature in degrees Celsius. $T_{\text{min}}$ is the minimum temperature, $T_{\text{max}}$ is the maximum temperature for severity. The $a$ , $b$ , and $c$ are parameters that define the top, symmetry, and size of the unimodal curve.
+
+Let's rescale (0 to 1) the data on the citrus canker using the function rescale of the {scales} package.
+
+```{r}
+library(scales)
+temp$yscaled <- rescale(temp$y)
+temp
+```
+
+Now we can fit the model using the same `nlsLM` function.
+
+```{r}
+#| warning: false
+#| message: false
+
+# Define the minimum and maximum temperatures
+Tmin <- 12
+Tmax <- 40
+
+library(minpack.lm)
+fit_temp2 <- nlsLM(
+  yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
+  data = temp,
+  start = list(a = 1, b = 2, c = 3), # Initial guesses for parameters
+  algorithm = "port" 
+)
+
+summary(fit_temp2)
+
+modelr::rsquare(fit_temp2, temp)
+
+```
+
+Lets's store the model parameters in objects.
+
+```{r}
+fit_temp2$m$getAllPars()
+a <- fit_temp2$m$getAllPars()[1]
+b <- fit_temp2$m$getAllPars()[2]
+c <- fit_temp2$m$getAllPars()[3]
+
+```
+
+Again, we create a data frame for predictions at each temperature unit from 10 to 45 degree Celsius.
+
+```{r}
+Tmin <- 12
+Tmax <- 40
+t <- seq(10, 45, 0.1)
+y <- (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c
+dat2 <- data.frame(t, y)
+```
+
+And now we can plot the observed and predicted data using {ggplot2} package.
+
+```{r}
+#| warning: false
+#| message: false
+library(ggplot2)
+library(r4pde)
+dat2 |>
+  ggplot(aes(t, y)) +
+  geom_line() +
+  geom_point(data = temp, aes(t, yscaled)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Scaled severity", 
+       title = "Analytis beta function")
+```
+
+#### Moisture effects
+
+##### Monomolecular function
+
+For this example, we will use a subset of the data obtained from a study conducted under controlled conditions that aimed to assess the effects of moisture duration on the symptom development of citrus canker in sweet orange [@dallapria2006]. As in the previous example for temperature effects, the data used here is only for severity on the cultivar Hamlin (plot a in @fig-moisture). The data was also extracted using the R package digitize.
+
+Let's look at the original data and the predictions by the model fitted in the paper.
+
+![Effect of leaf wetness duration (0, 4, 8, 12, 16, 20 or 24 h) on disease severity of citrus canker on sweet orange cvs Hamlin (a), Natal (b), Pera (c) and Valencia (d) at 30°C. Each point represents the mean of three repetitions. Vertical bars represent standard errors. Lines show the monomolecular model fitted to data. Source: @dallapria2006](imgs/modeling-fig2.gif){#fig-moisture fig-align="center" width="516"}
+
+For this pattern in the data, we will fit a three-parameter asymptotic regression model. These models describe a limited growth, where y approaches an horizontal asymptote as x tends to infinity. This equation is also known as Monomolecular Growth, Mitscherlich law or von Bertalanffy law. See [this tutorial](https://www.statforbiology.com/nonlinearregression/usefulequations) for comprehensive information about fitting several non-linear regression models in R.
+
+Again, we enter the data manually. The 𝑥x is wetness duration in hours and 𝑦y is severity.
+
+```{r}
+wet <- tibble::tribble(~ x, ~ y,
+                       0 ,  0,
+                       4 ,  0.50,
+                       8 ,  0.81,
+                       12,  1.50,
+                       16,  1.26,
+                       20,  2.10,
+                       24,  1.45)
+```
+
+The model can be written as:
+
+$y = c1 + (d1-c1)*(1-exp(-x/e1))$
+
+where $c$ is the lower limit (at $x = 0$), the parameter $d$ is the upper limit and the parameter $e$ (greater than 0) is determining the steepness of the increase as $x$.
+
+We will solve the model again using the `nlsLM` function. We should provide initial values for the three parameters.
+
+```{r}
+fit_wet <- nlsLM(y ~ c1 + (d1 - c1) * (1 - exp(-x / e1)),
+                 start = list(c1 = 0.5,
+                              d1 = 3,
+                              e1 = 1),
+                 data = wet)
+
+summary(fit_wet)
+
+modelr::rsquare(fit_wet, wet)
+```
+
+Store the value of the parameters in the respective object.
+
+```{r}
+HW <- seq(0, 24, 0.1)
+c1 <-  fit_wet$m$getAllPars()[1]
+d1 <- fit_wet$m$getAllPars()[2]
+e1 <- fit_wet$m$getAllPars()[3]
+y <-  (c1 + (d1 - c1) * (1 - exp(-HW / e1)))
+dat2 <- data.frame(HW, y)
+```
+
+Now we can plot the predictions and the original data.
+
+```{r}
+dat2 |>
+  ggplot(aes(HW, y)) +
+  geom_line() +
+  geom_point(data = wet, aes(x, y)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Wetness duration", y = "Severity")
+```
+
+##### Weibull function
+
+In the study by [@ji2021; @ji2023a], a Weibull model was fitted to the re-scaled data (0 to 1) on the effect of moisture duration on spore germination or infection. Let's keep working with the re-scaled data on the citrus canker.
+
+The model is given by:
+
+$y = 1 - \exp(-(a \cdot x)^b)$
+
+where $y$ is the response variable, $x$ is the moist duration, $a$ is the scale parameter influencing the rate of infection and $b$ is the shape parameter affecting the curve's shape and acceleration
+
+```{r}
+wet$yscaled <- rescale(wet$y) 
+wet
+
+```
+
+```{r}
+fit_wet2 <- nlsLM(
+  yscaled ~ 1 - exp(-(a * x)^b),
+  data = wet,
+  start = list(a = 1, b = 2),  # Initial guesses for parameters a and b
+  )
+summary(fit_wet2)
+modelr::rsquare(fit_wet2, wet)
+
+```
+
+Set the value of the parameters in the respective objects
+
+```{r}
+x <- seq(0, 24, 0.1)
+a <-  fit_wet2$m$getAllPars()[1]
+b <- fit_wet2$m$getAllPars()[2]
+y <-  1 - exp(-(a * x)^b)
+dat3 <- data.frame(x, y)
+```
+
+```{r}
+dat3 |>
+  ggplot(aes(x, y)) +
+  geom_line() +
+  geom_point(data = wet, aes(x, yscaled)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Wetness duration", y = "Scaled severity")
+```
+
+#### Integrating temperature and wetness effects
+
+The equations developed for the separate effects can be integrated to create a surface response curve or a simple contour plot. Let's first integrate the generalized beta and the monomolecular models for the original severity data for the citrus canker experiment.
+
+First, we need a data frame for the interaction between temperature $t$ and hours of wetness $hw$. Then, we obtain the disease value for each combination of $t$ and $hw$.
+
+```{r}
+t <- rep(1:40, 40)
+hw <- rep(1:40, each = 40)
+
+# let's fit the two models again and store the parameters in objects
+# Temperature effects
+fit_temp <- nlsLM(
+  y ~ a * ((t - b) ^ d) * ((c - t) ^ e),
+  start = list(
+    a = 0,
+    b = 10,
+    c = 40,
+    d = 1.5,
+    e = 1
+  ),
+  algorithm = "port",
+  data = temp
+)
+fit_temp$m$getAllPars()
+a <- fit_temp$m$getAllPars()[1]
+b <- fit_temp$m$getAllPars()[2]
+c <- fit_temp$m$getAllPars()[3]
+d <- fit_temp$m$getAllPars()[4]
+e <- fit_temp$m$getAllPars()[5]
+
+## Moist duration effects
+fit_wet <- nlsLM(y ~ c1 + (d1 - c1) * (1 - exp(-x / e1)),
+                 start = list(c1 = 0.5,
+                              d1 = 3,
+                              e1 = 1),
+                 data = wet)
+
+c1 <-  fit_wet$m$getAllPars()[1]
+d1 <- fit_wet$m$getAllPars()[2]
+e1 <- fit_wet$m$getAllPars()[3]
+
+dis <-
+  (a * (t - b) ^ d) * ((c - t) ^ e) * (c1 + (d1 - c1) * (1 - exp(- hw / e1)))
+validation <- data.frame(t, hw, dis)
+```
+
+Now the contour plot can be visualized using {ggplot2} and {geomtextpath} packages.
+
+```{r}
+#| warning: false
+#| message: false
+
+
+library(geomtextpath)
+ggplot(validation, aes(t, hw, z = dis)) +
+  geom_contour_filled(bins = 8, alpha = 0.7) +
+  geom_textcontour(bins = 8,
+                   size = 2.5,
+                   padding = unit(0.05, "in")) +
+  theme_light(base_size = 10) +
+  theme(legend.position = "right") +
+  ylim(0, 40) +
+  labs(y = "Wetness duration (hours)",
+       fill = "Severity",
+       x = "Temperature (Celcius)",
+       title = "Integrating generalized beta and monomolecular")
+```
+
+In the second example, let's integrate the Analytis beta and the Weibull model:
+
+```{r}
+
+fit_temp2 <- nlsLM(
+  yscaled ~ (a * ((t - Tmin) / (Tmax - Tmin))^b * (1 - ((t - Tmin) / (Tmax - Tmin))))^c,
+  data = temp,
+  start = list(a = 1, b = 2, c = 3), # Initial guesses for parameters
+  algorithm = "port" 
+)
+
+fit_temp2$m$getAllPars()
+a2 <- fit_temp2$m$getAllPars()[1]
+b2 <- fit_temp2$m$getAllPars()[2]
+c2 <- fit_temp2$m$getAllPars()[3]
+
+
+fit_wet2 <- nlsLM(
+  yscaled ~ 1 - exp(-(d * x)^e),
+  data = wet,
+  start = list(d = 1, e = 2),  # Initial guesses for parameters a and b
+  )
+
+d2 <-  fit_wet2$m$getAllPars()[1]
+e2 <- fit_wet2$m$getAllPars()[2]
+
+Tmin <- 12
+Tmax <- 40
+dis2 <-  (a2 * ((t - Tmin) / (Tmax - Tmin))^b2 * (1 - ((t - Tmin) / (Tmax - Tmin))))^c2 * 1 - exp(-(d2 * hw)^e2)
+
+t <- rep(1:40, 40)
+hw <- rep(1:40, each = 40)
+validation2 <- data.frame(t, hw, dis2)
+
+validation2 <- validation2 |> 
+  filter(dis2 != "NaN") |> 
+  mutate(dis2 = case_when(dis2 < 0 ~ 0,
+                          TRUE ~ dis2))
+
+```
+
+Now the plot.
+
+```{r}
+ggplot(validation2, aes(t, hw, z = dis2)) +
+  geom_contour_filled(bins = 7, alpha = 0.7) +
+  geom_textcontour(bins = 7,
+                   size = 2.5,
+                   padding = unit(0.05, "in")) +
+  theme_light(base_size = 10) +
+  theme(legend.position = "right") +
+  ylim(0, 40) +
+  labs(y = "Wetness duration (hours)",
+       fill = "Severity",
+       x = "Temperature (Celcius)",
+       title = "Integrating generalized beta and monomolecular")
+```
+
+We can create a 3D surface plot to visualize the predictions, as [it was used in the original paper](https://bsppjournals.onlinelibrary.wiley.com/cms/asset/0acf45ce-bad8-4a49-9a17-181836aa9876/ppa_1393_f3.gif). Note that In `plot_ly`, a 3D surface plot requires a matrix or grid format for the `z` values, with corresponding vectors for `x` and `y` values that define the axes. If the data frame (`validation2`) has three columns (`t`, `hw`, and `dis2`), we'll need to convert `dis2` into a matrix format that `plot_ly` can interpret for a surface plot.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(plotly)
+library(reshape2)  
+z_matrix <- acast(validation2, hw ~ t, value.var = "dis2")
+x_vals <- sort(unique(validation2$t))  
+y_vals <- sort(unique(validation2$hw)) 
+
+plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |> 
+    config(displayModeBar = FALSE) |> 
+  layout(
+    scene = list(
+      xaxis = list(title = "Temperature (°C)", nticks = 10),
+      yaxis = list(title = "Wetness Duration (hours)", range = c(0, 40)),
+      zaxis = list(title = "Severity"),
+      aspectratio = list(x = 1, y = 1, z = 1)  
+    ),
+    title = "Integrating Generalized Beta and Monomolecular"
+  )
+```
+
+#### Magarey's generic infection model
+
+In the early 2000s, Magarey and collaborators [@magarey2005] proposed a generic infection model for foliar fungal pathogens, designed to predict infection periods based on limited data on temperature and wetness requirements. The model uses cardinal temperatures (minimum, optimum, maximum) and the minimum wetness duration (Wmin) necessary for infection. The model can incorporate inputs based on estimated cardinal temperatures and surface wetness duration. These values are available for numerous pathogens and can be consulted in the literature (See table 2 of the paper by @magarey2005).
+
+The model utilizes a temperature response function, which is adjusted to the pathogen's minimum and optimum wetness duration needs, allowing it to be broadly applicable even with limited data on specific pathogens. The model was validated with data from 53 studies, showing good accuracy and adaptability, even for pathogens lacking comprehensive data [@magarey2005].
+
+The function is given by
+
+$f(T) = \left( \frac{T_{\text{max}} - T}{T_{\text{max}} - T_{\text{opt}}} \right)^{\frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{max}} - T_{\text{opt}}}} \times \left( \frac{T - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}} \right)^{\frac{T_{\text{opt}} - T_{\text{min}}}{T_{\text{opt}} - T_{\text{min}}}}$
+
+where $T$ is the temperature, $T_{\text{min}}$ is the minimum temperature, $T_{\text{opt}}$ is the optimum temperature, and $T_{\text{max}}$ is the maximum temperature for infection.
+
+The wetness duration requirement is given by
+
+$W(T) = \frac{W_{\text{min}}}{f(T)} \leq W_{\text{max}}$
+
+where $W_{\text{min}}$ is the minimum wetness duration requirement, and $W_{\text{max}}$ is an optional upper limit on $W(T)$.
+
+Let's write the functions for estimating the required wetness duration at each temperature.
+
+```{r}
+temp_response <- function(T, Tmin, Topt, Tmax) {
+  if (T < Tmin || T > Tmax) {
+    return(0)
+  } else {
+    ((Tmax - T) / (Tmax - Topt))^((Topt - Tmin) / (Tmax - Topt)) * 
+    ((T - Tmin) / (Topt - Tmin))^((Topt - Tmin) / (Topt - Tmin))
+  }
+}
+
+# Define the function to calculate wetness duration requirement W(T)
+wetness_duration <- function(T, Wmin, Tmin, Topt, Tmax, Wmax = Inf) {
+  f_T <- temp_response(T, Tmin, Topt, Tmax)
+  if (f_T == 0) {
+    return(0)  # Infinite duration required if outside temperature range
+  }
+  W <- Wmin / f_T
+  return(min(W, Wmax))  # Apply Wmax as an upper limit if specified
+}
+
+
+```
+
+Let's set the parameters for the fungus *Venturia inaequalis*, the cause of apple scab.
+
+```{r}
+
+# Parameters for Venturia inaequalis (apple scab)
+T <- seq(0, 35, by = 0.5) 
+Wmin <- 6                  
+Tmin <- 1                  
+Topt <- 20                 
+Tmax <- 35                 
+Wmax <- 40.5                
+
+# Calculate wetness duration required at each temperature
+W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
+
+temperature_data_applescab <- data.frame(
+  Temperature = T,
+  Wetness_Duration = W_T
+)
+
+```
+
+And now the parameters for the fungus *Phakopsora pachyrhizi*, the cause of soybean rust in soybean.
+
+```{r}
+# Parameters for Phakposora pachyrhizi
+T <- seq(0, 35, by = 0.5)  
+Wmin <- 8                
+Tmin <- 10                  
+Topt <- 23                 
+Tmax <- 28                
+Wmax <- 12                 
+
+# Calculate wetness duration required at each temperature
+W_T <- sapply(T, wetness_duration, Wmin, Tmin, Topt, Tmax, Wmax)
+
+temperature_data_soyrust <- data.frame(
+  Temperature = T,
+  Wetness_Duration = W_T)
+
+
+```
+
+We can produce the plots for each pathogen.
+
+```{r}
+
+applescab <- ggplot(temperature_data_applescab, aes(x = Temperature, y = Wetness_Duration)) +
+  geom_line(color = "black", linewidth = 1, linetype =1) +
+  theme_r4pde(font_size = 14)+
+  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
+       subtitle = "Venturia inaequalis")+
+  theme(plot.subtitle = element_text(face = "italic"))
+
+soyrust <- ggplot(temperature_data_soyrust, aes(x = Temperature, y = Wetness_Duration)) +
+  geom_line(color = "black", linewidth = 1, linetype =1) +
+  theme_r4pde(font_size = 14)+
+  labs(x = "Temperature (°C)", y = "Wetness Duration (hours)", 
+       subtitle = "Phakopsora pachyrizhi")+ 
+  theme(plot.subtitle = element_text(face = "italic"))
+
+library(patchwork)
+applescab | soyrust
+
+```
+
+### Latency period models
+
+The latent period can be defined as "the length of time between the start of the infection process by a unit of inoculum and the start of production of infectious units" [@madden2007]. The latent period, analogous to the reproductive maturity age of nonparasitic organisms, defines the generation time between infections and is a key factor in pathogen development and epidemic progress in plant disease epidemiology [@plantdi1963]. As a critical trait of aggressiveness, especially in polycyclic diseases, it largely determines the potential number of infection cycles within a season, impacting the overall epidemic intensity [@lannou2012].
+
+#### Parabolic function
+
+The effects of temperature on the length of the incubation and latent periods of hawthorn powdery mildew, caused by *Podosphaera clandestina*, were studied by @xu2000. In that work, the authors inoculated the leaves and, each day after inoculation, the upper surface of each leaf was examined for mildew colonies and conidiophores using a pen-microscope (×50). Sporulation was recorded at the leaf level, noting the number of colonies and the first appearance dates of colonies and sporulation for each leaf.
+
+The latent period (LP) was defined as the time from inoculation to the first day of observed sporulation on the leaf. Due to the skewed distribution of LP across temperatures and inoculations, medians were used to summarize LP rather than means [@xu2000].
+
+Let's look at two plots extracted from the paper. The first, on the left-hand side, is the original number of days of the latent period of each evaluated temperature (note: the solid symbol is for constant temperature while the open circle is for fluctuating temperature). On the right-hand side, the relationship between temperature and rates of development of powdery mildew under constant temperature during the latent periods; the solid line indicates the fitted model. The rate of fungal development was calculated as the reciprocal of the corresponding observed incubation (in hours) and latent periods.
+
+![Source: @xu2000](imgs/modeling-latent.png){#fig-latent fig-align="center"}
+
+The latent period data in days for the solid black circle (constant temperature) above was extracted using the {digitize} R package.
+
+```{r}
+latent <- tibble::tribble(
+   ~T, ~days,
+  10L,   13L,
+  11L,   16L,
+  13L,    8L,
+  14L,    9L,
+  15L,    7L,
+  16L,    7L,
+  17L,    6L,
+  18L,    6L,
+  19L,    6L,
+  20L,    6L,
+  21L,    5L,
+  22L,    5L,
+  23L,    6L,
+  24L,    6L,
+  25L,    5L,
+  26L,    7L,
+  27L,    7L,
+  28L,   10L
+  )
+
+```
+
+Let's reproduce the two plots using the datapoints.
+
+```{r}
+#|fig-width: 10
+#|fig-height: 4
+library(ggplot2)
+library(r4pde)
+
+p_latent <- latent |> 
+  ggplot(aes(T, days))+
+  geom_point()+
+  theme_r4pde()
+
+latent_rate <- data.frame(
+  T = latent$T,  # Scale temperature
+  R = 1/latent$days/24
+)
+
+p_latent_rate <- latent_rate |> 
+  ggplot(aes(T, R))+
+  geom_point()+
+  theme_r4pde()
+
+library(patchwork)
+p_latent | p_latent_rate
+
+```
+
+We will fit the parabolic function proposed by @bernard2013 which predicts a thermal response curve (developmental rate, R), which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the minimum latent period. The model is given by:
+
+$R(T) = \frac{k}{\text{LP}_{\text{min}} + \text{a} \times (T - T_{\text{opt}})^2}$
+
+```{r}
+
+# Load necessary package
+#library(minpack.lm)
+
+# Define the model formula
+# model_formula <- R ~ (a + b * T)^(c * T)
+LPmin <- 5 # minimum latent period
+Topt <- 21 # Optimal temperature
+model_formula2 <- R ~ k / (LPmin + a * (T - Topt)^2)
+
+# Set initial parameter estimates
+#start_values <- list(a = 0.1, b = 0.01, c = 0.01)
+start_values2 <- list(a = 0.1, k = 1)
+# Fit the model
+#fit_rate <- nlsLM(model_formula, data = latent_rate, start = start_values)
+fit_rate2 <- nls(model_formula2, data = latent_rate, start = start_values2)
+
+# View the summary of the fit
+summary(fit_rate2)
+
+fit_rate2$m$getAllPars()
+a <- fit_rate2$m$getAllPars()[1]
+k <- fit_rate2$m$getAllPars()[2]
+
+```
+
+Now we reproduce the plot with the fitted data. Note that the curve is not the same shown in the paper because we used a different equation.
+
+```{r}
+T <- seq(10, 29, 0.1)
+#R <- (a + b * T)^(c * T)
+R <- k / (LPmin + a * (T - Topt)^2)
+dat2 <- data.frame(T, R)
+
+dat2 |>
+  ggplot(aes(T, R)) +
+  geom_line() +
+  geom_point(data = latent_rate, aes(T, R)) +
+  theme_r4pde(font_size = 16) +
+  labs(x = "Temperature", y = "Inverse of the latent period (hour -1)", 
+       title = "")
+
+
+```
+
+## Field data
+
+While pathogen inoculum, host resistance, and agronomic factors are sometimes included alongside weather in empirically derived models using field data [@shah2013; @cao2015; @mehra2017], only a few models explicitly incorporate non-weather factors [@mehra2016; @paul2004]. In most cases, these models primarily rely on weather variables as predictors [@gonzález-domínguez2023]. This focus reflects the critical role of weather in driving key processes in the disease cycle, such as pathogen survival, dispersal, host infection, and reproduction [@dewolf2007]. Consequently, a primary objective for plant epidemiologists is to identify and quantify the relationships between weather conditions and measures of disease intensity [@shah2019; @eljarroudi2017; @pietravalle2003; @coakley1988; @delponte2006; @shah2013; @coakley1988a].
+
+In modeling efforts, the disease variable can be represented either as a continuous measure (e.g., incidence or severity) or as categorical data, which may be binary (e.g., non-epidemic vs. epidemic) or multinomial (e.g., low, moderate, and high severity). This variability in response types informs the selection of suitable modeling techniques, ensuring that the model accurately captures the nature of the data and the relationships between weather variables and disease outcomes.
+
+In this section, I will demonstrate several modeling approaches that can be applied when field data is available. These examples will cover a range of techniques, starting with variable construction, which involves transforming raw weather data into summary measures that can effectively represent conditions relevant to disease outcomes. Next, variable selection methods will be explored to identify the most influential predictors, ensuring that models are both accurate and interpretable. The focus will then shift to model fitting, showing how different models, such as linear and logistic regression, can be used to capture relationships between weather variables and disease endpoints. Finally, model evaluation will be addressed, emphasizing metrics like accuracy, sensitivity, and area under the curve (AUC), which are crucial for assessing the predictive performance and reliability of the models developed.
+
+### Variable construction
+
+Variable construction, particularly for weather-related variables, involves not only data transformation methods but also requires an understanding of how diseases respond to specific weather conditions at particular growth stages [@decól2024; @dewolf2003]. This approach ensures that the variables derived accurately capture biologically relevant processes, improving the realism and relevance of the model inputs.
+
+In addition, data mining techniques are employed to systematically explore time-series data and identify potential weather-disease relationships [@shah2019; @pietravalle2003; @coakley1988]. These techniques involve creating lagged variables, moving averages, or window-based summaries that capture delayed or cumulative effects of weather on disease outcomes. By integrating system knowledge with data mining, researchers aim to construct variables that are both biologically meaningful and statistically robust, improving the chances of identifying predictors that enhance model accuracy and interpretability.
+
+#### Window-pane
+
+##### Variable construction
+
+With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s [@coakley1985], has been widely used in modeling studies in plant pathology [@pietravalle2003; @calverojr1996; @tebeest2008a; @gouache2015a; @coakley1988; @kriss2010; @dallalana2021; @coakley1988a]. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g. daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.
+
+The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs. high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.
+
+Here's an R code that demonstrates how the windows are defined over a 28-day period using four fixed window lengths (7, 14, 21, and 28 days), generating a total of 46 variables.
+
+```{r}
+#| warning: false
+#| message: false
+#| code-fold: true
+
+library(dplyr)
+library(ggplot2)
+
+# Define total days and window lengths
+max_days <- 28
+window_lengths <- c(7, 14, 21, 28)
+
+# Create an empty data frame for all sliding windows
+window_data <- data.frame()
+
+# Populate the data frame with start and end points for each window
+var_id <- 1  # Variable ID for each window
+
+for (length in sort(window_lengths)) {  # Sort window lengths from shortest to longest
+  for (start_day in 0:(max_days - length)) {
+    end_day <- start_day + length
+    window_data <- rbind(
+      window_data,
+      data.frame(
+        start = start_day,
+        end = end_day,
+        var_id = var_id,
+        window_length = length
+      )
+    )
+    var_id <- var_id + 1  # Increment variable ID
+  }
+}
+
+# Convert window_length to a factor for correct ordering in the legend
+window_data$window_length <- factor(window_data$window_length, levels = sort(unique(window_data$window_length)))
+
+```
+
+```{r}
+#| fig-width: 8
+#| fig-height: 8
+window_data |> 
+  ggplot(aes(x = start, xend = end, y = var_id, yend = var_id)) +
+  geom_segment(linewidth = 2) +  # Line segments for each window
+  scale_x_continuous(breaks = 0:max_days, limits = c(0, max_days)) +
+  scale_y_continuous(breaks = 1:var_id) +
+  labs(title = "Window-pane",
+    subtitle = "Each variable of 7, 14, 21 and 28 days length over 28 days",
+    x = "Days", y = "Variable ID", color = "Window Length (days)") +
+  r4pde::theme_r4pde(font_size = 14) +
+  theme(legend.position = "right")
+```
+
+The window pane analysis requires a spreadsheet program [@kriss2010] or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW [@coakley1985]. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane [@pietravalle2003; @tebeest2008a]. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts [@gouache2015a; @dallalana2021].
+
+I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window pane approach. First, let's load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by @decól2024.
+
+```{r}
+#| warning: false
+#| message: false
+library(r4pde)
+library(dplyr)
+trials <- BlastWheat
+glimpse(trials)
+
+```
+
+We can note that the heading date, which will be used as reference date in our analysis, is not defined as date object, which needs correction.
+
+```{r}
+trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
+glimpse(trials$heading)
+```
+
+The weather data for our analysis will be downloaded from NASA POWER. Since we have multiple trials with different heading dates, a wrapper function for the `get_power()` function from the {nasapower} package was created, included in {r4pde}, and named `get_nasapower()`. This function enables the download of data for a period "around" the key date, which can be defined by the user. In our case, we will download data from 28 days before and 28 days after the heading date.
+
+```{r}
+#| eval: FALSE
+weather_data <- get_nasapower(
+  data = trials,
+  days_around = 28,
+  date_col = "heading"
+)
+
+# save the data for faster rendering
+write_csv(weather_data, "data/weather_windowpane.csv")
+```
+
+Now we can see the weather data and join the two dataframes.
+
+```{r}
+#| warning: false
+#| message: false
+
+# read the data
+weather_data <- readr::read_csv("data/weather_windowpane.csv")
+
+glimpse(weather_data)
+
+# apply a full join
+trials_weather <- full_join(trials, weather_data) 
+
+```
+
+We are now ready to use the windowpane function to create new variables. The function has several arguments. Note the two date variables: `end_date`, which serves as the reference for sliding the windows, and `date_col`, which represents the date for each day in the time series. The `summary_type` specifies the statistic to be calculated, while the `direction` determines whether the sliding windows will move backward, forward, or in both directions relative to the end date. Lastly, the `group_by` argument specifies the index variable for the epidemic or study.
+
+We will create new variables based on the mean daily temperature (T2M), with each variable representing the mean value over one of the four window lengths (7, 14, 21, and 28 days) defined in the `window_length` argument. We will only generate variables that cover periods before the heading date, using "backward" in the `direction` argument.
+
+```{r}
+
+# Create window variables separated for each weather variable
+
+wp_T2M <- windowpane(
+  data = trials_weather,
+  end_date_col = heading,
+  date_col = YYYYMMDD,
+  variable = T2M,  
+  summary_type = "mean",
+  threshold = NULL,
+  window_lengths = c(7, 14, 21, 28),
+  direction = "backward",
+  group_by_cols = "study", 
+)
+
+wpT2M_MIN_15 <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   
+    summary_type = "below_threshold",
+    threshold = 15,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpT2M_MIN <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpT2M_MAX <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MAX,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpPREC <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = PRECTOTCORR,   
+    summary_type = "sum",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+wpRH2M <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = RH2M,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21, 28),
+    direction = "backward",
+    group_by_cols = "study", 
+  )
+
+# combine all datasets
+wp_all <- cbind(wp_T2M, wpT2M_MIN_15, wpT2M_MIN, wpT2M_MAX, wpPREC, wpRH2M)
+
+```
+
+##### Correlations and multiple hypothesis test
+
+The window pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman's rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal [@kriss2010].
+
+In a recent study, @dallalana2021, differing from @kriss2010, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g. 1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.
+
+The window-pane analysis involves numerous tests, as each time window generates a separate test statistic. Because many tests are conducted, the global significance level becomes higher than the critical significance level set for individual tests, increasing the risk of false positives [@kriss2010]. Additionally, the correlations among test statistics are influenced by overlapping time windows, shared data, and large-scale climatic patterns. To address this issue, @kriss2010 proposed the use of the Simes' method, which tests the global null hypothesis that none of the individual correlations are significant. Simes' method orders p-values and rejects the global null hypothesis if any adjusted p-value meets a specific threshold.
+
+While this method indicates whether at least one correlation is significant, it does not provide significance for individual correlations. Therefore, the authors proposed that the individual correlation coefficients should be compared against a more stringent significance level (α = 0.005 instead of 0.05), reducing the likelihood of false positives but increasing false negatives. Although this adjustment is independent of the Simes' method, there was a general alignment: significant global results often corresponded to significant individual correlations, and non-significant global results typically lacked significant individual correlations [@kriss2010].
+
+Let's calculate the bootstrapped correlation coefficients combined with the Sime's method. First, we need to subset our variables to the specific combination of weather and window.
+
+```{r}
+
+  T2M_MIN_7 = wp_all %>% select(starts_with("length7_T2M_MIN_mean"))
+  T2M_MIN_14 = wp_all %>% select(starts_with("length14_T2M_MIN_mean"))
+  T2M_MIN_21 = wp_all %>% select(starts_with("length21_T2M_MIN_mean"))
+  T2M_MIN_28 = wp_all %>% select(starts_with("length28_T2M_MIN_mean"))
+ 
+  T2M_MAX_7 = wp_all %>% select(starts_with("length7_T2M_MAX_mean"))
+  T2M_MAX_14 = wp_all %>% select(starts_with("length14_T2M_MAX_mean"))
+  T2M_MAX_21 = wp_all %>% select(starts_with("length21_T2M_MAX_mean"))
+  T2M_MAX_28 = wp_all %>% select(starts_with("length28_T2M_MAX_mean"))
+  
+  T2M_7 = wp_all %>% select(starts_with("length7_T2M_mean"))
+  T2M_14 = wp_all %>% select(starts_with("length14_T2M_mean"))
+  T2M_21 = wp_all %>% select(starts_with("length21_T2M_mean"))
+  T2M_28 = wp_all %>% select(starts_with("length28_T2M_mean"))
+  
+  RH2M_7 = wp_all %>% select(starts_with("length7_RH2M_mean"))
+  RH2M_14 = wp_all %>% select(starts_with("length14_RH2M_mean"))
+  RH2_21 = wp_all %>% select(starts_with("length21_RH2M_mean"))
+  RH2_28 = wp_all %>% select(starts_with("length28_RH2M_mean"))
+  
+  PRECTOTCORR_7 = wp_all %>% select(starts_with("length7_PRECTOTCORR"))
+  PRECTOTCORR_14 = wp_all %>% select(starts_with("length14_PRECTOTCORR"))
+  PRECTOTCORR_21 = wp_all %>% select(starts_with("length21_PRECTOTCORR"))
+  PRECTOTCORR_28 = wp_all %>% select(starts_with("length28_PRECTOTCORR"))
+  
+  T2M_MINb_7 = wp_all %>% select(starts_with("length7_T2M_MIN_below"))
+  T2M_MINb_14 = wp_all %>% select(starts_with("length14_T2M_MIN_below"))
+  T2M_MINb_21 = wp_all %>% select(starts_with("length21_T2M_MIN_below"))
+  T2M_MINb_28 = wp_all %>% select(starts_with("length28_T2M_MIN_below"))
+  
+
+```
+
+Now, we can use the `windowpane_tests()` function from the {r4pde} package to analyze each of the datasets created above. This function will compute the bootstrapped correlation coefficients for the variables of interest and apply the Simes' procedure to account for multiple testing, providing adjusted P-values for more robust statistical inference.
+
+```{r}
+library(boot)
+data <- T2M_MINb_7 
+data$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results <- windowpane_tests(data, response_var, corr_type = "spearman", R = 1000)
+results_TMINb <- results$results
+
+results
+```
+
+The window pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15 ^o^C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all P-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response.
+
+The global P-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 7 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
+
+Let's apply the test function to 7-day long windows for three other variables: relative humidity, precipitation and maximum temperature.
+
+```{r}
+library(r4pde)
+data1 <- RH2M_7 
+data1$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results1 <- windowpane_tests(data1, response_var, corr_type = "spearman", R = 1000)
+results_RH <- results1$results
+
+
+data2 <- PRECTOTCORR_7 
+data2$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results2 <- windowpane_tests(data2, response_var, corr_type = "spearman", R = 1000)
+results_PREC <- results2$results
+
+
+data3 <- T2M_MAX_7 # enter the dataset
+data3$inc <- trials$inc_mean 
+response_var <- 'inc'  
+results3 <- windowpane_tests(data3, response_var, corr_type = "spearman", R = 1000)
+results_TMAX <- results3$results
+
+
+
+```
+
+The first variable in the results dataframe contains the name of the variable. We can extract the starting and ending day from each window using the `extract` function, which allows for regex-based extraction into new columns. In this case, two new columns will be created representing the extreme days of the window.
+
+```{r}
+# Use strcapture to extract components into new columns
+df_TMINb7 <- results_TMINb %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+
+df_RH7 <- results_RH %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+
+df_PREC7 <- results_PREC %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+
+df_TMAX7 <- results_TMAX %>%
+  extract(variable, into = c("variable_prefix", "low", "high"), 
+          regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
+```
+
+Now we can plot the mean correlation for the start day of each window.
+
+```{r}
+p_TMIN <- df_TMINb7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "N. days TMIN < 15C",
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+p_RH <- df_RH7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Relative humidity", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+p_TMAX <- df_TMAX7 |> 
+ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Max. temperature", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+
+
+p_PREC <- df_PREC7 |> 
+  ggplot(aes(low, mean_corr, fill = p_value))+
+  ylim(-1, 1)+
+  geom_col()+
+  theme_r4pde(font_size = 12)+
+  labs(title = "Cumulative rainfall", 
+       subtitle = "7-day window",
+       y = "Spearman's correlation",
+       x = "Day relative to heading date ")
+    
+scale_common <- scale_fill_viridis_c(limits = c(0, 1), 
+                                     na.value = "grey90")
+
+p_TMIN <- p_TMIN + scale_common
+p_TMAX <- p_TMAX + scale_common
+p_RH <- p_RH + scale_common
+p_PREC <- p_PREC + scale_common
+
+# Combine plots using patchwork and collect guides
+(p_TMIN | p_TMAX) / (p_RH | p_PREC) + 
+  plot_layout(guides = "collect")
+
+```
+
+#### Functional data analysis (under development)
+
+Functional Data Analysis (FDA) is a statistical approach used to analyze and model data that varies continuously over time or space. It represents entire data sequences (e.g., time series) as smooth functions, allowing for the exploration of trends, patterns, and relationships in complex, continuous processes rather than relying on discrete, segmented data points [@Gertheiss2024].
+
+Initially applied in plant pathology to study the relationship between Fusarium head blight outbreaks and weather variables over time [@shah2019a], FDA has since been adopted in other plant pathology studies with similar objectives [@shah2019; @hjelkrem2021a; @alves2022a].
+
+Unlike traditional methods, such as the window-pane approach that divides continuous weather data into fixed-length windows to search for summary variables, FDA treats the time series as a continuous process. It uses smoothing functions to create mathematical representations of weather conditions, capturing gradual changes in variables like temperature and humidity throughout the growing season.
+
+According to @shah2019a, this method offers several advantages, particularly when classifying epidemics into binary categories (epidemic vs. non-epidemic). First, it can reveal how weather variables differ between epidemic and non-epidemic periods over extended times, providing a more nuanced understanding of potential disease drivers. By maintaining data continuity, FDA can detect early signs of divergence in weather patterns that may precede disease outbreaks. Additionally, FDA minimizes the arbitrary segmentations inherent in the window-pane method, leading to more stable and robust detection of signals relevant to epidemic risk. This continuous representation aligns better with the gradual, overlapping nature of many plant-pathogen interactions, offering clearer insights into the environmental conditions that promote disease development.
+
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(refund)
+
+# Create the dataset based on your code
+dat_T2M <- trials_weather |> 
+  mutate(epidemic = case_when(
+    inc_mean <= 25 ~ 0,
+    inc_mean > 25  ~ 1)) |> 
+  select(study, T2M, YYYYMMDD, heading, epidemic) |>
+  mutate(days = as.numeric(-(heading - YYYYMMDD))) |> 
+  select(study, T2M, days, epidemic)
+
+# Transform to wide format to create a matrix of T2M values
+dat_wide <- dat_T2M |>
+  pivot_wider(names_from = days, values_from = T2M)
+
+# Extract time points and clean column names to ensure numeric conversion
+time_points <- as.numeric(gsub("[^0-9.-]", "", colnames(dat_wide)[-1]))
+
+# Ensure there are no NA values in time_points
+time_points <- time_points[!is.na(time_points)]
+
+# Create a matrix for T2M values
+T2M_matrix <- as.matrix(dat_wide[,-1])  # Exclude the 'study' column, keep only T2M values
+
+# Check dimensions
+if (length(time_points) != ncol(T2M_matrix)) {
+  stop("Mismatch between number of time points and number of columns in T2M_matrix")
+}
+
+# Create the data list for pffr
+dat <- list(
+  y = dat_T2M$epidemic,   # Response variable
+  x = T2M_matrix,         # Matrix of predictors
+  yind = time_points      # Cleaned time indices
+)
+
+# Run pffr model
+m2 <- pffr(y ~ x, 
+           yind = dat$yind, 
+           data = dat,
+           bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
+           bs.int = list(bs = "ps", k = 30, m = c(2, 1)),
+           algorithm = "bam")  # Use 'bam' as the default fitting algorithm
+
+```
+
+
+## Codigo Denis
+
+```{r}
+---
+title: "Function-on-Scalar regressions for the white mold data"
+author: "Denis Shah"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    fig_caption: yes
+    highlight: tango
+    number_sections: true
+    theme: cerulean
+    toc: yes
+    toc_depth: 4
+    toc_float: true
+    editor_options: 
+      chunk_output_type: console
+---
+
+
+```{r setup, include=FALSE, eval=TRUE}
+options(digits = 3)
+require(knitr)
+## options
+knitr::opts_chunk$set(eval = TRUE, echo = FALSE, cache = FALSE, warning = FALSE, message = FALSE)
+```
+
+
+```{r Libraries, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE}
+library(fda)
+library(refund)
+library(fdatest)
+library(tidyverse)
+library(tictoc)
+library(kableExtra)
+```
+
+
+```{r Load-and-process-the-data}
+wm_load <- readr::read_csv("~/PethybridgeProjects/AlvesPipeline/OriginalCode/data_white-mold/data_model_plus_weather_filtered.csv", show_col_types = FALSE)
+
+# Simplify things. Keep only the weather-related variables and others needed for calculations
+wm_data <-
+  wm_load %>%
+  dplyr::select(subject, date, planting.date, sampling.date, wm, d2m, t2m_mean, t2m_max, t2m_min, st, sp, sm, rh) %>%
+  # Do the filtering steps before doing any calculations or feature engineering:
+  # wm_load has identical data for each of the sampling dates, which is why there is a filtering step on sampling.date.
+  dplyr::group_by(subject) %>% 
+  dplyr::filter(sampling.date == max(sampling.date)) %>%
+  dplyr::ungroup() %>% 
+  # Add the response variable (wm present or absent; binary):
+  dplyr::group_by(subject) %>% 
+  dplyr::mutate(wm = (mean(wm, na.rm = T) > 0)*1) %>% 
+  # wm as a factor:
+  dplyr::mutate(wm = factor(wm, levels = c(0, 1))) %>%
+  dplyr::ungroup() %>% 
+  dplyr::filter(!is.na(wm)) %>% 
+  # Calculate dap (as a numeric):
+  dplyr::mutate(dap = as.numeric(date - planting.date)) %>%
+  # Convert temperatures from Kelvin to degrees Celsius:
+  dplyr::mutate(across(d2m:st, ~ .x - 273.15)) %>%
+  # dewpoint depression:
+  dplyr::mutate(dpd = t2m_mean - d2m) %>%
+  # surface pressure in kPa:
+  dplyr::mutate(sp = sp/1000) %>%
+  # Ratio of soil temperature to soil moisture:
+  dplyr::mutate(stsm = st/sm) %>%
+  # Difference in max and min temperatures:
+  dplyr::mutate(tdiff = t2m_max - t2m_min) %>%
+  # Calculate saturation vapor pressure (es):
+  dplyr::mutate(es = 0.61078 * exp((17.27 * t2m_mean) / (t2m_mean + 237.3))) %>% 
+  # Calculate actual vapor pressure (ea):
+  dplyr::mutate(ea = (rh / 100) * es) %>% 
+  # Calculate VPD (kPa):
+  dplyr::mutate(vpd = es - ea) %>% 
+  # estimate GDD (base 0). NB: base 0 is reasonable for snap bean; see the Jenni et al. (2000) paper. I think we want GDD to start accumulating the day after planting date onwards...
+  # I use the day after planting, because we don't know exactly what time of the day the field was planted.
+  dplyr::mutate(gddi = ifelse(dap <= 0, 0, (t2m_max + t2m_min)*0.5 - 0)) %>%
+  dplyr::group_by(subject) %>% 
+  # We don't want the gddi column after creating gdd:
+  dplyr::mutate(gdd = cumsum(gddi), .keep = "unused") %>%
+  dplyr::ungroup() %>%
+  # Keep only the columns you need:
+  dplyr::select(subject, dap, wm:gdd, -es, -ea) %>%
+  # Filter the dataset to dap <= 50:
+  dplyr::filter(dap <= 50) %>%
+  # wm as a contrast: -1 = absent, 1 = present (needed for function-on-scalar regression):
+  dplyr::mutate(wm = as.numeric(wm)-1) %>%
+  dplyr::mutate(wm = 2*wm-1) 
+```
+
+
+```{r fos-functions}
+data.prep <- function(x) {
+  # Prepare the data for function-on-scalar regression
+  # N x J matrix of the functional predictor 
+  # Args:
+  #  x = unquoted variable name
+  # Returns:
+  #  a list with the following named elements:
+  #   y = N x J matrix of the functional response
+  #   x = a vector of the wm status coded as -1, 1
+  #   yind =  a vector of the evaluation days, which is of length 81 from -30 to 50
+  
+  .x <- enquo(x)
+  
+  # The environmental data:
+  ez <-
+    wm_data %>%
+    dplyr::select(subject, dap, !!.x) %>%
+    tidyr::pivot_wider(id_cols = subject, names_from = dap, names_prefix = "", values_from = !!.x) %>%
+    dplyr::select(-subject) %>%
+    as.matrix()
+  
+  colnames(ez) <- NULL
+  
+  # the vector of wm status:
+  x.wm <- 
+    wm_data %>%
+    dplyr::group_by(subject) %>%
+    dplyr::summarise(wm = mean(wm)) %>%
+    dplyr::pull(wm)
+  
+  # the vector of the evaluation days:
+  days <- seq(-30, 50)
+  
+  # the final data frame:
+  df <- list(y = ez, x = x.wm, yind = days)
+  
+  return(df)
+  
+}
+
+# Example of use:
+# dat <- data.prep(d2m)
+
+fANOVA <- function(dat) {
+  # Performs a functional ANOVA and plots the estimated coefs for the overall mean and 
+  # the difference between wm(0) and wm(1).
+  #
+  # Args:
+  #   dat: prepared data from calling the data.prep function
+  #
+  # Returns:
+  #   a ggplot graphic of the estimated beta(t) coefs.
+  
+  
+  # k = 30 gives wiggliness, no oversmoothing
+  m2 <- pffr(y~x, yind = dat$yind, data = dat,
+             bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
+             bs.int = list(bs = "ps", k = 30, m = c(2, 1)))
+  
+  
+  # The smooth coefficients for the overall mean and beta(t):
+  z <- coef(m2)$smterms
+  
+  # 1. For the overall mean:
+  a1 <- z[[1]]$coef[, "yindex.vec"]
+  a2 <- z[[1]]$coef[, "value"]
+  a3 <- z[[1]]$coef[, "se"]
+  
+  # 2. For beta(t):
+  b1 <- z[[2]]$coef[, "yindex.vec"]
+  b2 <- z[[2]]$coef[, "value"]
+  b3 <- z[[2]]$coef[, "se"]
+
+  
+  # Extract parts of the output to produce a more attractive plot in ggplot.
+  # The coefs for the overall mean, adding an approx. 95% CI:
+  X <- data.frame(x = a1, coef.mean = a2, lower.mean = a2 - 1.96*a3, upper.mean = a2 + 1.96*a3, coef = "Overall mean")
+  
+  # The coefs for the time trend of the mean difference between epidemics and non-epidemics:
+  Y <- data.frame(x = b1, coef.mean = b2, lower.mean = b2 - 1.96*b3, upper.mean = b2 + 1.96*b3, coef = "Difference")
+  
+  Z <- rbind(X, Y)
+  
+  # To get different lines in each facet, you need another data.frame:
+  hline.data <- data.frame(z = c(0), coef = c("Difference"))
+  
+  breaks <- seq(-30, 50, 10)
+  labels <- seq(-30, 50, 10)
+  
+  Z %>%
+  dplyr::mutate(coef = factor(coef, levels = c("Difference", "Overall mean"))) %>%
+  ggplot(., aes(x = x, y = coef.mean)) +
+  annotate("rect", ymin = -Inf, ymax = Inf, xmin = 35, xmax = 50, fill = "steelblue", alpha = 0.2) +
+  geom_ribbon(aes(ymin = lower.mean, ymax = upper.mean), alpha = 0.2) +
+  geom_path(linewidth = 1.2) +
+  geom_hline(aes(yintercept = 0), color = "grey", linetype = "dashed") +
+  geom_vline(aes(xintercept = 0), color = "grey", linetype = "dashed") +
+  theme_bw() +
+  facet_grid(coef ~ ., scales = "free_y") +
+  theme(strip.text = element_text(face = "bold", size = rel(1.0))) +
+  scale_x_continuous(name = "Days relative to sowing", breaks = breaks, labels = labels) +
+  theme(axis.title.x = element_text(face = "bold", size = 11)) +
+  ylab("Coefficient function") +
+  theme(axis.title.y = element_text(face = "bold", size = 11))
+  }
+```
+
+
+# Function-on-scalar regression {.tabset .tabset-fade .tabset-pills}
+## Dew point
+```{r function-on-scalar-d2m}
+fANOVA(dat = data.prep(d2m))
+```
+
+
+## Mean air temperature
+```{r function-on-scalar-t2m-mean}
+fANOVA(dat = data.prep(t2m_mean))
+```
+
+
+## Max air temperature
+```{r function-on-scalar-t2m-max}
+fANOVA(dat = data.prep(t2m_max))
+```
+
+
+## Min air temperature
+```{r function-on-scalar-t2m-min}
+fANOVA(dat = data.prep(t2m_min))
+```
+
+
+## Max - Min air temperature
+```{r function-on-scalar-tdiff}
+fANOVA(dat = data.prep(tdiff))
+```
+
+
+## Temperature-Dewpoint depression
+```{r function-on-scalar-dpd}
+fANOVA(dat = data.prep(dpd))
+```
+
+
+## Soil temperature
+```{r function-on-scalar-st}
+fANOVA(dat = data.prep(st))
+```
+
+
+## Soil moisture
+```{r function-on-scalar-sm}
+fANOVA(dat = data.prep(sm))
+```
+
+
+## soil temperature:soil moisture ratio
+```{r function-on-scalar-stsm}
+fANOVA(dat = data.prep(stsm))
+```
+
+
+## Surface pressure
+```{r function-on-scalar-sp}
+fANOVA(dat = data.prep(sp))
+```
+
+
+## Relative humidity
+```{r function-on-scalar-rh}
+fANOVA(dat = data.prep(rh))
+```
+
+
+## VPD
+```{r function-on-scalar-vpd}
+fANOVA(dat = data.prep(vpd))
+```
+
+
+## Growing degree days
+```{r function-on-scalar-gdd}
+fANOVA(dat = data.prep(gdd))
+```
+
+
+-------------------------------------------------------------------------------
+
+
+<!-- NEW SECTION: interval-wide tests -->
+
+```{r fdatest-example-with-d2m, eval=FALSE}
+# We will illustrate fdatest with the d2m variable.
+
+# For fdatest, we need to create two separate matrices (for wm = 0 and wm = 1), which we can then put into a list for convenience.
+wm0 <- 
+  wm_data %>%
+  dplyr::filter(wm == -1) %>%
+  dplyr::select(subject, dap, d2m) %>%
+  tidyr::pivot_wider(id_cols = subject, names_from = dap, names_prefix = "", values_from = d2m) %>%
+  dplyr::select(-subject) %>%
+  as.matrix()
+# and ...
+colnames(wm0) <- NULL
+
+wm1 <- 
+  wm_data %>%
+  dplyr::filter(wm == 1) %>%
+  dplyr::select(subject, dap, d2m) %>%
+  tidyr::pivot_wider(id_cols = subject, names_from = dap, names_prefix = "", values_from = d2m) %>%
+  dplyr::select(-subject) %>%
+  as.matrix()
+colnames(wm1) <- NULL
+
+# Performing the ITP:
+ITP.result <- fdatest::ITP2bspline(wm0, wm1, B = 100)
+
+# The function generates a print line for each iteration. To suppress that, wrap within sink:
+tic()
+{ sink(type = "message"); ITP.result <- fdatest::ITP2bspline(wm0, wm1, B = 1000); sink() }
+toc()  # 9.18 sec
+
+# Plotting the results of the ITP:
+# (there are two plots. The first is of the individual curves. The 2nd is of the adjusted p-values)
+plot(ITP.result, main = NULL, xrange = c(1, 365), xlab = 'Day')
+
+# Plotting the p-values heatmap
+# (I'm not finding it all that telling)
+ITPimage(ITP.result, abscissa.range = c(0, 1))
+
+# Selecting the significant components at 5% level:
+which(ITP.result$corrected.pval < 0.05)
+
+# Which corresponds to the following days (relative to sowing, where sowing is day = 0):
+seq(-30, 50)[31:32]
+
+# NEXT:
+# Take the above code, and wrap into functions to (i) prep the data for input into fdatest, (ii) calling the fdatest functions to estimate the adjusted p values
+```
+
+
+```{r fdatest-functions}
+make_kable <- function(...) {
+  # kable and kableExtra styling to avoid repetitively calling the styling over and over again
+  # See: https://stackoverflow.com/questions/73718600/option-to-specify-default-kableextra-styling-in-rmarkdown
+  # knitr::kable(...) %>%
+  kable(..., format = "html", row.names = TRUE, align = 'l') %>%
+    kable_styling(bootstrap_options = c("striped"), position = "left", font_size = 11, full_width = FALSE) 
+}
+
+do.fdatest <- function(x) {
+  # Performs an Interval Testing Procedure for testing the difference between the two functional wm populations evaluated on a uniform grid
+  #
+  # Args:
+  #  x = unquoted variable name, e.g. d2m
+  #
+  # Returns:
+  #   a tibble of the variable with a list vector of the days (relative to sowing) where the two populations differ functionally
+  
+  # Data prep for input to fdatest
+  .x <- enquo(x)
+  # wm0 = N x J matrix of the functional data for wm absent
+  wm0 <- 
+    wm_data %>%
+    dplyr::filter(wm == -1) %>%
+    dplyr::select(subject, dap, !!.x) %>%
+    tidyr::pivot_wider(id_cols = subject, names_from = dap, names_prefix = "", values_from = !!.x) %>%
+    dplyr::select(-subject) %>%
+    as.matrix()
+    # and ...
+    colnames(wm0) <- NULL
+    
+  # wm1 = N x J matrix of the functional data for wm present  
+  wm1 <- 
+    wm_data %>%
+    dplyr::filter(wm == 1) %>%
+    dplyr::select(subject, dap, !!.x) %>%
+    tidyr::pivot_wider(id_cols = subject, names_from = dap, names_prefix = "", values_from = !!.x) %>%
+    dplyr::select(-subject) %>%
+    as.matrix()
+    colnames(wm1) <- NULL
+  
+  dat <- list(wm0 = wm0, wm1 = wm1)
+  
+  # The function generates a print line for each iteration. To suppress that, wrap within sink:
+  # (set a seed for reproducibility)
+  { sink(nullfile()); set.seed(86754309); foo <- ITP2bspline(dat$wm0, dat$wm1, B = 10000); sink() }
+
+  # Selecting the significant components at 5% level:
+  # Which corresponds to the following days (relative to sowing, where sowing is day = 0):
+  z <- seq(-30, 50)[which(foo$corrected.pval < 0.05)]
+  
+  res <- tibble(var = rlang::as_name(.x), days = list(z))
+  
+  return(res)
+}
+
+# Example of use:
+# do.fdatest(x = d2m)
+
+filter.iwt <- function(x) {
+  # Filter the interval-wise testing results to see the days that were significant
+  # Args:
+  #  x = the series (quoted character string)
+  # Returns:
+  #  a vector of the days where the series was different between wm = 0 and wm = 1
+  iwt |>
+  dplyr::filter(var == x) |>
+  purrr::pluck("days", 1)
+}
+
+
+zee <- function(series) {
+  # Output the start and end days of significant windows within a time series
+  # Args:
+  #  series = quoted character name of the series
+  # Returns:
+  #  a table
+  v <- 
+    filter.iwt(x = series) %>% 
+    split(., cumsum(c(1, diff(.) != 1)))
+  
+  # Create an empty data frame with three named columns:
+  z <- data.frame(matrix(
+    vector(), 0, 3, dimnames = list(c(), c("series", "start", "end"))), 
+    stringsAsFactors = F)
+  
+  # Now loop over v to pick out the start and end of the continuous windows:
+  for (i in 1:length(v)) {
+    b <- purrr::pluck(v, i) %>%  dplyr::first()
+    c <- purrr::pluck(v, i) %>%  dplyr::last()
+    z[i, "series"] <- series
+    z[i, "start"] <- b
+    z[i, "end"] <- c
+    } # end for loop
+  return(z)
+}
+
+# Examples of use:
+# zee("t2m_mean")
+# zee("d2m")
+
+#  Example of the workflow:
+###---###
+# tst.d2m <- do.fdatest(x = d2m)
+
+# You could output this way:
+# pluck(iwt.list, "tst.d2m") %>% 
+#   make_kable()
+
+# But this shows the windows in a cleaner format:  
+# zee("d2m") %>% 
+  # make_kable()
+###---###
+
+# Now we're ready to roll...
+```
+
+<!-- Already did the interval-wise tests. Just load the results. -->
+```{r load-the-iwt-results}
+load("~/PethybridgeProjects/AlvesPipeline/FunctiononScalar/iwt.RData")
+```
+
+# Interval-wise tests {.tabset .tabset-fade .tabset-pills}
+Perform the interval-wise tests
+```{r do-interval-wise-tests, eval=FALSE}
+tst.d2m <- do.fdatest(x = d2m)
+
+tst.t2m_mean <- do.fdatest(x = t2m_mean)
+
+tst.t2m_max <- do.fdatest(x = t2m_max)
+
+tst.t2m_min <- do.fdatest(x = t2m_min)
+
+tst.tdiff <- do.fdatest(x = tdiff)
+
+tst.dpd <- do.fdatest(x = dpd)
+
+tst.st <- do.fdatest(x = st)
+
+tst.sm <- do.fdatest(x = sm)
+
+tst.stsm <- do.fdatest(x = stsm)
+
+tst.sp <- do.fdatest(x = sp)
+
+tst.rh <- do.fdatest(x = rh)
+
+tst.vpd <- do.fdatest(x = vpd)
+
+tst.gdd <- do.fdatest(x = gdd)
+```
+
+
+
+I've already done the interval-wise tests, so the chunks in this section will just output the days that the test found to be significant.
+
+## Dew point
+```{r iwt-d2m}
+zee("d2m") %>% 
+  make_kable()
+```
+
+## Mean air temperature
+```{r iwt-t2m-mean}
+zee("t2m_mean") %>% 
+  make_kable()
+```
+
+## Max air temperature
+```{r iwt-t2m-max}
+zee("t2m_max") %>% 
+  make_kable()
+```
+
+## Min air temperature
+```{r iwt-t2m-min}
+zee("t2m_min") %>% 
+  make_kable()
+```
+
+## Max - Min air temperature
+```{r iwt-tdiff}
+zee("tdiff") %>% 
+  make_kable()
+```
+
+## Temperature-Dewpoint depression
+```{r iwt-dpd}
+zee("dpd") %>% 
+  make_kable()
+```
+
+## Soil temperature
+```{r iwt-st}
+zee("st") %>% 
+  make_kable()
+```
+
+## Soil moisture
+```{r iwt-sm}
+zee("sm") %>% 
+  make_kable()
+```
+
+## soil temperature:soil moisture ratio
+```{r iwt-stsm}
+zee("stsm") %>% 
+  make_kable()
+```
+
+## Surface pressure
+```{r iwt-sp}
+zee("sp") %>% 
+  make_kable()
+```
+
+## Relative humidity
+```{r iwt-rh}
+zee("rh") %>% 
+  make_kable()
+```
+
+
+## VPD
+```{r iwt-vpd}
+zee("vpd") %>% 
+  make_kable()
+```
+
+<!-- ## Growing degree days -->
+```{r iwt-gdd, eval=FALSE, echo=FALSE}
+zee("gdd") %>% 
+  make_kable()
+```
+
+
+```{r save-the-results, eval=FALSE}
+# I want to put all the data frames into a list (to pass to bind_rows). Found the solution at:
+# https://stackoverflow.com/questions/26738302/make-list-of-objects-in-global-environment-matching-certain-string-pattern
+# so don't have to write them out one-by-one
+Pattern1 <- grep("^tst.", names(.GlobalEnv), value = TRUE)
+iwt.list <- do.call("list", mget(Pattern1))
+# Don't need the tst. objects no more:
+# rm(list = Pattern1)
+
+# Now bind all the data frames into one:
+iwt <- dplyr::bind_rows(iwt.list)
+
+# Save iwt: 
+save(iwt.list, iwt, file = "iwt.RData")
+```
+
+
+# Summary of the test results
+```{r parsing-the-results, results='hide'}
+# Let's use the filter.iwt function to have a look at the intervals that were significant (all series, ignoring gdd):
+# air temperature-related
+filter.iwt(x = "t2m_mean")
+filter.iwt(x = "t2m_max")
+filter.iwt(x = "t2m_min")
+filter.iwt(x = "tdiff")
+filter.iwt(x = "d2m") 
+filter.iwt(x = "dpd")
+
+# soil-related
+filter.iwt(x = "sm")
+filter.iwt(x = "st")
+filter.iwt(x = "stsm")
+
+# surface pressure
+filter.iwt(x = "sp")
+
+# moisture-related
+filter.iwt(x = "rh")
+filter.iwt(x = "vpd")
+
+# We want to be able to cut the significant periods into continuous windows should those exist.
+# The code to do so is adapted from here:
+# https://stackoverflow.com/questions/5222061/create-grouping-variable-for-consecutive-sequences-and-split-vector
+# Examples:
+filter.iwt(x = "t2m_max") %>% split(., cumsum(c(1, diff(.) != 1)))
+filter.iwt(x = "stsm") %>% split(., cumsum(c(1, diff(.) != 1)))
+
+
+# What we're ultimately interested in is parsing the significant dates into any continuous segments.
+# The find the start and end of these segments, so that we can input those to a dataframe for plotting. For that we use the function `zee` (see the functions chunk)
+
+# Create a vector of all the series names:
+e <- c("t2m_mean", "t2m_max", "t2m_min", "tdiff", "d2m", "dpd", "sm", "st", "stsm", "sp", "rh", "vpd")
+
+# May over e and bind the rows:
+g <- purrr::map(e, zee) |> list_rbind()
+```
+
+
+```{r plot-the-results}
+# Code for plotting the segments derived from here:
+# https://stackoverflow.com/questions/35322919/grouped-data-by-factor-with-geom-segment
+g %>% 
+  ggplot(., aes(ymin = start, ymax = end, x = series)) + 
+  # Changing the order on the x-axis for the categories:
+  scale_x_discrete(limits = rev(c("t2m_mean", "t2m_max", "t2m_min", "tdiff", "d2m", "dpd", "sm", "st", "stsm", "sp", "rh", "vpd"))) + 
+  # Pay attention to layers. Do coord_flip first, then annotations to appear in the background, segment the topmost layer:
+  coord_flip() +
+  # Add some guides:
+  geom_hline(aes(yintercept = 0), color = "grey", linetype = "dashed") +
+  annotate("rect", xmin = -Inf, xmax = Inf, ymin = 35, ymax = 50, fill = "steelblue", alpha = 0.2) +
+    geom_linerange(colour = "grey20", position = position_dodge(width = 0.2), linewidth = 3, na.rm = TRUE) + 
+    theme_bw() +
+    labs(x = "Series", y = "Days relative to sowing") +
+    theme(axis.title = element_text(face = "bold", size = 11))
+```
+
+
+<!-- # Summary variables -->
+```{r summary-variables, eval=FALSE}
+weather_vars <- function(whichvar, start, end) {
+  # Calculate the weather-based summary variable for each observation
+  # Args:
+  #  whichvar = unquoted character string of the variable (series), e.g., sm
+  #  start = the start day relative to sowing
+  #  end = the end day of the window relative to sowing
+  # Returns:
+  #  a data frame with two columns (subject, the weather-based summary variable)
+  
+  var <- enquo(whichvar)
+  # Create a name for the column to hold the summary variable:
+  var_name <- paste(rlang::as_name(var), start, end, sep = "_")
+  
+  wm_data %>%
+    dplyr::select(subject, dap, !!var) %>%
+    dplyr::filter(dap %in% c(start:end)) %>%
+    dplyr::group_by(subject) %>%
+    dplyr::summarise("{var_name}" := mean(!!var))
+  } # end of function
+
+
+# These are the variables and windows we'll create summaries for:
+# t2m_mean  start = 0, end = 4
+# sm start = -4, end = 3
+# sm start = 5, end = 15
+# sm start = 17, end = 24
+# sm start = 40, end = 49
+# stsm start = 35, end = 44
+
+u <- weather_vars(whichvar = t2m_mean, start = 0, end = 4)
+v <- weather_vars(whichvar = sm, start = -4, end = 3)
+w <- weather_vars(whichvar = sm, start = 5, end = 15)
+x <- weather_vars(whichvar = sm, start = 17, end = 24)
+y <- weather_vars(whichvar = sm, start = 40, end = 49)
+z <- weather_vars(whichvar = stsm, start = 35, end = 44)
+
+weather.vars <- purrr::reduce(list(u, v, w, x, y, z), dplyr::left_join, by = "subject")
+
+# Save the weather.vars data frame:
+save(weather.vars, file = "WeatherVars.RData")
+```
+
+
+
+<!-- #  Further... -->
+<!-- One issue that is of concern is the small nature of the dataset.  However, if we could generate artificial datasets, those could be used for model training. -->
+<!-- [See this R package on GANs](https://github.com/mneunhoe/RGAN)  -->
+
+
+```
+
+
+
