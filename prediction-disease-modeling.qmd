@@ -990,7 +990,7 @@ Let's calculate the bootstrapped correlation coefficients combined with the Sime
 
 ```
 
-Now, we can use the `windowpane_tests()` function from the {r4pde} package to analyze each of the datasets created above. This function will compute the bootstrapped correlation coefficients for the variables of interest and apply the Simes' procedure to account for multiple testing, providing adjusted p-values for more robust statistical inference.
+Now, we can use the `windowpane_tests()` function from the {r4pde} package to analyze each of the datasets created above. This function will compute the bootstrapped correlation coefficients for the variables of interest and apply the Simes' procedure to account for multiple testing, providing adjusted P-values for more robust statistical inference.
 
 ```{r}
 library(boot)
@@ -1003,11 +1003,11 @@ results_TMINb <- results$results
 results
 ```
 
-The window pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all p-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response. 
+The window pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15 ^o^C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all P-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response.
 
-The global p-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 14 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
+The global P-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 7 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
 
-Let's apply the test function to 7-day long windows for three other variables.
+Let's apply the test function to 7-day long windows for three other variables: relative humidity, precipitation and maximum temperature.
 
 ```{r}
 library(r4pde)
@@ -1035,7 +1035,7 @@ results_TMAX <- results3$results
 
 ```
 
-The first variable contains the name of the variable. We can extract the number of days from each window using the `extract` function, which allows for regex-based extraction into new columns. In this case, two new columns will be created representing the extreme days of the window. 
+The first variable in the results dataframe contains the name of the variable. We can extract the starting and ending day from each window using the `extract` function, which allows for regex-based extraction into new columns. In this case, two new columns will be created representing the extreme days of the window.
 
 ```{r}
 # Use strcapture to extract components into new columns
@@ -1115,3 +1115,15 @@ p_PREC <- p_PREC + scale_common
   plot_layout(guides = "collect")
 
 ```
+
+#### Functional data analysis (under development)
+
+Functional Data Analysis (FDA) is a statistical approach used to analyze and model data that varies continuously over time or space. It represents entire data sequences (e.g., time series) as smooth functions, allowing for the exploration of trends, patterns, and relationships in complex, continuous processes rather than relying on discrete, segmented data points [@Gertheiss2024].
+
+Initially applied in plant pathology to study the relationship between Fusarium head blight outbreaks and weather variables over time [@shah2019a], FDA has since been adopted in other plant pathology studies with similar objectives [@shah2019; @hjelkrem2021a; @alves2022].
+
+Unlike traditional methods, such as the window-pane approach that divides continuous weather data into fixed-length windows to search for summary variables, FDA treats the time series as a continuous process. It uses smoothing functions to create mathematical representations of weather conditions, capturing gradual changes in variables like temperature and humidity throughout the growing season.
+
+According to @shah2019a, this method offers several advantages, particularly when classifying epidemics into binary categories (epidemic vs. non-epidemic). First, it can reveal how weather variables differ between epidemic and non-epidemic periods over extended times, providing a more nuanced understanding of potential disease drivers. By maintaining data continuity, FDA can detect early signs of divergence in weather patterns that may precede disease outbreaks. Additionally, FDA minimizes the arbitrary segmentations inherent in the window-pane method, leading to more stable and robust detection of signals relevant to epidemic risk. This continuous representation aligns better with the gradual, overlapping nature of many plant-pathogen interactions, offering clearer insights into the environmental conditions that promote disease development.
+
+Under construction.
