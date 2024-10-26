@@ -745,9 +745,9 @@ In addition, data mining techniques are employed to systematically explore time-
 
 #### Window-pane
 
-##### Variable construction
+##### Variable construction and selection
 
-With regards to weather variable creation for data-mining purposes, window-pane analysis, first introduced in the mid-1980s [@coakley1985], has been widely used in modeling studies in plant pathology [@pietravalle2003; @calverojr1996; @tebeest2008a; @gouache2015a; @coakley1988; @kriss2010; @dallalana2021; @coakley1988a]. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g. daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.
+With regards to weather variable creation and selection for data-mining purposes, window-pane analysis, first introduced in the mid-1980s [@coakley1985], has been widely used in modeling studies in plant pathology [@pietravalle2003; @calverojr1996; @tebeest2008a; @gouache2015a; @coakley1988; @kriss2010; @dallalana2021; @coakley1988a]. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g. daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.
 
 The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs. high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.
 
@@ -957,35 +957,35 @@ Let's calculate the bootstrapped correlation coefficients combined with the Sime
 
 ```{r}
 
-  T2M_MIN_7 = wp_all %>% select(starts_with("length7_T2M_MIN_mean"))
-  T2M_MIN_14 = wp_all %>% select(starts_with("length14_T2M_MIN_mean"))
-  T2M_MIN_21 = wp_all %>% select(starts_with("length21_T2M_MIN_mean"))
-  T2M_MIN_28 = wp_all %>% select(starts_with("length28_T2M_MIN_mean"))
+  T2M_MIN_7 = wp_all |> select(starts_with("length7_T2M_MIN_mean"))
+  T2M_MIN_14 = wp_all |> select(starts_with("length14_T2M_MIN_mean"))
+  T2M_MIN_21 = wp_all |> select(starts_with("length21_T2M_MIN_mean"))
+  T2M_MIN_28 = wp_all |> select(starts_with("length28_T2M_MIN_mean"))
  
-  T2M_MAX_7 = wp_all %>% select(starts_with("length7_T2M_MAX_mean"))
-  T2M_MAX_14 = wp_all %>% select(starts_with("length14_T2M_MAX_mean"))
-  T2M_MAX_21 = wp_all %>% select(starts_with("length21_T2M_MAX_mean"))
-  T2M_MAX_28 = wp_all %>% select(starts_with("length28_T2M_MAX_mean"))
+  T2M_MAX_7 = wp_all |> select(starts_with("length7_T2M_MAX_mean"))
+  T2M_MAX_14 = wp_all |> select(starts_with("length14_T2M_MAX_mean"))
+  T2M_MAX_21 = wp_all |> select(starts_with("length21_T2M_MAX_mean"))
+  T2M_MAX_28 = wp_all |> select(starts_with("length28_T2M_MAX_mean"))
   
-  T2M_7 = wp_all %>% select(starts_with("length7_T2M_mean"))
-  T2M_14 = wp_all %>% select(starts_with("length14_T2M_mean"))
-  T2M_21 = wp_all %>% select(starts_with("length21_T2M_mean"))
-  T2M_28 = wp_all %>% select(starts_with("length28_T2M_mean"))
+  T2M_7 = wp_all |> select(starts_with("length7_T2M_mean"))
+  T2M_14 = wp_all |> select(starts_with("length14_T2M_mean"))
+  T2M_21 = wp_all |> select(starts_with("length21_T2M_mean"))
+  T2M_28 = wp_all |> select(starts_with("length28_T2M_mean"))
   
-  RH2M_7 = wp_all %>% select(starts_with("length7_RH2M_mean"))
-  RH2M_14 = wp_all %>% select(starts_with("length14_RH2M_mean"))
-  RH2_21 = wp_all %>% select(starts_with("length21_RH2M_mean"))
-  RH2_28 = wp_all %>% select(starts_with("length28_RH2M_mean"))
+  RH2M_7 = wp_all |> select(starts_with("length7_RH2M_mean"))
+  RH2M_14 = wp_all |> select(starts_with("length14_RH2M_mean"))
+  RH2_21 = wp_all |> select(starts_with("length21_RH2M_mean"))
+  RH2_28 = wp_all |> select(starts_with("length28_RH2M_mean"))
   
-  PRECTOTCORR_7 = wp_all %>% select(starts_with("length7_PRECTOTCORR"))
-  PRECTOTCORR_14 = wp_all %>% select(starts_with("length14_PRECTOTCORR"))
-  PRECTOTCORR_21 = wp_all %>% select(starts_with("length21_PRECTOTCORR"))
-  PRECTOTCORR_28 = wp_all %>% select(starts_with("length28_PRECTOTCORR"))
+  PRECTOTCORR_7 = wp_all |> select(starts_with("length7_PRECTOTCORR"))
+  PRECTOTCORR_14 = wp_all |> select(starts_with("length14_PRECTOTCORR"))
+  PRECTOTCORR_21 = wp_all |> select(starts_with("length21_PRECTOTCORR"))
+  PRECTOTCORR_28 = wp_all |> select(starts_with("length28_PRECTOTCORR"))
   
-  T2M_MINb_7 = wp_all %>% select(starts_with("length7_T2M_MIN_below"))
-  T2M_MINb_14 = wp_all %>% select(starts_with("length14_T2M_MIN_below"))
-  T2M_MINb_21 = wp_all %>% select(starts_with("length21_T2M_MIN_below"))
-  T2M_MINb_28 = wp_all %>% select(starts_with("length28_T2M_MIN_below"))
+  T2M_MINb_7 = wp_all |> select(starts_with("length7_T2M_MIN_below"))
+  T2M_MINb_14 = wp_all |> select(starts_with("length14_T2M_MIN_below"))
+  T2M_MINb_21 = wp_all |> select(starts_with("length21_T2M_MIN_below"))
+  T2M_MINb_28 = wp_all |> select(starts_with("length28_T2M_MIN_below"))
   
 
 ```
@@ -1039,21 +1039,21 @@ The first variable in the results dataframe contains the name of the variable. W
 
 ```{r}
 # Use strcapture to extract components into new columns
-df_TMINb7 <- results_TMINb %>%
+df_TMINb7 <- results_TMINb |>
   extract(variable, into = c("variable_prefix", "low", "high"), 
           regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
 
 
-df_RH7 <- results_RH %>%
+df_RH7 <- results_RH |>
   extract(variable, into = c("variable_prefix", "low", "high"), 
           regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
 
 
-df_PREC7 <- results_PREC %>%
+df_PREC7 <- results_PREC |>
   extract(variable, into = c("variable_prefix", "low", "high"), 
           regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
 
-df_TMAX7 <- results_TMAX %>%
+df_TMAX7 <- results_TMAX |>
   extract(variable, into = c("variable_prefix", "low", "high"), 
           regex = "^(.*)_(-?\\d+)_(-?\\d+)$", convert = TRUE)
 ```
@@ -1116,14 +1116,192 @@ p_PREC <- p_PREC + scale_common
 
 ```
 
-#### Functional data analysis (under development)
+#### Functional data analysis
 
-Functional Data Analysis (FDA) is a statistical approach used to analyze and model data that varies continuously over time or space. It represents entire data sequences (e.g., time series) as smooth functions, allowing for the exploration of trends, patterns, and relationships in complex, continuous processes rather than relying on discrete, segmented data points [@Gertheiss2024].
+Functional Data Analysis (FDA) is a statistical approach used to analyze and model data that varies continuously over time or space. It represents entire data sequences (e.g., time series) as smooth functions, allowing for the exploration of trends, patterns, and relationships in complex, continuous processes rather than relying on discrete, segmented data points [@ramsay2005functional; @Gertheiss2024].
 
-Initially applied in plant pathology to study the relationship between Fusarium head blight outbreaks and weather variables over time [@shah2019a], FDA has since been adopted in other plant pathology studies with similar objectives [@shah2019; @hjelkrem2021a; @alves2022a].
+In the FDA framework, scalar-on-function and function-on-scalar models are two types of FDA models, designed to examine relationships between functional predictors and outcomes. Function-on-scalar models use single values (e.g., mean daily relative humidity) as predictors to explain the shape of an entire outcome curve (e.g. disease). Meanwhile, in scalar-on-function models, time series data (e.g., daily temperatures) are used as predictors to identify which parts of the series are linked to a single outcome. Together, these FDA models offer complementary insights, allowing either for predicting a scalar outcome from curves or understanding how scalar predictors influence entire functions [@ramsay2005functional].
 
-Unlike traditional methods, such as the window-pane approach that divides continuous weather data into fixed-length windows to search for summary variables, FDA treats the time series as a continuous process. It uses smoothing functions to create mathematical representations of weather conditions, capturing gradual changes in variables like temperature and humidity throughout the growing season.
+Initially applied in plant pathology to study the relationship between Fusarium head blight outbreaks and weather variables over time (using the function-on-scalar model) [@shah2019a], FDA has since been adopted in other plant pathology studies with similar objectives [@shah2019; @hjelkrem2021a; @alves2022a].
 
-According to @shah2019a, this method offers several advantages, particularly when classifying epidemics into binary categories (epidemic vs. non-epidemic). First, it can reveal how weather variables differ between epidemic and non-epidemic periods over extended times, providing a more nuanced understanding of potential disease drivers. By maintaining data continuity, FDA can detect early signs of divergence in weather patterns that may precede disease outbreaks. Additionally, FDA minimizes the arbitrary segmentations inherent in the window-pane method, leading to more stable and robust detection of signals relevant to epidemic risk. This continuous representation aligns better with the gradual, overlapping nature of many plant-pathogen interactions, offering clearer insights into the environmental conditions that promote disease development.
+In particular, @shah2019 used FDA as a basis to develop logistic regression models for large-scale deployment by utilizing FDA through a scalar-on-function approach to predict plant diseases - in this approach, the model identifies which parts of the time series (e.g., certain weeks or days) are most associated with the disease outcome, helping to predict whether an epidemic is likely to occur based on patterns in the weather series. Moreover, FDA was employed to identify the most relevant temporal regions of weather series associated with disease outbreaks, improving prediction by summarizing key windows across critical growth stages. The authors discussed that , unlike traditional window-pane analysis, FDA reduces statistical testing issues and offers a more refined method for incorporating novel predictors into simple, effective models [@shah2019].
+
+With the objective of identifying temporal regions of the weather series, Alves et al. (unpublished) proposed the use of a function-on-scalar model to gain insights about the time series related to a binary disease outcome by identifying significant regions in the weather series where the curves diverge. The function-on-scalar approach here compares the average functional trajectories of two groups: epidemic vs. non-epidemic. It identifies time regions where the mean weather curves for the two groups differ significantly. While the model doesn't directly predict a binary response, it aids in diagnosing critical time points in the series that differentiate the two disease outcomes, supporting model development and refinement for binary classification.
+
+For that purpose, the authors used the `ITP2bspline()` function of the R package {fdatest} that implements the Interval Testing Procedure (ITP) to compare two functional populations (epidemic vs. non-epidemic) evaluated on a uniform grid. It represents data using B-spline basis functions and assesses the significance of each basis coefficient with interval-wise control of the Family Wise Error Rate (FWER) [@pini2016].
+
+In this section, I will first demonstrate how to fit the function-on-scalar regression with the objective of visualizing two curves, the difference coefficient function and the overall mean coefficient curve. The former shows how the effect of a weather-related variable on the response variable changes over the days relative to a reference date (e.g. planting date, flowering). It helps to identify critical windows when the weather variations have the most substantial impact. The latter represents the cumulative or overall effect of weather over the time period. It helps assess whether the influence of weather variable accumulates or stabilizes over time.
+
+Then, I will demonstrate the Interval Testing Procedure (ITP) to compare two functional populations (epidemic vs. non-epidemic) and identify exactly the days in the series that the two populations are significantly different. We will keep analyzing the data on wheat blast epidemics in Brazil.
+
+##### Function-on-scalar regression
+
+The following analysis uses function-on-scalar regression to explore the relationship between relative humidity at 2 meters (RH2M) and the occurrence of wheat blast epidemics. Let's first load the necessary libraries.
+
+```{r}
+#| warning: false
+#| message: false
+library(dplyr)
+library(tidyr)
+library(r4pde)
+library(refund)
+library(ggplot2)
+```
+
+The first step involves reading and merging two datasets:
+
+\- `trials`: Contains disease data with heading dates.
+
+\- `weather_data`: Contains weather data for specific time windows.
+
+The datasets are merged into `trials_weather`, and the resulting data is transformed into a wide format where each column represents time points (days), and rows correspond to individual studies. The binary epidemic status is created, where:
+
+-   1 indicates an epidemic (if `inc_mean > 25`).
+-   0 indicates no epidemic (if `inc_mean <= 25`).
+
+The weather variable (`RH2M`) is used as the predictor, and time points (days) are calculated relative to the heading date.
+
+```{r}
+#| warning: false
+#| message: false
+
+trials <- BlastWheat
+trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
+weather_data <- readr::read_csv("data/weather_windowpane.csv")
+trials_weather <- full_join(trials, weather_data)
+
+dat_wide_RH <- trials_weather |>
+    mutate(epidemic = if_else(inc_mean > 20, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD))) |>
+    select(study, epidemic, days, RH2M) |>
+    pivot_wider(id_cols = c(study, epidemic), 
+                names_from = days, values_from = RH2M)
+
+```
+
+The response vector is the epidemic status (0 or 1), while the predictor matrix contains the values of the specified weather variable across time. The model fits smooth functions to represent the effects of time and the epidemic status on the weather variable using penalized splines. The function-on-scalar regression model is given by:
+
+$y_{ij} = \beta_0(t_j) + \beta_1(t_j) x_i + \epsilon_{ij}$
+
+where: $y\_{ij}$ is the value of the weather variable for study $i$ at time $j$; $\beta\_0(t_j)$ is the smooth function for the overall mean effect over time; $\beta*1(t_j)$ is the smooth function representing the effect of epidemic status over time; $x_i$ is the binary epidemic status (0 or 1); and $\epsilon{ij}$ is the error term.
+
+We can now fit the model using the `pffr()` function of the {refund} package.
+
+```{r}
+x <- dat_wide_RH$epidemic  # Response vector
+y <- dat_wide_RH |> 
+  select(-study, -epidemic) |> 
+  as.matrix()  # Matrix of predictors
+
+yind <- as.numeric(colnames(y))
+
+FOSR_RH <- pffr(y ~ x, 
+             yind = yind,
+             bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
+             bs.int = list(bs = "ps", k = 30, m = c(2, 1)),
+                algorithm = "gam")
+  
+```
+
+Let's extract the coefficients of the model fit object and prepare the data and plot using gpplot.
+
+```{r}
+
+  coef_list <- coef(FOSR_RH)$smterms
+  
+  mean_df <- data.frame(
+    time = coef_list[[1]]$coef[, "yind.vec"],
+    value = coef_list[[1]]$coef[, "value"],
+    lower = coef_list[[1]]$coef[, "value"] - 1.96 * coef_list[[1]]$coef[, "se"],
+    upper = coef_list[[1]]$coef[, "value"] + 1.96 * coef_list[[1]]$coef[, "se"],
+    term = "Overall Mean"
+  )
+  
+  x_df <- data.frame(
+    time = coef_list[[2]]$coef[, "yind.vec"],
+    value = coef_list[[2]]$coef[, "value"],
+    lower = coef_list[[2]]$coef[, "value"] - 1.96 * coef_list[[2]]$coef[, "se"],
+    upper = coef_list[[2]]$coef[, "value"] + 1.96 * coef_list[[2]]$coef[, "se"],
+    term = "Difference"
+  )
+  
+  plot_df <- bind_rows(mean_df, x_df)
+  
+
+  ggplot(plot_df, aes(x = time, y = value)) +
+    geom_ribbon(aes(ymin = lower, ymax = upper), 
+                alpha = 0.2) +
+    geom_line(linewidth = 1.2) +
+    facet_grid(rows = vars(term), 
+               scales = "free_y") +
+    theme_r4pde(font_size = 12) +
+    geom_hline(aes(yintercept = 0), 
+               color = "grey", 
+               linetype = "dashed") +
+    geom_vline(aes(xintercept = 0), 
+               color = "grey", 
+               linetype = "dashed") +
+    labs(x = "Day relative to wheat heading", y = "Coefficient Function",
+         title = "RH2M") +
+    theme(strip.text = element_text(face = "bold", size = rel(1.0)),
+          axis.title = element_text(face = "bold", size = 12))
+
+```
+
+##### Interval test procedure
 
 Under construction.
+
+```{r}
+#| warning: false
+#| message: false
+library(fdatest)
+
+
+df_epidemic <- trials_weather |> 
+  mutate(epidemic = if_else(inc_mean > 20, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD))) |>
+  filter(epidemic == 1) |> 
+  dplyr::select(T2M_MIN, days, study)
+
+df_non_epidemic <- trials_weather |> 
+   mutate(epidemic = if_else(inc_mean > 20, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD))) |>
+  filter(epidemic == 0) |> 
+  dplyr::select(T2M_MIN, days, study)
+
+# Pivot data to wide format for FDA
+df_epidemic_wide <- df_epidemic |>
+  group_by(study) |>
+  pivot_wider(names_from = days, values_from = T2M_MIN) |>
+  ungroup() |>
+  dplyr::select(-study)
+
+df_non_epidemic_wide <- df_non_epidemic |>
+  group_by(study) |>
+  pivot_wider(names_from = days, values_from = T2M_MIN) |>
+  ungroup() |>
+  dplyr::select(-study)
+
+# Convert to matrix
+data_epidemic <- as.matrix(df_epidemic_wide)
+data_non_epidemic <- as.matrix(df_non_epidemic_wide)
+
+# Perform FDA test
+itp_result <- ITP2bspline(data1 = data_epidemic, data2 = data_non_epidemic, B = 100)
+
+# Output results
+
+# global p-values
+itp_result$corrected.pval
+
+# significant components
+which(itp_result$corrected.pval < 0.05)
+
+
+# Plot FDA results
+plot(itp_result, main = "T2M_MIN", xrange = c(-28, 28), xlab = 'Day', xaxt = 'n')
+axis(1, at = seq(-28, 28, by = 2), labels = seq(-28, 28, by = 2))
+
+
+```

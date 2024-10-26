@@ -1124,89 +1124,207 @@ Initially applied in plant pathology to study the relationship between Fusarium 
 
 Unlike traditional methods, such as the window-pane approach that divides continuous weather data into fixed-length windows to search for summary variables, FDA treats the time series as a continuous process. It uses smoothing functions to create mathematical representations of weather conditions, capturing gradual changes in variables like temperature and humidity throughout the growing season.
 
-According to @shah2019a, this method offers several advantages, particularly when classifying epidemics into binary categories (epidemic vs. non-epidemic). First, it can reveal how weather variables differ between epidemic and non-epidemic periods over extended times, providing a more nuanced understanding of potential disease drivers. By maintaining data continuity, FDA can detect early signs of divergence in weather patterns that may precede disease outbreaks. Additionally, FDA minimizes the arbitrary segmentations inherent in the window-pane method, leading to more stable and robust detection of signals relevant to epidemic risk. This continuous representation aligns better with the gradual, overlapping nature of many plant-pathogen interactions, offering clearer insights into the environmental conditions that promote disease development.
+According to @shah2019a, this method offers several advantages, particularly when classifying epidemics into binary categories (epidemic vs. non-epidemic). First, it can reveal how weather variables differ between epidemic and non-epidemic periods over extended times, providing a more nuanced understanding of potential disease drivers. By maintaining data continuity, FDA can detect early signs of divergence in weather patterns that may precede disease outbreaks. Additionally, FDA minimizes the arbitrary segmentation inherent in the window-pane method, leading to more stable and robust detection of signals relevant to epidemic risk. This continuous representation aligns better with the gradual, overlapping nature of many plant-pathogen interactions, offering clearer insights into the environmental conditions that promote disease development.
+
+
+
+### FOSR Model
+
+
+The following analysis uses **function-on-scalar regression (FOSR)** to explore the relationship between relative humidity at 2 meters (RH2M) and the occurrence of epidemics over time.
+
+The first step involves reading and merging two datasets:
+- **`trials`**: Contains disease data with heading dates.
+- **`weather_data`**: Contains weather data for specific time windows.
+
+The datasets are merged into `trials_weather`, and the resulting data is transformed into a **wide format** where each column represents time points (days), and rows correspond to individual studies. The **binary epidemic status** is created, where:
+
+- 1 indicates an epidemic (if `inc_mean > 25`).
+- 0 indicates no epidemic (if `inc_mean <= 25`).
+
+The weather variable (`RH2M`) is used as the predictor, and time points (days) are calculated relative to the heading date.
+
 
 
 ```{r}
+# Load necessary libraries
 library(dplyr)
-library(tidyr)
+library(r4pde)
 library(refund)
+library(ggplot2)
 
-# Create the dataset based on your code
-dat_T2M <- trials_weather |> 
-  mutate(epidemic = case_when(
-    inc_mean <= 25 ~ 0,
-    inc_mean > 25  ~ 1)) |> 
-  select(study, T2M, YYYYMMDD, heading, epidemic) |>
-  mutate(days = as.numeric(-(heading - YYYYMMDD))) |> 
-  select(study, T2M, days, epidemic)
+# Prepare the weather and disease data
+trials <- BlastWheat
+trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
+weather_data <- readr::read_csv("data/weather_windowpane.csv")
+trials_weather <- full_join(trials, weather_data)
 
-# Transform to wide format to create a matrix of T2M values
-dat_wide <- dat_T2M |>
-  pivot_wider(names_from = days, values_from = T2M)
+# Create epidemic data as zero or one and transform to wide format
+dat_wide_RH <- trials_weather %>%
+    mutate(epidemic = if_else(inc_mean > 25, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD))) %>%
+    select(study, epidemic, days, RH2M) %>%
+    pivot_wider(id_cols = c(study, epidemic), names_from = days, values_from = RH2M)
 
-# Extract time points and clean column names to ensure numeric conversion
-time_points <- as.numeric(gsub("[^0-9.-]", "", colnames(dat_wide)[-1]))
+```
 
-# Ensure there are no NA values in time_points
-time_points <- time_points[!is.na(time_points)]
+The response vector is the **epidemic status** (0 or 1), while the predictor matrix contains the values of the specified weather variable across time. The model fits smooth functions to represent the effects of time and the epidemic status on the weather variable using **penalized splines**. The function-on-scalar regression (FOSR) model is given by:
 
-# Create a matrix for T2M values
-T2M_matrix <- as.matrix(dat_wide[,-1])  # Exclude the 'study' column, keep only T2M values
+$y_{ij} = \beta_0(t_j) + \beta_1(t_j) x_i + \epsilon_{ij}$
 
-# Check dimensions
-if (length(time_points) != ncol(T2M_matrix)) {
-  stop("Mismatch between number of time points and number of columns in T2M_matrix")
+where: $y\_{ij}$ is the value of the weather variable for study $i$ at time $j$; $\beta\_0(t_j)$ is the smooth function for the overall mean effect over time; $\beta*1(t_j)$ is the smooth function representing the effect of epidemic status over time; $x_i$ is the binary epidemic status (0 or 1); and $\epsilon{ij}$ is the error term.
+
+
+Let's fit the model using the `pffr()` function of the {refund} package.
+
+
+```{r}
+# Step 2: Extract the response vector 'x' (epidemic status) and predictor matrix 'y'
+  x <- dat_wide_RH$epidemic  # Response vector
+  y <- dat_wide_RH %>% select(-study, -epidemic) %>% as.matrix()  # Matrix of predictors
+  
+  # Step 3: Extract time points from column names and ensure alignment
+  yind <- as.numeric(colnames(y))
+  
+  # Step 4: Fit the function-on-scalar regression model
+  FOSR_RH <- pffr(y ~ x, 
+             yind = yind,
+             bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
+             bs.int = list(bs = "ps", k = 30, m = c(2, 1)),
+                algorithm = "gam")
+  
+```
+
+
+### Plot the results
+
+
+```{r}
+# Step 5: Extract and organize coefficients for plotting
+  coef_list <- coef(FOSR_RH)$smterms
+  
+  mean_df <- data.frame(
+    time = coef_list[[1]]$coef[, "yind.vec"],
+    value = coef_list[[1]]$coef[, "value"],
+    lower = coef_list[[1]]$coef[, "value"] - 1.96 * coef_list[[1]]$coef[, "se"],
+    upper = coef_list[[1]]$coef[, "value"] + 1.96 * coef_list[[1]]$coef[, "se"],
+    term = "Overall Mean"
+  )
+  
+  x_df <- data.frame(
+    time = coef_list[[2]]$coef[, "yind.vec"],
+    value = coef_list[[2]]$coef[, "value"],
+    lower = coef_list[[2]]$coef[, "value"] - 1.96 * coef_list[[2]]$coef[, "se"],
+    upper = coef_list[[2]]$coef[, "value"] + 1.96 * coef_list[[2]]$coef[, "se"],
+    term = "Difference"
+  )
+  
+  plot_df <- bind_rows(mean_df, x_df)
+  
+  # Step 6: Plot the results
+  ggplot(plot_df, aes(x = time, y = value)) +
+    geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2) +
+    geom_line(size = 1.2) +
+    facet_wrap(~ term, scales = "free_y", ncol = 1) +
+    theme_r4pde(font_size = 10) +
+    geom_hline(aes(yintercept = 0), color = "grey", linetype = "dashed") +
+    geom_vline(aes(xintercept = 0), color = "grey", linetype = "dashed") +
+    labs(x = "Days", y = "Coefficient Function",
+         title = "RH2M") +
+    theme(strip.text = element_text(face = "bold", size = rel(1.0)),
+          axis.title = element_text(face = "bold", size = 10))
+
+```
+
+
+
+
+```{r}
+# Define the function for function-on-scalar regression
+fosr <- function(data, weather_var) {
+  
+  # Step 1: Prepare the dataset and transform to wide format
+  dat_wide <- data %>%
+    mutate(epidemic = if_else(inc_mean > 25, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD))) %>%
+    #filter(days < 1) %>%  # Pre-heading data only
+    select(study, epidemic, days, !!sym(weather_var)) %>%
+    pivot_wider(id_cols = c(study, epidemic), names_from = days, values_from = !!sym(weather_var))
+  
+  # Step 2: Extract the response vector 'x' (epidemic status) and predictor matrix 'y'
+  x <- dat_wide$epidemic  # Response vector
+  y <- dat_wide %>% select(-study, -epidemic) %>% as.matrix()  # Matrix of predictors
+  
+  # Step 3: Extract time points from column names and ensure alignment
+  yind <- as.numeric(colnames(y))
+  if (any(is.na(yind))) stop("Non-numeric or missing time points detected.")
+  
+  # Step 4: Fit the function-on-scalar regression model
+  m2 <- pffr(y ~ x, 
+             yind = yind,
+             bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
+             bs.int = list(bs = "ps", k = 30, m = c(2, 1)),
+                algorithm = "gam")
+  
+  # Step 5: Extract and organize coefficients for plotting
+  coef_list <- coef(m2)$smterms
+  
+  mean_df <- data.frame(
+    time = coef_list[[1]]$coef[, "yind.vec"],
+    value = coef_list[[1]]$coef[, "value"],
+    lower = coef_list[[1]]$coef[, "value"] - 1.96 * coef_list[[1]]$coef[, "se"],
+    upper = coef_list[[1]]$coef[, "value"] + 1.96 * coef_list[[1]]$coef[, "se"],
+    term = "Overall Mean"
+  )
+  
+  x_df <- data.frame(
+    time = coef_list[[2]]$coef[, "yind.vec"],
+    value = coef_list[[2]]$coef[, "value"],
+    lower = coef_list[[2]]$coef[, "value"] - 1.96 * coef_list[[2]]$coef[, "se"],
+    upper = coef_list[[2]]$coef[, "value"] + 1.96 * coef_list[[2]]$coef[, "se"],
+    term = "Difference"
+  )
+  
+  plot_df <- bind_rows(mean_df, x_df)
+  
+  # Step 6: Plot the results
+  ggplot(plot_df, aes(x = time, y = value)) +
+    geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2) +
+    geom_line(size = 1.2) +
+    facet_wrap(~ term, scales = "free_y", ncol = 1) +
+    theme_r4pde(font_size = 8) +
+    geom_hline(aes(yintercept = 0), color = "grey", linetype = "dashed") +
+    geom_vline(aes(xintercept = 0), color = "grey", linetype = "dashed") +
+    labs(x = "Days", y = "Coefficient Function",
+         title = weather_var) +
+    theme(strip.text = element_text(face = "bold", size = rel(1.0)),
+          axis.title = element_text(face = "bold", size = 8))
 }
 
-# Create the data list for pffr
-dat <- list(
-  y = dat_T2M$epidemic,   # Response variable
-  x = T2M_matrix,         # Matrix of predictors
-  yind = time_points      # Cleaned time indices
-)
 
-# Run pffr model
-m2 <- pffr(y ~ x, 
-           yind = dat$yind, 
-           data = dat,
-           bs.yindex = list(bs = "ps", k = 30, m = c(2, 1)), 
-           bs.int = list(bs = "ps", k = 30, m = c(2, 1)),
-           algorithm = "bam")  # Use 'bam' as the default fitting algorithm
+tmin <- fosr(trials_weather, "T2M_MIN")
+
+tmax <- fosr(trials_weather, "T2M_MAX")
+
+rh <- fosr(trials_weather, "RH2M")
+
+prec <- fosr(trials_weather, "PRECTOTCORR")
+
+
+library(patchwork)
+
+(tmin |tmax)/(rh | prec)
 
 ```
 
 
-## Codigo Denis
+
+# codigo Denis
 
 ```{r}
----
-title: "Function-on-Scalar regressions for the white mold data"
-author: "Denis Shah"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
-output:
-  html_document:
-    fig_caption: yes
-    highlight: tango
-    number_sections: true
-    theme: cerulean
-    toc: yes
-    toc_depth: 4
-    toc_float: true
-    editor_options: 
-      chunk_output_type: console
----
+# codigo denis
 
 
-```{r setup, include=FALSE, eval=TRUE}
-options(digits = 3)
-require(knitr)
-## options
-knitr::opts_chunk$set(eval = TRUE, echo = FALSE, cache = FALSE, warning = FALSE, message = FALSE)
-```
-
-
-```{r Libraries, echo=FALSE, eval=TRUE, message=FALSE, warning=FALSE}
 library(fda)
 library(refund)
 library(fdatest)
@@ -1214,7 +1332,6 @@ library(tidyverse)
 library(tictoc)
 library(kableExtra)
 ```
-
 
 ```{r Load-and-process-the-data}
 wm_load <- readr::read_csv("~/PethybridgeProjects/AlvesPipeline/OriginalCode/data_white-mold/data_model_plus_weather_filtered.csv", show_col_types = FALSE)
@@ -1268,7 +1385,6 @@ wm_data <-
   dplyr::mutate(wm = as.numeric(wm)-1) %>%
   dplyr::mutate(wm = 2*wm-1) 
 ```
-
 
 ```{r fos-functions}
 data.prep <- function(x) {
@@ -1378,88 +1494,87 @@ fANOVA <- function(dat) {
   }
 ```
 
-
 # Function-on-scalar regression {.tabset .tabset-fade .tabset-pills}
+
 ## Dew point
+
 ```{r function-on-scalar-d2m}
 fANOVA(dat = data.prep(d2m))
 ```
 
-
 ## Mean air temperature
+
 ```{r function-on-scalar-t2m-mean}
 fANOVA(dat = data.prep(t2m_mean))
 ```
 
-
 ## Max air temperature
+
 ```{r function-on-scalar-t2m-max}
 fANOVA(dat = data.prep(t2m_max))
 ```
 
-
 ## Min air temperature
+
 ```{r function-on-scalar-t2m-min}
 fANOVA(dat = data.prep(t2m_min))
 ```
 
-
 ## Max - Min air temperature
+
 ```{r function-on-scalar-tdiff}
 fANOVA(dat = data.prep(tdiff))
 ```
 
-
 ## Temperature-Dewpoint depression
+
 ```{r function-on-scalar-dpd}
 fANOVA(dat = data.prep(dpd))
 ```
 
-
 ## Soil temperature
+
 ```{r function-on-scalar-st}
 fANOVA(dat = data.prep(st))
 ```
 
-
 ## Soil moisture
+
 ```{r function-on-scalar-sm}
 fANOVA(dat = data.prep(sm))
 ```
 
-
 ## soil temperature:soil moisture ratio
+
 ```{r function-on-scalar-stsm}
 fANOVA(dat = data.prep(stsm))
 ```
 
-
 ## Surface pressure
+
 ```{r function-on-scalar-sp}
 fANOVA(dat = data.prep(sp))
 ```
 
-
 ## Relative humidity
+
 ```{r function-on-scalar-rh}
 fANOVA(dat = data.prep(rh))
 ```
 
-
 ## VPD
+
 ```{r function-on-scalar-vpd}
 fANOVA(dat = data.prep(vpd))
 ```
 
-
 ## Growing degree days
+
 ```{r function-on-scalar-gdd}
 fANOVA(dat = data.prep(gdd))
 ```
 
-
--------------------------------------------------------------------------------
-
+------------------------------------------------------------------------
 
 <!-- NEW SECTION: interval-wide tests -->
 
@@ -1511,7 +1626,6 @@ seq(-30, 50)[31:32]
 # NEXT:
 # Take the above code, and wrap into functions to (i) prep the data for input into fdatest, (ii) calling the fdatest functions to estimate the adjusted p values
 ```
-
 
 ```{r fdatest-functions}
 make_kable <- function(...) {
@@ -1631,12 +1745,15 @@ zee <- function(series) {
 ```
 
 <!-- Already did the interval-wise tests. Just load the results. -->
+
 ```{r load-the-iwt-results}
 load("~/PethybridgeProjects/AlvesPipeline/FunctiononScalar/iwt.RData")
 ```
 
 # Interval-wise tests {.tabset .tabset-fade .tabset-pills}
+
 Perform the interval-wise tests
+
 ```{r do-interval-wise-tests, eval=FALSE}
 tst.d2m <- do.fdatest(x = d2m)
 
@@ -1665,89 +1782,98 @@ tst.vpd <- do.fdatest(x = vpd)
 tst.gdd <- do.fdatest(x = gdd)
 ```
 
-
-
 I've already done the interval-wise tests, so the chunks in this section will just output the days that the test found to be significant.
 
 ## Dew point
+
 ```{r iwt-d2m}
 zee("d2m") %>% 
   make_kable()
 ```
 
 ## Mean air temperature
+
 ```{r iwt-t2m-mean}
 zee("t2m_mean") %>% 
   make_kable()
 ```
 
 ## Max air temperature
+
 ```{r iwt-t2m-max}
 zee("t2m_max") %>% 
   make_kable()
 ```
 
 ## Min air temperature
+
 ```{r iwt-t2m-min}
 zee("t2m_min") %>% 
   make_kable()
 ```
 
 ## Max - Min air temperature
+
 ```{r iwt-tdiff}
 zee("tdiff") %>% 
   make_kable()
 ```
 
 ## Temperature-Dewpoint depression
+
 ```{r iwt-dpd}
 zee("dpd") %>% 
   make_kable()
 ```
 
 ## Soil temperature
+
 ```{r iwt-st}
 zee("st") %>% 
   make_kable()
 ```
 
 ## Soil moisture
+
 ```{r iwt-sm}
 zee("sm") %>% 
   make_kable()
 ```
 
 ## soil temperature:soil moisture ratio
+
 ```{r iwt-stsm}
 zee("stsm") %>% 
   make_kable()
 ```
 
 ## Surface pressure
+
 ```{r iwt-sp}
 zee("sp") %>% 
   make_kable()
 ```
 
 ## Relative humidity
+
 ```{r iwt-rh}
 zee("rh") %>% 
   make_kable()
 ```
 
-
 ## VPD
+
 ```{r iwt-vpd}
 zee("vpd") %>% 
   make_kable()
 ```
 
 <!-- ## Growing degree days -->
+
 ```{r iwt-gdd, eval=FALSE, echo=FALSE}
 zee("gdd") %>% 
   make_kable()
 ```
-
 
 ```{r save-the-results, eval=FALSE}
 # I want to put all the data frames into a list (to pass to bind_rows). Found the solution at:
@@ -1765,8 +1891,8 @@ iwt <- dplyr::bind_rows(iwt.list)
 save(iwt.list, iwt, file = "iwt.RData")
 ```
 
-
 # Summary of the test results
+
 ```{r parsing-the-results, results='hide'}
 # Let's use the filter.iwt function to have a look at the intervals that were significant (all series, ignoring gdd):
 # air temperature-related
@@ -1807,7 +1933,6 @@ e <- c("t2m_mean", "t2m_max", "t2m_min", "tdiff", "d2m", "dpd", "sm", "st", "sts
 g <- purrr::map(e, zee) |> list_rbind()
 ```
 
-
 ```{r plot-the-results}
 # Code for plotting the segments derived from here:
 # https://stackoverflow.com/questions/35322919/grouped-data-by-factor-with-geom-segment
@@ -1826,8 +1951,8 @@ g %>%
     theme(axis.title = element_text(face = "bold", size = 11))
 ```
 
-
 <!-- # Summary variables -->
+
 ```{r summary-variables, eval=FALSE}
 weather_vars <- function(whichvar, start, end) {
   # Calculate the weather-based summary variable for each observation
@@ -1871,14 +1996,10 @@ weather.vars <- purrr::reduce(list(u, v, w, x, y, z), dplyr::left_join, by = "su
 save(weather.vars, file = "WeatherVars.RData")
 ```
 
-
-
 <!-- #  Further... -->
+
 <!-- One issue that is of concern is the small nature of the dataset.  However, if we could generate artificial datasets, those could be used for model training. -->
+
 <!-- [See this R package on GANs](https://github.com/mneunhoe/RGAN)  -->
 
-
-```
-
-
-
+\`\`\`
