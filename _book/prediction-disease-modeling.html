@@ -2625,58 +2625,64 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <li><p>The null deviance (197.06) reflects the fit of a model without predictors, while the residual deviance (125.11) indicates the fit of the full model with predictors. A significant reduction in deviance suggests that the predictors improve model fit.</p></li>
 <li><p>The AIC (133.11) helps evaluate model performance, with lower values indicating better fit.</p></li>
 </ul>
-<p>Conclusion</p>
-<p>Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases.</p>
-<p>We can check the accuracy of the model in predicting the training data</p>
+<p>Let’s fit again the model using only the two significant variables.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
-<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the predicted probability</span></span>
-<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a>pred_probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_logistic, epi_weather, <span class="at">type =</span> <span class="st">"response"</span>)</span>
-<span id="cb133-5"><a href="#cb133-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb133-6"><a href="#cb133-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert probabilities to binary outcomes using 0.5 as the threshold</span></span>
-<span id="cb133-7"><a href="#cb133-7" aria-hidden="true" tabindex="-1"></a>pred_classes <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred_probs <span class="sc">&gt;=</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb133-8"><a href="#cb133-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb133-9"><a href="#cb133-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
-<span id="cb133-10"><a href="#cb133-10" aria-hidden="true" tabindex="-1"></a>actual_classes <span class="ot">&lt;-</span> epi_weather<span class="sc">$</span>epidemic</span>
-<span id="cb133-11"><a href="#cb133-11" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_classes <span class="sc">==</span> actual_classes)</span>
-<span id="cb133-12"><a href="#cb133-12" aria-hidden="true" tabindex="-1"></a>accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a>m_logistic <span class="ot">&lt;-</span> <span class="fu">glm</span>(epidemic <span class="sc">~</span> tmin_pre <span class="sc">+</span> rh_pre, </span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> epi_weather, </span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">family =</span> binomial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Conclusion</strong></p>
+<p>Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases including wheat blast.</p>
+<p>We can check the accuracy of the model in predicting the training data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb134"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb134-1"><a href="#cb134-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb134-2"><a href="#cb134-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-3"><a href="#cb134-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the predicted probability</span></span>
+<span id="cb134-4"><a href="#cb134-4" aria-hidden="true" tabindex="-1"></a>pred_probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_logistic, epi_weather, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb134-5"><a href="#cb134-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-6"><a href="#cb134-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert probabilities to binary outcomes using 0.5 as the threshold</span></span>
+<span id="cb134-7"><a href="#cb134-7" aria-hidden="true" tabindex="-1"></a>pred_classes <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred_probs <span class="sc">&gt;=</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb134-8"><a href="#cb134-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb134-9"><a href="#cb134-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb134-10"><a href="#cb134-10" aria-hidden="true" tabindex="-1"></a>actual_classes <span class="ot">&lt;-</span> epi_weather<span class="sc">$</span>epidemic</span>
+<span id="cb134-11"><a href="#cb134-11" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_classes <span class="sc">==</span> actual_classes)</span>
+<span id="cb134-12"><a href="#cb134-12" aria-hidden="true" tabindex="-1"></a>accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.7832168</code></pre>
 </div>
 </div>
 <p>The <code>confusionMatrix()</code> function of the {caret} package gives a more complete information about the perfomrance of the model on the training set.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the confusion matrix</span></span>
-<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">as.factor</span>(<span class="fu">as.numeric</span>(pred_probs <span class="sc">&gt;</span> <span class="fl">0.50</span>)),  <span class="at">mode=</span> <span class="st">"everything"</span>,  <span class="at">reference =</span> <span class="fu">as.factor</span>(epi_weather<span class="sc">$</span>epidemic))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb136"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb136-1"><a href="#cb136-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the confusion matrix</span></span>
+<span id="cb136-2"><a href="#cb136-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">as.factor</span>(<span class="fu">as.numeric</span>(pred_probs <span class="sc">&gt;</span> <span class="fl">0.50</span>)),  <span class="at">mode=</span> <span class="st">"everything"</span>,  <span class="at">reference =</span> <span class="fu">as.factor</span>(epi_weather<span class="sc">$</span>epidemic))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Confusion Matrix and Statistics
 
           Reference
 Prediction  0  1
-         0 47 13
-         1 18 65
+         0 48 14
+         1 17 64
                                           
                Accuracy : 0.7832          
                  95% CI : (0.7066, 0.8477)
     No Information Rate : 0.5455          
     P-Value [Acc &gt; NIR] : 2.797e-09       
                                           
-                  Kappa : 0.56            
+                  Kappa : 0.5611          
                                           
- Mcnemar's Test P-Value : 0.4725          
+ Mcnemar's Test P-Value : 0.7194          
                                           
-            Sensitivity : 0.7231          
-            Specificity : 0.8333          
-         Pos Pred Value : 0.7833          
-         Neg Pred Value : 0.7831          
-              Precision : 0.7833          
-                 Recall : 0.7231          
-                     F1 : 0.7520          
+            Sensitivity : 0.7385          
+            Specificity : 0.8205          
+         Pos Pred Value : 0.7742          
+         Neg Pred Value : 0.7901          
+              Precision : 0.7742          
+                 Recall : 0.7385          
+                     F1 : 0.7559          
              Prevalence : 0.4545          
-         Detection Rate : 0.3287          
-   Detection Prevalence : 0.4196          
-      Balanced Accuracy : 0.7782          
+         Detection Rate : 0.3357          
+   Detection Prevalence : 0.4336          
+      Balanced Accuracy : 0.7795          
                                           
        'Positive' Class : 0               
                                           </code></pre>
