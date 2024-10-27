@@ -737,7 +737,11 @@ In modeling efforts, the disease variable can be represented either as a continu
 
 In this section, I will demonstrate several modeling approaches that can be applied when field data is available. These examples will cover a range of techniques, starting with variable construction, which involves transforming raw weather data into summary measures that can effectively represent conditions relevant to disease outcomes. Next, variable selection methods will be explored to identify the most influential predictors, ensuring that models are both accurate and interpretable. The focus will then shift to model fitting, showing how different models, such as linear and logistic regression, can be used to capture relationships between weather variables and disease endpoints. Finally, model evaluation will be addressed, emphasizing metrics like accuracy, sensitivity, and area under the curve (AUC), which are crucial for assessing the predictive performance and reliability of the models developed.
 
-### Variable construction and selection
+Follows a typical workflow for developing a disease prediction model, starting with disease data collection and weather data retrieval. The process includes data pre-processing, feature engineering, variable selection, model fitting, cross-validation, model tuning, and evaluation, followed by interpretation. Iterative feedback between model evaluation and variable selection aims to optimize model performance.
+
+![Key steps for developing a plant disease prediction model](imgs/modeling-workflow.png){#fig-workflow fig-align="center"}
+
+### Variable creation and selection
 
 Variable construction, particularly for weather-related variables, involves not only data transformation methods but also requires an understanding of how diseases respond to specific weather conditions at particular growth stages [@decól2024; @dewolf2003]. This approach ensures that the variables derived accurately capture biologically relevant processes, improving the realism and relevance of the model inputs.
 
@@ -957,15 +961,15 @@ Let's calculate the bootstrapped correlation coefficients combined with the Sime
 
 ```{r}
 
-  T2M_MIN_7 = wp_all |> select(starts_with("length7_T2M_MIN_mean"))
-  T2M_MIN_14 = wp_all |> select(starts_with("length14_T2M_MIN_mean"))
-  T2M_MIN_21 = wp_all |> select(starts_with("length21_T2M_MIN_mean"))
-  T2M_MIN_28 = wp_all |> select(starts_with("length28_T2M_MIN_mean"))
+  T2M_MIN_7 = wp_all |> dplyr::select(starts_with("length7_T2M_MIN_mean"))
+  T2M_MIN_14 = wp_all |> dplyr::select(starts_with("length14_T2M_MIN_mean"))
+  T2M_MIN_21 = wp_all |> dplyr::select(starts_with("length21_T2M_MIN_mean"))
+  T2M_MIN_28 = wp_all |> dplyr::select(starts_with("length28_T2M_MIN_mean"))
  
-  T2M_MAX_7 = wp_all |> select(starts_with("length7_T2M_MAX_mean"))
-  T2M_MAX_14 = wp_all |> select(starts_with("length14_T2M_MAX_mean"))
-  T2M_MAX_21 = wp_all |> select(starts_with("length21_T2M_MAX_mean"))
-  T2M_MAX_28 = wp_all |> select(starts_with("length28_T2M_MAX_mean"))
+  T2M_MAX_7 = wp_all |> dplyr::select(starts_with("length7_T2M_MAX_mean"))
+  T2M_MAX_14 = wp_all |> dplyr::select(starts_with("length14_T2M_MAX_mean"))
+  T2M_MAX_21 = wp_all |> dplyr::select(starts_with("length21_T2M_MAX_mean"))
+  T2M_MAX_28 = wp_all |> dplyr::select(starts_with("length28_T2M_MAX_mean"))
   
   T2M_7 = wp_all |> select(starts_with("length7_T2M_mean"))
   T2M_14 = wp_all |> select(starts_with("length14_T2M_mean"))
@@ -1519,6 +1523,8 @@ Compared to more complex machine learning models, logistic regression offers a h
 
 In this section, we will keep working with the wheat blast disease data and expand on the previous sections on variable construction and selection, a usual step prior to testing the prediction variables in the logistic regression model.
 
+##### Data preparation
+
 ```{r}
 #| warning: false
 #| message: false
@@ -1561,6 +1567,8 @@ epi_weather <- trials_weather |>
 
 ```
 
+##### Model fitting
+
 Now we can fit the model and look at the summary.
 
 ```{r}
@@ -1575,13 +1583,13 @@ summary(m_logistic)
 
 interpretation of the coefficients:
 
--   Intercept**:** Estimate of -20.17, indicating the baseline log-odds of an epidemic when all predictors are zero.
+-   Intercept: Estimate of -20.17, indicating the baseline log-odds of an epidemic when all predictors are zero.
 
--   tmin_pre**:** Positive estimate (0.27, p = 0.00147), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
+-   tmin_pre: Positive estimate (0.27, p = 0.00147), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
 
--   rh_pre**:** Positive estimate (0.22, p \< 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
+-   rh_pre: Positive estimate (0.22, p \< 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
 
--   prec_pre**:** Negative but non-significant estimate (-0.13, p = 0.544), indicating no significant relationship between precipitation and epidemic occurrence.
+-   prec_pre: Negative but non-significant estimate (-0.13, p = 0.544), indicating no significant relationship between precipitation and epidemic occurrence.
 
 Model fit
 
@@ -1598,9 +1606,9 @@ m_logistic <- glm(epidemic ~ tmin_pre + rh_pre,
 
 ```
 
-**Conclusion**
-
-Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases including wheat blast.
+::: callout-important
+Conclusion: Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases including wheat blast.
+:::
 
 We can check the accuracy of the model in predicting the training data.
 
@@ -1627,6 +1635,54 @@ The `confusionMatrix()` function of the {caret} package gives a more complete in
 ```{r}
 # create the confusion matrix
 confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.50)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
+```
+
+##### Model evaluation
+
+It is highly desirable to evaluate model performance metrics using data that was not "seen" by the model during training. If the dataset is sufficiently large (e.g., more than 300 observations), it can be split into training and test sets, typically using an 80:20 ratio. For smaller datasets, alternatives like leave-one-out cross-validation (LOOCV) can be applied, as was done in the original wheat blast model study, which had 143 cases available [@decól2024].
+
+The Leave-One-Out Cross-Validation (LOOCV) is a resampling method used to evaluate model performance, particularly with small datasets. In LOOCV, the model is trained repeatedly, each time using all but one observation, which is set aside for testing. This process is repeated until every observation has served as the test case once. The overall performance metric is calculated by averaging the results from all iterations, providing an unbiased estimate of model accuracy [@hastie2009].
+
+Let's first create the training and test data.
+
+```{r}
+train_index <- createDataPartition(epi_weather$epidemic, p = 0.8, list = FALSE)
+train_data <- epi_weather[train_index, ]
+test_data <- epi_weather[-train_index, ]
+```
+
+Now we fit the logistic model on the training data and obtain the predictions.
+
+```{r}
+# fit the model on training data
+m_logistic2 <- glm(epidemic ~ tmin_pre + rh_pre, 
+                   data = train_data, 
+                   family = binomial)
+
+# Predict on the test data
+pred <- predict(m_logistic2, newdata = test_data, type = "response")
+
+```
+
+Let's build not the confusion matrix for the test data.
+
+```{r}
+confusion_matrix <- confusionMatrix(data = as.factor(as.numeric(pred > 0.5)), reference = as.factor(test_data$epidemic), mode = "everything")
+print(confusion_matrix)
+```
+
+The code below provides a comparative evaluation of model accuracy using two different cross-validation techniques, the LOOCV and 10-fold cross validation. The latter is similar to the LOOCV code, but with the addition of `K = 10`, which specifies 10-fold cross-validation. Here, the dataset is divided into 10 subsets (folds), with the model trained on 9 folds and tested on the remaining fold. This process repeats for all 10 folds, averaging the results. For both we need a custom cost function that evaluates the performance of a binary classifier. Note that we will use the model 1 built with all observations, not the training data.
+
+```{r}
+library(boot)
+
+cost <- function(r, pi = 0) mean(abs(r - pi) > 0.5)
+
+# LOOCV (accuracy)
+1 - cv.glm(epi_weather, m_logistic, cost = cost)$delta[1]
+
+# K-fold CV K=10 (accuracy)
+1 - cv.glm(epi_weather, m_logistic, K = 10, cost = cost)$delta[1]
 ```
 
 We can conclude that using only two variables from relatively long periods before heading, the model can reasonably predict wheat blast. We can further explore the effect of other variables from the post-heading period, as well as variables from shorter intervals around heading and flowering---periods when infections are likely to occur.
