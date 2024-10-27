@@ -481,6 +481,10 @@ window.Quarto = {
   <li><a href="#interval-test-procedure" id="toc-interval-test-procedure" class="nav-link" data-scroll-target="#interval-test-procedure"><span class="header-section-number">20.3.1.2.2</span> Interval test procedure</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#model-fitting" id="toc-model-fitting" class="nav-link" data-scroll-target="#model-fitting"><span class="header-section-number">20.3.2</span> Model fitting</a>
+  <ul>
+  <li><a href="#logistic-regression-models" id="toc-logistic-regression-models" class="nav-link" data-scroll-target="#logistic-regression-models"><span class="header-section-number">20.3.2.1</span> Logistic regression models</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/emdelponte/epidemiology-R/edit/main/prediction-disease-modeling.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/emdelponte/epidemiology-R/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -1387,7 +1391,7 @@ Achieved convergence tolerance: 3.175e-06</code></pre>
 <h4 data-number="20.3.1.1" class="anchored" data-anchor-id="window-pane"><span class="header-section-number">20.3.1.1</span> Window-pane</h4>
 <section id="variable-construction" class="level5" data-number="20.3.1.1.1">
 <h5 data-number="20.3.1.1.1" class="anchored" data-anchor-id="variable-construction"><span class="header-section-number">20.3.1.1.1</span> Variable construction</h5>
-<p>With regards to weather variable creation and selection for data-mining purposes, window-pane analysis, first introduced in the mid-1980s <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>, has been widely used in modeling studies in plant pathology <span class="citation" data-cites="pietravalle2003 calverojr1996 tebeest2008a gouache2015a coakley1988 kriss2010 dallalana2021 coakley1988a">(<a href="references.html#ref-calverojr1996" role="doc-biblioref">Calvero Jr et al. 1996</a>; <a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-coakley1988a" role="doc-biblioref">Coakley 1988</a>; <a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>; <a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g.&nbsp;daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.</p>
+<p>With regards to weather variable creation and selection for data-mining purposes, window-pane analysis, first introduced in the mid-1980s <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>, has been widely used in modeling studies in plant pathology <span class="citation" data-cites="pietravalle2003 calverojr1996 tebeest2008a gouache2015a coakley1988 kriss2010 dallalana2021 coakley1988a">(<a href="references.html#ref-calverojr1996" role="doc-biblioref">Calvero Jr et al. 1996</a>; <a href="references.html#ref-coakley1988" role="doc-biblioref">Coakley et al. 1988</a>; <a href="references.html#ref-coakley1988a" role="doc-biblioref">Coakley 1988</a>; <a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021b</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>; <a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>; <a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. This method aids in identifying weather conditions that are most strongly associated with disease outcomes by segmenting a continuous time series (e.g.&nbsp;daily temperature, relative humidity, and rainfall), into discrete, fixed-length windows.</p>
 <p>The analysis involves summarizing conditions within each window (e.g., mean, sum, count) and correlating these summaries with disease outcomes, which may be expressed as continuous measures (e.g., severity) or as categorical variables (e.g., low vs.&nbsp;high levels). This approach allows users to set specific start and end times, as well as window lengths, enabling the exploration of different temporal relationships between weather and disease. By sliding the start and end points along the series, multiple overlapping windows are generated, making it possible to identify the most informative variables for modeling. The selected optimal fixed-time and fixed-window-length variables derived from this analysis serve as predictors in model development, helping to improve the accuracy and relevance of disease forecasting models.</p>
 <p>Here’s an R code that demonstrates how the windows are defined over a 28-day period using four fixed window lengths (7, 14, 21, and 28 days), generating a total of 46 variables.</p>
 <div class="cell">
@@ -1445,7 +1449,7 @@ Achieved convergence tolerance: 3.175e-06</code></pre>
 </div>
 </div>
 </div>
-<p>The window pane analysis requires a spreadsheet program <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span> or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
+<p>The window pane analysis requires a spreadsheet program <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span> or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW <span class="citation" data-cites="coakley1985">(<a href="references.html#ref-coakley1985" role="doc-biblioref">Coakley 1985</a>)</span>. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane <span class="citation" data-cites="pietravalle2003 tebeest2008a">(<a href="references.html#ref-pietravalle2003" role="doc-biblioref">Pietravalle et al. 2003</a>; <a href="references.html#ref-tebeest2008a" role="doc-biblioref">Te Beest et al. 2008</a>)</span>. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts <span class="citation" data-cites="gouache2015a dallalana2021">(<a href="references.html#ref-dallalana2021" role="doc-biblioref">Dalla Lana et al. 2021b</a>; <a href="references.html#ref-gouache2015a" role="doc-biblioref">Gouache et al. 2015</a>)</span>.</p>
 <p>I will demonstrate the <code>windowpane()</code> function of the {r4pde} package developed to facilitate the creation of variables using the window pane approach. First, let’s load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by <span class="citation" data-cites="decól2024">De Cól et al. (<a href="references.html#ref-decól2024" role="doc-biblioref">2024</a>)</span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
@@ -1597,7 +1601,7 @@ $ study       &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <section id="correlations-and-multiple-hypothesis-test" class="level5" data-number="20.3.1.1.2">
 <h5 data-number="20.3.1.1.2" class="anchored" data-anchor-id="correlations-and-multiple-hypothesis-test"><span class="header-section-number">20.3.1.1.2</span> Correlations and multiple hypothesis test</h5>
 <p>The window pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman’s rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>.</p>
-<p>In a recent study, <span class="citation" data-cites="dallalana2021">Dalla Lana et al. (<a href="references.html#ref-dallalana2021" role="doc-biblioref">2021</a>)</span>, differing from <span class="citation" data-cites="kriss2010">Kriss et al. (<a href="references.html#ref-kriss2010" role="doc-biblioref">2010</a>)</span>, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g.&nbsp;1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.</p>
+<p>In a recent study, <span class="citation" data-cites="dallalana2021">Dalla Lana et al. (<a href="references.html#ref-dallalana2021" role="doc-biblioref">2021b</a>)</span>, differing from <span class="citation" data-cites="kriss2010">Kriss et al. (<a href="references.html#ref-kriss2010" role="doc-biblioref">2010</a>)</span>, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g.&nbsp;1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.</p>
 <p>The window-pane analysis involves numerous tests, as each time window generates a separate test statistic. Because many tests are conducted, the global significance level becomes higher than the critical significance level set for individual tests, increasing the risk of false positives <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>. Additionally, the correlations among test statistics are influenced by overlapping time windows, shared data, and large-scale climatic patterns. To address this issue, <span class="citation" data-cites="kriss2010">Kriss et al. (<a href="references.html#ref-kriss2010" role="doc-biblioref">2010</a>)</span> proposed the use of the Simes’ method, which tests the global null hypothesis that none of the individual correlations are significant. Simes’ method orders p-values and rejects the global null hypothesis if any adjusted p-value meets a specific threshold.</p>
 <p>While this method indicates whether at least one correlation is significant, it does not provide significance for individual correlations. Therefore, the authors proposed that the individual correlation coefficients should be compared against a more stringent significance level (α = 0.005 instead of 0.05), reducing the likelihood of false positives but increasing false negatives. Although this adjustment is independent of the Simes’ method, there was a general alignment: significant global results often corresponded to significant individual correlations, and non-significant global results typically lacked significant individual correlations <span class="citation" data-cites="kriss2010">(<a href="references.html#ref-kriss2010" role="doc-biblioref">Kriss et al. 2010</a>)</span>.</p>
 <p>Let’s calculate the bootstrapped correlation coefficients combined with the Sime’s method. First, we need to subset our variables to the specific combination of weather and window.</p>
@@ -2526,6 +2530,162 @@ Swapping 'y' and 'argvals', because 'y' is  simpler,
 </div>
 </div>
 <p><strong>Interpretation</strong>: Based on the results above, minimum temperature and relative humidity had a significant influence across the entire range of days, particularly during the pre-heading period. Maximum temperature did not affect the epidemics at any time. Lastly, precipitation influenced wheat blast during several short intervals, with the most notable impact occurring over a longer seven-day period around the heading stage. Therefore, TMIN, RH and PREC can be tested further as candidate predictors in prediction models.</p>
+</section>
+</section>
+</section>
+<section id="model-fitting" class="level3" data-number="20.3.2">
+<h3 data-number="20.3.2" class="anchored" data-anchor-id="model-fitting"><span class="header-section-number">20.3.2</span> Model fitting</h3>
+<section id="logistic-regression-models" class="level4" data-number="20.3.2.1">
+<h4 data-number="20.3.2.1" class="anchored" data-anchor-id="logistic-regression-models"><span class="header-section-number">20.3.2.1</span> Logistic regression models</h4>
+<p>Logistic regression is a statistical modeling technique used to predict the probability of a binary outcome based on one or more predictor variables <span class="citation" data-cites="james2021">(<a href="references.html#ref-james2021" role="doc-biblioref">James et al. 2021</a>)</span>. In the context of plant disease prediction, the logistic model relates factors like environmental conditions (usually weather), host characteristics (e.g., cultivar resistance), and pathogen presence to the likelihood of disease occurrence. This occurrence can be expressed as presence or absence <span class="citation" data-cites="mila2004">(<a href="references.html#ref-mila2004" role="doc-biblioref">Mila et al. 2004</a>)</span> or as a classification of incidence/severity based on an epidemic threshold <span class="citation" data-cites="dewolf2003 decól2024">(<a href="references.html#ref-decól2024" role="doc-biblioref">De Cól et al. 2024</a>; <a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>. By integrating these variables, the model enables researchers to assess disease risk under varying conditions and to develop decision support systems. This modeling approach has been used successfully in several studies in the field <span class="citation" data-cites="harikrishnan2008 xu2013 romero2021 shah2013 mila2004 decól2024 willbur2018 dewolf2003">(<a href="references.html#ref-decól2024" role="doc-biblioref">De Cól et al. 2024</a>; <a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>; <a href="references.html#ref-harikrishnan2008" role="doc-biblioref">Harikrishnan and Río 2008</a>; <a href="references.html#ref-mila2004" role="doc-biblioref">Mila et al. 2004</a>; <a href="references.html#ref-romero2021" role="doc-biblioref">Romero et al. 2021</a>; <a href="references.html#ref-shah2013" role="doc-biblioref">Shah et al. 2013</a>; <a href="references.html#ref-willbur2018" role="doc-biblioref">Willbur et al. 2018</a>; <a href="references.html#ref-xu2013" role="doc-biblioref">Xu et al. 2013</a>)</span>, demonstrating its efficacy in predicting disease outbreaks and informing early intervention efforts.</p>
+<p>The logistic model uses the logistic function to transform a linear combination of predictors into a probability between 0 and 1. This transformation ensures that the predicted values are valid probabilities, facilitating meaningful interpretations. By estimating the influence of each predictor on the odds of disease, logistic regression helps identify significant risk factors. Additionally, the model’s coefficients provide insights into the strength and direction of the association between predictors and disease risk, offering valuable information for understanding the underlying mechanisms of disease development and progression.</p>
+<p>The logistic regression model predicts the probability <span class="math inline">\(P\)</span> of the binary outcome <span class="math inline">\(Y = 1 \mid X\)</span> (e.g., presence or absence of disease) given a set of predictor variables <span class="math inline">\(X\)</span>. The model uses the logistic function to ensure the predicted probabilities lie between 0 and 1:</p>
+<p><span class="math inline">\(P(Y = 1 \mid X) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p)}}\)</span></p>
+<p>Alternatively, the model can be expressed in terms of the log-odds (also known as the logit function):</p>
+<p><span class="math inline">\(\log\left( \frac{P(Y = 1 \mid X)}{1 - P(Y = 1 \mid X)} \right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p\)</span></p>
+<p>Compared to more complex machine learning models, logistic regression offers a high degree of interpretability, which is crucial in many scientific and practical applications. While models like neural networks, random forests, or support vector machines can achieve high predictive accuracy, they often function as “black boxes” where the relationship between predictors and the outcome is not easily understood <span class="citation" data-cites="molnar2019">(<a href="references.html#ref-molnar2019" role="doc-biblioref">Molnar 2019</a>)</span>. In contrast, logistic regression provides clear and direct interpretations of model parameters, allowing researchers and practitioners to understand how each predictor variable influences the probability of disease occurrence. This transparency makes logistic regression a preferred choice in contexts where explaining the underlying relationships is as important as prediction accuracy. The balance between interpretability and predictive performance justifies the choice of logistic regression in several contexts, especially when insights into the data are essential for decision-making, which is the case in plant disease prediction contexts.</p>
+<p>In this section, we will keep working with the wheat blast disease data and expand on the previous sections on variable construction and selection, a usual step prior to testing the prediction variables in the logistic regression model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb129"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb129-1"><a href="#cb129-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(r4pde)</span>
+<span id="cb129-2"><a href="#cb129-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb129-3"><a href="#cb129-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-4"><a href="#cb129-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load the disease datase</span></span>
+<span id="cb129-5"><a href="#cb129-5" aria-hidden="true" tabindex="-1"></a>trials <span class="ot">&lt;-</span> r4pde<span class="sc">::</span>BlastWheat</span>
+<span id="cb129-6"><a href="#cb129-6" aria-hidden="true" tabindex="-1"></a>trials<span class="sc">$</span>heading <span class="ot">=</span> <span class="fu">as.Date</span>(trials<span class="sc">$</span>heading, <span class="at">format =</span> <span class="st">"%d-%m-%Y"</span>)</span>
+<span id="cb129-7"><a href="#cb129-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-8"><a href="#cb129-8" aria-hidden="true" tabindex="-1"></a><span class="co"># load the weather data </span></span>
+<span id="cb129-9"><a href="#cb129-9" aria-hidden="true" tabindex="-1"></a>weather_data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/emdelponte/epidemiology-R/refs/heads/main/data/weather_windowpane.csv"</span>)</span>
+<span id="cb129-10"><a href="#cb129-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-11"><a href="#cb129-11" aria-hidden="true" tabindex="-1"></a><span class="co"># join the two datasets</span></span>
+<span id="cb129-12"><a href="#cb129-12" aria-hidden="true" tabindex="-1"></a>trials_weather <span class="ot">&lt;-</span> <span class="fu">full_join</span>(trials, weather_data)</span>
+<span id="cb129-13"><a href="#cb129-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb129-14"><a href="#cb129-14" aria-hidden="true" tabindex="-1"></a><span class="co"># create epidemic variable and number of days relative to heading</span></span>
+<span id="cb129-15"><a href="#cb129-15" aria-hidden="true" tabindex="-1"></a>trials_weather <span class="ot">&lt;-</span> trials_weather <span class="sc">|&gt;</span></span>
+<span id="cb129-16"><a href="#cb129-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">epidemic =</span> <span class="fu">if_else</span>(inc_mean <span class="sc">&gt;</span> <span class="dv">20</span>, <span class="dv">1</span>, <span class="dv">0</span>),</span>
+<span id="cb129-17"><a href="#cb129-17" aria-hidden="true" tabindex="-1"></a>           <span class="at">days =</span> <span class="fu">as.numeric</span>(<span class="sc">-</span>(heading <span class="sc">-</span> YYYYMMDD)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s create a few weather-related variables based on the original variables available from the NASA POWER. First, we need to group by study and epidemic and then filter the days to only the pre-heading (28 days) since will attempt to develop a model using only pre-heading variables. We will not include mean daily maximum temperature given its weak association based on window pane and not significant influence based on the interval test procedure of the FDA (see previous section).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb130"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb130-1"><a href="#cb130-1" aria-hidden="true" tabindex="-1"></a>epi_weather <span class="ot">&lt;-</span> trials_weather <span class="sc">|&gt;</span> </span>
+<span id="cb130-2"><a href="#cb130-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(study, epidemic) <span class="sc">|&gt;</span> </span>
+<span id="cb130-3"><a href="#cb130-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(days <span class="sc">&gt;=</span> <span class="sc">-</span><span class="dv">28</span> <span class="sc">&amp;</span> days <span class="sc">&lt;=</span> <span class="sc">-</span><span class="dv">1</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb130-4"><a href="#cb130-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb130-5"><a href="#cb130-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">tmin_pre =</span> <span class="fu">mean</span>(T2M_MIN, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb130-6"><a href="#cb130-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">rh_pre =</span> <span class="fu">mean</span>(RH2M, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb130-7"><a href="#cb130-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">prec_pre =</span> <span class="fu">mean</span>(PRECTOTCORR, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))<span class="sc">|&gt;</span> </span>
+<span id="cb130-8"><a href="#cb130-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb130-9"><a href="#cb130-9" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span> study)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we can fit the model and look at the summary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb131"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb131-1"><a href="#cb131-1" aria-hidden="true" tabindex="-1"></a><span class="co"># model fitting</span></span>
+<span id="cb131-2"><a href="#cb131-2" aria-hidden="true" tabindex="-1"></a>m_logistic <span class="ot">&lt;-</span> <span class="fu">glm</span>(epidemic <span class="sc">~</span> tmin_pre <span class="sc">+</span> rh_pre <span class="sc">+</span> prec_pre, </span>
+<span id="cb131-3"><a href="#cb131-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">data =</span> epi_weather, </span>
+<span id="cb131-4"><a href="#cb131-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">family =</span> binomial)</span>
+<span id="cb131-5"><a href="#cb131-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb131-6"><a href="#cb131-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Model summary</span></span>
+<span id="cb131-7"><a href="#cb131-7" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(m_logistic)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Call:
+glm(formula = epidemic ~ tmin_pre + rh_pre + prec_pre, family = binomial, 
+    data = epi_weather)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.1986  -0.5938   0.3459   0.6545   2.1343  
+
+Coefficients:
+             Estimate Std. Error z value Pr(&gt;|z|)    
+(Intercept) -20.16698    3.87801  -5.200 1.99e-07 ***
+tmin_pre      0.27391    0.08610   3.181  0.00147 ** 
+rh_pre        0.22020    0.04734   4.652 3.29e-06 ***
+prec_pre     -0.12680    0.20907  -0.606  0.54420    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 197.06  on 142  degrees of freedom
+Residual deviance: 125.11  on 139  degrees of freedom
+AIC: 133.11
+
+Number of Fisher Scoring iterations: 5</code></pre>
+</div>
+</div>
+<p>interpretation of the coefficients:</p>
+<ul>
+<li><p>Intercept<strong>:</strong> Estimate of -20.17, indicating the baseline log-odds of an epidemic when all predictors are zero.</p></li>
+<li><p>tmin_pre<strong>:</strong> Positive estimate (0.27, p = 0.00147), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.</p></li>
+<li><p>rh_pre<strong>:</strong> Positive estimate (0.22, p &lt; 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.</p></li>
+<li><p>prec_pre<strong>:</strong> Negative but non-significant estimate (-0.13, p = 0.544), indicating no significant relationship between precipitation and epidemic occurrence.</p></li>
+</ul>
+<p>Model fit</p>
+<ul>
+<li><p>The null deviance (197.06) reflects the fit of a model without predictors, while the residual deviance (125.11) indicates the fit of the full model with predictors. A significant reduction in deviance suggests that the predictors improve model fit.</p></li>
+<li><p>The AIC (133.11) helps evaluate model performance, with lower values indicating better fit.</p></li>
+</ul>
+<p>Conclusion</p>
+<p>Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases.</p>
+<p>We can check the accuracy of the model in predicting the training data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb133"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb133-1"><a href="#cb133-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(caret)</span>
+<span id="cb133-2"><a href="#cb133-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb133-3"><a href="#cb133-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Obtain the predicted probability</span></span>
+<span id="cb133-4"><a href="#cb133-4" aria-hidden="true" tabindex="-1"></a>pred_probs <span class="ot">&lt;-</span> <span class="fu">predict</span>(m_logistic, epi_weather, <span class="at">type =</span> <span class="st">"response"</span>)</span>
+<span id="cb133-5"><a href="#cb133-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb133-6"><a href="#cb133-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert probabilities to binary outcomes using 0.5 as the threshold</span></span>
+<span id="cb133-7"><a href="#cb133-7" aria-hidden="true" tabindex="-1"></a>pred_classes <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(pred_probs <span class="sc">&gt;=</span> <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb133-8"><a href="#cb133-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb133-9"><a href="#cb133-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate accuracy</span></span>
+<span id="cb133-10"><a href="#cb133-10" aria-hidden="true" tabindex="-1"></a>actual_classes <span class="ot">&lt;-</span> epi_weather<span class="sc">$</span>epidemic</span>
+<span id="cb133-11"><a href="#cb133-11" aria-hidden="true" tabindex="-1"></a>accuracy <span class="ot">&lt;-</span> <span class="fu">mean</span>(pred_classes <span class="sc">==</span> actual_classes)</span>
+<span id="cb133-12"><a href="#cb133-12" aria-hidden="true" tabindex="-1"></a>accuracy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.7832168</code></pre>
+</div>
+</div>
+<p>The <code>confusionMatrix()</code> function of the {caret} package gives a more complete information about the perfomrance of the model on the training set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb135"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb135-1"><a href="#cb135-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create the confusion matrix</span></span>
+<span id="cb135-2"><a href="#cb135-2" aria-hidden="true" tabindex="-1"></a><span class="fu">confusionMatrix</span>(<span class="at">data =</span> <span class="fu">as.factor</span>(<span class="fu">as.numeric</span>(pred_probs <span class="sc">&gt;</span> <span class="fl">0.50</span>)),  <span class="at">mode=</span> <span class="st">"everything"</span>,  <span class="at">reference =</span> <span class="fu">as.factor</span>(epi_weather<span class="sc">$</span>epidemic))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Confusion Matrix and Statistics
+
+          Reference
+Prediction  0  1
+         0 47 13
+         1 18 65
+                                          
+               Accuracy : 0.7832          
+                 95% CI : (0.7066, 0.8477)
+    No Information Rate : 0.5455          
+    P-Value [Acc &gt; NIR] : 2.797e-09       
+                                          
+                  Kappa : 0.56            
+                                          
+ Mcnemar's Test P-Value : 0.4725          
+                                          
+            Sensitivity : 0.7231          
+            Specificity : 0.8333          
+         Pos Pred Value : 0.7833          
+         Neg Pred Value : 0.7831          
+              Precision : 0.7833          
+                 Recall : 0.7231          
+                     F1 : 0.7520          
+             Prevalence : 0.4545          
+         Detection Rate : 0.3287          
+   Detection Prevalence : 0.4196          
+      Balanced Accuracy : 0.7782          
+                                          
+       'Positive' Class : 0               
+                                          </code></pre>
+</div>
+</div>
+<p>We can conclude that using only two variables from relatively long periods before heading, the model can reasonably predict wheat blast. We can further explore the effect of other variables from the post-heading period, as well as variables from shorter intervals around heading and flowering—periods when infections are likely to occur.</p>
+<p>For instance, in the FDA section, rainfall around heading was significantly associated with the epidemics. In the original paper, the best models with two to five predictors achieved accuracies between 0.80 and 0.85, with one model including rainfall during the 7-day period after heading, consistent with the FDA results from the previous section.</p>
+<p>Variable selection is a critical process that combines statistical techniques with biological knowledge to identify the most relevant predictors for a given model. Approaches can range from simple methods, like selecting the most correlated variables at periods of time know as most critical for infection or epidemic development <span class="citation" data-cites="dewolf2003">(<a href="references.html#ref-dewolf2003" role="doc-biblioref">De Wolf et al. 2003</a>)</span>, to more advanced algorithms designed to optimize predictive power, such as regularization techniques like lasso or elastic-net <span class="citation" data-cites="decól2024 dallalana2021a dewolf2023">(<a href="references.html#ref-dallalana2021a" role="doc-biblioref">Dalla Lana et al. 2021a</a>; <a href="references.html#ref-decól2024" role="doc-biblioref">De Cól et al. 2024</a>; <a href="references.html#ref-dewolf2023" role="doc-biblioref">De Wolf et al. 2023</a>)</span>.</p>
+<p>Regularization methods not only help in selecting significant predictors but also in handling multicollinearity and reducing model complexity <span class="citation" data-cites="hastie2009">(<a href="references.html#ref-hastie2009" role="doc-biblioref">Hastie et al. 2009</a>)</span>. These methods will be demonstrated further in the following sections, where Lasso and similar techniques are discussed in detail.</p>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list" style="display: none">
@@ -2559,14 +2719,20 @@ Coakley, S. M. 1988. Predicting stripe rust severity on winter wheat using an im
 <div id="ref-coakley1988" class="csl-entry" role="listitem">
 Coakley, S. M., McDaniel, L. R., and Line, R. F. 1988. Quantifying how climatic factors affect variation in plant disease severity: A general method using a new way to analyze meteorological data. Climatic Change 12:57–75. <a href="https://doi.org/10.1007/bf00140264">https://doi.org/10.1007/bf00140264</a>.
 </div>
+<div id="ref-dallalana2021a" class="csl-entry" role="listitem">
+Dalla Lana, F., Madden, L. V., and Paul, P. A. 2021a. Logistic Models Derived via LASSO Methods for Quantifying the Risk of Natural Contamination of Maize Grain with Deoxynivalenol. Phytopathology® 111:2250–2267. <a href="https://doi.org/10.1094/phyto-03-21-0104-r">https://doi.org/10.1094/phyto-03-21-0104-r</a>.
+</div>
 <div id="ref-dallalana2021" class="csl-entry" role="listitem">
-Dalla Lana, F., Madden, L. V., and Paul, P. A. 2021. Natural Occurrence of Maize Gibberella Ear Rot and Contamination of Grain with Mycotoxins in Association with Weather Variables. Plant Disease 105:114–126. <a href="https://doi.org/10.1094/pdis-05-20-0952-re">https://doi.org/10.1094/pdis-05-20-0952-re</a>.
+Dalla Lana, F., Madden, L. V., and Paul, P. A. 2021b. Natural Occurrence of Maize Gibberella Ear Rot and Contamination of Grain with Mycotoxins in Association with Weather Variables. Plant Disease 105:114–126. <a href="https://doi.org/10.1094/pdis-05-20-0952-re">https://doi.org/10.1094/pdis-05-20-0952-re</a>.
 </div>
 <div id="ref-dallapria2006" class="csl-entry" role="listitem">
 Dalla Pria, M., Christiano, R. C. S., Furtado, E. L., Amorim, L., and Bergamin Filho, A. 2006. Effect of temperature and leaf wetness duration on infection of sweet oranges by Asiatic citrus canker. Plant Pathology 55:657–663. <a href="https://doi.org/10.1111/j.1365-3059.2006.01393.x">https://doi.org/10.1111/j.1365-3059.2006.01393.x</a>.
 </div>
 <div id="ref-decól2024" class="csl-entry" role="listitem">
 De Cól, M., Coelho, M., and Del Ponte, E. M. 2024. Weather-Based Logistic Regression Models for Predicting Wheat Head Blast Epidemics. Plant Disease 108:2206–2213. <a href="https://doi.org/10.1094/pdis-11-23-2513-re">https://doi.org/10.1094/pdis-11-23-2513-re</a>.
+</div>
+<div id="ref-dewolf2023" class="csl-entry" role="listitem">
+De Wolf, E. D., Andersen Onofre, K. F., and Lollato, R. P. 2023. Early Season Environmental Indicators of Wheat Stripe Rust Epidemics in Kansas and the Central Great Plains Region of the United States. Plant Disease 107:2119–2125. <a href="https://doi.org/10.1094/pdis-08-22-1873-re">https://doi.org/10.1094/pdis-08-22-1873-re</a>.
 </div>
 <div id="ref-dewolf2007" class="csl-entry" role="listitem">
 De Wolf, E. D., and Isard, S. A. 2007. Disease Cycle Approach to Plant Disease Prediction. Annual Review of Phytopathology 45:203–220. <a href="https://doi.org/10.1146/annurev.phyto.44.070505.143329">https://doi.org/10.1146/annurev.phyto.44.070505.143329</a>.
@@ -2598,11 +2764,20 @@ González-Domínguez, E., Caffi, T., Rossi, V., Salotti, I., and Fedele, G. 2023
 <div id="ref-gouache2015a" class="csl-entry" role="listitem">
 Gouache, D., Léon, M. S., Duyme, F., and Braun, P. 2015. A novel solution to the variable selection problem in Window Pane approaches of plant pathogen <span></span> Climate models: Development, evaluation and application of a climatological model for brown rust of wheat. Agricultural and Forest Meteorology 205:51–59. <a href="https://doi.org/10.1016/j.agrformet.2015.02.013">https://doi.org/10.1016/j.agrformet.2015.02.013</a>.
 </div>
+<div id="ref-harikrishnan2008" class="csl-entry" role="listitem">
+Harikrishnan, R., and Río, L. E. del. 2008. A Logistic Regression Model for Predicting Risk of White Mold Incidence on Dry Bean in North Dakota. Plant Disease 92:42–46. <a href="https://doi.org/10.1094/pdis-92-1-0042">https://doi.org/10.1094/pdis-92-1-0042</a>.
+</div>
+<div id="ref-hastie2009" class="csl-entry" role="listitem">
+Hastie, T., Tibshirani, R., and Friedman, J. 2009. <em>The elements of statistical learning</em>. Springer New York. <a href="https://doi.org/10.1007/978-0-387-84858-7">https://doi.org/10.1007/978-0-387-84858-7</a>.
+</div>
 <div id="ref-hau1990" class="csl-entry" role="listitem">
 Hau, B., and Kranz, J. 1990. Mathematics and statistics for analyses in epidemiology. In Springer Berlin Heidelberg, pp. 12–52. <a href="https://doi.org/10.1007/978-3-642-75398-5_2">https://doi.org/10.1007/978-3-642-75398-5_2</a>.
 </div>
 <div id="ref-hjelkrem2021a" class="csl-entry" role="listitem">
 Hjelkrem, A.-G. R., Aamot, H. U., Lillemo, M., Sørensen, E. S., Brodal, G., Russenes, A. L., Edwards, S. G., and Hofgaard, I. S. 2021. Weather Patterns Associated with DON Levels in Norwegian Spring Oat Grain: A Functional Data Approach. Plants 11:73. <a href="https://doi.org/10.3390/plants11010073">https://doi.org/10.3390/plants11010073</a>.
+</div>
+<div id="ref-james2021" class="csl-entry" role="listitem">
+James, G., Witten, D., Hastie, T., and Tibshirani, R. 2021. <em>An introduction to statistical learning with applications in r</em>. 2nd ed. New York: Springer.
 </div>
 <div id="ref-ji2021" class="csl-entry" role="listitem">
 Ji, T., Languasco, L., Li, M., and Rossi, V. 2021. Effects of Temperature and Wetness Duration on Infection by Coniella diplodiella, the Fungus Causing White Rot of Grape Berries. Plants 10:1696. <a href="https://doi.org/10.3390/plants10081696">https://doi.org/10.3390/plants10081696</a>.
@@ -2640,8 +2815,14 @@ Mehra, L. K., Cowger, C., Gross, K., and Ojiambo, P. S. 2016. Predicting pre-pla
 <div id="ref-mehra2017" class="csl-entry" role="listitem">
 Mehra, L. K., Cowger, C., and Ojiambo, P. S. 2017. A Model for Predicting Onset of Stagonospora nodorum Blotch in Winter Wheat Based on Preplanting and Weather Factors. Phytopathology® 107:635–644. <a href="https://doi.org/10.1094/phyto-03-16-0133-r">https://doi.org/10.1094/phyto-03-16-0133-r</a>.
 </div>
+<div id="ref-mila2004" class="csl-entry" role="listitem">
+Mila, A. L., Carriquiry, A. L., and Yang, X. B. 2004. Logistic Regression Modeling of Prevalence of Soybean Sclerotinia Stem Rot in the North-Central Region of the United States. Phytopathology® 94:102–110. <a href="https://doi.org/10.1094/phyto.2004.94.1.102">https://doi.org/10.1094/phyto.2004.94.1.102</a>.
+</div>
 <div id="ref-mills1944" class="csl-entry" role="listitem">
 Mills, W. D. 1944. Efficient use of sulfur dusts and sprays during rain to control apple scab. Cornell Extension Bulletin 630.
+</div>
+<div id="ref-molnar2019" class="csl-entry" role="listitem">
+Molnar, C. 2019. <em>Interpretable machine learning</em>. Leanpub.
 </div>
 <div id="ref-paul2004" class="csl-entry" role="listitem">
 Paul, P. A., and Munkvold, G. P. 2004. A Model-Based Approach to Preplanting Risk Assessment for Gray Leaf Spot of Maize. Phytopathology® 94:1350–1357. <a href="https://doi.org/10.1094/phyto.2004.94.12.1350">https://doi.org/10.1094/phyto.2004.94.12.1350</a>.
@@ -2657,6 +2838,9 @@ Pini, A., and Vantini, S. 2016. The Interval Testing Procedure: A General Framew
 </div>
 <div id="ref-ramsay2005functional" class="csl-entry" role="listitem">
 Ramsay, J. O., and Silverman, B. W. 2005. <em>Functional data analysis</em>. 2nd ed. New York: Springer.
+</div>
+<div id="ref-romero2021" class="csl-entry" role="listitem">
+Romero, J., Moral, J., Gonzalez-Dominguez, E., Agustí-Brisach, C., Roca, L. F., Rossi, V., and Trapero, A. 2021. Logistic models to predict olive anthracnose under field conditions. Crop Protection 148:105714. <a href="https://doi.org/10.1016/j.cropro.2021.105714">https://doi.org/10.1016/j.cropro.2021.105714</a>.
 </div>
 <div id="ref-rossi2008" class="csl-entry" role="listitem">
 Rossi, V., Caffi, T., Giosuè, S., and Bugiani, R. 2008. A mechanistic model simulating primary infections of downy mildew in grapevine. Ecological Modelling 212:480–491. <a href="https://doi.org/10.1016/j.ecolmodel.2007.10.046">https://doi.org/10.1016/j.ecolmodel.2007.10.046</a>.
@@ -2697,14 +2881,19 @@ Te Beest, D. E., Paveley, N. D., Shaw, M. W., and Bosch, F. van den. 2008. Disea
 <div id="ref-plantdi1963" class="csl-entry" role="listitem">
 Vanderplank, J. 1963. <em>Plant disease epidemics and control</em>. Elsevier. <a href="https://doi.org/10.1016/c2013-0-11642-x">https://doi.org/10.1016/c2013-0-11642-x</a>.
 </div>
+<div id="ref-willbur2018" class="csl-entry" role="listitem">
+Willbur, J. F., Fall, M. L., Bloomingdale, C., Byrne, A. M., Chapman, S. A., Isard, S. A., Magarey, R. D., McCaghey, M. M., Mueller, B. D., Russo, J. M., Schlegel, J., Chilvers, M. I., Mueller, D. S., Kabbage, M., and Smith, D. L. 2018. Weather-Based Models for Assessing the Risk of <span><em>Sclerotinia sclerotiorum</em></span> Apothecial Presence in Soybean (<span><em>Glycine max</em></span>) Fields. Plant Disease 102:73–84. <a href="https://doi.org/10.1094/pdis-04-17-0504-re">https://doi.org/10.1094/pdis-04-17-0504-re</a>.
+</div>
 <div id="ref-windels1998" class="csl-entry" role="listitem">
 Windels, C. E., Lamey, H. A., Hilde, D., Widner, J., and Knudsen, T. 1998. A Cerospora Leaf Spot Model for Sugar Beet: In Practice by an Industry. Plant Disease 82:716–726. <a href="https://doi.org/10.1094/pdis.1998.82.7.716">https://doi.org/10.1094/pdis.1998.82.7.716</a>.
+</div>
+<div id="ref-xu2013" class="csl-entry" role="listitem">
+Xu, X., Madden, L. V., Edwards, S. G., Doohan, F. M., Moretti, A., Hornok, L., Nicholson, P., and Ritieni, A. 2013. Developing logistic models to relate the accumulation of DON associated with Fusarium head blight to climatic conditions in Europe. European Journal of Plant Pathology 137:689–706. <a href="https://doi.org/10.1007/s10658-013-0280-x">https://doi.org/10.1007/s10658-013-0280-x</a>.
 </div>
 <div id="ref-xu2000" class="csl-entry" role="listitem">
 Xu, X.-M., and Robinson, J. D. 2000. Effects of temperature on the incubation and latent periods of hawthorn powdery mildew (<span><em>Podosphaera clandestina</em></span>). Plant Pathology 49:791–797. <a href="https://doi.org/10.1046/j.1365-3059.2000.00520.x">https://doi.org/10.1046/j.1365-3059.2000.00520.x</a>.
 </div>
 </div>
-</section>
 </section>
 </section>
 </section>

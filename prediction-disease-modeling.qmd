@@ -1498,3 +1498,132 @@ axis(1, at = seq(-28, 28, by = 2),
 ```
 
 **Interpretation**: Based on the results above, minimum temperature and relative humidity had a significant influence across the entire range of days, particularly during the pre-heading period. Maximum temperature did not affect the epidemics at any time. Lastly, precipitation influenced wheat blast during several short intervals, with the most notable impact occurring over a longer seven-day period around the heading stage. Therefore, TMIN, RH and PREC can be tested further as candidate predictors in prediction models.
+
+### Model fitting
+
+#### Logistic regression models
+
+Logistic regression is a statistical modeling technique used to predict the probability of a binary outcome based on one or more predictor variables [@james2021]. In the context of plant disease prediction, the logistic model relates factors like environmental conditions (usually weather), host characteristics (e.g., cultivar resistance), and pathogen presence to the likelihood of disease occurrence. This occurrence can be expressed as presence or absence [@mila2004] or as a classification of incidence/severity based on an epidemic threshold [@dewolf2003; @decól2024]. By integrating these variables, the model enables researchers to assess disease risk under varying conditions and to develop decision support systems. This modeling approach has been used successfully in several studies in the field [@harikrishnan2008; @xu2013; @romero2021; @shah2013; @mila2004; @decól2024; @willbur2018; @dewolf2003], demonstrating its efficacy in predicting disease outbreaks and informing early intervention efforts.
+
+The logistic model uses the logistic function to transform a linear combination of predictors into a probability between 0 and 1. This transformation ensures that the predicted values are valid probabilities, facilitating meaningful interpretations. By estimating the influence of each predictor on the odds of disease, logistic regression helps identify significant risk factors. Additionally, the model's coefficients provide insights into the strength and direction of the association between predictors and disease risk, offering valuable information for understanding the underlying mechanisms of disease development and progression.
+
+The logistic regression model predicts the probability $P$ of the binary outcome $Y = 1 \mid X$ (e.g., presence or absence of disease) given a set of predictor variables $X$. The model uses the logistic function to ensure the predicted probabilities lie between 0 and 1:
+
+$P(Y = 1 \mid X) = \frac{1}{1 + e^{-(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p)}}$
+
+Alternatively, the model can be expressed in terms of the log-odds (also known as the logit function):
+
+$\log\left( \frac{P(Y = 1 \mid X)}{1 - P(Y = 1 \mid X)} \right) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \dots + \beta_p X_p$
+
+Compared to more complex machine learning models, logistic regression offers a high degree of interpretability, which is crucial in many scientific and practical applications. While models like neural networks, random forests, or support vector machines can achieve high predictive accuracy, they often function as "black boxes" where the relationship between predictors and the outcome is not easily understood [@molnar2019]. In contrast, logistic regression provides clear and direct interpretations of model parameters, allowing researchers and practitioners to understand how each predictor variable influences the probability of disease occurrence. This transparency makes logistic regression a preferred choice in contexts where explaining the underlying relationships is as important as prediction accuracy. The balance between interpretability and predictive performance justifies the choice of logistic regression in several contexts, especially when insights into the data are essential for decision-making, which is the case in plant disease prediction contexts.
+
+In this section, we will keep working with the wheat blast disease data and expand on the previous sections on variable construction and selection, a usual step prior to testing the prediction variables in the logistic regression model.
+
+```{r}
+#| warning: false
+#| message: false
+
+library(r4pde)
+library(tidyverse)
+
+# load the disease datase
+trials <- r4pde::BlastWheat
+trials$heading = as.Date(trials$heading, format = "%d-%m-%Y")
+
+# load the weather data 
+weather_data <- readr::read_csv("https://raw.githubusercontent.com/emdelponte/epidemiology-R/refs/heads/main/data/weather_windowpane.csv")
+
+# join the two datasets
+trials_weather <- full_join(trials, weather_data)
+
+# create epidemic variable and number of days relative to heading
+trials_weather <- trials_weather |>
+    mutate(epidemic = if_else(inc_mean > 20, 1, 0),
+           days = as.numeric(-(heading - YYYYMMDD)))
+
+```
+
+Let's create a few weather-related variables based on the original variables available from the NASA POWER. First, we need to group by study and epidemic and then filter the days to only the pre-heading (28 days) since will attempt to develop a model using only pre-heading variables. We will not include mean daily maximum temperature given its weak association based on window pane and not significant influence based on the interval test procedure of the FDA (see previous section).
+
+```{r}
+#| warning: false
+#| message: false
+
+epi_weather <- trials_weather |> 
+  group_by(study, epidemic) |> 
+  filter(days >= -28 & days <= -1) |> 
+  summarise(
+    tmin_pre = mean(T2M_MIN, na.rm = TRUE),
+    rh_pre = mean(RH2M, na.rm = TRUE),
+    prec_pre = mean(PRECTOTCORR, na.rm = TRUE))|> 
+  ungroup() |> 
+  dplyr::select(- study)
+
+```
+
+Now we can fit the model and look at the summary.
+
+```{r}
+# model fitting
+m_logistic <- glm(epidemic ~ tmin_pre + rh_pre + prec_pre, 
+                      data = epi_weather, 
+                      family = binomial)
+
+# Model summary
+summary(m_logistic)
+```
+
+interpretation of the coefficients:
+
+-   Intercept**:** Estimate of -20.17, indicating the baseline log-odds of an epidemic when all predictors are zero.
+
+-   tmin_pre**:** Positive estimate (0.27, p = 0.00147), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
+
+-   rh_pre**:** Positive estimate (0.22, p \< 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
+
+-   prec_pre**:** Negative but non-significant estimate (-0.13, p = 0.544), indicating no significant relationship between precipitation and epidemic occurrence.
+
+Model fit
+
+-   The null deviance (197.06) reflects the fit of a model without predictors, while the residual deviance (125.11) indicates the fit of the full model with predictors. A significant reduction in deviance suggests that the predictors improve model fit.
+
+-   The AIC (133.11) helps evaluate model performance, with lower values indicating better fit.
+
+Conclusion
+
+Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases.
+
+We can check the accuracy of the model in predicting the training data
+
+```{r}
+#| warning: false
+#| message: false
+library(caret)
+
+# Obtain the predicted probability
+pred_probs <- predict(m_logistic, epi_weather, type = "response")
+
+# Convert probabilities to binary outcomes using 0.5 as the threshold
+pred_classes <- ifelse(pred_probs >= 0.5, 1, 0)
+
+# Calculate accuracy
+actual_classes <- epi_weather$epidemic
+accuracy <- mean(pred_classes == actual_classes)
+accuracy
+
+```
+
+The `confusionMatrix()` function of the {caret} package gives a more complete information about the perfomrance of the model on the training set.
+
+```{r}
+# create the confusion matrix
+confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.50)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
+```
+
+We can conclude that using only two variables from relatively long periods before heading, the model can reasonably predict wheat blast. We can further explore the effect of other variables from the post-heading period, as well as variables from shorter intervals around heading and flowering---periods when infections are likely to occur.
+
+For instance, in the FDA section, rainfall around heading was significantly associated with the epidemics. In the original paper, the best models with two to five predictors achieved accuracies between 0.80 and 0.85, with one model including rainfall during the 7-day period after heading, consistent with the FDA results from the previous section.
+
+Variable selection is a critical process that combines statistical techniques with biological knowledge to identify the most relevant predictors for a given model. Approaches can range from simple methods, like selecting the most correlated variables at periods of time know as most critical for infection or epidemic development [@dewolf2003], to more advanced algorithms designed to optimize predictive power, such as regularization techniques like lasso or elastic-net [@decól2024; @dallalana2021a; @dewolf2023].
+
+Regularization methods not only help in selecting significant predictors but also in handling multicollinearity and reducing model complexity [@hastie2009]. These methods will be demonstrated further in the following sections, where Lasso and similar techniques are discussed in detail.
