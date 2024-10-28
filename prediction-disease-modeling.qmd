@@ -1557,13 +1557,26 @@ Let's create a few weather-related variables based on the original variables ava
 
 epi_weather <- trials_weather |> 
   group_by(study, epidemic) |> 
-  filter(days >= -28 & days <= -1) |> 
+  filter(days >= -28 & days <= 7) |> 
   summarise(
     tmin_pre = mean(T2M_MIN, na.rm = TRUE),
     rh_pre = mean(RH2M, na.rm = TRUE),
-    prec_pre = mean(PRECTOTCORR, na.rm = TRUE))|> 
+    prec_pre = sum(PRECTOTCORR, na.rm = TRUE))|> 
   ungroup() |> 
   dplyr::select(- study)
+
+
+## create rainfall around heading
+epi_rain <- trials_weather |> 
+  group_by(study, epidemic) |> 
+  filter(days >= -3 & days <= 6) |> 
+  summarise(
+    prec_pos = sum(PRECTOTCORR, na.rm = TRUE))|> 
+  ungroup() |> 
+  dplyr::select(- study, - epidemic)
+
+epi_weather2 <- cbind(epi_weather, epi_rain)
+
 
 ```
 
@@ -1583,34 +1596,35 @@ summary(m_logistic)
 
 interpretation of the coefficients:
 
--   Intercept: Estimate of -20.17, indicating the baseline log-odds of an epidemic when all predictors are zero.
+-   Intercept: Estimate of -17.86, indicating the baseline log-odds of an epidemic when all predictors are zero.
 
--   tmin_pre: Positive estimate (0.27, p = 0.00147), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
+-   tmin_pre: Positive estimate (0.27, p = 0.002), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
 
--   rh_pre: Positive estimate (0.22, p \< 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
+-   rh_pre: Positive estimate (0.20, p < 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
 
--   prec_pre: Negative but non-significant estimate (-0.13, p = 0.544), indicating no significant relationship between precipitation and epidemic occurrence.
+-   prec_pre: Negative but non-significant estimate (-0.002, p = 0.70), indicating no significant relationship between precipitation and epidemic occurrence.
 
 Model fit
 
--   The null deviance (197.06) reflects the fit of a model without predictors, while the residual deviance (125.11) indicates the fit of the full model with predictors. A significant reduction in deviance suggests that the predictors improve model fit.
+-   The null deviance (197.06) reflects the fit of a model without predictors, while the residual deviance (121.55) indicates the fit of the full model with predictors. A significant reduction in deviance suggests that the predictors improve model fit.
 
--   The AIC (133.11) helps evaluate model performance, with lower values indicating better fit.
+-   The AIC (129.55) helps evaluate model performance, with lower values indicating better fit.
 
-Let's fit again the model using only the two significant variables.
+Let's fit again the model using only the two significant variables and include the prec_pos variable.
 
 ```{r}
-m_logistic <- glm(epidemic ~ tmin_pre + rh_pre, 
-                      data = epi_weather, 
+m_logistic <- glm(epidemic ~ tmin_pre + rh_pre + prec_pos, 
+                      data = epi_weather2, 
                       family = binomial)
+
+summary(m_logistic)
 
 ```
 
-::: callout-important
-Conclusion: Minimum temperature and relative humidity before the event are significant predictors of epidemics, while precipitation is not. This suggests that warmer and more humid conditions may increase the likelihood of an epidemic, aligning with expectations for many plant diseases including wheat blast.
-:::
+We can notice that including rainfall accumulation around flowering, the AIC is reduced to 117.99, suggesting that its inclusion improved prediction.
 
-We can check the accuracy of the model in predicting the training data.
+
+We can check the accuracy of the new model in predicting the training data.
 
 ```{r}
 #| warning: false
@@ -1618,7 +1632,7 @@ We can check the accuracy of the model in predicting the training data.
 library(caret)
 
 # Obtain the predicted probability
-pred_probs <- predict(m_logistic, epi_weather, type = "response")
+pred_probs <- predict(m_logistic, epi_weather2, type = "response")
 
 # Convert probabilities to binary outcomes using 0.5 as the threshold
 pred_classes <- ifelse(pred_probs >= 0.5, 1, 0)
@@ -1634,7 +1648,7 @@ The `confusionMatrix()` function of the {caret} package gives a more complete in
 
 ```{r}
 # create the confusion matrix
-confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.50)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
+confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.5)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
 ```
 
 ##### Model evaluation
@@ -1646,16 +1660,16 @@ The Leave-One-Out Cross-Validation (LOOCV) is a resampling method used to evalua
 Let's first create the training and test data.
 
 ```{r}
-train_index <- createDataPartition(epi_weather$epidemic, p = 0.8, list = FALSE)
-train_data <- epi_weather[train_index, ]
-test_data <- epi_weather[-train_index, ]
+train_index <- createDataPartition(epi_weather2$epidemic, p = 0.8, list = FALSE)
+train_data <- epi_weather2[train_index, ]
+test_data <- epi_weather2[-train_index, ]
 ```
 
 Now we fit the logistic model on the training data and obtain the predictions.
 
 ```{r}
 # fit the model on training data
-m_logistic2 <- glm(epidemic ~ tmin_pre + rh_pre, 
+m_logistic2 <- glm(epidemic ~ tmin_pre + rh_pre + prec_pos, 
                    data = train_data, 
                    family = binomial)
 
@@ -1679,15 +1693,14 @@ library(boot)
 cost <- function(r, pi = 0) mean(abs(r - pi) > 0.5)
 
 # LOOCV (accuracy)
-1 - cv.glm(epi_weather, m_logistic, cost = cost)$delta[1]
+1 - cv.glm(epi_weather2, m_logistic, cost = cost)$delta[1]
 
 # K-fold CV K=10 (accuracy)
-1 - cv.glm(epi_weather, m_logistic, K = 10, cost = cost)$delta[1]
+1 - cv.glm(epi_weather2, m_logistic, K = 10, cost = cost)$delta[1]
+
 ```
 
-We can conclude that using only two variables from relatively long periods before heading, the model can reasonably predict wheat blast. We can further explore the effect of other variables from the post-heading period, as well as variables from shorter intervals around heading and flowering---periods when infections are likely to occur.
-
-For instance, in the FDA section, rainfall around heading was significantly associated with the epidemics. In the original paper, the best models with two to five predictors achieved accuracies between 0.80 and 0.85, with one model including rainfall during the 7-day period after heading, consistent with the FDA results from the previous section.
+We can conclude that using two variables from relatively long periods before heading, and the precipitation accumulation variable around heading (all defined based on FDA analysis) the model can reasonably predict wheat blast. We can further explore the effect of other variables from the post-heading period, as well as variables from shorter intervals around heading and flowering---periods when infections are likely to occur.
 
 Variable selection is a critical process that combines statistical techniques with biological knowledge to identify the most relevant predictors for a given model. Approaches can range from simple methods, like selecting the most correlated variables at periods of time know as most critical for infection or epidemic development [@dewolf2003], to more advanced algorithms designed to optimize predictive power, such as regularization techniques like lasso or elastic-net [@decól2024; @dallalana2021a; @dewolf2023].
 
