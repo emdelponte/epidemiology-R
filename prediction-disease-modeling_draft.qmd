@@ -1196,6 +1196,241 @@ Let's fit the model using the `pffr()` function of the {refund} package.
 ```
 
 
+
+
+
+
+
+#### Regularlization methods
+
+##### Prepare data 
+
+
+```{r}
+#| code-fold: true
+
+wp_T2M <- windowpane(
+  data = trials_weather,
+  end_date_col = heading,
+  date_col = YYYYMMDD,
+  variable = T2M,  
+  summary_type = "mean",
+  threshold = NULL,
+  window_lengths = c(7, 14, 21),
+  direction = "both",
+  group_by_cols = "study", 
+)
+
+wpT2M_MIN_15 <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   
+    summary_type = "below_threshold",
+    threshold = 15,
+    window_lengths = c(7, 14, 21),
+    direction = "both",
+    group_by_cols = "study", 
+  )
+
+wpT2M_MIN <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MIN,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21),
+    direction = "both",
+    group_by_cols = "study", 
+  )
+
+wpT2M_MAX <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = T2M_MAX,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21),
+    direction = "both",
+    group_by_cols = "study", 
+  )
+
+wpPREC <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = PRECTOTCORR,   
+    summary_type = "sum",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21),
+    direction = "both",
+    group_by_cols = "study", 
+  )
+
+wpRH2M <- windowpane(
+    data = trials_weather,
+    end_date_col = heading,
+    date_col = YYYYMMDD,
+    variable = RH2M,   
+    summary_type = "mean",
+    threshold = NULL,
+    window_lengths = c(7, 14, 21),
+    direction = "both",
+    group_by_cols = "study", 
+  )
+
+# combine all datasets
+wp_all <- cbind(wp_T2M, wpT2M_MIN_15, wpT2M_MIN, wpT2M_MAX, wpPREC, wpRH2M)
+```
+
+
+##### Elastic net
+
+```{r}
+library(glmnet)
+
+set.seed(123)
+
+# Define lambda sequence
+lambdas <- 10^seq(2, -3, by = -.1)
+
+# Convert response to matrix
+y <- epi_weather |> 
+  dplyr::select(epidemic) |> 
+  as.matrix()
+
+# Convert predictors to matrix, excluding specific columns
+X <- wp_all |> 
+  dplyr::select(-study, -heading) |> 
+  as.matrix()
+
+# Set alpha for elastic-net (e.g., 0.5 for equal L1 and L2 penalties)
+alpha_elasticnet <- 0.5
+
+# Elastic-net regression with cross-validation
+elasticnet_reg <- cv.glmnet(X, y,
+  alpha = alpha_elasticnet,
+  family = "binomial",
+  lambda = lambdas,
+  standardize = TRUE,  # Standardize predictors
+  nfolds = 5
+)
+
+# Plot cross-validated performance
+plot(elasticnet_reg)
+
+# Best lambda from cross-validation
+lambda_best <- elasticnet_reg$lambda.min
+lambda_best
+
+# Fit final elastic-net model with the best lambda
+elasticnet_model <- glmnet(X,
+  y,
+  alpha = alpha_elasticnet,
+  family = "binomial",
+  lambda = lambda_best,
+  standardize = TRUE
+)
+
+# Coefficients of the final model
+coef(elasticnet_model)
+
+# Assess model performance
+assess.glmnet(elasticnet_model,
+  newx = X,
+  newy = y
+)
+
+# ROC curve plot for the model
+plot(roc.glmnet(elasticnet_model,
+  newx = X,
+  newy = factor(y)
+),
+type = "l"
+)
+
+# Extract non-zero coefficients from the model
+selected_coefficients <- coef(elasticnet_model, s = lambda_best) |> as.matrix()
+
+# Get variable names with non-zero coefficients
+selected_variables <- rownames(selected_coefficients)[selected_coefficients != 0]
+
+# Remove the intercept from the selected variables
+selected_variables <- selected_variables[selected_variables != "(Intercept)"]
+
+# Display selected variables
+selected_variables
+
+top_15_indices <- order(abs(selected_coefficients), decreasing = TRUE)[1:15]
+top_15_variables <- rownames(selected_coefficients)[top_15_indices]
+top_15_variables <- top_15_variables[top_15_variables != "(Intercept)"]
+```
+
+##### Best glm
+
+
+```{r}
+library(bestglm)
+data <- wp_all |> dplyr::select(-study, -heading)
+# Prepare the data frame for bestglm
+data_subset <- data.frame(data[,top_15_variables], inc2 = epi_weather$epidemic)
+
+# Remove rows with missing values
+data_subset <- na.omit(data_subset)
+data_subset <- data_subset 
+names(data_subset)
+# Convert the response variable to a factor for logistic regression
+data_subset$inc2 <- as.factor(data_subset$inc2)
+
+
+# Fit the Best Subset Selection model with bestglm
+bestglm_fit <- bestglm(
+  data_subset,
+  family = binomial,   # Logistic regression
+  IC = "BIC"  ,
+  method = "exhaustive"# Use BIC as the information criterion
+)
+
+# Print the summary of the best model
+summary(bestglm_fit)
+
+# Extract the names of the selected variables
+selected_bestglm_variables <- names(coef(bestglm_fit$BestModel))[-1]  # Exclude intercept
+
+cat("Variables selected by Best Subset Selection (bestglm):", selected_bestglm_variables, "\n")
+
+# Predict probabilities on the training set
+y_pred_prob <- predict(bestglm_fit$BestModel, type = "response")
+
+# Convert probabilities to binary predictions
+y_pred <- ifelse(y_pred_prob > 0.5, 1, 0)
+
+# Calculate accuracy
+accuracy <- mean(y_pred == data_subset$inc2)
+cat("Accuracy of Best Subset Model:", accuracy, "\n")
+
+# Calculate confusion matrix
+conf_matrix <- table(Predicted = y_pred, Actual = data_subset$inc2)
+print(conf_matrix)
+
+# Calculate AUC
+library(pROC)
+roc_obj <- roc(data_subset$inc2, y_pred_prob)
+auc <- auc(roc_obj)
+cat("AUC of Best Subset Model:", auc, "\n")
+
+# Plot ROC curve
+plot(roc_obj, main = "ROC Curve for Best Subset Logistic Model")
+
+```
+
+
+
+
+
+
 ### Plot the results
 
 
