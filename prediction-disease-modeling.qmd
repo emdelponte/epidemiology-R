@@ -811,9 +811,9 @@ window_data |>
   theme(legend.position = "right")
 ```
 
-The window pane analysis requires a spreadsheet program [@kriss2010] or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW [@coakley1985]. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window pane [@pietravalle2003; @tebeest2008a]. More recently, window pane analysis including variable creation and analysis has been conducted in R using custom-made scripts [@gouache2015a; @dallalana2021].
+The window-pane analysis requires a spreadsheet program [@kriss2010] or a specific algorithm that automates the creation of sliding windows at defined starting and ending times relative to a reference date. In the seminal work, software was programmed in the FORTRAN language and named WINDOW [@coakley1985]. It enabled the creation of windows and the calculation of summary statistics, including correlation with disease severity. Building on the original idea, a Genstat 6.1 algorithm was developed in the early 2000s, incorporating further adjustments such as the implementation of bootstrapping analysis to validate correlations and misclassifications identified by window-pane [@pietravalle2003; @tebeest2008a]. More recently, window-pane analysis including variable creation and analysis has been conducted in R using custom-made scripts [@gouache2015a; @dallalana2021].
 
-I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window pane approach. First, let's load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by @decól2024.
+I will demonstrate the `windowpane()` function of the {r4pde} package developed to facilitate the creation of variables using the window-pane approach. First, let's load a dataset that contains information on the disease, as well as metadata, including a key date that will be used as the starting point for window creation. The BlastWheat dataset, which is included in the {r4pde} package, was provided by @decól2024.
 
 ```{r}
 #| warning: false
@@ -949,7 +949,7 @@ wp_all <- cbind(wp_T2M, wpT2M_MIN_15, wpT2M_MIN, wpT2M_MAX, wpPREC, wpRH2M)
 
 ##### Correlations and multiple hypothesis test
 
-The window pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman's rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal [@kriss2010].
+The window-pane analysis begins by quantifying the associations between each summary weather variable and disease response using a specific correlation coefficient (Pearson or Spearman). Usually, Spearman's rank correlation can be preferred due to its ability to measure monotonic relationships and its robustness to outliers. In other cases, Spearman was used because the disease data was ordinal [@kriss2010].
 
 In a recent study, @dallalana2021, differing from @kriss2010, proposed the estimation of the precision of these correlations via bootstrapping, where a high number of samples (e.g. 1000) are randomly drawn (with replacement) from the original dataset. For each bootstrap sample, correlations between weather variables and disease outcomes are calculated, and the average across samples is used as the final measure of association. This approach ensures a more reliable estimation of the correlations by capturing variability and improving statistical robustness.
 
@@ -1007,7 +1007,7 @@ results_TMINb <- results$results
 results
 ```
 
-The window pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15 ^o^C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all P-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response.
+The window-pane tests results indicate strong, statistically significant negative correlations between the response variable, the number of days when the TMIN was lower than 15 ^o^C, and the selected predictors over a 7-day period. The correlations range from approximately -0.56 to -0.50, with all P-values below the global significance threshold after Simes' correction, suggesting that these predictors are robustly associated with the response.
 
 The global P-value, which accounts for multiple testing, is exceptionally low, confirming a significant overall relationship, while the highest observed correlation is -0.50. These findings highlight that low-temperature conditions over 7 days are consistently linked with the response variable, emphasizing the importance of temperature variability in this context.
 
@@ -1158,7 +1158,7 @@ The first step involves reading and merging two datasets:
 
 \- `trials`: Contains disease data with heading dates.
 
-\- `weather_data`: Contains weather data for specific time windows. It was created in the previous section on window pane and can be downloaded [here](https://raw.githubusercontent.com/emdelponte/epidemiology-R/refs/heads/main/data/weather_windowpane.csv).
+\- `weather_data`: Contains weather data for specific time windows. It was created in the previous section on window-pane and can be downloaded [here](https://raw.githubusercontent.com/emdelponte/epidemiology-R/refs/heads/main/data/weather_windowpane.csv).
 
 The datasets are merged into `trials_weather`, and the resulting data is transformed into a wide format where each column represents time points (days), and rows correspond to individual studies. The binary epidemic status is created, where:
 
@@ -1393,7 +1393,7 @@ itp_result <- ITP2bspline(data1 = data_epidemic,
                           B = 100)
 ```
 
-Here, we can see the p-values for each time point as well as which time points were significant considering p < 0.05.
+Here, we can see the p-values for each time point as well as which time points were significant considering p \< 0.05.
 
 ```{r}
 # global p-values
@@ -1549,7 +1549,7 @@ trials_weather <- trials_weather |>
 
 ```
 
-Let's create a few weather-related variables based on the original variables available from the NASA POWER. First, we need to group by study and epidemic and then filter the days to only the pre-heading (28 days) since will attempt to develop a model using only pre-heading variables. We will not include mean daily maximum temperature given its weak association based on window pane and not significant influence based on the interval test procedure of the FDA (see previous section).
+Let's create a few weather-related variables based on the original variables available from the NASA POWER. First, we need to group by study and epidemic and then filter the days to only the pre-heading (28 days) since will attempt to develop a model using only pre-heading variables. We will not include mean daily maximum temperature given its weak association based on window-pane and not significant influence based on the interval test procedure of the FDA (see previous section).
 
 ```{r}
 #| warning: false
@@ -1596,11 +1596,11 @@ summary(m_logistic)
 
 interpretation of the coefficients:
 
--   Intercept: Estimate of -17.86, indicating the baseline log-odds of an epidemic when all predictors are zero.
+-   Intercept: Estimate of -18.96, indicating the baseline log-odds of an epidemic when all predictors are zero.
 
 -   tmin_pre: Positive estimate (0.27, p = 0.002), indicating that higher minimum temperatures are significantly associated with an increased probability of an epidemic.
 
--   rh_pre: Positive estimate (0.20, p < 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
+-   rh_pre: Positive estimate (0.20, p \< 0.001), suggesting that higher relative humidity is strongly associated with an increased probability of an epidemic.
 
 -   prec_pre: Negative but non-significant estimate (-0.002, p = 0.70), indicating no significant relationship between precipitation and epidemic occurrence.
 
@@ -1622,7 +1622,6 @@ summary(m_logistic)
 ```
 
 We can notice that including rainfall accumulation around flowering, the AIC is reduced to 117.99, suggesting that its inclusion improved prediction.
-
 
 We can check the accuracy of the new model in predicting the training data.
 
@@ -1648,7 +1647,7 @@ The `confusionMatrix()` function of the {caret} package gives a more complete in
 
 ```{r}
 # create the confusion matrix
-confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.5)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
+confusionMatrix(data = as.factor(as.numeric(pred_probs > 0.50)),  mode= "everything",  reference = as.factor(epi_weather$epidemic))
 ```
 
 ##### Model evaluation
@@ -1705,6 +1704,3 @@ We can conclude that using two variables from relatively long periods before hea
 Variable selection is a critical process that combines statistical techniques with biological knowledge to identify the most relevant predictors for a given model. Approaches can range from simple methods, like selecting the most correlated variables at periods of time know as most critical for infection or epidemic development [@dewolf2003], to more advanced algorithms designed to optimize predictive power, such as regularization techniques like lasso or elastic-net [@decól2024; @dallalana2021a; @dewolf2023].
 
 Regularization methods not only help in selecting significant predictors but also in handling multicollinearity and reducing model complexity [@hastie2009]. These methods will be demonstrated further in the following sections, where Lasso and similar techniques are discussed in detail.
-
-
-
