@@ -1,4 +1,3 @@
-# epidemiology-R
-Plant Disease Epidemiology in R
+# R for Plant Disease Epidemiology
 
 A repository for the code of the book
