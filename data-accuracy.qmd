@@ -444,7 +444,7 @@ rho <- ccc$rho.c[,1]
 # Bias coefficient
 Cb <- ccc$C.b
 # Precision
-r <- ccc$C.b*ccc$rho.c[,1]
+r <- ccc$rho.c[,1]/ccc$C.b
 # Scale-shift
 ss <- ccc$s.shift
 # Location-shift
@@ -467,7 +467,7 @@ ccc_byrater <- function(data) {
     group_by(rater) %>%
     summarise(Agreement = as.numeric(epi.ccc(measurement, actual)$rho.c[1]),
               `Bias coefficient` = epi.ccc(measurement, actual)$C.b,
-              Precision = Agreement * `Bias coefficient`,
+              Precision = Agreement / `Bias coefficient`,
               scale_shift = epi.ccc(measurement, actual)$s.shift,
               location_shift = epi.ccc(measurement, actual)$l.shift)
   
