@@ -16,12 +16,12 @@ Several examples draw on concepts and analyses from *The Study of Plant Disease 
 
 The current book is organized around the main kinds of data and questions encountered in plant disease epidemiology:
 
-- **Introduction to plant disease epidemiology**: disease concepts, epidemic importance, historical context, and additional resources.
-- **Epidemic data**: terminology, ordinal disease data, actual severity, assessment accuracy, standard area diagrams, training, and remote sensing.
-- **Temporal analysis**: disease progress curves, epidemic classification, AUDPC, functional comparison of curves, population growth models, and model fitting.
-- **Spatial analysis**: spatial gradients, spatial models, model fitting, spatial patterns, and statistical tests for spatial aggregation.
-- **Epidemics and yield**: crop loss concepts and regression models relating disease intensity to yield loss.
-- **Disease prediction**: warning systems, risk models, and disease modeling workflows.
+-   **Introduction to plant disease epidemiology**: disease concepts, epidemic importance, historical context, and additional resources.
+-   **Epidemic data**: terminology, ordinal disease data, actual severity, assessment accuracy, standard area diagrams, training, and remote sensing.
+-   **Temporal analysis**: disease progress curves, epidemic classification, AUDPC, functional comparison of curves, population growth models, and model fitting.
+-   **Spatial analysis**: spatial gradients, spatial models, model fitting, spatial patterns, and statistical tests for spatial aggregation.
+-   **Epidemics and yield**: crop loss concepts and regression models relating disease intensity to yield loss.
+-   **Disease prediction**: warning systems, risk models, and disease modeling workflows.
 
 The examples combine epidemiological explanation with reproducible R code, plots, and worked analyses.
 
@@ -31,13 +31,13 @@ The book uses general R packages as well as plant pathology-focused packages suc
 
 Install the released version of `r4pde` from CRAN:
 
-```r
+``` r
 install.packages("r4pde")
 ```
 
 Install the development version from GitHub with [{pak}](https://pak.r-lib.org/):
 
-```r
+``` r
 install.packages("pak")
 pak::pkg_install("Icens")
 pak::pkg_install("emdelponte/r4pde")
@@ -47,28 +47,28 @@ pak::pkg_install("emdelponte/r4pde")
 
 Important files and folders include:
 
-- `_quarto.yml`: book configuration, chapter order, theme, bibliography, and output settings.
-- `index.qmd`: welcome page and overview of the book.
-- `intro.qmd`: introductory chapter on plant disease epidemiology.
-- `data-*.qmd`: chapters on epidemic data and disease assessment.
-- `temporal-*.qmd`: chapters on temporal epidemic analysis.
-- `spatial-*.qmd`: chapters on spatial epidemic analysis.
-- `yieldloss-*.qmd`: chapters on crop loss and yield loss modeling.
-- `prediction-*.qmd`: chapters on disease warning systems and prediction.
-- `references.bib`: bibliography used by the book.
-- `imgs/` and `images/`: source images and figures used in chapters.
+-   `_quarto.yml`: book configuration, chapter order, theme, bibliography, and output settings.
+-   `index.qmd`: welcome page and overview of the book.
+-   `intro.qmd`: introductory chapter on plant disease epidemiology.
+-   `data-*.qmd`: chapters on epidemic data and disease assessment.
+-   `temporal-*.qmd`: chapters on temporal epidemic analysis.
+-   `spatial-*.qmd`: chapters on spatial epidemic analysis.
+-   `yieldloss-*.qmd`: chapters on crop loss and yield loss modeling.
+-   `prediction-*.qmd`: chapters on disease warning systems and prediction.
+-   `references.bib`: bibliography used by the book.
+-   `imgs/` and `images/`: source images and figures used in chapters.
 
 ## Rendering the book locally
 
 To build the book locally, install:
 
-- [R](https://www.r-project.org/)
-- [Quarto](https://quarto.org/)
-- The R packages used in the chapters, including `tidyverse`, `r4pde`, `epifitter`, `epiphy`, and other packages loaded by individual chapters.
+-   [R](https://www.r-project.org/)
+-   [Quarto](https://quarto.org/)
+-   The R packages used in the chapters, including `tidyverse`, `r4pde`, `epifitter`, `epiphy`, and other packages loaded by individual chapters.
 
 Then clone the repository and render the book:
 
-```bash
+``` bash
 git clone https://github.com/emdelponte/epidemiology-R.git
 cd epidemiology-R
 quarto render
@@ -76,7 +76,7 @@ quarto render
 
 To render a single chapter:
 
-```bash
+``` bash
 quarto render temporal-dpc.qmd
 ```
 
@@ -90,11 +90,11 @@ If you use the book in teaching, research, or extension material, please cite it
 
 Contributions are welcome through issues and pull requests. Useful contributions include:
 
-- Reporting errors or broken code chunks.
-- Suggesting clearer explanations or examples.
-- Improving figures, data examples, or exercises.
-- Updating package syntax when R packages change.
-- Proposing new epidemiological workflows that fit the scope of the book.
+-   Reporting errors or broken code chunks.
+-   Suggesting clearer explanations or examples.
+-   Improving figures, data examples, or exercises.
+-   Updating package syntax when R packages change.
+-   Proposing new epidemiological workflows that fit the scope of the book.
 
 Before contributing, please keep the style of the book in mind: examples should be reproducible, epidemiologically motivated, and useful for readers who are learning plant disease epidemiology with R.
 
