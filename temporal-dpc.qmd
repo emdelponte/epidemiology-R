@@ -259,3 +259,188 @@ AUDPC(dpc$t, dpc$y,
 AUDPS(dpc$t, dpc$y, 
       y_proportion = FALSE)
 ```
+
+## Functional comparison of curves
+
+The AUDPC is useful when the objective is to reduce an epidemic to one number. However, two epidemics may have similar AUDPC values and still differ in timing, shape, or the period when disease increases most rapidly. A more direct way to compare whole disease progress curves is to treat each curve as a function of time. This is the idea behind the `functional_curves()` and `functional_distances()` functions in the *r4pde* package.
+
+The `functional_curves()` function fits a smooth disease progress curve for each treatment using a generalized additive model (GAM). The fitted curves are then predicted over a common time grid. The `functional_distances()` function compares these predicted functions by calculating the distance between each pair of curves across the entire time interval. For two fitted curves, $f_1(t)$ and $f_2(t)$, the distance is based on the integrated squared difference between them:
+
+$$
+d(f_1, f_2) = \sqrt{\int \{f_1(t) - f_2(t)\}^2 dt}
+$$
+
+Because disease progress data are observed at discrete times, the function uses predictions on a regular grid and approximates the integral numerically. In practical terms, the distance increases when two curves are far apart for a long period of time, and decreases when the curves remain close to each other.
+
+The example below creates two hypothetical epidemics with nearly identical AUDPC values but very different shapes. The first epidemic increases earlier and reaches a moderate plateau. The second epidemic remains low for a longer period but then increases sharply and reaches a higher final intensity. If only the AUDPC is used, these two epidemics appear almost equivalent; if the full curves are compared, their temporal patterns are clearly different.
+
+```{r}
+#| warning: false
+#| message: false
+#| code-fold: true
+
+dpc_functional <- tidyr::crossing(
+  treatment = c("Early plateau", "Late surge"),
+  unit_id = 1:4,
+  t = seq(0, 49, 7)
+) |>
+  mutate(
+    y = case_when(
+      treatment == "Early plateau" ~ 0.70 * plogis(-3 + 0.24 * t),
+      treatment == "Late surge" ~ plogis(-8.5 + 0.36 * t)
+    )
+  )
+
+audpc_functional <- dpc_functional |>
+  distinct(treatment, t, y) |>
+  group_by(treatment) |>
+  summarise(
+    audpc = epifitter::AUDPC(t, y, y_proportion = TRUE),
+    .groups = "drop"
+  )
+
+curves_fit <- functional_curves(
+  data = dpc_functional,
+  time = "t",
+  response = "y",
+  treatment = "treatment",
+  response_scale = "proportion",
+  min_points = 5,
+  grid_n = 120,
+  family_try = "quasibinomial",
+  show_progress = FALSE
+)
+
+audpc_functional
+
+curve_dist <- functional_distances(
+  curves_fit,
+  cluster_k = 2,
+  show_progress = FALSE
+)
+
+curve_dist$distance_table
+```
+
+The figure first shows that the two epidemics have the same AUDPC even though their shapes differ. The lower panels show how the functional distance is built. The two fitted curves are compared at every point in the prediction grid. The vertical segments represent local differences between the curves. The shaded region emphasizes the separation accumulated over time. The final distance is the square root of the summed squared differences, scaled by the spacing of the time grid.
+
+```{r}
+#| warning: false
+#| message: false
+#| code-fold: true
+
+distance_curves <- curves_fit$curves |>
+  tidyr::pivot_wider(
+    names_from = treatment,
+    values_from = mu
+  ) |>
+  mutate(
+    ymin = pmin(`Early plateau`, `Late surge`),
+    ymax = pmax(`Early plateau`, `Late surge`),
+    squared_difference = (`Early plateau` - `Late surge`)^2
+  )
+
+distance_lines <- distance_curves |>
+  slice(round(seq(1, n(), length.out = 12)))
+
+distance_value <- curve_dist$distance_table$distance[1]
+
+audpc_labels <- audpc_functional |>
+  mutate(
+    t = 26,
+    y = 0.08,
+    label = paste0("AUDPC = ", round(audpc, 2))
+  )
+
+p_same_audpc <- dpc_functional |>
+  distinct(treatment, t, y) |>
+  ggplot(aes(t, y, color = treatment, fill = treatment)) +
+  geom_area(alpha = 0.22, color = NA) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  geom_label(
+    data = audpc_labels,
+    aes(t, y, label = label),
+    inherit.aes = FALSE,
+    size = 3.2,
+    fill = "white"
+  ) +
+  facet_wrap(~ treatment, nrow = 1) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(
+    x = "Assessment time (days)",
+    y = "Disease intensity"
+  ) +
+  theme_r4pde(font_size = 12) +
+  theme(
+    legend.position = "none",
+    strip.background = element_blank(),
+    strip.text = element_text(face = "bold")
+  )
+
+p_distance_curves <- curves_fit$curves |>
+  ggplot(aes(t, mu, color = treatment)) +
+  geom_ribbon(
+    data = distance_curves,
+    aes(x = t, ymin = ymin, ymax = ymax),
+    inherit.aes = FALSE,
+    fill = "#D9A441",
+    alpha = 0.30
+  ) +
+  geom_segment(
+    data = distance_lines,
+    aes(x = t, xend = t, y = ymin, yend = ymax),
+    inherit.aes = FALSE,
+    color = "gray35",
+    linewidth = 0.5
+  ) +
+  geom_point(
+    data = dpc_functional,
+    aes(t, y, color = treatment),
+    alpha = 0.45,
+    size = 1.8
+  ) +
+  geom_line(linewidth = 1.1) +
+  annotate(
+    "label",
+    x = 34,
+    y = 0.16,
+    label = paste0("Functional distance = ", round(distance_value, 2)),
+    size = 3.5,
+    fill = "white"
+  ) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  labs(
+    x = "Assessment time (days)",
+    y = "Disease intensity",
+    color = "Treatment"
+  ) +
+  theme_r4pde(font_size = 12) +
+  theme(legend.position = "bottom")
+
+p_squared_difference <- distance_curves |>
+  ggplot(aes(t, squared_difference)) +
+  geom_area(fill = "#4C78A8", alpha = 0.65) +
+  geom_line(color = "#234B70", linewidth = 0.8) +
+  labs(
+    x = "Assessment time (days)",
+    y = "Squared difference"
+  ) +
+  theme_r4pde(font_size = 12)
+
+library(patchwork)
+functional_distance_plot <- p_same_audpc / p_distance_curves / p_squared_difference +
+  plot_layout(heights = c(1.2, 1.6, 1))
+
+ggsave(
+  "imgs/functional-distance.png",
+  functional_distance_plot,
+  width = 7,
+  height = 8,
+  bg = "white"
+)
+```
+
+![Two disease progress curves with the same AUDPC but different temporal shapes. The upper panels show equal AUDPC values. The middle panel shows the fitted functional curves and the vertical differences between them at selected times. The lower panel shows the squared differences accumulated across the time grid.](imgs/functional-distance.png){#fig-functional-distance fig-align="center"}
+
+The same approach can be extended to many treatments or genotypes. In that case, `functional_distances()` returns a full distance matrix, a pairwise distance table, and clusters of curves with similar epidemic patterns. These outputs are useful when the interest is not only whether one treatment has less disease, but also whether the entire temporal pattern of the epidemic is different.
