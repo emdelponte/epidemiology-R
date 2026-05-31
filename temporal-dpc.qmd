@@ -12,64 +12,11 @@ Before knowing how epidemics develop in time, it is important to understand how 
 
 Once the infection is established, the pathogen *colonizes* the plant tissues and disease symptoms are noticed. When this happens, the **incubation period** can be measured in time units. A successful colonization will lead to *reproduction* of the pathogen inside and/or external to the crop, and so the **latent period** is completed, and can also be measure in time units. Finally, the **infectious period** takes place and continues until the pathogen is not capable of producing the **secondary inoculum** on the infected site.
 
-```{mermaid}
-%%| label: fig-diagram
-%%| fig-cap: "Five main processes of the disease cycle"
-
-flowchart
-  A[Infection] --> B[Colonization]
-  B --> C[Reproduction]
-  C -. New inoculum .-> D[Dispersal]
-  E[Survival] -- Primary inoculum --> D
-  D  --> A
-  D  -.-> A
-  C --> E 
-```
+![Five main processes of the disease cycle](imgs/disease_cycle.png){#fig-diagram width="490"}
 
 Epidemiologists are generally interested in determining the length of the incubation, latent, and infectious periods as influenced by factors related to the host, pathogen, or environment. This is relevant because the longer it takes for the completion of the incubation and latent periods, the lower the potential number of repeated cycles. In summary, a single "infection cycle" represents all events that occur from infection to dispersal, and this occurs only once for many diseases, while for others there may be multiple cycles, which are defined as an "infection chain."
 
-```{r}
-#| warning: false
-#| message: false
-#| code-fold: true
-library(tidyverse)
-library(r4pde)
-periods <- tibble::tribble(
-  ~period, ~length, ~color, ~order,
-  "Incubation", 10, 0, 1,
-  "Latent" , 15, 0, 2,
-  "Infectious", 25, 15, 3
-)
-
-p <- periods |> 
-  ggplot(aes(reorder(period, order), length, fill = period))+
-  geom_col()+
-  geom_col(aes(period, color), color = "white", fill = "white")+
-  coord_flip()+
-  theme_void()+
-  theme(legend.position = "none")+
-  annotate(geom = "text", x = 0.5, y = 15, label = "----- Time --->")+
-  annotate(geom = "text", x = 1, y = 5, label = "Incubation", color = "white")+
-  annotate(geom = "text", x = 2, y = 8, label = "Latent", color = "white")+
-  annotate(geom = "text", x = 3, y = 20, label = "Infectious", color = "white")+
-  annotate(geom = "text", x = 1, y = 10.5, label = "Visible symptoms", angle = 90, size = 1.7)+
-  annotate(geom = "text", x = 2, y = 15.5, label = "Reproduction starts", angle = 90, size =1.7)+
-  annotate(geom = "text", x = 3, y = 25.5, label = "Reproduction ends", angle = 90, size =1.7)+
-  scale_fill_manual(values = c("darkgreen",  "brown", "darkorange"))+
-  geom_segment(mapping=aes(x=0.6, y=0, xend=0.6, yend=10), arrow=arrow(ends='both'), size=1, color = "black")+ 
-  geom_segment(mapping=aes(x=1.6, y=0, xend=1.6, yend=15), arrow=arrow(ends='both'), size=1, color = "black")  +
-   geom_segment(mapping=aes(x=2.6, y=15, xend=2.6, yend=25), arrow=arrow(ends='both'), size=1, color = "black") 
-  library(png)
-  library(cowplot)
-  incubation <- readPNG("imgs/incubation3.png", native = TRUE)
-  latent <- readPNG("imgs/latent3.png", native = TRUE)
-  p2 <- p + draw_image(incubation , x = 0.5, y = 13, scale = 5)+
-    draw_image(latent , x = 1.5, y = 20, scale = 5)
-  ggsave("imgs/periods.png", width =6, height =2, bg = "white")  
-    
-```
-
-![Three time-related epidemiological periods and their relations with stages of the disease cycle including colonization (symptoms) and reproduction (sporulation in the case of fungi). Drawings of apple scab symptoms and signs adapted from Agrios (2005)](imgs/periods.png){#fig-periods fig-align="center"}
+![Three time-related epidemiological periods and their relations with stages of the disease cycle including colonization (symptoms) and reproduction (sporulation in the case of fungi). Drawings of apple scab symptoms and signs adapted from Agrios (2005)](imgs/incubation_latent_infectious.png){#fig-periods fig-align="center"}
 
 ## Disease curves
 
@@ -420,8 +367,8 @@ p_distance_curves <- curves_fit$curves |>
 
 p_squared_difference <- distance_curves |>
   ggplot(aes(t, squared_difference)) +
-  geom_area(fill = "#4C78A8", alpha = 0.65) +
-  geom_line(color = "#234B70", linewidth = 0.8) +
+  geom_area(fill = "#339966", alpha = 0.65) +
+  geom_line(color = "gray60", linewidth = 0.8) +
   labs(
     x = "Assessment time (days)",
     y = "Squared difference"
