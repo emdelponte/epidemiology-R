@@ -4,8 +4,6 @@ editor_options:
   chunk_output_type: inline
 ---
 
-
-
 ## Definitions
 
 According to a glossary on phytopathometry [@bock2021], standard area diagram (SAD) can be defined as "*a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen".*
@@ -274,10 +272,9 @@ As shown above, we can reject the null hypothesis that the means are the same be
 
 Alternatively, we could fit GLMMs - generalized linear mixed models, which extend the traditional linear mixed models to accommodate response variables that follow different distributions. They are particularly useful when the response variable does not follow a normal distribution and cannot be adequately transformed to meet the parametric assumptions of traditional linear models. The glmmTMB package in R provides a convenient and flexible platform to fit GLMMs using a variety of distributions [@brooks2017].
 
-In our case, considering our response variable bounded between 0 and 1, a Beta distribution might be a suitable choice. Beta distribution is a continuous probability distribution defined on the interval [0, 1], and is commonly used for modelling variables that represent proportions or percentages.
+In our case, considering our response variable bounded between 0 and 1, a Beta distribution might be a suitable choice. Beta distribution is a continuous probability distribution defined on the interval \[0, 1\], and is commonly used for modelling variables that represent proportions or percentages.
 
-The function `glmmTMB()` from the *glmmTMB* package can be used to fit a GLMM with a Beta distribution. In this function, we specify the distribution family as `beta_family()`. 
-
+The function `glmmTMB()` from the *glmmTMB* package can be used to fit a GLMM with a Beta distribution. In this function, we specify the distribution family as `beta_family()`.
 
 ```{r}
 #| message: false
@@ -289,7 +286,7 @@ mix2 <-  glmmTMB(estimate ~ condition + (1| rater),
 
 ```
 
-Because the package *performance*  does not handle the *glmmTMB* output, we will use the *DHARMa* package in R which can be particularly useful for checking the assumptions of your GLMM fitted with `glmmTMB()`. The package provides a convenient way to carry out residual diagnostics for models fitted via maximum likelihood estimation, including GLMMs. This package creates standardized residuals from the observed responses and the predicted responses of a fitted model, and then compares these residuals to a simulated set of residuals under a correct model. 
+Because the package *performance* does not handle the *glmmTMB* output, we will use the *DHARMa* package in R which can be particularly useful for checking the assumptions of your GLMM fitted with `glmmTMB()`. The package provides a convenient way to carry out residual diagnostics for models fitted via maximum likelihood estimation, including GLMMs. This package creates standardized residuals from the observed responses and the predicted responses of a fitted model, and then compares these residuals to a simulated set of residuals under a correct model.
 
 ```{r}
 #| message: false
@@ -312,7 +309,3 @@ em
 # Contrast the means
 pairs(em)
 ```
-
-
-
-
