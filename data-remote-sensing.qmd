@@ -209,6 +209,13 @@ This is a shapefile with one polygon representing the boundary of the study area
 
 ### Read the orthomosaic and the ground data
 
+```{r}
+#| include: false
+if (!file.exists("data/banana_data/1_UAV multispectral reflectance/UAV multispectral reflectance.tif")) {
+  knitr::opts_chunk$set(eval = FALSE)
+}
+```
+
 Now, let's read the orthomosaic using the *terra* package:
 
 ```{r}
@@ -508,9 +515,9 @@ logistic_reg() |>
 
 The `recipe()` function to be used here has two arguments:
 
--   A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
+- A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
 
--   The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so `data = data_train` here.
+- The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so `data = data_train` here.
 
 ```{r}
 recipe_lr <-
@@ -528,11 +535,11 @@ Next, we need to specify what we would like to see for determining the performan
 
 We will want to use our recipe across several steps as we train and test our model. We will:
 
--   Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
+- Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
 
--   Apply the recipe to the training set: We create the final predictor set on the training set.
+- Apply the recipe to the training set: We create the final predictor set on the training set.
 
--   Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
+- Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
 
 To simplify this process, we can use a model workflow, which pairs a model and recipe together. This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test workflows. We'll use the workflows package from *tidymodels* to bundle our model with our recipe.
 
@@ -659,6 +666,9 @@ It is very important to visualize how different levels of table beet CLS disease
 Let's start by cleaning up R memory:
 
 ```{r}
+#| eval: true
+# Re-enable execution for the Cercospora leaf spot section
+knitr::opts_chunk$set(eval = TRUE)
 rm(list=ls())
 ```
 
@@ -703,8 +713,8 @@ Note that there is one CLS_DS.csv file with the CLS ground data and two folders 
 
 Each image file is named according to the plot number and the date of capture, using the format plt_rYYYYMMDD, where:
 
--   **'plt'** stands for the plot number.
--   **'YYYYMMDD'** represents the date on which the image was captured (year, month, day).
+- **'plt'** stands for the plot number.
+- **'YYYYMMDD'** represents the date on which the image was captured (year, month, day).
 
 For example, the file name 5_r20210715 corresponds to an image taken on July 15, 2021, from study plot 5.
 
@@ -1315,9 +1325,9 @@ boost_tree(
 
 The `recipe()` function to be used here has two arguments:
 
--   A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
+- A formula. Any variable on the left-hand side of the tilde (\~) is considered the model outcome (here, outcome). On the right-hand side of the tilde are the predictors. Variables may be listed by name, or you can use the dot (.) to indicate all other variables as predictors.
 
--   The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so data = data_train here.
+- The data. A recipe is associated with the data set used to create the model. This will typically be the training set, so data = data_train here.
 
 ```{r}
 recipe_lr <-
@@ -1335,11 +1345,11 @@ Next, we need to specify what we would like to see for determining the performan
 
 We will want to use our recipe across several steps as we train and test our model. We will:
 
--   Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
+- Process the recipe using the training set: This involves any estimation or calculations based on the training set. For our recipe, the training set will be used to determine which predictors should be converted to dummy variables and which predictors will have zero-variance in the training set, and should be slated for removal.
 
--   Apply the recipe to the training set: We create the final predictor set on the training set.
+- Apply the recipe to the training set: We create the final predictor set on the training set.
 
--   Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
+- Apply the recipe to the test set: We create the final predictor set on the test set. Nothing is recomputed and no information from the test set is used here; the dummy variable and zero-variance results from the training set are applied to the test set.
 
 To simplify this process, we can use a model workflow, which pairs a model and recipe together. This is a straightforward approach because different recipes are often needed for different models, so when a model and recipe are bundled, it becomes easier to train and test workflows. We’ll use the workflows package from tidymodels to bundle our model with our recipe.
 
