@@ -30,7 +30,7 @@ The integral for the exponential model is given by
 
 $y = y_0 e^{r_Et}$,
 
-where $y0$ is and $r$ are obtained via estimation. Let's simulate two curves by varying $r$ while fixing $y0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the \`stat_function\`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum by half, etc.).
+where $y_0$ and $r_E$ are obtained via estimation. Let's simulate two curves by varying $r_E$ while fixing $y_0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the \`stat_function\`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum by half, etc.).
 
 ```{r}
 #| warning: false
@@ -93,7 +93,7 @@ where now the $r_M$ is the rate parameter of the monomolecular model and $(1-y)$
 
 The integral of the monomolecular model is given by
 
-$\frac{dy}{dt} = 1 - (1-y)e^{-r_Mt}$
+$y = 1 - (1-y_0)e^{-r_Mt}$
 
 This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics do not contribute new infections. Therefore, different from the exponential model, disease intensity $y$ does not affect the epidemics and so the absolute rate is proportional to $(1-y)$.
 
@@ -138,13 +138,13 @@ $\frac{dy}{dt} = r_L. y . (1 - y)$,
 
 where $r_L$ is the infection rate of the logistic model, $y$ is the proportion of diseased individuals or host tissue and $(1-y)$ is the proportion of non-affected individuals or host area.
 
-Biologically, $y$ in its differential equation implies that $\frac{dy}{dt}$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $(1-y)$ leads to a decrease in $\frac{dy}{dt}$ when $y$ approaches the maximum $y=1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $\frac{dy}{dt}$ is minimal at the onset of the epidemics, reaches a maximum when $y/2$ and declines until $y=1$.
+Biologically, $y$ in its differential equation implies that $\frac{dy}{dt}$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $(1-y)$ leads to a decrease in $\frac{dy}{dt}$ when $y$ approaches the maximum $y=1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $\frac{dy}{dt}$ is minimal at the onset of the epidemics, reaches a maximum when $y = 0.5$ and declines until $y=1$.
 
 The integral is given by
 
-$y = \frac{1}{1 + (1-y_0).e^{-r.t}}$,
+$y = \frac{1}{1 + \left(\frac{1-y_0}{y_0}\right).e^{-r_L.t}}$,
 
-where $r_L$ is the apparent infection rate of the logistic model and $y0$ is the disease intensity at $t=0$. This model provides a good fit to polycyclic epidemics.
+where $r_L$ is the apparent infection rate of the logistic model and $y_0$ is the disease intensity at $t=0$. This model provides a good fit to polycyclic epidemics.
 
 Let's check two curves where in one the infection rate is double while keeping the same initial inoculum.
 
@@ -194,7 +194,7 @@ $\frac{dy}{dt} = r_G.[ln(1) - ln(y)]$
 
 Differently from the logistic, the variable representing the non-infected individuals or host area is $-ln(y)$. The integral equation is given by
 
-$y = e^{(ln(y0)).{e^{-r_G.t)}}}$,
+$y = e^{ln(y_0).e^{-r_G.t}}$,
 
 where $r_G$ is the apparent infection rate for the Gompertz models and $y_0$ is the disease intensity at $t = 0$.
 
