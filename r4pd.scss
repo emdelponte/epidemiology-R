@@ -40,7 +40,7 @@ a {
 }
 
 main.content {
-  max-width: 880px;
+  max-width: none;
 }
 
 main.content p,
@@ -172,4 +172,19 @@ thead th {
 img.quarto-cover-image {
   border-radius: 6px;
   box-shadow: 0 .75rem 1.75rem rgba(38, 49, 38, .18);
+}
+
+/* wide layout: the page grid fills the window instead of floating in the middle.
+   Sidebar (260px) and right margin (210px) keep the widths set in _quarto.yml;
+   the free space goes to the text column, up to 1350px. */
+@media (min-width: 992px) {
+  body.nav-sidebar #quarto-content.page-columns {
+    justify-content: center;
+    grid-template-columns:
+      [screen-start] 12px [screen-start-inset] 12px [page-start] 52px
+      [page-start-inset] 156px [body-start-outset] 52px [body-start] 24px
+      [body-content-start] minmax(500px, 1350px) [body-content-end] 24px
+      [body-end] 42px [body-end-outset] 126px [page-end-inset] 42px
+      [page-end] 12px [screen-end-inset] 12px [screen-end] !important;
+  }
 }
