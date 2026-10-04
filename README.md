@@ -84,7 +84,7 @@ The rendered website is written to the `_book/` directory.
 
 ## Citation
 
-Edition 1 is archived on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23145275.svg)](https://doi.org/10.5281/zenodo.23145275). The DOI of edition 2 will be added after its release.
+Edition 2: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23145652.svg)](https://doi.org/10.5281/zenodo.23145652). Edition 1: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23145275.svg)](https://doi.org/10.5281/zenodo.23145275).
 
 If you use the book in teaching, research, or extension material, please cite it as described in the [How to cite](https://r4pde.net/cite.html) page of the book.
 
