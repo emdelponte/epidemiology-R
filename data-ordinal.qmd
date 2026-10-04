@@ -6,7 +6,7 @@ editor_options:
 
 ## Introduction
 
-Ordinal scales are organized as rank-ordered numeric classes, with a finite number of such classes. The utilization of ordinal scales is often due to their convenience and speed of rating [@madden2007]. In fact, plant pathologists often encounter situations where direct estimates of the nearest percent severity are time-consuming or impractical, besides being unreliably and inacuratelly estimated. In plant pathological research, there are two commonly used types of ordinal scales: quantitative and qualitative [@Chiang2022].
+Ordinal scales are organized as rank-ordered numeric classes, with a finite number of such classes. The utilization of ordinal scales is often due to their convenience and speed of rating [@madden2007]. In fact, plant pathologists often encounter situations where direct estimates of the nearest percent severity are time-consuming or impractical, besides being estimated unreliably and inaccurately. In plant pathological research, there are two commonly used types of ordinal scales: quantitative and qualitative [@Chiang2022].
 
 ### Quantitative ordinal
 
@@ -22,7 +22,7 @@ Let's input the HB scale data and store as a data frame in R so we can prepare a
 
 ```{r}
 #| label: tbl-HB
-#| tbl-cap: "The Horsfal-Barrat quantitative ordinal scale used as a tool for assessing plant disease severity "
+#| tbl-cap: "The Horsfall-Barratt quantitative ordinal scale used as a tool for assessing plant disease severity "
 HB <- tibble::tribble(
   ~ordinal, ~'range', ~midpoint,
   0,          '0',    0,   
@@ -47,7 +47,7 @@ Let's visualize the different sizes of the percent interval encompassing each sc
 #| warning: false
 #| message: false
 #| label: fig-hb
-#| fig-cap: "Ordinal scores of the Horsfal-Barrat scale"
+#| fig-cap: "Ordinal scores of the Horsfall-Barratt scale"
 #| code-fold: true
 library(tidyverse)
 library(r4pde)
@@ -134,14 +134,14 @@ chiang |>
 
 ### Qualitative ordinal
 
-In the qualitative ordinal scale, each class provides a description of the symptoms. An example is the ordinal 0-3 scale for rating eyespot of wheat developed by [@scott1974].
+In the qualitative ordinal scale, each class provides a description of the symptoms. An example is the ordinal 0-3 scale for rating eyespot of wheat developed by @scott1974.
 
 | Class | Description                                                                                                 |
 |--------------------------|----------------------------------------------|
 | 0     | uninfected                                                                                                  |
-| 1     | slight eyespot (or or more small lesion occupying in total less than half of the circumference of the stem) |
+| 1     | slight eyespot (one or more small lesions occupying in total less than half of the circumference of the stem) |
 | 2     | moderate eyespot (one or more lesions occupying at least half the circumference of the stem)                |
-| 3     | severe eyespot (stem completely girdled by lesions; tissue softened so that lodging would really occur)     |
+| 3     | severe eyespot (stem completely girdled by lesions; tissue softened so that lodging would readily occur)     |
 
 : Ordinal scale for rating eyespot of wheat [@scott1974]
 
@@ -153,7 +153,7 @@ $DSI = \frac{∑(class \ freq. \ ✕ \ score \  of \ class)} {total \ n \ ✕ \ 
 
 The `DSI()` and `DSI2()` are part of the *r4pde* package. Let's see how each function works.
 
-The `DSI()` allows to automate the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores. The function requires three arguments:
+The `DSI()` function automates the calculation of the disease severity index (DSI) in a series of units (e.g. leaves) that are further classified according to ordinal scores. The function requires three arguments:
 
 -   unit = the vector of the number of each unit
 
@@ -161,7 +161,7 @@ The `DSI()` allows to automate the calculation of the disease severity index (DS
 
 -   max = the maximum value of the scale
 
-Let's create a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named scores.
+Let's create a toy data set composed of 12 units where each received an ordinal score. The vectors were arranged as a data frame named ratings.
 
 ```{r}
 unit <- c(1:12)
@@ -300,6 +300,8 @@ dat_ordinal_mp
 The visualization using box-plots suggests differences between the treatments.
 
 ```{r}
+#| label: fig-ordinal-compare
+#| fig-cap: "Box-plots of the ordinal scores (left) and of the corresponding mid-point percentages (right) for the four treatments"
 p_score <- dat_ordinal |> 
   ggplot(aes(treatment, score))+
   geom_boxplot(outlier.colour = NA)+
@@ -323,10 +325,12 @@ Parametric methods can be employed when analyzing data, provided that the underl
 We can use the `aov` function to fit the model and check the parametric assumptions using the `DHARMa` package.
 
 ```{r}
+#| label: fig-ordinal-resid-midpoint
+#| fig-cap: "Residual diagnostics (DHARMa) of the analysis of variance fitted to the mid-point severity values"
 #| warning: false
 #| message: false
 m1_mp <- aov(midpoint ~ treatment, data = dat_ordinal_mp)
-# normality and homocedasticity tests
+# normality and homoscedasticity tests
 library(DHARMa)
 plot(simulateResiduals(m1_mp))
 ```
@@ -334,6 +338,8 @@ plot(simulateResiduals(m1_mp))
 Since both normality and homoscedasticity assumptions are violated in our initial model, we will halt further analysis using this model. Instead, we will explore an alternative approach that includes data transformation (logit).
 
 ```{r}
+#| label: fig-ordinal-resid-logit
+#| fig-cap: "Residual diagnostics (DHARMa) of the analysis of variance fitted to the logit-transformed mid-point values"
 #| warning: false
 #| message: false
 
@@ -347,7 +353,7 @@ plot(simulateResiduals(m2_mp)) # assumptions are met
 
 ```
 
-Now that both assumptions have been met, we can proceed to use a means comparison test to determine which treatments differ from one another, with the assistance of the {emmeans} package. It's important to note that the results are displayed in the original scale after transformation, specifically when using `type = "response`.
+Now that both assumptions have been met, we can proceed to use a means comparison test to determine which treatments differ from one another, with the assistance of the {emmeans} package. It's important to note that the results are displayed in the original scale after transformation, specifically when using `type = "response"`.
 
 ```{r}
 library(emmeans)
@@ -389,7 +395,7 @@ names(dat_ordinal) <- c("treatment", "x")
 
 ```
 
-The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the `dat` and the `scale` arguments. The scale will be used to convert the scores in to the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.
+The `CompMuCens()` function uses the `ictest()` from the {interval} package to conduct nonparametric survival analysis. Detailed explanation of the function's input and output can be found [here](https://github.com/StatisticalMethodsinPlantProtection/CompMuCens/blob/main/Supplementary%20Data.pdf). We just need to set the `dat` and the `scale` arguments. The scale will be used to convert the scores into the defined interval which is used as response variable in the analysis. For example, if the score is 2, the respective limits of the interval will be 3 and 6. For 7, the limits will be 75 and 88. The function takes care of this conversion based on the inputted scale values.
 
 ```{r}
 library(interval)
@@ -400,8 +406,8 @@ CompMuCens(dat_ordinal, scale)
 
 ```
 
-The outcomes are three: the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
+There are three outputs: the ordered scores for each treatment, the pairwise comparison between treatments and the significance levels, followed by a conclusion section. In this example all treatments differ from each other.
 
 ### Interpretation
 
-Upon comparing the three methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth a reading [@chiang2023a]
+Upon comparing the three methods, it becomes evident that there is a marked distinction in their outcomes. The Kruskal-Wallis and the survival analysis tests suggested a significant difference between treatment A and B, whereas the parametric counterpart did not. However, it's crucial to note that the P-value is borderline significant at 0.0530, being just slightly above the conventional threshold of 0.05. Given this, it appears that the conversion to the mid-point might have resulted in a type II error, wherein a genuine difference between the treatments might have been missed or overlooked. A detailed comparison between the mid-point and survival analysis has been presented in the paper, which is worth reading [@chiang2023a].

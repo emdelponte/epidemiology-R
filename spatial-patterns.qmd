@@ -1,4 +1,6 @@
-# Spatial patterns
+---
+title: "Spatial patterns"
+---
 
 ## Definitions
 
@@ -70,15 +72,15 @@ pag
   
 ```
 
-A rare pattern found in nature is the regular pattern, but it may be generated artificially by the man when conducting experimentation. Follows a code to produce the regular pattern.
+A rare pattern found in nature is the regular pattern, but it may be generated artificially by humans when conducting experimentation. The code below produces a regular pattern.
 
 ```{r}
 #| label: fig-regular
 #| fig-cap: "Regular pattern of a plant disease epidemic"
-#| #| warning: false
+#| warning: false
 #| message: false
-x <- rep(c(0,5,10,15,20, 25, 30, 35, 40, 45), 5) 
-y <- rep(c(0, 5, 10, 15, 20, 25, 30, 35, 40, 45), each = 10)
+x <- rep(seq(0, 30, by = 5), times = 7) 
+y <- rep(seq(0, 30, by = 5), each = 7)
 dat3 <- data.frame(x, y)
 
 preg <- dat3 |>
@@ -106,11 +108,11 @@ ggsave("imgs/spatial.png", width = 10, height = 4)
 
 ## Spatiotemporal
 
-The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let's visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) during six times during the epidemics. The data is available in the *epiphy* R package. Let's use only one variety and one irrigation type.
+The location of diseased plants can be assessed over time and so we can appraise both the progress and pattern of the epidemics. Let's visualize spatial data collected from actual epidemics monitored (plant is diseased or not diseased) at six times during the epidemic. The data are available in the *epiphy* R package. Let's use only one variety and one irrigation type.
 
 ```{r}
 #| label: fig-spatiotemporal1
-#| fig-cap: "Spatial patterns of tomato spotted wilt virus at six assessment times"
+#| fig-cap: "Spatial patterns of tomato spotted wilt at six assessment times"
 #| warning: false
 #| message: false
 library(epiphy)
@@ -130,11 +132,11 @@ tswv_1928 |>
   
 ```
 
-In this other example, the severity of gummy stem blight (*Didymella bryoniae)* of watermelon [@café-filho2010] was recorded in a 0-4 ordinal scale over time (days after planting) and space, in a naturally-infected rain-fed commercial field, to evaluate the effect of the distance of initial inoculum on the intensity of the disease. The dataset is included in the {r4pde} package that accompanies the book.
+In this other example, the severity of gummy stem blight (*Didymella bryoniae*) of watermelon [@café-filho2010] was recorded on a 0-4 ordinal scale over time (days after planting) and space, in a naturally-infected rain-fed commercial field, to evaluate the effect of the distance of initial inoculum on the intensity of the disease. The dataset is included in the {r4pde} package that accompanies the book.
 
 ```{r}
 #| label: fig-spatiotemporal2
-#| fig-cap: "Spatial patterns of the severity (0-4 ordinal scale) gummy stem blight of watermelon during seven times after the day of planting [@café-filho2010]"
+#| fig-cap: "Spatial patterns of the severity (0-4 ordinal scale) of gummy stem blight of watermelon at seven times after planting [@café-filho2010]"
 #| warning: false
 #| message: false
 library(r4pde)
@@ -155,10 +157,10 @@ We can see that the disease spread from the initial focus detected at 50 days af
 
 ## Simulating spatial patterns
 
-Two Shiny apps have been developed to allow simulating various spatial disease patterns. The first generates a disease- or pathogen-only data where the units are located in a scatter plot where the user can define the number of cells of the grid as well as the number of points to be plotted and the realized pattern: random or aggregated.
+Two Shiny apps have been developed to allow simulating various spatial disease patterns. The first generates disease- or pathogen-only data where the units are located in a scatter plot where the user can define the number of cells of the grid as well as the number of points to be plotted and the realized pattern: random or aggregated.
 
 [![Screenshot of a Shiny app to simulate disease-only data in a grid](imgs/spatial_shiny.png){#fig-spatial1 fig-align="center" width="521"}](https://delponte.shinyapps.io/spatial/)
 
 The second app generates an artificial plantation with presence-absence data in a 2D map. The user can define the number of rows and number of plants per row and the realized pattern: random or aggregated. The latter pattern can start from the center or border of the plantation. The app calculates the number of foci and the final incidence (proportion of diseased plants).
 
-[![Screenshot of a Shiny app to simulate a presence-absence data in a 2D map](imgs/spatial2_shiny.png){#fig-spatial2 fig-align="center" width="521"}](https://delponte.shinyapps.io/spatial2)
+[![Screenshot of a Shiny app to simulate presence-absence data in a 2D map](imgs/spatial2_shiny.png){#fig-spatial2 fig-align="center" width="521"}](https://delponte.shinyapps.io/spatial2)

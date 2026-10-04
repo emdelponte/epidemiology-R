@@ -6,7 +6,7 @@ editor_options:
 
 ## The actual severity measure
 
-Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (as discussed in the previous chapter), we require the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
+Among the various methods to express plant disease severity, the percent area affected (or symptomatic) by the disease is one of the most common, especially when dealing with diseases that affect leaves. In order to evaluate whether visual estimates of plant disease severity are sufficiently accurate (see the chapter on [reliability and accuracy](data-accuracy.qmd)), we require the actual severity values. These are also essential when creating Standard Area Diagrams (SADs), which are diagrammatic representations of severity values used as a reference either before or during visual assessment to standardize and produce more accurate results across different raters [@delponte2017].
 
 The actual severity values are typically approximated using image analysis, wherein the image is segmented, and each pixel is categorized into one of three classes:
 
@@ -26,13 +26,15 @@ The most crucial step is the initial one, where the user needs to correctly defi
 
 The reference image palettes can be constructed by manually sampling small areas of the image and creating a composite image. As expected, the results may vary depending on how these areas are selected. A study that validated pliman for determining disease severity demonstrated the effect of different palettes prepared independently by three researchers, in which the composite palette (combining the three users) was superior [@olivoto2022]. During the calibration of the palettes, examining the processed masks is crucial to create reference palettes that are the most representative of the respective class.
 
-In this example, I manually selected and pasted several sections of images representing each class from a few leaves into a Google slide. Once the image palette was ready, I exported each one as a separate PNG image file (JPG also works). These files were named: sbr_b.png, sbr_h.png, and sbr_s.png. They can be found [here in this folder](https://github.com/emdelponte/epidemiology-R/tree/main/imgs) for downloading.
+In this example, we manually selected and pasted several sections of images representing each class from a few leaves into a Google slide. Once the image palette was ready, we exported each one as a separate PNG image file (JPG also works). These files were named: sbr_b.png, sbr_h.png, and sbr_s.png. They can be found [here in this folder](https://github.com/emdelponte/epidemiology-R/tree/main/imgs) for downloading.
 
-[![Preparation of image palettes by manually sampling fraction of the images that represent background, heatlhy leaf and lesions](imgs/pliman1.png){#fig-pliman1 style="margin: 15px" fig-align="center"}](Fig_palettes)
+![Preparation of image palettes by manually sampling fractions of the images that represent background, healthy leaf and lesions](imgs/pliman1.png){#fig-pliman1 style="margin: 15px" fig-align="center"}
 
 Now that we have the image palettes, we need to import them into the environment, using `image_import()` function for further analysis. Let's create an image object for each palette named h (healthy), s (symptoms) and b (background).
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(pliman)
 h <- image_import("imgs/sbr_h.png")
 s <- image_import("imgs/sbr_s.png")
@@ -44,11 +46,11 @@ We can visualize the imported image palettes using the `image_combine()` functio
 
 ```{r}
 #| label: fig-palettes
-#| fig-cap: "Image palettes created to segment images into background, sypomtoms and healthy area of the image" 
+#| fig-cap: "Image palettes created to segment images into background, symptoms and healthy area of the image" 
 image_combine(h, s, b, ncol =3)
 ```
 
-An alternative way to set the palettes is to use the `pick_palette()` function. It allows to manually pick the colors for each class by clicking on top of the imported image. We can use one of the original images or a composite images with portions of several leaves. Let's use here one of the original images and pick the background colors and assigned to `b` vector.
+An alternative way to set the palettes is to use the `pick_palette()` function. It allows you to pick the colors for each class manually by clicking on top of the imported image. We can use one of the original images or a composite image with portions of several leaves. Let's use here one of the original images and pick the background colors and assign them to the `b` vector.
 
 ```{r}
 #| eval: false
@@ -60,14 +62,14 @@ b <- pick_palette(img, viewer = "mapview")
 
 The original image is displayed and the user needs to select the place marker. It is possible to zoom in the image. After placing the markers via clicking on the background colors multiple times, the user should click on "Done".
 
-![Soybean leaf displaying symptoms of soybean rust](imgs/sbr_pick_palette.png){#fig_pick_palette fig-align="center"}
+![Soybean leaf displaying symptoms of soybean rust](imgs/sbr_pick_palette.png){#fig-pick-palette fig-align="center"}
 
 ```{r}
 #| eval: false
 image_combine(b)
 ```
 
-![Image generating after picking the palette colors for the background of the leaf](imgs/b_picked.png){#fig_background_colors_picked fig-align="center" width="372"}
+![Image generated after picking the palette colors for the background of the leaf](imgs/b_picked.png){#fig-background-colors-picked fig-align="center" width="372"}
 
 Now, we can proceed and pick the colors for the other categories following the same logic.
 
@@ -112,7 +114,7 @@ measure_disease(
 )
 ```
 
-If we want to show the mask with two colors instead of the original, we can set to FALSE two "show\_" arguments:
+If we want to show the mask with two colors instead of the original, we can set the two "show\_" arguments to FALSE:
 
 ```{r}
 set.seed(123)
@@ -152,15 +154,15 @@ severity
 
 When the argument `save_image` is set to TRUE, the images are all saved in the folder with the standard prefix "proc."
 
-[![Images created by pliman and exported to a specific folder](imgs/pliman2.png){#fig-pliman2 style="margin: 15px" fig-align="center"}](fig_folder)
+![Images created by pliman and exported to a specific folder](imgs/pliman2.png){#fig-pliman2 style="margin: 15px" fig-align="center"}
 
 Let's have a look at one of the processed images.
 
-[![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delinated in the image.](imgs/processed/proc_img46.jpg){#fig-processed style="margin: 15px" fig-align="center" width="452"}](fig_proc1)
+![Figure created by pliman after batch processing to segment the images and calculate percent area covered by symptoms. The symptomatic area is delineated in the image.](imgs/processed/proc_img46.jpg){#fig-processed style="margin: 15px" fig-align="center" width="452"}
 
 #### More than a target per image
 
-{pliman} offers a custom function to estimate the severity in multiple targets (e.g. leaf) per image. This is convenient to decrease the time when scanning the specimens, for example. Let's combine three soybean rust leaves into a single image and import it for processing. We will further set the `index_lb` (leaf background), `save_image` to `TRUE` and inform the directory for the processed images using `dir_processed`.
+{pliman} offers a custom function to estimate the severity in multiple targets (e.g. leaf) per image. This is convenient to decrease the time when scanning the specimens, for example. Let's combine three soybean rust leaves into a single image and import it for processing. We will further set the `index_lb` (leaf background), `save_image` to `TRUE` and specify the directory for the processed images using `dir_processed`.
 
 ```{r}
 #| label: fig-img2
@@ -184,15 +186,17 @@ image_combine(img2)
 
 ```
 
-The original image is splited and the individual new images are saved in the proc folder.
+The original image is split and the individual new images are saved in the proc folder.
 
-![Individual images of the soybean leaves after processed using the measure_disease_byl function of the {pliman} package.](imgs/sbr_procor.png){#fig_sbr_processed fig-align="center" width="505"}
+![Individual images of the soybean leaves after being processed using the measure_disease_byl function of the {pliman} package.](imgs/sbr_procor.png){#fig-sbr-processed fig-align="center" width="505"}
 
 ## How good are these measurements?
 
 These 10 images were previously processed in QUANT software for measuring severity which is also based on image threshold. Let's create a tibble for the image code and respective "actual" severity - assuming QUANT measures as reference.
 
-```{r, warning=FALSE, message=FALSE}
+```{r}
+#| warning: false
+#| message: false
 library(tidyverse)
 library(r4pde)
 quant <- tribble(
@@ -219,7 +223,7 @@ We can now combine the two dataframes and produce a scatter plot relating the tw
 #| fig-cap: "Scatter plot for the relationship between severity values measured by pliman and Quant software" 
 dat <- left_join(severity, quant)
 
-dat %>%
+dat |>
   ggplot(aes(actual, symptomatic)) +
   geom_point(size = 3, shape = 16) +
   ylim(0, 100) +
@@ -232,7 +236,7 @@ dat %>%
 
 ```
 
-The concordance correlation coefficient is a test for agreement between two observers or two methods (see previous chapter). It is an indication of how accurate the *pliman* measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!
+The concordance correlation coefficient is an index of agreement between two observers or two methods (see the chapter on [reliability and accuracy](data-accuracy.qmd)). It is an indication of how accurate the *pliman* measures are compared with a standard. The coefficient is greater than 0.99 (1.0 is perfect concordance), suggesting an excellent agreement!
 
 ```{r}
 #| warning: false
@@ -242,4 +246,4 @@ ccc <- epi.ccc(dat$actual, dat$symptomatic)
 ccc$rho.c
 ```
 
-In conclusion, as mentioned earlier, the most critical step is defining the reference image palettes. A few preliminary runs may be necessary for some images to ensure that the segmentation is being carried out correctly, based on visual judgment. This is not different from any other color-threshold based methods, where the choices made by the user impact the final result and contribute to variation among assessors. The drawbacks are the same as those encountered with direct competitors, namely, the need for images to be taken under uniform and controlled conditions, especially with a contrasting background.
+In conclusion, as mentioned earlier, the most critical step is defining the reference image palettes. A few preliminary runs may be necessary for some images to ensure that the segmentation is being carried out correctly, based on visual judgment. This is not different from any other color-threshold based methods, where the choices made by the user impact the final result and contribute to variation among assessors. The drawbacks are the same as those encountered with other image-analysis tools, namely, the need for images to be taken under uniform and controlled conditions, especially with a contrasting background.

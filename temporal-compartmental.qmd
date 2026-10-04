@@ -75,7 +75,7 @@ A word equation for the transition rate corresponding to infection is
 $$
 \small
 \begin{aligned}
- \mbox{Net rate of infection} &\propto \mbox{Number of healthy hosts} \times \mbox{Number of infected hosts}.\\
+ \mbox{Net rate of infection} &\propto \mbox{Number of healthy hosts} \times \mbox{Number of infectious hosts}.\\
 \end{aligned}
 $$
 
@@ -98,7 +98,7 @@ If we introduce the following symbols for parameters
 
 - $\gamma$ = rate at which latently infected hosts become infectious (per unit time)
 - $\mu$ = rate at which infectious hosts lose infectivity (per unit time)
-- $\beta$ = rate of infection (per unit time, per infected host, per healthy host)
+- $\beta$ = rate of infection (per unit time, per infectious host, per healthy host)
 
 then the H-L-I-R model can be expressed as a system of differential equations
 
@@ -250,12 +250,12 @@ plot.model.results <- function(data, type)
 
   if(type == "HLIR" | type == "HLIRP" | type == "HLIRP (with host growth)")
   {
-    plot_df <- data %>%
+    plot_df <- data |>
       mutate(D = L + I + R)
     
     if(type == "HLIRP (with host growth)")
     {
-      plot_df <- plot_df %>%
+      plot_df <- plot_df |>
         mutate(T_tissue = H + L + I + R)
       
       cols <- c(
@@ -312,9 +312,9 @@ plot.model.results <- function(data, type)
       legend_pos <- c(0.78, 0.5)
     }
     
-    plot_long <- plot_df %>%
-      select(time, all_of(gather_cols)) %>%
-      pivot_longer(cols = -time, names_to = "Compartment", values_to = "Value") %>%
+    plot_long <- plot_df |>
+      select(time, all_of(gather_cols)) |>
+      pivot_longer(cols = -time, names_to = "Compartment", values_to = "Value") |>
       mutate(Compartment = factor(Compartment, levels = gather_cols))
     
     p <- ggplot(plot_long, aes(x = time, y = Value, color = Compartment, linetype = Compartment)) +
@@ -355,7 +355,7 @@ plot.model.results <- function(data, type)
     }
     multi_plot_df <- bind_rows(multi_list)
     
-    multi_long <- multi_plot_df %>%
+    multi_long <- multi_plot_df |>
       pivot_longer(cols = c(D, T_tissue), names_to = "Variable", values_to = "Value")
     
     p1 <- ggplot(multi_long, aes(x = time, y = Value, color = Variable, group = interaction(Season, Variable))) +
@@ -398,6 +398,8 @@ plot.model.results <- function(data, type)
 ```
 
 ```{r}
+#| label: fig-hlir-solution
+#| fig-cap: "Numerical solution of the H-L-I-R model: numbers of healthy (H), latently infected (L), infectious (I) and removed (R) hosts, and the number of diseased hosts (D), through time"
 #| fig-align: center
 #| warning: false
 #| message: false
@@ -575,6 +577,8 @@ On the figures below, the left hand panel shows the logarithm of the number of i
 (Arbitrarily) selecting $t_{start} = 20 \le t \le 50 = t_{end}$ as a representative region within this range of plausibly exponential increase, a subset of the curve is plotted on the right-hand side (black), together with the results of a linear regression (red).
 
 ```{r}
+#| label: fig-hlir-growth-rate
+#| fig-cap: "Left: logarithm of the number of infectious hosts through time. Right: the segment used to estimate the initial exponential growth rate (black) and the fitted linear regression (red, dashed)"
 #| fig-align: center
 library(ggplot2)
 library(r4pde)
@@ -692,6 +696,8 @@ However, because the decay rate of inoculum is relatively large, this drops off 
 The code to simulate the model is given below. Note it is just a lightly edited version of the code we originally used to simulate the H-L-I-R model.
 
 ```{r}
+#| label: fig-hlirp
+#| fig-cap: "Numerical solution of the H-L-I-R-(P) model, which adds primary infection from a decaying pool of inoculum"
 #| fig-align: center
 hlirp.model <- function(t, state, parameters) {
   with(as.list(c(state, parameters)), {
@@ -760,6 +766,8 @@ The updated model can again be solved by adapting our previous template. The fol
 In the original H-L-I-R model, the total host population size was fixed, and we denoted this constant by $$N = H+L+I+R$$ Once host growth is added, however, this quantity is no longer constant. To avoid confusion, we denote the time-varying total number of hosts by $$T(t) = H(t) + L(t) + I(t) + R(t).$$ The carrying capacity for this total amount of host tissue is denoted by $N_{\max}$. In the figure below, $T(t)$ is shown by the dotted blue line. Also note that we start with $H(0) = N_{max}/20$, i.e., a small number of hosts initially.
 
 ```{r}
+#| label: fig-hlirp-growth
+#| fig-cap: "Numerical solution of the H-L-I-R-(P) model with host growth. The dotted blue line is the total amount of host tissue"
 #| fig-align: center
 hlirp.with.growth.model <- function(t, state, parameters) {
   with(as.list(c(state, parameters)), {
@@ -1038,6 +1046,8 @@ find.ss.beta <- function(beta, data)
 Before performing numerical optimisation, it is sensible to calculate $SS(\beta)$ over a range of possible transmission rates, and to plot the results. Note that before plotting the y-value (the sum of squares) is divided by one million.
 
 ```{r}
+#| label: fig-sum-squares
+#| fig-cap: "Sum of squares as a function of the infection rate, showing the true and the fitted values of the transmission rate"
 #| fig-align: center
 library(ggplot2)
 library(r4pde)
@@ -1124,6 +1134,8 @@ The estimate of $\beta$ is very close to the true value used to generate the syn
 To assess the quality of the fit, the fitted model predictions can be plotted against the observations (see below).
 
 ```{r}
+#| label: fig-fitted-hlir
+#| fig-cap: "Observations (points), the fitted model (solid line) and the model with the original parameter value (dotted line)"
 #| fig-align: center
 library(ggplot2)
 library(r4pde)
@@ -1178,7 +1190,7 @@ More sophisticated approaches, including likelihood-based and Bayesian methods, 
 
 The H–L–I–R framework provides a useful and biologically interpretable starting point for modelling plant disease epidemics. However, the assumptions underpinning the model are often simplifications.
 
-In the above, we have shown here how some of these assumptions can be relaxed. However, many applications require extensions that relax one or more of these assumptions. Important extensions include:
+Above, we have shown how some of these assumptions can be relaxed. However, many applications require extensions that relax one or more of these assumptions. Important extensions include:
 
 - **Multiple strains**, allowing investigation of competition, coexistence and evolutionary change. Examples of models in the literature tracking multiple pathogen strains include @Elderfield2018, @Allen2019, @Hamelin2019 and @Taylor2023.
 - **Multiple hosts**, allowing investigation of pathosystems in which more than one host or variety of host can become infected. Examples include @Bussell2022, @MurrayWatson2023 and @DelPonte2026.
@@ -1191,11 +1203,11 @@ Although these extensions increase biological realism, they also introduce addit
 
 ## Summary
 
-Compartmental models are probably best viewed as a flexible framework rather than a single model. A major strength of the framework is that additional biological complexity can often be incorporated simply by introducing new compartments or modifying transition rates. Starting from simple formulations, additional biological realism can be introduced in targeted ways to reflect specific epidemiological settings. The key challenge is not to maximise complexity, but to identify the simplest model that captures the dominant processes governing the epidemic. This principle underlies much of modern infectious disease modelling, irrespective of whether pathogen infecting plants, humans or animals are being considered. Throughout, the same framework serves three complementary purposes: representing biological mechanisms, understanding epidemic behaviour and extracting information from data.
+Compartmental models are probably best viewed as a flexible framework rather than a single model. A major strength of the framework is that additional biological complexity can often be incorporated simply by introducing new compartments or modifying transition rates. Starting from simple formulations, additional biological realism can be introduced in targeted ways to reflect specific epidemiological settings. The key challenge is not to maximise complexity, but to identify the simplest model that captures the dominant processes governing the epidemic. This principle underlies much of modern infectious disease modelling, irrespective of whether the pathogens infect plants, humans or animals. Throughout, the same framework serves three complementary purposes: representing biological mechanisms, understanding epidemic behaviour and extracting information from data.
 
 ## Appendix. Relationship to population dynamics models
 
-It is useful to show how simpler population dynamics models (as covered in Chapter 10) arise as limiting cases of the compartmental modelling framework.
+It is useful to show how simpler population dynamics models (as covered in the chapter on [population models](temporal-models.qmd)) arise as limiting cases of the compartmental modelling framework.
 
 We start with the H-L-I-R-(P) model (without host growth).
 
@@ -1239,6 +1251,6 @@ This is equivalent to the H-L-I-R-(P) model in the limit $\epsilon \rightarrow 0
 
 ### Gompertz model
 
-A concordance between process-based models and the Gompertz model can be made if we move to a more complex Kermack-McMcKermack type model in which the infection rate depends on the time-since-infection [@Segarra2001; @Cunniffe2012], at least approximately. However, this is really quite advanced and requires going well beyond what can be covered in this chapter, so we do not pursue this here.
+A concordance between process-based models and the Gompertz model can be made if we move to a more complex Kermack-McKendrick type model in which the infection rate depends on the time-since-infection [@Segarra2001; @Cunniffe2012], at least approximately. However, this is really quite advanced and requires going well beyond what can be covered in this chapter, so we do not pursue this here.
 
 

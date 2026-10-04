@@ -1,12 +1,14 @@
-## Gradient models
+---
+title: "Gradient models"
+---
 
 Similar to the disease progress curves, models can be fitted empirically to observed disease gradient curves and provide insights into the mechanisms of inoculum dispersal and deposition, the source of inoculum, and the physical processes underlying dispersal.
 
-When modeling disease gradients, the distance is represented by $x$, a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the **deterministic** type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained it [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx)
+When modeling disease gradients, the distance is represented by $x$, a continuous variable which can be expressed by various units (cm, m, km, etc). The gradient models, similar to the population dynamics models (disease progress) are of the **deterministic** type. The difference is that, for disease progress curves, disease intensity tends to increase with increasing time, while in disease gradients the disease intensity tends to decrease with increasing distance from the source of inoculum. Two models are most commonly fitted to data on disease gradients. More details about these models can be obtained in [this tutorial.](https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/ModelingDispersalGradients/Pages/default.aspx)
 
 ## Exponential model
 
-The exponential model is also known as Kiyosawa & Shiyomi model. The differential of the exponential model is given by
+The exponential model is also known as Kiyosawa and Shiyomi model. The differential of the exponential model is given by
 
 $\frac{dy}{dx}$ = $-b_{E}.y$ ,
 
@@ -38,10 +40,10 @@ max2 <- 80 # maximum distance for gradient 2
 dat <- data.frame(x = seq(1:max1), y = seq(0:a1))
 ```
 
-The following code allows to visualize the model predictions.
+The following code allows us to visualize the model predictions.
 
 ```{r}
-#| label: fig-exp1
+#| label: fig-grad-exp1
 #| fig-cap: "Exponential curves describing plant disease gradients"
 dat |>
   ggplot(aes(x, y)) +
@@ -57,15 +59,15 @@ dat |>
 
 ## Power law model
 
-Also known as the modified Gregory's model (Gregory was a pioneer in the use this model to describe plant disease gradients). In the power law model, $Y$ is proportional to the power of the distance, and is given by:
+Also known as the modified Gregory's model (Gregory was a pioneer in the use of this model to describe plant disease gradients). In the power law model, $Y$ is proportional to the power of the distance, and is given by:
 
-$Y = a_{P}.x - b_{P}$
+$Y = a_{P} \, x^{-b_{P}}$
 
-where $a_{P}$ and $b_{P}$ are the two parameters of the power law model. They differ from the exponential because as closer to $x$ is to zero, $Y$ is indefinitely large (not meaningful biologically). However, the model can still be useful because it produces realistic values at any distance $x$ away from the source. The values of the $a_{P}$ parameter should be interpreted in accord to the scale of $x$, whether in centimeters or meters. If the distance between the source and the first measure away from the source is 0.5m, it is so more appropriate to record the distance in cm than in m or km.
+where $a_{P}$ and $b_{P}$ are the two parameters of the power law model. They differ from the exponential because as $x$ approaches zero, $Y$ becomes indefinitely large (not meaningful biologically). However, the model can still be useful because it produces realistic values at any distance $x$ away from the source. The values of the $a_{P}$ parameter should be interpreted according to the scale of $x$, whether in centimeters or meters. If the distance between the source and the first measure away from the source is 0.5m, it is more appropriate to record the distance in cm than in m or km.
 
-Once $y$ at the distance zero from the source is undefined when using the power law model, this is usually modified by the addition of a positive constant $C$ in $x$:
+Because $y$ at the distance zero from the source is undefined when using the power law model, this is usually modified by the addition of a positive constant $C$ in $x$:
 
-$Y = a_{P}.(x + C) - b_{P}$
+$Y = a_{P} \, (x + C)^{-b_{P}}$
 
 For this reason, the model is named as the modified power law. Here, the constant $C$ is of the same unit of $x$. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the $a$ parameter is a theoretical value of $Y$ at the distance $1-C$ from the center of the inoculum source.
 
@@ -91,14 +93,14 @@ dat2 |>
   stat_function(fun = function(x) a1 * ((x + C)^-b1), linetype = 1) +
   stat_function(fun = function(x) a2 * ((x + C)^-b2), linetype = 2) +
   ylim(0, a1 - 0.02) +
-  annotate("text", x = 20, y = 0.03, label = "b = 0.1") +
-  annotate("text", x = 20, y = 0.06, label = "b = 0.05") +
+  annotate("text", x = 20, y = 0.03, label = "b = 0.7") +
+  annotate("text", x = 20, y = 0.06, label = "b = 0.5") +
   labs(x = "Distance (m)", y = "Disease incidence")
 ```
 
 The differential equation of the power law model is given by:
 
-$\frac{dy}{dx}$ = $\frac{-b_{P}.Y}{x - C}$
+$\frac{dy}{dx} = \frac{-b_{P} \, Y}{x + C}$
 
 Similar to the exponential model, $\frac{dy}{dx}$ is proportional to $Y$, meaning that the gradient is steeper (more negative) at the highest disease intensity value, usually closer to the source.
 
@@ -106,42 +108,36 @@ Similar to the exponential model, $\frac{dy}{dx}$ is proportional to $Y$, meanin
 
 ### Transformations of y
 
-The gradient models, again similar to the temporal disease models, are **non linear in their parameters**. The model is intrinsically linear if transformations are applied (according to the model) in both sides of the equations. The linear model in its generic state is given by
+The gradient models, again similar to the temporal disease models, are **nonlinear in their parameters**. The model is intrinsically linear if transformations are applied (according to the model) on both sides of the equations. The linear model in its generic state is given by
 
 $y* = a* + bx$ ,
 
-where the asterisk in $a$ indicated that one of the transformations was applied in $y$ that produced the linear model. Note that $a*$ is the transformed version of the initial disease intensity, which needs to be returned to the original scale according to the respective back-transformation. Follows the linearized form of the two most common gradient models.
+where the asterisk in $a$ indicates that one of the transformations was applied in $y$ that produced the linear model. Note that $a*$ is the transformed version of the initial disease intensity, which needs to be returned to the original scale according to the respective back-transformation. The linearized forms of the two most common gradient models are:
 
 $ln(y) = ln(a_{E}) - b_{E}. x$
 
-$ln(y) = ln(a_{P}) - b_{E}. ln(x+C)$
+$ln(y) = ln(a_{P}) - b_{P}. ln(x+C)$
 
 ### Plot for the linearized form of models
 
 Let's visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was $ln(y)$.
 
 ```{r}
-#| label: fig-exp2
+#| label: fig-grad-exp2
 #| fig-cap: "Linearization of the exponential model describing plant disease gradients"
-C <- 0.5
-a1 <- 0.2 # y at zero distance for gradient 1
-a2 <- 0.2 # y at zero distance for gradient 2
-b1 <- 0.5 # decline rate for gradient 1
-b2 <- 0.7 # decline rate for gradient 2
-max1 <- 80 # maximum distance for gradient 1
-max2 <- 80 # maximum distance for gradient 2
-dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
+a1 <- 0.2  # y at zero distance for gradient 1
+a2 <- 0.2  # y at zero distance for gradient 2
+b1 <- 0.1  # decline rate for gradient 1
+b2 <- 0.05 # decline rate for gradient 2
 
-dat2 |>
-  ggplot(aes(x, y)) +
-  theme_r4pde()+
+ggplot(data.frame(x = c(0, 80)), aes(x)) +
+  theme_r4pde() +
   stat_function(fun = function(x) log(a1) - (b1 * x), linetype = 1) +
   stat_function(fun = function(x) log(a2) - (b2 * x), linetype = 2) +
-  labs(x = "log of distance (m)", y = "log of disease incidence"
-  )
+  labs(x = "Distance (m)", y = "log of disease incidence")
 ```
 
-Follows the linearization of the modified power law model. Note that the transformation used was $ln(y)$ and $ln(x+C)$ .
+Next is the linearization of the modified power law model. Note that the transformation used was $ln(y)$ and $ln(x+C)$ .
 
 ```{r}
 #| label: fig-power2
@@ -151,19 +147,15 @@ a1 <- 0.2 # y at zero distance for gradient 1
 a2 <- 0.2 # y at zero distance for gradient 2
 b1 <- 0.5 # decline rate for gradient 1
 b2 <- 0.7 # decline rate for gradient 2
-max1 <- log(80) # maximum distance for gradient 1
-max2 <- log(80) # maximum distance for gradient 2
-dat2 <- data.frame(x = seq(1:max1), y = seq(0:a1))
 
-dat2 |>
-  ggplot(aes(x, y)) +
-  theme_r4pde()+
-  stat_function(fun = function(x) log(a1) - (b1 * log(x + C)), linetype = 1) +
-  stat_function(fun = function(x) log(a2) - (b2 * log(x + C)), linetype = 2) +
+# the x axis is the transformed distance, log(x + C)
+ggplot(data.frame(u = c(log(C), log(80 + C))), aes(u)) +
+  theme_r4pde() +
+  stat_function(fun = function(u) log(a1) - b1 * u, linetype = 1) +
+  stat_function(fun = function(u) log(a2) - b2 * u, linetype = 2) +
   labs(
     title = "Modified Power Law",
-    subtitle = "",
-    x = "log of distance (m)",
+    x = "log of (distance + C)",
     y = "log of disease incidence"
   )
 ```
@@ -172,4 +164,4 @@ dat2 |>
 
 A shiny app was developed to demonstrate these two models interactively. Click on the image below to get access to the app.
 
-[![Screenshot of the application to visualize the spatial disease gradient models by varying the model's parameters](imgs/shiny_gradients.png){#fig-models fig-align="center" width="533"}](https://delponte.shinyapps.io/gradients)
+[![Screenshot of the application to visualize the spatial disease gradient models by varying the model's parameters](imgs/shiny_gradients.png){#fig-grad-models fig-align="center" width="533"}](https://delponte.shinyapps.io/gradients)

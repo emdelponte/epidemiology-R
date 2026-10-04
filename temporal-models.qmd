@@ -1,4 +1,6 @@
-# Population models
+---
+title: "Population models"
+---
 
 Mathematical models can be fitted to the DPC data to express epidemic progress in terms of rates and absolute/relative quantities. The latter can be accomplished using population dynamics (or growth-curve) models for which the estimated parameters are usually meaningful biologically and appropriately describe epidemics that do not decrease in disease intensity. By fitting an appropriate model to the progress curve data, another set of parameters is available to the researcher when attempting to represent, understand or compare epidemics.
 
@@ -6,9 +8,9 @@ The family of models that describe the growth of epidemics, hence population dyn
 
 ## Non-flexible models
 
-These population dynamics models require at least two parameters, hence they are known as non-flexible, as opposed to the flexible ones for which there are at least one additional (third) parameter.
+These population dynamics models require at least two parameters, hence they are known as non-flexible, as opposed to the flexible ones for which there is at least one additional (third) parameter.
 
-Following the convention proposed by [@chapter2007b] in their book "The study of plant disease epidemics":
+Following the convention proposed by @chapter2007b in their book "The study of plant disease epidemics":
 
 -   time is represented by $t$
 
@@ -24,13 +26,13 @@ The differential equation for the exponential model is given by
 
 $\frac{dy}{dt} = r_E.y$,
 
-where $r_E$ is the apparent infection rate (subscript E for this model) (sensu Vanderplank) and $y$ is the disease intensity. Biologically, this formulation suggests that diseased plants, or $y$, and $r_E$ at each time contribute to disease increase. The value of $\frac{dy}{dt}$ is minimal when $y = 0$ and increases exponentially with the increase in $y$.
+where $r_E$ is the apparent infection rate (subscript E for this model) (sensu Vanderplank) and $y$ is the disease intensity. Biologically, this formulation suggests that diseased plants, or $y$, and $r_E$ at each time contribute to disease increase. The value of $\frac{dy}{dt}$ is minimal when $y = 0$ and increases linearly with the increase in $y$ (so that $y$ itself grows exponentially over time).
 
 The integral for the exponential model is given by
 
 $y = y_0 e^{r_Et}$,
 
-where $y0$ is and $r$ are obtained via estimation. Let's simulate two curves by varying $r$ while fixing $y0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the \`stat_function\`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum by half, etc.).
+where $y_0$ and $r_E$ are obtained via estimation. Let's simulate two curves by varying $r$ while fixing $y0$ and varying the latter while fixing $r_E$. We produce the two plots in *ggplot* and add the predicted curve using the `stat_function`. But first, we need to define values for the two model parameters. Further modifications to these values will be handled directly in the simulation (e.g. doubling infection rate, reducing initial inoculum by half, etc.).
 
 ```{r}
 #| warning: false
@@ -93,11 +95,11 @@ where now the $r_M$ is the rate parameter of the monomolecular model and $(1-y)$
 
 The integral of the monomolecular model is given by
 
-$\frac{dy}{dt} = 1 - (1-y)e^{-r_Mt}$
+$y = 1 - (1-y_0)e^{-r_Mt}$
 
-This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics do not contribute new infections. Therefore, different from the exponential model, disease intensity $y$ does not affect the epidemics and so the absolute rate is proportional to $(1-y)$.
+This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics does not contribute new infections. Therefore, different from the exponential model, disease intensity $y$ does not affect the epidemics and so the absolute rate is proportional to $(1-y)$.
 
-Let's simulate two monomolecular curve with different rate parameters where one is one third of the other.
+Let's simulate two monomolecular curves with different rate parameters where one is one third of the other.
 
 ```{r}
 #| warning: false
@@ -118,7 +120,7 @@ Now inoculum was increased 100 times with the reduced rate.
 ```{r}
 #| warning: false
 #| label: fig-mono2
-#| fig-cap: "Monomolecular curves with one rate (0.06) and the  initial inoculum increased 100 times"
+#| fig-cap: "Monomolecular curves with one rate (0.03) and the initial inoculum increased 100 times"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(fun = function(t) 1 - ((1 - y0) * exp(-r / 2 * t))) +
@@ -132,17 +134,17 @@ dat |>
 
 ### Logistic
 
-The logistic model is a more elaborated version of the two previous models as it incorporates the features of them both. Its differential is given by
+The logistic model is a more elaborate version of the two previous models as it incorporates the features of them both. Its differential is given by
 
 $\frac{dy}{dt} = r_L. y . (1 - y)$,
 
 where $r_L$ is the infection rate of the logistic model, $y$ is the proportion of diseased individuals or host tissue and $(1-y)$ is the proportion of non-affected individuals or host area.
 
-Biologically, $y$ in its differential equation implies that $\frac{dy}{dt}$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $(1-y)$ leads to a decrease in $\frac{dy}{dt}$ when $y$ approaches the maximum $y=1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $\frac{dy}{dt}$ is minimal at the onset of the epidemics, reaches a maximum when $y/2$ and declines until $y=1$.
+Biologically, $y$ in its differential equation implies that $\frac{dy}{dt}$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $(1-y)$ leads to a decrease in $\frac{dy}{dt}$ when $y$ approaches the maximum $y=1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $\frac{dy}{dt}$ is minimal at the onset of the epidemics, reaches a maximum when $y = 0.5$ and declines until $y=1$.
 
 The integral is given by
 
-$y = \frac{1}{1 + (1-y_0).e^{-r.t}}$,
+$y = \frac{1}{1 + \frac{1-y_0}{y_0}\,e^{-r_L t}}$,
 
 where $r_L$ is the apparent infection rate of the logistic model and $y0$ is the disease intensity at $t=0$. This model provides a good fit to polycyclic epidemics.
 
@@ -151,7 +153,7 @@ Let's check two curves where in one the infection rate is double while keeping t
 ```{r}
 #| warning: false
 #| label: fig-log1
-#| fig-cap: "Logistic curves with two rates of infection (0.18 and 0.024) and the same initial inoculum (0.001) "
+#| fig-cap: "Logistic curves with two rates of infection (0.12 and 0.24) and the same initial inoculum (0.001)"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -161,16 +163,16 @@ dat |>
   stat_function(fun = function(t) 1 / (1 + ((1 - y0) / y0) * exp(-r * 4 * t))) +
   labs(x = "Time") +
 theme_r4pde()+
-  annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.18") +
-  annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.024")
+  annotate(geom = "text", x = 41, y = 0.77, label = "r = 0.24") +
+  annotate(geom = "text", x = 50, y = 0.10, label = "r = 0.12")
 ```
 
-Now the inoculum is reduced 10 times for a same infection rate.
+Now the inoculum is reduced 10 times for the same infection rate.
 
 ```{r}
 #| warning: false
 #| label: fig-log2
-#| fig-cap: "Logistic curves with a single rate of infection (0.24) and two initial inoculum (0.001 and 0.0001) "
+#| fig-cap: "Logistic curves with a single rate of infection (0.18) and two initial inocula (0.001 and 0.0001)"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -190,11 +192,11 @@ dat |>
 
 The Gompertz model is similar to the logistic and also provides a very good fit to several polycyclic diseases. The differential equation is given by
 
-$\frac{dy}{dt} = r_G.[ln(1) - ln(y)]$
+$\frac{dy}{dt} = r_G \, y \, [\ln(1) - \ln(y)] = -r_G \, y \ln(y)$
 
 Differently from the logistic, the variable representing the non-infected individuals or host area is $-ln(y)$. The integral equation is given by
 
-$y = e^{(ln(y0)).{e^{-r_G.t)}}}$,
+$y = e^{\ln(y_0)\, e^{-r_G t}}$,
 
 where $r_G$ is the apparent infection rate for the Gompertz models and $y_0$ is the disease intensity at $t = 0$.
 
@@ -222,7 +224,7 @@ And those when inoculum was reduced one thousand times.
 ```{r}
 #| warning: false
 #| label: fig-gomp2
-#| fig-cap: "Gompertz curves with a single rate of infection (0.12) and two levels of initial inoculum (0.001 and 0.00001)"
+#| fig-cap: "Gompertz curves with a single rate of infection (0.12) and two levels of initial inoculum (0.001 and 0.000001)"
 dat |>
   ggplot(aes(t, y)) +
   stat_function(
@@ -233,7 +235,7 @@ dat |>
   labs(x = "Time") +
  theme_r4pde()+
   annotate(geom = "text", x = 15, y = 0.77, label = "y0 = 0.001") +
-  annotate(geom = "text", x = 25, y = 0.10, label = "y0 = 0.00001")
+  annotate(geom = "text", x = 25, y = 0.10, label = "y0 = 0.000001")
 
 
 
@@ -243,4 +245,4 @@ dat |>
 
 A shiny app was developed to demonstrate these four models interactively. Click on the image below to get access to the app.
 
-[![Screenshot of the application to visualize the population dynamics models by varying the model\'s parameters](imgs/epidemic_models.png){#fig-models fig-align="center" width="533"}](https://edelponte.shinyapps.io/epidemics/)
+[![Screenshot of the application to visualize the population dynamics models by varying the model's parameters](imgs/epidemic_models.png){#fig-models fig-align="center" width="533"}](https://edelponte.shinyapps.io/epidemics/)
