@@ -1,16 +1,14 @@
 ---
-output: html_document
+title: "Disease progress curves"
 editor_options: 
   chunk_output_type: console
 ---
 
-# Disease progress curves
-
 ## How epidemics occur
 
-Before knowing how epidemics develop in time, it is important to understand how an epidemic occur. An epidemic begins when the **primary inoculum** (a variable number of propagules able to infect the plant) that is *surviving* somewhere establishes an intimate contact with individuals of the host population - this process is called *infection*. These inocula are usually surviving externally to the plant host and need to *disperse* (move), passively or by means of a vector, to reach the plant. It can also be that a growing host encounter a localized (static) source of inoculum.
+Before knowing how epidemics develop in time, it is important to understand how an epidemic occurs. An epidemic begins when the **primary inoculum** (a variable number of propagules able to infect the plant) that is *surviving* somewhere establishes an intimate contact with individuals of the host population - this process is called *infection*. These inocula are usually surviving externally to the plant host and need to *disperse* (move), passively or by means of a vector, to reach the plant. It can also be that a growing host encounters a localized (static) source of inoculum.
 
-Once the infection is established, the pathogen *colonizes* the plant tissues and disease symptoms are noticed. When this happens, the **incubation period** can be measured in time units. A successful colonization will lead to *reproduction* of the pathogen inside and/or external to the crop, and so the **latent period** is completed, and can also be measure in time units. Finally, the **infectious period** takes place and continues until the pathogen is not capable of producing the **secondary inoculum** on the infected site.
+Once the infection is established, the pathogen *colonizes* the plant tissues and disease symptoms are noticed. When this happens, the **incubation period** can be measured in time units. A successful colonization will lead to *reproduction* of the pathogen inside and/or external to the crop, and so the **latent period** is completed, and can also be measured in time units. Finally, the **infectious period** takes place and continues until the pathogen is no longer capable of producing the **secondary inoculum** on the infected site.
 
 ![Five main processes of the disease cycle](imgs/disease_cycle.png){#fig-diagram width="490"}
 
@@ -20,7 +18,7 @@ Epidemiologists are generally interested in determining the length of the incuba
 
 ## Disease curves
 
-A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state as time goes. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
+A key understanding of the epidemics relates to the knowledge of rates and patterns. Epidemics can be viewed as dynamic systems that change their state over time. The first and simplest way to characterize such changes in time is to produce a graphical plot called disease progress curve (DPC). This curve can be obtained as long as the intensity of the disease (*y*) in the host population is assessed sequentially in time (*t*).
 
 A DPC summarizes the interaction of the three main components of the disease triangle occurring during the epidemic. The curves can vary greatly in shape according to variations in each of the components, in particular due to management practices that alter the course of the epidemics and for which the goal is to stop disease increase. We can create a data frame in R for a single DPC and make a plot using ggplot. By convention we use `t` for time and `y` for disease intensity, expressed in percentage (0 to 100%).
 
@@ -30,10 +28,11 @@ Firstly, let's load the essential R packages and set up the environment.
 #| warning: false
 #| message: false
 library(tidyverse) # essential packages 
+library(r4pde)
 theme_set(theme_r4pde()) # set global theme
 ```
 
-There are several ways to create a data frame in R. I like to use the `tribble` function as below. The entered data will be assigned to a dataframe called `dpc`.
+There are several ways to create a data frame in R. We use the `tribble` function as below. The entered data will be assigned to a data frame called `dpc`.
 
 ```{r}
 dpc <- 
@@ -57,7 +56,7 @@ Now the plot
 dpc1 <- dpc |>
   ggplot(aes(t, y)) +
   theme_r4pde()+
-  geom_line(size = 1)+
+  geom_line(linewidth = 1)+
   geom_point(size = 3, shape = 16)+
   labs(x = "Assessment time (days)",
        y = "Disease intensity (%)")
@@ -69,9 +68,9 @@ ggsave("imgs/dpc1.png", dpc1)
 
 ## Epidemic classification
 
-Vanderplank analysed the shapes of great number of epidemic curves and classified the epidemics into two basic types: monocyclic or polycyclic [@plantdi1963]. In **monocyclic** epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidemics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Tipically, the progress curves for monocyclic epidemics have a saturation type shape. An example of a monocyclic epidemic is the disease known as wheat smut caused by *Tilletia caries*. In this disease, although two types of spores are produced during a single cycle (teliospores and basidiospores), no additional infection cycles occur within the same growing season.
+Vanderplank analyzed the shapes of a great number of epidemic curves and classified the epidemics into two basic types: monocyclic or polycyclic [@plantdi1963]. In **monocyclic** epidemics, inoculum capable of infecting the crop is not produced during the epidemics. These epidemics are initiated and maintained only by the primary inoculum. There is no secondary infection and hence no further spread of newly produced inoculum among the host individuals. Typically, the progress curves for monocyclic epidemics have a saturation type shape. An example of a monocyclic epidemic is the disease known as wheat smut caused by *Tilletia caries*. In this disease, although two types of spores are produced during a single cycle (teliospores and basidiospores), no additional infection cycles occur within the same growing season.
 
-Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a **polycyclic** epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle. These epidemics most commonly present a sigmoid shape @fig-cycles. An example of a polycyclic epidemic is soybean rust as it undergoes repeated infection cycles with uredospores on soybean.
+Conversely, when the secondary inoculum produced during the epidemics is capable of infecting the host during the same crop cycle, a **polycyclic** epidemic is established. The number of repeated cycles just depends on how long it takes to complete a single infection cycle. These epidemics most commonly present a sigmoid shape (@fig-cycles). An example of a polycyclic epidemic is soybean rust as it undergoes repeated infection cycles with urediniospores on soybean.
 
 ```{r}
 #| warning: false
@@ -125,7 +124,7 @@ The precision and complexity of the analysis of progress curve data depends on t
 -   Epidemic duration
 -   Maximum disease
 -   Curve shape
--   Area under the area under the disease progress curve (AUDPC).
+-   Area under the disease progress curve (AUDPC).
 
 Let's visualize the AUDPC in the same plot that we produced above.
 

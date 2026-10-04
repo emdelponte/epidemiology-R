@@ -2,11 +2,7 @@
 title: "Fitting gradient models"
 ---
 
-::: {.callout-note appearance="simple"}
-This is a work in progress that is currently undergoing heavy technical editing and copy-editing
-:::
-
-```{r message=FALSE, warning=FALSE}
+```{r}
 #| message: false
 #| warning: false
 library(tidyverse)
@@ -55,7 +51,7 @@ reg_exp <- lm(log(Y) ~ x, data = grad1)
 jtools::summ(reg_exp)
 ```
 
-The intercept $a$ represents the natural logarithm (log) of the response variable when the predictor is at a distance of zero. The negative slope $-b$ indicates the rate at which the response decreases as the predictor increases --- this is the decline rate of the gradient. The adjusted R-squared value of 0.86 suggests that approximately 86% of the variability in the response variable can be explained by the predictor in the model. While this seems to indicate a good fit, it is essential to compare this coefficient with those from other models to determine its relative goodness of fit. Furthermore, visually inspecting a regression plot is crucial. By doing this, we can check for any patterns or residuals around the predicted line, which can provide insights into the model's assumptions and potential areas of improvement
+The intercept $a$ represents the natural logarithm (log) of the response variable when the predictor is at a distance of zero. The negative slope $-b$ indicates the rate at which the response decreases as the predictor increases --- this is the decline rate of the gradient. The adjusted R-squared value of 0.86 suggests that approximately 86% of the variability in the response variable can be explained by the predictor in the model. While this seems to indicate a good fit, it is essential to compare this coefficient with those from other models to determine its relative goodness of fit. Furthermore, visually inspecting a regression plot is crucial. By doing this, we can check for any patterns in the residuals around the predicted line, which can provide insights into the model's assumptions and potential areas of improvement
 
 ```{r}
 #| label: fig-fit_grad2
@@ -72,7 +68,7 @@ grad1 |>
 
 ```
 
-From the aforementioned plot, it's evident that the exponential model might not be the optimal choice. This inference is drawn from the noticeable patterns or residuals surrounding the regression fit line, suggesting that the model may not capture all the underlying structures in the data.
+From the aforementioned plot, it's evident that the exponential model might not be the optimal choice. This inference is drawn from the noticeable patterns in the residuals surrounding the regression fit line, suggesting that the model may not capture all the underlying structures in the data.
 
 ### Power law model
 
@@ -124,7 +120,7 @@ grad1 |>
 
 ```
 
-Among the models tested, the modified power law emerges as the most suitable choice based on its highest coefficient of determination, $R^2$ . This conclusion is not only supported by the statistical metrics but also visibly evident when we examine the graphs of the fitted models.To further illustrate this, we'll generate a gradient plot. On this plot, we'll overlay the data with the best-fitting model --- the modified power law. Remember, to accurately represent the data, we'll need to back-transform the parameter $a$ before plotting.
+Among the models tested, the modified power law emerges as the most suitable choice based on its highest coefficient of determination, $R^2$ . This conclusion is not only supported by the statistical metrics but also visibly evident when we examine the graphs of the fitted models. To further illustrate this, we'll generate a gradient plot. On this plot, we'll overlay the data with the best-fitting model --- the modified power law. Remember, to accurately represent the data, we'll need to back-transform the parameter $a$ before plotting.
 
 ```{r}
 grad1 |> 
@@ -137,8 +133,8 @@ grad1 |>
        x = "Distance (m)")
 
 ```
-## fit_gradients
 
+## Fitting all models with `fit_gradients()`
 
 The `fit_gradients()` function of the {r4pde} package is designed to take in a dataset consisting of two variables: distance (x) and some measure of the phenomenon (Y). Using this data, the function fits each of the three models and evaluates their performance by calculating the R-squared value for each fit. The higher the R-squared value, the better that particular model explains the variation in the data. Once the models are fit, the function returns a series of outputs:
 
@@ -177,21 +173,3 @@ Each plot can be further customized for publication purposes.
        title = "")
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
