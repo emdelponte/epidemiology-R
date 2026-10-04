@@ -597,7 +597,7 @@ rf_training_pred |> # training set predictions
 acc_train
 ```
 
-The accuracy of the model on the training data is 0.85 which is above 0.5 (mere chance). This basically means that the model was able to learn predictive patterns from the training data. To see if the model is able to generalize what it learned when exposed to new data, we evaluate the model on our hold-out (or so-called test data). We created a test dataset when splitting the data at the start of the modelling.
+The accuracy of the model on the training data is `r round(acc_train$.estimate, 2)`, which is above 0.5 (the accuracy expected by chance for two balanced classes). This basically means that the model was able to learn predictive patterns from the training data. To see if the model is able to generalize what it learned when exposed to new data, we evaluate the model on our hold-out (or so-called test data). We created a test dataset when splitting the data at the start of the modelling.
 
 #### Evaluating the model on test data
 
@@ -623,7 +623,7 @@ lr_testing_pred |>                   # test set predictions
   accuracy(score, .pred_class)
 ```
 
-The resulting accuracy is similar to the accuracy on the training data. It is good for a first go and a relatively simple classification model.
+The accuracy on the test data is similar to or higher than the accuracy on the training data, so there is no sign of overfitting. Note that the test set has only 20 samples, so this estimate is imprecise. The result is good for a first go and a relatively simple classification model.
 
 ```{r}
 ## Let's plot the AUC-ROC 
@@ -936,89 +936,56 @@ unique(cls$year)
 
 The 2021 data collection dates are 20210707, 20210715, 20210720, 20210802,and 20210825.
 
-Let's start creating a list of images per date for 2021:
+We will write a function that processes all the plot images of one date. For each image, the function reads the five bands, clamps the reflectance values to the range 0 to 1, computes several vegetation indices (VIs), and obtains the average value of the original bands and of the VIs. The results for all plots of the date are returned as a data frame with one row per plot.
 
 ```{r}
-# Create a list .tif files collected at each date:
-# These are the DXfiles
-D0files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210707.tif")
-D1files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210715.tif")
-D2files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210720.tif")
-D3files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210802.tif")
-D4files <- Sys.glob("data/cercospora_data/multispec_2021_2022/*_r20210825.tif")
-```
+process_date <- function(date_string) {
+  # all plot images collected on the given date
+  pattern <- paste0("*_r", format(as.Date(date_string), "%Y%m%d"), ".tif")
+  files <- Sys.glob(file.path("data/cercospora_data/multispec_2021_2022", pattern))
 
-Now, define date variables:
+  # plot number taken from the file name (files are sorted as text)
+  plot_id <- as.integer(sub("_.*", "", basename(files)))
 
-```{r}
-# These are the DX variables
-(D0 <- as.Date('7/7/2021',format='%m/%d/%Y'))
-(D1 <- as.Date('7/15/2021',format='%m/%d/%Y'))
-(D2 <- as.Date('7/20/2021',format='%m/%d/%Y'))
-(D3 <- as.Date('8/02/2021',format='%m/%d/%Y'))
-(D4 <- as.Date('8/25/2021',format='%m/%d/%Y'))
-```
+  means <- lapply(files, function(file) {
+    r <- clamp(rast(file), 0, 1)
+    ndvi <- (r[[5]] - r[[3]]) / (r[[5]] + r[[3]])
+    ndre <- (r[[5]] - r[[4]]) / (r[[5]] + r[[4]])
+    cire <- (r[[5]] / r[[4]]) - 1
+    sipi <- (r[[5]] - r[[1]]) / (r[[5]] - r[[3]])
+    ndvi_range <- minmax(ndvi)
+    ndvi_mean <- global(ndvi, fun = "mean", na.rm = TRUE)[, 1]
+    mndvi <- 2 + log((ndvi - ndvi_mean) / (ndvi_range[2] - ndvi_range[1]))
+    all_layers <- c(r, ndvi, ndre, cire, sipi, mndvi)
+    global(all_layers, fun = "mean", na.rm = TRUE)[, 1]
+  })
 
-The following block of code should be executed five times (one per each *DXfiles* & each *DX* variable).
-
-The code reads each image included in a given *DXfiles*, computes several vegetation indices (VIs) for such image, and obtain the average value of original bands & VIs per each. All values are stored in a *vector* object.
-
-```{r}
-# Read all files for each date
-lista <- lapply(D0files, function(x) rast(x)) 
-# Compute global statistics
-output <- vector("double", 5)  # 1. output
-for (i in seq_along(lista)) {            # 2. sequence
-  img <- lista[[i]]
-  r <- clamp(img, 0, 1)
-  ndvi <- (r[[5]]-r[[3]])/(r[[5]]+r[[3]])
-  ndre = (r[[5]]-r[[4]]) / (r[[5]]+r[[4]])
-  cire = (r[[5]] / r[[4]]) - 1
-  sipi = (r[[5]] - r[[1]]) / (r[[5]] - r[[3]])
-  min <- minmax(ndvi)[1]
-  max <- minmax(ndvi)[2]
-  avg <- global(ndvi, fun="mean", na.rm=TRUE)[,1]
-  #dev <- global(ndvi, fun="std")
-  #mndvi <- (ndvi-min)/(max-min)
-  mndvi <- 2 + log((ndvi-avg)/(max-min))
-  nimg <- c(r,ndvi, ndre, cire, sipi, mndvi)
-  output[i] <- global(nimg, fun="mean", na.rm=TRUE) 
-  #output[i] <- global(nimg, mean, na.rm=TRUE) 
+  df <- as.data.frame(do.call(rbind, means))
+  colnames(df) <- c("blue", "green", "red", "redge", "nir", "ndvi",
+                    "ndre", "cire", "sipi", "mndvi")
+  df$plot <- plot_id
+  df$date <- as.Date(date_string)
+  df
 }
 ```
 
-The following block of code combine all vectors produced previously into a matrix as a previous step to put all data into a dataframe with meaningful column names. It also add columns storing each plot ID as well as the corresponding data. Note that the code also needs to be executed five times (one per each *DX* variable).
+Now we apply the function to the five dates of 2021 and write one CSV file per date (`D0_2021.csv` to `D4_2021.csv`). This step reads all the images, so it can take several minutes.
 
 ```{r}
-#combine all vectors into a matrix
-mat <- do.call("rbind",output) #combine all vectors into a matrix
-#convert matrix to data frame
-df <- as.data.frame(mat)
-#specify column names
-colnames(df) <- c('blue', 'green', 'red', 'redge', 'nir', 'ndvi', 
-                  'ndre', 'cire', 'sipi', 'mndvi')
-date = D0
-plot <- as.integer(sub("_.*", "", basename(D0files))) # plot number taken from the file name
-date <- rep(date,40)
-newdf <- cbind(df,plot,date)
+dates_2021 <- c(D0 = "2021-07-07", D1 = "2021-07-15", D2 = "2021-07-20",
+                D3 = "2021-08-02", D4 = "2021-08-25")
+
+for (i in seq_along(dates_2021)) {
+  covariates <- process_date(dates_2021[[i]])
+  write_csv(covariates,
+            paste0("data/cercospora_data/", names(dates_2021)[i], "_2021.csv"))
+}
 ```
 
-What we got?
+Let's inspect the covariates of the first date:
 
 ```{r}
-newdf
-```
-
-The following block of code writes to disk a *DX_2021.csv* file. Note that the *append* parameter is set to FALSE in order to overwrite any existing data.
-
-```{r}
-write_csv(
-  newdf,
-  "data/cercospora_data/D0_2021.csv",
-  na = "NA",
-  col_names = TRUE,
-  append = FALSE
-)
+read_csv("data/cercospora_data/D0_2021.csv", show_col_types = FALSE)
 ```
 
 ### Put all covariate data in a single object
