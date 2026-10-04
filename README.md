@@ -82,6 +82,10 @@ quarto render temporal-dpc.qmd
 
 The rendered website is written to the `_book/` directory.
 
+## Data not included
+
+The remote-sensing chapter uses public datasets that belong to their authors. The large UAV orthomosaic of the banana Fusarium wilt study (Ye et al. 2020) is **not** included in this repository. To run that chapter, download it from <https://www.scidb.cn/en/detail?dataSetId=8d77781a1d754db4b8842708a69c2c22> and save it as `data/banana_data/1_UAV multispectral reflectance/UAV multispectral reflectance.tif`. The table beet cercospora leaf spot data (Saif et al. 2024) are available from <https://data.mendeley.com/datasets/v9b7rwrwx9/1>. Please cite the original authors when you use these data.
+
 ## Citation
 
 Edition 1 is archived on Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23145275.svg)](https://doi.org/10.5281/zenodo.23145275). The DOI of edition 2 will be added after its release.
