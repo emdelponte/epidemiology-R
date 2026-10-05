@@ -51,7 +51,7 @@ When infection responses are measured at various temperature and wetness combina
 | Approach | Strengths | Weaknesses |
 |----|----|----|
 | Matrix [@krause1975; @mills1944; @windels1998] | Easy; converts moisture/temperature combinations into severity values or risk categories. Tried and true approach. | Data to populate matrix may not be readily available. |
-| Regression:<br>-- Polynomial [@evans1992]<br>-- Logistic [@bulger1987] | Widely used in plant pathology. Available for many economically important pathogens. | Parameters not biologically based. Requires dataset for development. |
+| Regression:<br>• Polynomial [@evans1992]<br>• Logistic [@bulger1987] | Widely used in plant pathology. Available for many economically important pathogens. | Parameters not biologically based. Requires dataset for development. |
 | Three-dimensional response surface [@duthie1997] | Describes infection response in detail. | Parameters not biologically based. Complex, requires extensive data and processing time. |
 | Degree wet hours [@pfender2003] | Simple; based on degree hours, commonly used in entomology. Requires only Tmin and Tmax | Recently developed; assumes linear thermal response. |
 | Temperature-moisture response function [@magarey2005] | Simple; based on crop modeling functions, requires only Tmin, Topt and Tmax | Recently developed. |
@@ -489,7 +489,9 @@ ggplot(validation2, aes(t, hw, z = dis2)) +
 
 We can create a 3D surface plot to visualize the predictions, as [it was used in the original paper](https://bsppjournals.onlinelibrary.wiley.com/cms/asset/0acf45ce-bad8-4a49-9a17-181836aa9876/ppa_1393_f3.gif). Note that In `plot_ly`, a 3D surface plot requires a matrix or grid format for the `z` values, with corresponding vectors for `x` and `y` values that define the axes. If the data frame (`validation2`) has three columns (`t`, `hw`, and `dis2`), we'll need to convert `dis2` into a matrix format that `plot_ly` can interpret for a surface plot.
 
+::: {.content-visible when-format="html"}
 ```{r}
+#| eval: !expr knitr::is_html_output()
 #| warning: false
 #| message: false
 
@@ -511,6 +513,15 @@ plot_ly(x = ~x_vals, y = ~y_vals, z = ~z_matrix, type = "surface") |>
     title = "Integrating Analytis Beta and Weibull"
   )
 ```
+:::
+
+::: {.content-visible unless-format="html"}
+::: callout-note
+## Interactive content
+
+The 3D surface plot is interactive and only available in the online edition of the book: <https://r4pde.net/prediction-disease-modeling.html>.
+:::
+:::
 
 #### Magarey's generic infection model
 
