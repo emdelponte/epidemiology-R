@@ -598,7 +598,7 @@ I dedicate this book to my wife, Isabel, and our son, Vitor, for their support t
 <acknowledgements>
 Writing #emph[R for Plant Disease Epidemiology (R4PDE)] has benefited from the support and contributions of several people and organizations.
 
-I thank Helen Pennington for granting permission to use her painting of coffee leaf rust on the book cover. Her work provides an appropriate visual representation of one of the classic subjects in plant disease epidemiology.
+I thank Helen Pennington for granting permission to use her paintings on the book cover: coffee leaf rust in the first edition and Tomato Spotted Wilt Virus in the second edition. Her work provides an appropriate visual representation of classic subjects in plant disease epidemiology.
 
 I am grateful to Prof.~Laurence V. Madden for sharing data from #emph[The Study of Plant Disease Epidemics]. These datasets contributed substantially to the analytical examples presented in the book.
 
