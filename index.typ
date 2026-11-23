@@ -126,6 +126,7 @@
           subfloat-numbering(n-super, subfloat-idx)
         })
         show figure.where(kind: kind): set figure.caption(position: position)
+        show figure.where(kind: kind): set figure(outlined: false)
 
         show figure: it => {
           let num = numbering(subcapnumbering, n-super, quartosubfloatcounter.get().first() + 1)
@@ -304,6 +305,10 @@
   toc_title: none,
   toc_depth: none,
   toc_indent: 1.5em,
+  lof: false,
+  lof-title: none,
+  lot: false,
+  lot-title: none,
   doc,
 ) = {
   // Set document metadata for PDF accessibility
@@ -401,10 +406,22 @@
     }
     block(above: 0em, below: 2em)[
     #outline(
-      title: toc_title,
+      title: title,
       depth: toc_depth,
       indent: toc_indent
     );
+    ]
+  }
+
+  if lof {
+    block(above: 0em, below: 2em)[
+    #outline(title: lof-title, target: figure.where(kind: "quarto-float-fig"));
+    ]
+  }
+
+  if lot {
+    block(above: 0em, below: 2em)[
+    #outline(title: lot-title, target: figure.where(kind: "quarto-float-tbl"));
     ]
   }
 
@@ -447,66 +464,66 @@
 )
 
 
-// R4PDE: mimic the HTML (zephyr + r4pd.scss) look
-#let olive = rgb("#5f7132")
-#let ink = rgb("#263126")
-#let head-ink = rgb("#24301f")
-#let muted = rgb("#6f7668")
-#let ui-font = ("Inter", "Segoe UI")
-#set page(paper: "a4", margin: (x: 2.2cm, y: 2.3cm))
-#set text(font: ui-font, size: 10.5pt, fill: ink, lang: "en")
-#set par(justify: false, leading: 0.7em, spacing: 1.1em, first-line-indent: 0pt)
-#show raw: set text(font: ("Consolas"), size: 0.88em)
-#show raw.where(block: true): set block(fill: rgb("#f7f7f7"), stroke: 0.6pt + rgb("#e1e1e1"), radius: 5pt, inset: 9pt, width: 100%)
-#show link: set text(fill: rgb("#52662d"))
-#show heading: set text(font: ui-font, fill: head-ink, weight: "bold")
-#show heading.where(level: 1): it => {
-  pagebreak(weak: true)
-  v(1.5cm)
-  block(width: 100%, below: 1.1em)[
-    #set text(size: 24pt)
-    #if it.numbering != none { text(fill: olive)[#counter(heading).display(it.numbering)] ; h(0.4em) }
-    #it.body
-    #v(-0.2em)
-    #line(length: 100%, stroke: 1.2pt + olive)
-  ]
-}
-#show heading.where(level: 2): it => block(width: 100%, above: 1.8em, below: 1em, breakable: false)[
-  #set text(size: 16pt)
-  #it.body
-  #v(-0.5em)
-  #line(length: 100%, stroke: 0.8pt + rgb("#f2f2f2"))
-]
-#show heading.where(level: 3): it => block(above: 1.5em, below: 0.8em, text(size: 13pt, it.body))
-#show heading.where(level: 4): it => block(above: 1.3em, below: 0.6em, text(size: 11.5pt, it.body))
-#show figure.caption: set text(size: 9pt, fill: muted)
-#show table: set text(size: 9pt)
-#set table(stroke: (x, y) => if y == 0 { (bottom: 1.2pt + olive) } else { (bottom: 0.5pt + rgb("#e1e1e1")) })
-
-// Part pages: simple title page (replaces the orange-book part page with its mini outline)
-#let part-n = counter("r4pd-part")
-#let part(title) = {
-  pagebreak(weak: true)
-  part-n.step()
-  page(header: none)[
-    #v(7cm)
-    #block(width: 100%)[
-      #set text(font: ui-font, fill: head-ink)
-      #text(size: 13pt, weight: "semibold", fill: olive, tracking: 0.12em)[#upper[Part #context part-n.display("I")]]
-      #v(0.4em)
-      #text(size: 32pt, weight: "bold")[#title]
-      #v(0.6em)
-      #line(length: 100%, stroke: 1.2pt + olive)
-    ]
-  ]
-}
-
-#show cite: set text(fill: rgb("#52662d"))
-#show ref: set text(fill: rgb("#52662d"))
-#show outline: set text(font: ui-font, size: 9.5pt)
-#show outline.entry: set text(fill: ink)
-
-#set bibliography(title: none)
+// R4PDE: mimic the HTML (zephyr + r4pd.scss) look
+#let olive = rgb("#5f7132")
+#let ink = rgb("#263126")
+#let head-ink = rgb("#24301f")
+#let muted = rgb("#6f7668")
+#let ui-font = ("Inter", "Segoe UI")
+#set page(paper: "a4", margin: (x: 2.2cm, y: 2.3cm))
+#set text(font: ui-font, size: 10.5pt, fill: ink, lang: "en")
+#set par(justify: false, leading: 0.7em, spacing: 1.1em, first-line-indent: 0pt)
+#show raw: set text(font: ("Consolas"), size: 0.88em)
+#show raw.where(block: true): set block(fill: rgb("#f7f7f7"), stroke: 0.6pt + rgb("#e1e1e1"), radius: 5pt, inset: 9pt, width: 100%)
+#show link: set text(fill: rgb("#52662d"))
+#show heading: set text(font: ui-font, fill: head-ink, weight: "bold")
+#show heading.where(level: 1): it => {
+  pagebreak(weak: true)
+  v(1.5cm)
+  block(width: 100%, below: 1.1em)[
+    #set text(size: 24pt)
+    #if it.numbering != none { text(fill: olive)[#counter(heading).display(it.numbering)] ; h(0.4em) }
+    #it.body
+    #v(-0.2em)
+    #line(length: 100%, stroke: 1.2pt + olive)
+  ]
+}
+#show heading.where(level: 2): it => block(width: 100%, above: 1.8em, below: 1em, breakable: false)[
+  #set text(size: 16pt)
+  #it.body
+  #v(-0.5em)
+  #line(length: 100%, stroke: 0.8pt + rgb("#f2f2f2"))
+]
+#show heading.where(level: 3): it => block(above: 1.5em, below: 0.8em, text(size: 13pt, it.body))
+#show heading.where(level: 4): it => block(above: 1.3em, below: 0.6em, text(size: 11.5pt, it.body))
+#show figure.caption: set text(size: 9pt, fill: muted)
+#show table: set text(size: 9pt)
+#set table(stroke: (x, y) => if y == 0 { (bottom: 1.2pt + olive) } else { (bottom: 0.5pt + rgb("#e1e1e1")) })
+
+// Part pages: simple title page (replaces the orange-book part page with its mini outline)
+#let part-n = counter("r4pd-part")
+#let part(title) = {
+  pagebreak(weak: true)
+  part-n.step()
+  page(header: none)[
+    #v(7cm)
+    #block(width: 100%)[
+      #set text(font: ui-font, fill: head-ink)
+      #text(size: 13pt, weight: "semibold", fill: olive, tracking: 0.12em)[#upper[Part #context part-n.display("I")]]
+      #v(0.4em)
+      #text(size: 32pt, weight: "bold")[#title]
+      #v(0.6em)
+      #line(length: 100%, stroke: 1.2pt + olive)
+    ]
+  ]
+}
+
+#show cite: set text(fill: rgb("#52662d"))
+#show ref: set text(fill: rgb("#52662d"))
+#show outline: set text(font: ui-font, size: 9.5pt)
+#show outline.entry: set text(fill: ink)
+
+#set bibliography(title: none)
 // Reset Quarto's custom figure counters at each chapter (level-1 heading).
 // Orange-book only resets kind:image and kind:table, but Quarto uses custom kinds.
 // This list is generated dynamically from crossref.categories.
@@ -562,7 +579,7 @@ This is the second edition of the book. It was first published on 23 October 202
 A suggested citation for the whole book (please use the edition and the year you consulted):
 
 #quote(block: true)[
-Del Ponte, E. M. (2026). #emph[R for Plant Disease Epidemiology (R4PDE)] (2nd ed.). Author. ISBN 978-65-02-43127-6. DOI: #link("https://doi.org/10.5281/zenodo.23145652")[10.5281/zenodo.23145652]. #link("https://r4pde.net/")[https:\/\/r4pde.net]
+Del Ponte, E. M. (2026). #emph[R for Plant Disease Epidemiology (R4PDE)] (2nd ed.). Author. ISBN 978-65-02-43127-6. DOI: #link("https://doi.org/10.5281/zenodo.23145652")[10.5281/zenodo.23145652]. #link("https://r4pde.net/")[https:/\/r4pde.net]
 ]
 
 Edition 1 (first published in 2023) is archived on Zenodo (DOI: #link("https://doi.org/10.5281/zenodo.23145275")[10.5281/zenodo.23145275]).
@@ -682,35 +699,17 @@ supplement: "Figure",
 
 The #strong[International Epidemiology Workshop (IEW)] is the principal working group of plant disease epidemiology. This is an organization with a rich history whose members have met approximately every 5 years since 1963. Thus far, #link("https://iew13.netlify.app/about.html")[13 meetings] have been organized:
 
-1963 - Pau, France \
-1971 - Wageningen, The Netherlands \
-1979 - Penn State, United States \
-1983 - NC State, Raleigh, United States \
-1986 - Jerusalem, Israel \
-1990 - Giessen, Germany \
-1994 - Papendal, The Netherlands \
-2001 - Ouro Preto, Brazil \
-2005 - Landerneau, France \
-2009 - Cornell, Geneva, United States \
-2013 - Beijing, China \
-2018 - Lillehammer, Norway \
-2024 - Iguassu Falls, Brazil
+1963 - Pau, France \ 1971 - Wageningen, The Netherlands \ 1979 - Penn State, United States \ 1983 - NC State, Raleigh, United States \ 1986 - Jerusalem, Israel \ 1990 - Giessen, Germany \ 1994 - Papendal, The Netherlands \ 2001 - Ouro Preto, Brazil \ 2005 - Landerneau, France \ 2009 - Cornell, Geneva, United States \ 2013 - Beijing, China \ 2018 - Lillehammer, Norway \ 2024 - Iguassu Falls, Brazil
 
 == Other resources
 <other-resources>
 === Books
 <books>
-2006 - #link("https://link.springer.com/book/10.1007/1-4020-4581-6")[The Epidemiology of Plant Diseases] \
-2007 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890545058")[The Study of Plant Disease Epidemics] \
-2017 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890544426")[Exercises in Plant Disease Epidemiology] \
-2017 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890544877")[Application of Information Theory to Epidemiology] \
-2020 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890546383")[Emerging Plant Diseases and Global Security] \
+2006 - #link("https://link.springer.com/book/10.1007/1-4020-4581-6")[The Epidemiology of Plant Diseases] \ 2007 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890545058")[The Study of Plant Disease Epidemics] \ 2017 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890544426")[Exercises in Plant Disease Epidemiology] \ 2017 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890544877")[Application of Information Theory to Epidemiology] \ 2020 - #link("https://apsjournals.apsnet.org/doi/book/10.1094/9780890546383")[Emerging Plant Diseases and Global Security] \
 
 === Online tutorials
 <online-tutorials>
-#link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/Pages/default.aspx")[Ecology and Epidemiology in R] \
-#link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EpidemiologyTemporal/Pages/default.aspx")[Plant Disease Epidemiology - Temporal aspects] \
-#link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/BotanicalEpidemiology/Pages/default.aspx")[Simulation Modeling in Plant Disease Epidemiology and Crop Loss Analysis]
+#link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EcologyAndEpidemiologyInR/Pages/default.aspx")[Ecology and Epidemiology in R] \ #link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/EpidemiologyTemporal/Pages/default.aspx")[Plant Disease Epidemiology - Temporal aspects] \ #link("https://www.apsnet.org/edcenter/disimpactmngmnt/topc/BotanicalEpidemiology/Pages/default.aspx")[Simulation Modeling in Plant Disease Epidemiology and Crop Loss Analysis]
 
 === Software
 <software>
@@ -1283,7 +1282,7 @@ In the qualitative ordinal scale, each class provides a description of the sympt
 <disease-severity-index-dsi>
 Sometimes, when quantitative or qualitative ordinal scales are used, the scores given to various individual specimens (the observational units) are transformed into an index on a percentage basis, such as the disease severity index (DSI) which is used as a value for the experimental unit further in data analysis. The DSI is a single number that summarizes a large amount of information on disease severity @chester1950. The formula for a DSI (%) can be written as follows:
 
-$D S I = frac(sum \( c l a s s med f r e q . med ✕ med s c o r e med o f med c l a s s \), t o t a l med n med ✕ med m a x i m a l med c l a s s) ✕ 100$
+$D S I = frac(sum\(c l a s s med f r e q . med ✕ med s c o r e med o f med c l a s s\), t o t a l med n med ✕ med m a x i m a l med c l a s s) ✕ 100$
 
 The #NormalTok("DSI()"); and #NormalTok("DSI2()"); are part of the #emph[r4pde] package. Let's see how each function works.
 
@@ -2749,10 +2748,7 @@ In the example above, the rater makes 9 accurate classifications and misses 3: 2
 
 Notice that there are four outcomes:
 
-TP = true positive, a positive sample correctly classified \
-TN = true negative, a negative sample correctly classified \
-FP = false positive, a negative sample classified as positive \
-FN = false negative, a positive sample classified as negative.
+TP = true positive, a positive sample correctly classified \ TN = true negative, a negative sample correctly classified \ FP = false positive, a negative sample classified as positive \ FN = false negative, a positive sample classified as negative.
 
 There are several metrics that can be calculated with the help of a confusion matrix, also known as error matrix. Considering the above outcomes, here is what a confusion matrix looks like.
 
@@ -2893,7 +2889,7 @@ We can calculate some metrics using the #emph[MixtureMissing] package.
 <standard-area-diagrams>
 == Definitions
 <definitions>
-According to a glossary on phytopathometry @bock2021, standard area diagram (SAD) can be defined as “#emph[a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen”.]
+According to a glossary on phytopathometry @bock2021, standard area diagram (SAD) can be defined as "#emph[a generic term for a pictorial or graphic representation (drawing or true-color photo) of selected disease severities on plants or plant parts (leaves, fruit, flowers, etc.) generally used as an aid for more accurate visual estimation (on the percentage scale) or classification (using an ordinal scale) of severity on a specimen".]
 
 The Standard Area Diagrams (SADs), also known as diagrammatic scales, have a long history of use in plant pathology. The concept dates back to the late 1800s when the Cobb scale was developed, featuring five diagrams depicting a range of severity levels of rust pustules on wheat leaves.
 
@@ -3490,7 +3486,7 @@ Optical remote sensing makes use of the radiation reflected by a surface in the 
 ], caption: figure.caption(
 position: bottom, 
 [
-Optical remote sensing via spaceborne sensors, field spectroscopy and laboratory spectroscopy (Adapted from #link("https://pages.cms.hu-berlin.de/EOL/geo_rs/")[https:\/\/pages.cms.hu-berlin.de/EOL/geo\_rs/index.htm]) .
+Optical remote sensing via spaceborne sensors, field spectroscopy and laboratory spectroscopy (Adapted from #link("https://pages.cms.hu-berlin.de/EOL/geo_rs/")[https:/\/pages.cms.hu-berlin.de/EOL/geo\_rs/index.htm]) .
 ]), 
 kind: "quarto-float-fig", 
 supplement: "Figure", 
@@ -3539,7 +3535,7 @@ Optical sensors/spectrometers measure the radiation reflected by a surface to a 
 ], caption: figure.caption(
 position: bottom, 
 [
-Source: https:\/\/pages.cms.hu-berlin.de/EOL/geo\_rs/
+Source: https:/\/pages.cms.hu-berlin.de/EOL/geo\_rs/
 ]), 
 kind: "quarto-float-fig", 
 supplement: "Figure", 
@@ -3699,7 +3695,7 @@ This section illustrates the use of unmanned aerial vehicle (UAV) remote sensing
 A common initial symptom of this disease is the appearance of a faint pale yellow streak at the base of the petiole of the oldest leaf. This is followed by leaf chlorosis which progresses from lower to upper leaves, wilting of leaves and longitudinal splitting of their bases. Pseudostem splitting of leaf bases is more common in young, rapidly growing plants #link("@fig-RSfw")[#cite(<pegg2019>, form: "prose")].
 
 #figure([
-#box(image("index_files\\mediabag\\fpls-10-01395-g006.jpg"))
+#box(image("index_files/mediabag/fpls-10-01395-g006.jpg"))
 ], caption: figure.caption(
 position: bottom, 
 [
@@ -3765,7 +3761,7 @@ Let's list the files under each subfolder:
 [#NormalTok("[4] \"UAV multispectral reflectance.tif.ovr\"    ");],));
 ]
 ]
-Note that the #emph[.tif] file contains an orthophotomosaic of surface reflectance. It was created from UAV images taken with a #emph[Micasense Red Edge M] camera which has five narrow spectral bands: Blue (465--485 nm), green (550--570 nm), red (653--673 nm), red edge (712--722 nm), and near-infrared (800--880 nm). We assume here that those images have been radiometrically and geometrically corrected.
+Note that the #emph[\.tif] file contains an orthophotomosaic of surface reflectance. It was created from UAV images taken with a #emph[Micasense Red Edge M] camera which has five narrow spectral bands: Blue (465--485 nm), green (550--570 nm), red (653--673 nm), red edge (712--722 nm), and near-infrared (800--880 nm). We assume here that those images have been radiometrically and geometrically corrected.
 
 #block[
 #Skylighting(([#FunctionTok("list.files");#NormalTok("(");#StringTok("\"data/banana_data/2_Ground survey data of banana Fusarium wilt\"");#NormalTok(")");],));
@@ -6622,9 +6618,9 @@ In R, we can obtain the AUDPC for the DPC we created earlier using the #NormalTo
 <functional-comparison-of-curves>
 The AUDPC is useful when the objective is to reduce an epidemic to one number. However, two epidemics may have similar AUDPC values and still differ in timing, shape, or the period when disease increases most rapidly. A more direct way to compare whole disease progress curves is to treat each curve as a function of time. This is the idea behind the #NormalTok("functional_curves()"); and #NormalTok("functional_distances()"); functions in the #emph[r4pde] package.
 
-The #NormalTok("functional_curves()"); function fits a smooth disease progress curve for each treatment using a generalized additive model (GAM). The fitted curves are then predicted over a common time grid. The #NormalTok("functional_distances()"); function compares these predicted functions by calculating the distance between each pair of curves across the entire time interval. For two fitted curves, $f_1 \( t \)$ and $f_2 \( t \)$, the distance is based on the integrated squared difference between them:
+The #NormalTok("functional_curves()"); function fits a smooth disease progress curve for each treatment using a generalized additive model (GAM). The fitted curves are then predicted over a common time grid. The #NormalTok("functional_distances()"); function compares these predicted functions by calculating the distance between each pair of curves across the entire time interval. For two fitted curves, $f_1\(t\)$ and $f_2\(t\)$, the distance is based on the integrated squared difference between them:
 
-$ d \( f_1 \, f_2 \) = sqrt(integral { f_1 \( t \) - f_2 \( t \) }^2 d t) $
+$ d\(f_1\,f_2\)= sqrt(integral { f_1\(t\)- f_2\(t\)}^2 d t) $
 
 Because disease progress data are observed at discrete times, the function uses predictions on a regular grid and approximates the integral numerically. In practical terms, the distance increases when two curves are far apart for a long period of time, and decreases when the curves remain close to each other.
 
@@ -6906,15 +6902,15 @@ supplement: "Figure",
 <monomolecular>
 The differential of the monomolecular model is given by
 
-$frac(d y, d t) = r_M \( 1 - y \)$
+$frac(d y, d t) = r_M\(1 - y\)$
 
-where now the $r_M$ is the rate parameter of the monomolecular model and $\( 1 - y \)$ is the proportion of non-infected (healthy) individuals or host tissue. Note that $frac(d y, d t)$ is maximum when $y = 0$ and decreases when $y$ approaches 1. Its decline is due to decrease in the proportion of individuals or healthy sites with the increase in $y$. Any inoculum capable of infecting the host will more likely land on infected individuals or sites.
+where now the $r_M$ is the rate parameter of the monomolecular model and $\(1 - y\)$ is the proportion of non-infected (healthy) individuals or host tissue. Note that $frac(d y, d t)$ is maximum when $y = 0$ and decreases when $y$ approaches 1. Its decline is due to decrease in the proportion of individuals or healthy sites with the increase in $y$. Any inoculum capable of infecting the host will more likely land on infected individuals or sites.
 
 The integral of the monomolecular model is given by
 
-$y = 1 - \( 1 - y_0 \) e^(- r_M t)$
+$y = 1 -\(1 - y_0\)e^(- r_M t)$
 
-This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics does not contribute new infections. Therefore, different from the exponential model, disease intensity $y$ does not affect the epidemics and so the absolute rate is proportional to $\( 1 - y \)$.
+This model commonly describes the temporal patterns of the monocyclic epidemics. In those, the inoculum produced during the course of the epidemics does not contribute new infections. Therefore, different from the exponential model, disease intensity $y$ does not affect the epidemics and so the absolute rate is proportional to $\(1 - y\)$.
 
 Let's simulate two monomolecular curves with different rate parameters where one is one third of the other.
 
@@ -6966,11 +6962,11 @@ supplement: "Figure",
 <logistic>
 The logistic model is a more elaborate version of the two previous models as it incorporates the features of them both. Its differential is given by
 
-$frac(d y, d t) = r_L . y . \( 1 - y \)$,
+$frac(d y, d t) = r_L . y .\(1 - y\)$,
 
-where $r_L$ is the infection rate of the logistic model, $y$ is the proportion of diseased individuals or host tissue and $\( 1 - y \)$ is the proportion of non-affected individuals or host area.
+where $r_L$ is the infection rate of the logistic model, $y$ is the proportion of diseased individuals or host tissue and $\(1 - y\)$ is the proportion of non-affected individuals or host area.
 
-Biologically, $y$ in its differential equation implies that $frac(d y, d t)$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $\( 1 - y \)$ leads to a decrease in $frac(d y, d t)$ when $y$ approaches the maximum $y = 1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $frac(d y, d t)$ is minimal at the onset of the epidemics, reaches a maximum when $y = 0.5$ and declines until $y = 1$.
+Biologically, $y$ in its differential equation implies that $frac(d y, d t)$ increases with the increase in $y$ (as in the exponential) because more disease means more inoculum. However, $\(1 - y\)$ leads to a decrease in $frac(d y, d t)$ when $y$ approaches the maximum $y = 1$, because the proportion of healthy individuals or host area decreases (as in the monomolecular). Therefore, $frac(d y, d t)$ is minimal at the onset of the epidemics, reaches a maximum when $y = 0.5$ and declines until $y = 1$.
 
 The integral is given by
 
@@ -7034,11 +7030,11 @@ supplement: "Figure",
 <gompertz>
 The Gompertz model is similar to the logistic and also provides a very good fit to several polycyclic diseases. The differential equation is given by
 
-$frac(d y, d t) = r_G thin y thin \[ ln \( 1 \) - ln \( y \) \] = - r_G thin y ln \( y \)$
+$frac(d y, d t) = r_G thin y thin\[ln\(1\)- ln\(y\)\]= - r_G thin y ln\(y\)$
 
-Differently from the logistic, the variable representing the non-infected individuals or host area is $- l n \( y \)$. The integral equation is given by
+Differently from the logistic, the variable representing the non-infected individuals or host area is $- l n\(y\)$. The integral equation is given by
 
-$y = e^(ln \( y_0 \) thin e^(- r_G t))$,
+$y = e^(ln\(y_0\)thin e^(- r_G t))$,
 
 where $r_G$ is the apparent infection rate for the Gompertz models and $y_0$ is the disease intensity at $t = 0$.
 
@@ -8323,10 +8319,10 @@ Having specified the transition processes, we can now express the model formally
   align: (left,left,),
   table.header([Symbol], [Meaning],),
   table.hline(),
-  [$H \( t \)$], [Healthy hosts at time t],
-  [$L \( t \)$], [Latently infected hosts at time t],
-  [$I \( t \)$], [Infectious hosts at time t],
-  [$R \( t \)$], [Removed hosts at time t],
+  [$H\(t\)$], [Healthy hosts at time t],
+  [$L\(t\)$], [Latently infected hosts at time t],
+  [$I\(t\)$], [Infectious hosts at time t],
+  [$R\(t\)$], [Removed hosts at time t],
 )
 If we introduce the following symbols for parameters
 
@@ -8336,22 +8332,22 @@ If we introduce the following symbols for parameters
 
 then the H-L-I-R model can be expressed as a system of differential equations
 
-$ frac(d H, d t) & = - beta I H \,\
-frac(d L, d t) & = beta I H - gamma L \,\
-frac(d I, d t) & = gamma L - mu I \,\
+$ frac(d H, d t) & = - beta I H\,\
+frac(d L, d t) & = beta I H - gamma L\,\
+frac(d I, d t) & = gamma L - mu I\,\
 frac(d R, d t) & = mu I . $
 
 === Numbers versus proportions
 <numbers-versus-proportions>
 We have chosen to model the numbers of hosts in each compartment, so that
 
-$ H + L + I + R = N \, $
+$ H + L + I + R = N\, $
 
 where $N$ is the total host population size.
 
 An alternative formulation is to model the corresponding proportions
 
-$ h = H \/ N \, quad l = L \/ N \, quad i = I \/ N \, quad r = R \/ N \, $
+$ h = H\/N\,quad l = L\/N\,quad i = I\/N\,quad r = R\/N\, $
 
 which satisfy
 
@@ -8363,7 +8359,7 @@ Working with numbers can be helpful because it keeps the biological interpretati
 
 For example, dividing the H-L-I-R equations by $N$ leads to
 
-$ frac(d h, d t) = - beta N i h \, $
+$ frac(d h, d t) = - beta N i h\, $
 
 with analogous equations for the other compartments. In this formulation, the epidemiologically important quantity is often the product $beta N$, rather than $beta$ itself.
 
@@ -8373,7 +8369,7 @@ The important message is that the numbers and proportions formulations contain e
 <meaning-of-the-parameters>
 Interpreting the parameters biologically connects the mathematical formulation back to observable processes in real systems.
 
-For the per capita rates, $gamma$ and $mu$, there is a well-known inverse relationship between the rate at which an epidemiological event occurs and the time taken on average for the event to occur @Keeling2008. Here, this means that hosts are latently infected for $1 \/ gamma$ time units, and the infectious period is $1 \/ mu$ time units. Consequently, these parameters can be estimated from biological knowledge of the pathogen, for example based upon experiments which involve single hosts in isolation, without tracking interactions or epidemic behaviour.
+For the per capita rates, $gamma$ and $mu$, there is a well-known inverse relationship between the rate at which an epidemiological event occurs and the time taken on average for the event to occur @Keeling2008. Here, this means that hosts are latently infected for $1\/gamma$ time units, and the infectious period is $1\/mu$ time units. Consequently, these parameters can be estimated from biological knowledge of the pathogen, for example based upon experiments which involve single hosts in isolation, without tracking interactions or epidemic behaviour.
 
 Conversely, because the infection rate $beta$ combines inoculum production, dispersal, host contact and infection efficiency, it is generally not directly measurable in a simple experiment. Moreover, its value depends on factors such as host density, spatial scale and environmental conditions. Consequently, $beta$ is usually estimated by fitting models to epidemic data (see below).
 
@@ -8396,11 +8392,11 @@ We show later how within-season growth of hosts can be included in the model.
   align: (left,left,left,),
   table.header([Symbol], [Meaning], [Type/Definition],),
   table.hline(),
-  [$H \( t \)$], [Number of healthy hosts at time $t$], [State variable],
-  [$L \( t \)$], [Number of latent hosts at time $t$], [State variable],
-  [$I \( t \)$], [Number of infectious hosts at time $t$], [State variable],
-  [$R \( t \)$], [Number of removed hosts at time $t$], [State variable],
-  [$P \( t \)$], [Density of primary inoculum at time $t$], [State variable],
+  [$H\(t\)$], [Number of healthy hosts at time $t$], [State variable],
+  [$L\(t\)$], [Number of latent hosts at time $t$], [State variable],
+  [$I\(t\)$], [Number of infectious hosts at time $t$], [State variable],
+  [$R\(t\)$], [Number of removed hosts at time $t$], [State variable],
+  [$P\(t\)$], [Density of primary inoculum at time $t$], [State variable],
   [$t$], [Time], [Independent variable],
   [$alpha$], [Primary infection rate], [User-specified parameter],
   [$beta$], [Secondary infection rate], [User-specified parameter],
@@ -8409,8 +8405,8 @@ We show later how within-season growth of hosts can be included in the model.
   [$omega$], [Rate of decay of primary inoculum], [User-specified parameter],
   [$r_H$], [Host production rate], [User-specified parameter],
   [$N$], [Fixed total host population size in the basic H-L-I-R model], [$N = H + L + I + R$ (constant)],
-  [$T \( t \)$], [Total number of hosts when host growth is included], [$T \( t \) = H \( t \) + L \( t \) + I \( t \) + R \( t \)$],
-  [$D \( t \)$], [Total number of diseased (i.e., non-healthy) hosts], [$D \( t \) = L \( t \) + I \( t \) + R \( t \)$],
+  [$T\(t\)$], [Total number of hosts when host growth is included], [$T\(t\)= H\(t\)+ L\(t\)+ I\(t\)+ R\(t\)$],
+  [$D\(t\)$], [Total number of diseased (i.e., non-healthy) hosts], [$D\(t\)= L\(t\)+ I\(t\)+ R\(t\)$],
   [$N_(m a x)$], [Carrying capacity], [User-specified parameter],
   [$T_max$], [Length of growing season], [User-specified parameter],
   [$phi.alt$], [Inoculum production rate], [User-specified parameter],
@@ -8425,7 +8421,7 @@ The H-L-I-R model makes the following assumptions:
 
 - #strong[Identical hosts.] All hosts are assumed to be epidemiologically identical. The model does not distinguish between resistant and susceptible cultivars, young and old hosts, or hosts experiencing different environmental conditions.
 
-- #strong[Fixed parameter values.] The transmission rate ($beta$), latent period ($1 \/ gamma$) and infectious period ($1 \/ mu$) are assumed constant throughout the epidemic. In reality these quantities often vary with weather, host development stage and management actions.
+- #strong[Fixed parameter values.] The transmission rate ($beta$), latent period ($1\/gamma$) and infectious period ($1\/mu$) are assumed constant throughout the epidemic. In reality these quantities often vary with weather, host development stage and management actions.
 
 - #strong[Deterministic dynamics.] The model predicts the average epidemic trajectory and ignores random events. Consequently, if $R_0 > 1$ (see below), invasion always occurs in the model, whereas chance extinction may occur in real epidemics when infection levels are low.
 
@@ -8453,10 +8449,10 @@ Given the inverse relationships described above, the choice of $gamma$ correspon
 
 Numerical solution also requires initial conditions. We assume there is a single latently infected host in a population of size $N = 10000$, which means
 
-- $H \( 0 \) = 9999$
-- $L \( 0 \) = 1$
-- $I \( 0 \) = 0$
-- $R \( 0 \) = 0$
+- $H\(0\)= 9999$
+- $L\(0\)= 1$
+- $I\(0\)= 0$
+- $R\(0\)= 0$
 
 The final component is specifying the range of time over which we are interested in knowing the solution. Here we take $0 lt.eq t lt.eq T_(m a x) = 250$ (days), corresponding to a $250$-day period.
 
@@ -8509,7 +8505,7 @@ The syntax, perhaps particularly the way parameters are handled by the function 
 [#NormalTok("hlir.sol.df ");#OtherTok("<-");#NormalTok(" ");#FunctionTok("data.frame");#NormalTok("(hlir.sol)");],
 [],
 [#CommentTok("# Plot results using our custom helper function");],
-[#FunctionTok("plot.model.results");#NormalTok("(hlir.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIR\"");#NormalTok(")");],));
+[#FunctionTok("plot_model_results");#NormalTok("(hlir.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIR\"");#NormalTok(")");],));
 #figure([
 #box(image("temporal-compartmental_files/figure-typst/fig-hlir-solution-1.svg"))
 ], caption: figure.caption(
@@ -8529,7 +8525,7 @@ The simulation shows the characteristic behaviour of an epidemic. Initially, dis
 
 The key features to notice are the lag before infectious tissue builds up, the subsequent rapid loss of healthy hosts, and the eventual plateau in total diseased tissue.
 
-The number of diseased hosts, $D \( t \)$, is also shown, where
+The number of diseased hosts, $D\(t\)$, is also shown, where
 
 While numerical simulation provides a detailed picture of epidemic behaviour, it is often useful to summarise these dynamics using a small number of quantitative measures.
 
@@ -8555,9 +8551,9 @@ This important idea is captured in a key threshold, the basic reproduction numbe
 
 There are a number of methods of different levels of mathematical sophistication for finding $R_0$. For simple models, it can be found heuristically.
 
-Assuming the total size of the population is $ H + L + I + R = N \, $ then at the start of a potential epidemic initiated by a single infected host, $ L = R = 0 \, $ and $ I = 1 \, $ and $ H = N - 1 approx N . $
+Assuming the total size of the population is $ H + L + I + R = N\, $ then at the start of a potential epidemic initiated by a single infected host, $ L = R = 0\, $ and $ I = 1\, $ and $ H = N - 1 approx N . $
 
-Considering only the infections directly caused by the single infected host and multiplying the net rate at which healthy hosts become infected by the host's average infectious period implies This is because the infected host generates infections at total rate $beta N$ and remains infectious for $1 \/ mu$ time units.
+Considering only the infections directly caused by the single infected host and multiplying the net rate at which healthy hosts become infected by the host's average infectious period implies This is because the infected host generates infections at total rate $beta N$ and remains infectious for $1\/mu$ time units.
 
 If $R_0 > 1$ then the pathogen will invade and the amount of infection will increase over time, at least initially.
 
@@ -8584,7 +8580,7 @@ For this parameterisation of the H-L-I-R model, $R_0 = 3$.
 <final-size-equation>
 While $R_0$ determines whether an epidemic can invade, it does not tell us how large the epidemic will become once it is established.
 
-Not all hosts necessarily become infected by the end of the epidemic. This can be quantified by the final size equation @Keeling2008, which states that the fraction of the population which eventually becomes infected, i.e., $ f = 1 - H \( oo \) \/ N $ satisfies $ f = 1 - exp \( - f R_0 \) . $ Note that because in this model at the end of the epidemic $L \( oo \) = I \( oo \) = 0$, all infected hosts are ultimately found in the removed compartment, and so $ f = R \( oo \) \/ N . $
+Not all hosts necessarily become infected by the end of the epidemic. This can be quantified by the final size equation @Keeling2008, which states that the fraction of the population which eventually becomes infected, i.e., $ f = 1 - H\(oo\)\/N $ satisfies $ f = 1 - exp\(- f R_0\). $ Note that because in this model at the end of the epidemic $L\(oo\)= I\(oo\)= 0$, all infected hosts are ultimately found in the removed compartment, and so $ f = R\(oo\)\/N . $
 
 The final size equation is a transcendental equation, and so must be solved numerically.
 
@@ -8610,7 +8606,7 @@ The code below uses the base R function #NormalTok("uniroot"); to solve it in R,
 ]
 #Skylighting(([#FunctionTok("print");#NormalTok("(");#FunctionTok("paste");#NormalTok("(");#StringTok("\"From numerical solution: f =\"");#NormalTok(", hlir.sol.df[");#FunctionTok("which.max");#NormalTok("(hlir.sol.df");#SpecialCharTok("$");#NormalTok("time), ");#StringTok("\"R\"");#NormalTok("]");#SpecialCharTok("/");#NormalTok("N))");],));
 #block[
-#Skylighting(([#NormalTok("[1] \"From numerical solution: f = 0.940466373627097\"");],));
+#Skylighting(([#NormalTok("[1] \"From numerical solution: f = 0.940466373627096\"");],));
 ]
 ]
 In both cases, approximately 94% of all hosts are infected by the end of the epidemic, with a very small discrepancy between the two calculations because the epidemic has not quite completed within $T_(m a x) = 250$ days.
@@ -8621,7 +8617,7 @@ A complementary question concerns the speed of epidemic growth during the early 
 
 When disease is rare, almost all hosts are healthy, so the epidemic is operating near the disease-free equilibrium. In this regime, the nonlinear model behaves approximately like a linear system. The dominant behaviour of that linear system determines whether infection grows or declines, and how rapidly this occurs. The quantity $r$ is the corresponding exponential growth rate.
 
-This initial exponential rate of disease increase can be found @Cunniffe2012 by calculating the largest real part of the eigenvalues of the Jacobian matrix of the system evaluated at the disease-free-equilibrium $ \( H \, L \, I \, R \) = \( N \, 0 \, 0 \, 0 \) $ The Jacobian matrix is simply a mathematical object that captures how small perturbations to each compartment affect the rates of change of all other compartments.
+This initial exponential rate of disease increase can be found @Cunniffe2012 by calculating the largest real part of the eigenvalues of the Jacobian matrix of the system evaluated at the disease-free-equilibrium $ \(H\,L\,I\,R\)=\(N\,0\,0\,0\) $ The Jacobian matrix is simply a mathematical object that captures how small perturbations to each compartment affect the rates of change of all other compartments.
 
 This can be done using the function #NormalTok("jacobian.full()"); in the #NormalTok("rootSolve"); package.
 
@@ -8660,7 +8656,7 @@ On the figures below, the left hand panel shows the logarithm of the number of i
 [#FunctionTok("library");#NormalTok("(r4pde)");],
 [#FunctionTok("library");#NormalTok("(patchwork)");],));
 #block[
-#Skylighting(([#NormalTok("Warning: package 'patchwork' was built under R version 4.5.3");],));
+#Skylighting(([#NormalTok("Warning: package 'patchwork' was built under R version 4.4.1");],));
 ]
 #Skylighting(([#CommentTok("# First plot: log(I) vs t");],
 [#NormalTok("p1 ");#OtherTok("<-");#NormalTok(" ");#FunctionTok("ggplot");#NormalTok("(hlir.sol.df, ");#FunctionTok("aes");#NormalTok("(");#AttributeTok("x =");#NormalTok(" time, ");#AttributeTok("y =");#NormalTok(" ");#FunctionTok("log");#NormalTok("(I))) ");#SpecialCharTok("+");],
@@ -8755,36 +8751,36 @@ Note that there are now two infection pathways, the net result of which sets the
 
 If we assume the inoculum ($P$) decays at characteristic rate $omega$ (per day per unit density of inoculum) and leads to primary infection at rate $alpha$ (per unit density of inoculum per healthy host), the equations of the H-L-I-R-(P) model are
 
-$ frac(d H, d t) & = - alpha P H - beta I H \,\
-frac(d L, d t) & = alpha P H + beta I H - gamma L \,\
-frac(d I, d t) & = gamma L - mu I \,\
-frac(d R, d t) & = mu I \,\
+$ frac(d H, d t) & = - alpha P H - beta I H\,\
+frac(d L, d t) & = alpha P H + beta I H - gamma L\,\
+frac(d I, d t) & = gamma L - mu I\,\
+frac(d R, d t) & = mu I\,\
 frac(d P, d t) & = - omega P . $ This model can be simulated too.
 
 Relative to our previous template, we need to
 
 - define a new function for the right hand side of the model
 - update the parameters to include $omega$ and $alpha$
-- update the initial condition to include $P \( 0 \)$
+- update the initial condition to include $P\(0\)$
 
 Of course, numeric values for the two new parameters and one new initial condition are required. In the code below we set
 
 - $omega = 0.05$ day$""^(- 1)$
 - $alpha = 0.00001$ inoculum$""^(- 1)$ day$""^(- 1)$
-- $P \( 0 \) = 10$
+- $P\(0\)= 10$
 
 We also set
 
-- $H \( 0 \) = 10000$
-- $L \( 0 \) = 0$
-- $I \( 0 \) = 0$
-- $R \( 0 \) = 0$
+- $H\(0\)= 10000$
+- $L\(0\)= 0$
+- $I\(0\)= 0$
+- $R\(0\)= 0$
 
 which corresponds to assuming no hosts are infected at $t = 0$.
 
-We have therefore assumed the inoculum has an average lifetime of $1 \/ omega = 20$ days, and that there are $10$ units of inoculum present at $t = 0$.
+We have therefore assumed the inoculum has an average lifetime of $1\/omega = 20$ days, and that there are $10$ units of inoculum present at $t = 0$.
 
-The value of $alpha$ requires some interpretation. It is the infection rate of healthy hosts per unit inoculum per host per unit time. So, in a system with $N = 10000$ hosts, with $P \( 0 \) = 10$, we would expect the initial net rate of primary infection to be $N alpha P \( 0 \) = 1$, and so for an average of one host to become infected via the primary infection pathway per day.
+The value of $alpha$ requires some interpretation. It is the infection rate of healthy hosts per unit inoculum per host per unit time. So, in a system with $N = 10000$ hosts, with $P\(0\)= 10$, we would expect the initial net rate of primary infection to be $N alpha P\(0\)= 1$, and so for an average of one host to become infected via the primary infection pathway per day.
 
 However, because the decay rate of inoculum is relatively large, this drops off quite rapidly (and is further reduced because as time goes by there are fewer healthy hosts to infect).
 
@@ -8824,7 +8820,7 @@ The code to simulate the model is given below. Note it is just a lightly edited 
 [#NormalTok("hlirp.sol.df ");#OtherTok("<-");#NormalTok(" ");#FunctionTok("data.frame");#NormalTok("(hlirp.sol)");],
 [],
 [#CommentTok("# Plot results using our custom helper function");],
-[#FunctionTok("plot.model.results");#NormalTok("(hlirp.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIRP\"");#NormalTok(")");],));
+[#FunctionTok("plot_model_results");#NormalTok("(hlirp.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIRP\"");#NormalTok(")");],));
 #figure([
 #box(image("temporal-compartmental_files/figure-typst/fig-hlirp-1.svg"))
 ], caption: figure.caption(
@@ -8838,7 +8834,7 @@ supplement: "Figure",
 <fig-hlirp>
 
 
-Compared with the previous simulation, primary inoculum removes the need for initial infected hosts, allowing the epidemic to start even when $L \( 0 \) = I \( 0 \) = R \( 0 \) = 0$.
+Compared with the previous simulation, primary inoculum removes the need for initial infected hosts, allowing the epidemic to start even when $L\(0\)= I\(0\)= R\(0\)= 0$.
 
 Note that for these parameters, the epidemic gets going slightly more rapidly.
 
@@ -8852,10 +8848,10 @@ We switch focus here, and focus on a crop plant host, which produces more infect
 
 In what follows we will continue to refer to "hosts" for simplicity, even though now we are actually thinking about the number/density of infectable sites rather than whole plants.
 
-There are various ways of modelling host growth. We introduce the idea in a simple way here, with logistic growth of healthy hosts at rate $r_H$, to a carrying capacity $N_(m a x)$. Adding this to the H-L-I-R-(P) model leads to $ frac(d H, d t) & = r_H H (1 - frac(H + L + I + R, N_(m a x))) - alpha P H - beta I H \,\
-frac(d L, d t) & = alpha P H + beta I H - gamma L \,\
-frac(d I, d t) & = gamma L - mu I \,\
-frac(d R, d t) & = mu I \,\
+There are various ways of modelling host growth. We introduce the idea in a simple way here, with logistic growth of healthy hosts at rate $r_H$, to a carrying capacity $N_(m a x)$. Adding this to the H-L-I-R-(P) model leads to $ frac(d H, d t) & = r_H H (1 - frac(H + L + I + R, N_(m a x))) - alpha P H - beta I H\,\
+frac(d L, d t) & = alpha P H + beta I H - gamma L\,\
+frac(d I, d t) & = gamma L - mu I\,\
+frac(d R, d t) & = mu I\,\
 frac(d P, d t) & = - omega P . $ We have included the total amount of host tissue in the density-dependent term in the logistic growth, which corresponds to assuming all classes of host take up space and/or consume resources, whereas we have only included the number of units of healthy host in the production term. Depending on the system being modelled, it could, perhaps, be argued that $R$ should be omitted from the density dependence, or $L$ be included in the production term. It might also be appropriate to include natural exponential death terms on all state variables, to account for natural death of host tissue, but we have not done so here.
 
 The updated model can again be solved by adapting our previous template. The following new parameter values are required
@@ -8863,7 +8859,7 @@ The updated model can again be solved by adapting our previous template. The fol
 - $r_H = 0.05$ day$""^(- 1)$
 - $N_(m a x) = 10000$
 
-In the original H-L-I-R model, the total host population size was fixed, and we denoted this constant by $ N = H + L + I + R $ Once host growth is added, however, this quantity is no longer constant. To avoid confusion, we denote the time-varying total number of hosts by $ T \( t \) = H \( t \) + L \( t \) + I \( t \) + R \( t \) . $ The carrying capacity for this total amount of host tissue is denoted by $N_max$. In the figure below, $T \( t \)$ is shown by the dotted blue line. Also note that we start with $H \( 0 \) = N_(m a x) \/ 20$, i.e., a small number of hosts initially.
+In the original H-L-I-R model, the total host population size was fixed, and we denoted this constant by $ N = H + L + I + R $ Once host growth is added, however, this quantity is no longer constant. To avoid confusion, we denote the time-varying total number of hosts by $ T\(t\)= H\(t\)+ L\(t\)+ I\(t\)+ R\(t\). $ The carrying capacity for this total amount of host tissue is denoted by $N_max$. In the figure below, $T\(t\)$ is shown by the dotted blue line. Also note that we start with $H\(0\)= N_(m a x)\/20$, i.e., a small number of hosts initially.
 
 #Skylighting(([#NormalTok("hlirp.with.growth.model ");#OtherTok("<-");#NormalTok(" ");#ControlFlowTok("function");#NormalTok("(t, state, parameters) {");],
 [#NormalTok("  ");#FunctionTok("with");#NormalTok("(");#FunctionTok("as.list");#NormalTok("(");#FunctionTok("c");#NormalTok("(state, parameters)), {");],
@@ -8898,7 +8894,7 @@ In the original H-L-I-R model, the total host population size was fixed, and we 
 [#NormalTok("hlirp.with.growth.sol.df ");#OtherTok("<-");#NormalTok(" ");#FunctionTok("data.frame");#NormalTok("(hlirp.with.growth.sol)");],
 [],
 [#CommentTok("# Plot results using our custom helper function");],
-[#FunctionTok("plot.model.results");#NormalTok("(hlirp.with.growth.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIRP (with host growth)\"");#NormalTok(")");],));
+[#FunctionTok("plot_model_results");#NormalTok("(hlirp.with.growth.sol.df, ");#AttributeTok("type=");#StringTok("\"HLIRP (with host growth)\"");#NormalTok(")");],));
 #figure([
 #box(image("temporal-compartmental_files/figure-typst/fig-hlirp-growth-1.svg"))
 ], caption: figure.caption(
@@ -8912,7 +8908,7 @@ supplement: "Figure",
 <fig-hlirp-growth>
 
 
-Note the epidemic is much slower and has only just completed by $t = T_(m a x)$. This is because the epidemic only becomes self-sustaining when the amount of healthy host tissue is large enough that the effective reproduction number exceeds one. In this model, when infection is rare, a natural approximation to the instantaneous reproduction number is $beta H \( t \) \/ mu$. Early in the season $H \( t \)$ is low, so infection fails to increase even though host growth later creates enough healthy tissue for spread.
+Note the epidemic is much slower and has only just completed by $t = T_(m a x)$. This is because the epidemic only becomes self-sustaining when the amount of healthy host tissue is large enough that the effective reproduction number exceeds one. In this model, when infection is rare, a natural approximation to the instantaneous reproduction number is $beta H\(t\)\/mu$. Early in the season $H\(t\)$ is low, so infection fails to increase even though host growth later creates enough healthy tissue for spread.
 
 === Accounting for multiple seasons
 <accounting-for-multiple-seasons>
@@ -8932,15 +8928,15 @@ The H--L--I--R-(P) model as presented above implicitly describes a single-season
 
 A simple way to represent multiple seasons is to assume that each season begins with a fresh population of healthy hosts, but with some carryover of infection pressure from the previous season via the inoculum compartment ($P$).
 
-Let $I_k \( t \)$ denote the time-dependent amount of infectious hosts during season $k$. Within each season, the epidemic follows an H--L--I--R-(P) model, but the initial amount of inoculum depends on what happened in the previous season.
+Let $I_k\(t\)$ denote the time-dependent amount of infectious hosts during season $k$. Within each season, the epidemic follows an H--L--I--R-(P) model, but the initial amount of inoculum depends on what happened in the previous season.
 
 For example, we might assume:
 
-- a constant fraction of hosts are replanted at the start of each season, so $H_k \( 0 \) = N_(m a x) \/ 20$,
-- no hosts are actively infected at planting, so $L_k \( 0 \) = I_k \( 0 \) = R_k \( 0 \) = 0$,
-- the initial amount of primary inoculum in season $k$, $P_k \( 0 \)$, depends on inoculum surviving from season $k - 1$.
+- a constant fraction of hosts are replanted at the start of each season, so $H_k\(0\)= N_(m a x)\/20$,
+- no hosts are actively infected at planting, so $L_k\(0\)= I_k\(0\)= R_k\(0\)= 0$,
+- the initial amount of primary inoculum in season $k$, $P_k\(0\)$, depends on inoculum surviving from season $k - 1$.
 
-A simple model of inoculum production and carryover between seasons is $ P_k \( 0 \) = phi.alt integral_0^(T_(m a x)) I_(k - 1) \( t \) thin d t \, $ where:
+A simple model of inoculum production and carryover between seasons is $ P_k\(0\)= phi.alt integral_0^(T_(m a x)) I_(k - 1)\(t\)thin d t\, $ where:
 
 - $T_(m a x)$ is the length of the growing season,
 - $phi.alt$ is rate at which infectious material is turned into inoculum (that survives between seasons).
@@ -8953,6 +8949,9 @@ Within each season, the dynamics are as before, but the model must track the amo
 
 #block[
 #Skylighting(([#FunctionTok("library");#NormalTok("(sfsmisc)");],));
+#block[
+#Skylighting(([#NormalTok("Warning: package 'sfsmisc' was built under R version 4.4.3");],));
+]
 #block[
 #Skylighting(([],
 [#NormalTok("Attaching package: 'sfsmisc'");],));
@@ -8975,11 +8974,11 @@ Within each season, the dynamics are as before, but the model must track the amo
 ]
 ==== Simulating multiple seasons
 <simulating-multiple-seasons>
-Having specified the mapping between successive seasons, the model is sufficiently "rich" to be able to track a multi-seasonal epidemic. We simulate over $5$ years, starting from a very small initial amount of inoculum in season one, with $P_1 \( 0 \) = 0.0001$.
+Having specified the mapping between successive seasons, the model is sufficiently "rich" to be able to track a multi-seasonal epidemic. We simulate over $5$ years, starting from a very small initial amount of inoculum in season one, with $P_1\(0\)= 0.0001$.
 
-The top plot shows the amount of disease, $D \( t \)$ and the total amount of host tissue, $T \( t \)$ over successive seasons. The responses of the individual compartments (e.g., $H \( t \) \, L \( t \) \, I \( t \)$ and $R \( t \)$) are not shown to avoid cluttering the figure.
+The top plot shows the amount of disease, $D\(t\)$ and the total amount of host tissue, $T\(t\)$ over successive seasons. The responses of the individual compartments (e.g., $H\(t\)\,L\(t\)\,I\(t\)$ and $R\(t\)$) are not shown to avoid cluttering the figure.
 
-The bottom plot shows how the initial amount of inoculum, $P_k \( 0 \)$ changes over time. This is shown on a logarithmic scale to allow small changes to be seen.
+The bottom plot shows how the initial amount of inoculum, $P_k\(0\)$ changes over time. This is shown on a logarithmic scale to allow small changes to be seen.
 
 #Skylighting(([#NormalTok("n.yr ");#OtherTok("<-");#NormalTok(" ");#DecValTok("5");],
 [#NormalTok("init.inoc ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.0001");],
@@ -9014,7 +9013,7 @@ The bottom plot shows how the initial amount of inoculum, $P_k \( 0 \)$ changes 
 [#NormalTok("  ");#CommentTok("# Calculate how much inoculum was produced this season");],
 [#NormalTok("  init.inoc ");#OtherTok("<-");#NormalTok(" ");#FunctionTok("find.inoc");#NormalTok("(hlirp.with.growth.sol.df, phi)");],
 [#NormalTok("}");],
-[#FunctionTok("plot.model.results");#NormalTok("(multi.to.plot,");#StringTok("\"MULTI\"");#NormalTok(")");],));
+[#FunctionTok("plot_model_results");#NormalTok("(multi.to.plot,");#StringTok("\"MULTI\"");#NormalTok(")");],));
 #align(center)[#box(image("temporal-compartmental_files/figure-typst/unnamed-chunk-6-1.svg"))]
 #block[
 #align(center)[#box(image("temporal-compartmental_files/figure-typst/unnamed-chunk-6-2.svg"))]
@@ -9025,7 +9024,7 @@ In the first year the small amount of inoculum leads to only a very small epidem
 <epidemiological-implications>
 The model including seasonality introduces new thresholds beyond the single-season basic reproduction number $R_0$. In particular, even if there is a large epidemic within a season, if the carry over of inoculum between seasons is too small, the epidemic dies out.
 
-This is illustrated below, in which the initial level of inoculum is much larger, but the production rate is much smaller (the code is omitted, which is identical apart from the values of the two parameters $P_1 \( 0 \)$ and $phi.alt$).
+This is illustrated below, in which the initial level of inoculum is much larger, but the production rate is much smaller (the code is omitted, which is identical apart from the values of the two parameters $P_1\(0\)$ and $phi.alt$).
 
 #block[
 #Skylighting(([#NormalTok("init.inoc ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.5");],
@@ -9111,9 +9110,9 @@ In the computational work hereafter, these observations are treated as if they w
 <defining-a-measure-of-goodness-of-fit>
 To estimate $beta$ we need a measure of agreement between the model (for different values of $beta$) and the observations.
 
-A simple choice is the sum of squared errors, $ S \( beta \) = sum_i (D_(o b s) \( t_i \) - D_(p r e d) \( t_i \; beta \))^2 $ where $D_(o b s) \( t_i \)$ is the observed amount of disease at time $t_i$, and $D_(p r e d) \( t_i \; beta \)$ is the corresponding model prediction for a particular value of $beta$.
+A simple choice is the sum of squared errors, $ S\(beta\)= sum_i (D_(o b s) \( t_i \) - D_(p r e d) \( t_i \; beta \))^2 $ where $D_(o b s)\(t_i\)$ is the observed amount of disease at time $t_i$, and $D_(p r e d)\(t_i\;beta\)$ is the corresponding model prediction for a particular value of $beta$.
 
-The value of $beta$ that minimises $S \( beta \)$ is the best-fitting estimate of the transmission rate
+The value of $beta$ that minimises $S\(beta\)$ is the best-fitting estimate of the transmission rate
 
 #block[
 #Skylighting(([#NormalTok("find.ss.beta ");#OtherTok("<-");#NormalTok(" ");#ControlFlowTok("function");#NormalTok("(beta, data)");],
@@ -9125,7 +9124,7 @@ The value of $beta$ that minimises $S \( beta \)$ is the best-fitting estimate o
 ]
 === Visualising the objective function
 <visualising-the-objective-function>
-Before performing numerical optimisation, it is sensible to calculate $S S \( beta \)$ over a range of possible transmission rates, and to plot the results. Note that before plotting the y-value (the sum of squares) is divided by one million.
+Before performing numerical optimisation, it is sensible to calculate $S S\(beta\)$ over a range of possible transmission rates, and to plot the results. Note that before plotting the y-value (the sum of squares) is divided by one million.
 
 #Skylighting(([#FunctionTok("library");#NormalTok("(ggplot2)");],
 [#FunctionTok("library");#NormalTok("(r4pde)");],
@@ -9215,7 +9214,7 @@ Although the minimum can be identified visually, optimisation algorithms provide
 [],
 [#FunctionTok("print");#NormalTok("(");#FunctionTok("paste");#NormalTok("(");#StringTok("\"Estimated beta (optim) =\"");#NormalTok(", beta.hat))");],));
 #block[
-#Skylighting(([#NormalTok("[1] \"Estimated beta (optim) = 1.98176029764102e-05\"");],));
+#Skylighting(([#NormalTok("[1] \"Estimated beta (optim) = 1.98176029764101e-05\"");],));
 ]
 ]
 The #NormalTok("parscale"); argument rescales the optimisation problem so that changes in $beta$ of order $10^(- 5)$ are treated as numerically meaningful by the optimiser.
@@ -9311,38 +9310,38 @@ It is useful to show how simpler population dynamics models (as covered in the c
 
 We start with the H-L-I-R-(P) model (without host growth).
 
-Assume that inoculum does not decay, i.e., $omega = 0$. This means the density of inoculum is fixed at $P \( 0 \)$ for the whole epidemic, and the equation for $d P \/ d t$ can be omitted.
+Assume that inoculum does not decay, i.e., $omega = 0$. This means the density of inoculum is fixed at $P\(0\)$ for the whole epidemic, and the equation for $d P\/d t$ can be omitted.
 
-Introduce the symbol $epsilon.alt = alpha P \( 0 \)$ to represent the fixed rate of primary infection (per healthy host) throughout the epidemic.
+Introduce the symbol $epsilon.alt = alpha P\(0\)$ to represent the fixed rate of primary infection (per healthy host) throughout the epidemic.
 
 The H-L-I-R-(P) model then becomes
 
-$ frac(d H, d t) & = - (epsilon.alt + beta I) H \,\
-frac(d L, d t) & = (epsilon.alt + beta I) H - gamma L \,\
-frac(d I, d t) & = gamma L - mu I \,\
+$ frac(d H, d t) & = - (epsilon.alt + beta I) H\,\
+frac(d L, d t) & = (epsilon.alt + beta I) H - gamma L\,\
+frac(d I, d t) & = gamma L - mu I\,\
 frac(d R, d t) & = mu I . $
 
-Assume that the latent period is infinitesimally short (i.e., $gamma arrow.r oo$) and that infectious tissue does not lose infectivity (i.e., $mu = 0$). This simplifies the dynamics $ frac(d H, d t) & = - (epsilon.alt + beta I) H \,\
+Assume that the latent period is infinitesimally short (i.e., $gamma arrow.r oo$) and that infectious tissue does not lose infectivity (i.e., $mu = 0$). This simplifies the dynamics $ frac(d H, d t) & = - (epsilon.alt + beta I) H\,\
 frac(d I, d t) & = (epsilon.alt + beta I) H .\
  $ But then, since $H + I = N$, the model reduces down to a single equation for the number of infected plants \$\$ \\frac{dI}{dt} = \\left(\\epsilon +\\beta I\\right)(N-I).\\\\\$\$ As a historical aside, note this form of model was introduced by #cite(<Brassett1988>, form: "prose") as a "differential equation that combines the properties of the monomolecular and logistic models", and used to understand take-all disease in wheat. Here we have seen how it can be derived from the H-L-I-R model.
 
-Recall the simpler population dynamics models are normally phrased in terms of the proportion of diseased plants/tissue. As described near the start of this chapter, this can be done here by considering $y = I \/ N$, which leads to \$\$ \\frac{dy}{dt} = \\left(\\epsilon+\\beta N y \\right)(1 - y),\\\\\$\$
+Recall the simpler population dynamics models are normally phrased in terms of the proportion of diseased plants/tissue. As described near the start of this chapter, this can be done here by considering $y = I\/N$, which leads to \$\$ \\frac{dy}{dt} = \\left(\\epsilon+\\beta N y \\right)(1 - y),\\\\\$\$
 
 === Logistic model
 <logistic-model>
-The logistic model is $ frac(d y, d t) = r_L y \( 1 - y \) \, $ in which $r_L$ is the rate parameter. The solution is $ y = frac(1, 1 + (frac(1 - y_0, y_0)) exp \( - r_L t \)) \, $ where $y_0$ is the initial proportion of disease.
+The logistic model is $ frac(d y, d t) = r_L y\(1 - y\)\, $ in which $r_L$ is the rate parameter. The solution is $ y = frac(1, 1 + (frac(1 - y_0, y_0)) exp\(- r_L t\))\, $ where $y_0$ is the initial proportion of disease.
 
 This is equivalent to the H-L-I-R-(P) model in the limit $epsilon.alt arrow.r 0$, i.e., when there is no primary infection, and with the parameter identification $beta N = r_L$.
 
 === Monomolecular model
 <monomolecular-model>
-The monomolecular model is $ frac(d y, d t) = r_M \( 1 - y \) \, $ in which $r_M$ is the rate parameter. The solution is $ y = 1 - \( 1 - y_0 \) exp \( - r_M t \) $ where $y_0$ is the initial proportion of disease.
+The monomolecular model is $ frac(d y, d t) = r_M\(1 - y\)\, $ in which $r_M$ is the rate parameter. The solution is $ y = 1 -\(1 - y_0\)exp\(- r_M t\) $ where $y_0$ is the initial proportion of disease.
 
 This is equivalent to the H-L-I-R-(P) model in the limit $beta arrow.r 0$, i.e., when there is no secondary infection, and with the parameter identification $epsilon.alt = r_M$.
 
 === Exponential model
 <exponential-model>
-The exponential model is $ frac(d y, d t) = r_E y \, $ in which $r_E$ is the rate parameter. The solution is $ y = y_0 exp \( r_E t \) $ where $y_0$ is the initial proportion of disease.
+The exponential model is $ frac(d y, d t) = r_E y\, $ in which $r_E$ is the rate parameter. The solution is $ y = y_0 exp\(r_E t\) $ where $y_0$ is the initial proportion of disease.
 
 This is equivalent to the H-L-I-R-(P) model in the limit $epsilon.alt arrow.r 0$ and $y approx 0$, i.e., the exponential model is recovered when there is no primary infection and when $y$ remains small, with the parameter identification $beta N = r_E$ $ frac(d y, d t) approx beta N y . $
 
@@ -9681,7 +9680,7 @@ where $a_P$ and $b_P$ are the two parameters of the power law model. They differ
 
 Because $y$ at the distance zero from the source is undefined when using the power law model, this is usually modified by the addition of a positive constant $C$ in $x$:
 
-$Y = a_P thin \( x + C \)^(- b_P)$
+$Y = a_P thin\(x + C\)^(- b_P)$
 
 For this reason, the model is named as the modified power law. Here, the constant $C$ is of the same unit of $x$. At the distance zero, the positive constant is a term that express the size of the inoculum source. In other words, the $a$ parameter is a theoretical value of $Y$ at the distance $1 - C$ from the center of the inoculum source.
 
@@ -9735,13 +9734,13 @@ $y * = a * + b x$ ,
 
 where the asterisk in $a$ indicates that one of the transformations was applied in $y$ that produced the linear model. Note that $a *$ is the transformed version of the initial disease intensity, which needs to be returned to the original scale according to the respective back-transformation. The linearized forms of the two most common gradient models are:
 
-$l n \( y \) = l n \( a_E \) - b_E . x$
+$l n\(y\)= l n\(a_E\)- b_E . x$
 
-$l n \( y \) = l n \( a_P \) - b_P . l n \( x + C \)$
+$l n\(y\)= l n\(a_P\)- b_P . l n\(x + C\)$
 
 === Plot for the linearized form of models
 <plot-for-the-linearized-form-of-models>
-Let's visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was $l n \( y \)$.
+Let's visualize the linearization of the exponential model with two different slopes (gradient 1 and 2). Note that the transformation used was $l n\(y\)$.
 
 #Skylighting(([#NormalTok("a1 ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.2");#NormalTok("  ");#CommentTok("# y at zero distance for gradient 1");],
 [#NormalTok("a2 ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.2");#NormalTok("  ");#CommentTok("# y at zero distance for gradient 2");],
@@ -9766,7 +9765,7 @@ supplement: "Figure",
 <fig-grad-exp2>
 
 
-Next is the linearization of the modified power law model. Note that the transformation used was $l n \( y \)$ and $l n \( x + C \)$ .
+Next is the linearization of the modified power law model. Note that the transformation used was $l n\(y\)$ and $l n\(x + C\)$ .
 
 #Skylighting(([#NormalTok("C ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.5");],
 [#NormalTok("a1 ");#OtherTok("<-");#NormalTok(" ");#FloatTok("0.2");#NormalTok(" ");#CommentTok("# y at zero distance for gradient 1");],
@@ -9883,24 +9882,32 @@ In this model, the log of $Y$ is taken and regressed against the (untransformed)
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); Observations], table.cell(align: right)[10],
-  table.cell(align: left)[#set text(weight: "bold"); Dependent variable], table.cell(align: right)[log(Y)],
-  table.cell(align: left)[#set text(weight: "bold"); Type], table.cell(align: right)[OLS linear regression],
+  table.cell(align: left)[#set text(weight: "bold");
+  Observations], table.cell(align: right)[10],
+  table.cell(align: left)[#set text(weight: "bold");
+  Dependent variable], table.cell(align: right)[log(Y)],
+  table.cell(align: left)[#set text(weight: "bold");
+  Type], table.cell(align: right)[OLS linear regression],
 )
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); F(1,8)], table.cell(align: right)[57.39],
-  table.cell(align: left)[#set text(weight: "bold"); R²], table.cell(align: right)[0.88],
-  table.cell(align: left)[#set text(weight: "bold"); Adj. R²], table.cell(align: right)[0.86],
+  table.cell(align: left)[#set text(weight: "bold");
+  F(1,8)], table.cell(align: right)[57.39],
+  table.cell(align: left)[#set text(weight: "bold");
+  R²], table.cell(align: right)[0.88],
+  table.cell(align: left)[#set text(weight: "bold");
+  Adj. R²], table.cell(align: right)[0.86],
 )
 #table(
   columns: 5,
   align: (left,right,right,right,right,),
   table.header(table.cell(align: left)[], table.cell(align: right)[Est.], table.cell(align: right)[S.E.], table.cell(align: right)[t val.], table.cell(align: right)[p],),
   table.hline(),
-  table.cell(align: left)[#set text(weight: "bold"); \(Intercept)], table.cell(align: right)[4.58], table.cell(align: right)[0.35], table.cell(align: right)[13.00], table.cell(align: right)[0.00],
-  table.cell(align: left)[#set text(weight: "bold"); x], table.cell(align: right)[-0.20], table.cell(align: right)[0.03], table.cell(align: right)[-7.58], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  \(Intercept)], table.cell(align: right)[4.58], table.cell(align: right)[0.35], table.cell(align: right)[13.00], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  x], table.cell(align: right)[-0.20], table.cell(align: right)[0.03], table.cell(align: right)[-7.58], table.cell(align: right)[0.00],
   table.hline(),
   table.footer([#super[] Standard errors: OLS], [], [], [], [],),
 )
@@ -9939,24 +9946,32 @@ For the power law model, we employ a log-log transformation: the natural logarit
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); Observations], table.cell(align: right)[10],
-  table.cell(align: left)[#set text(weight: "bold"); Dependent variable], table.cell(align: right)[log(Y)],
-  table.cell(align: left)[#set text(weight: "bold"); Type], table.cell(align: right)[OLS linear regression],
+  table.cell(align: left)[#set text(weight: "bold");
+  Observations], table.cell(align: right)[10],
+  table.cell(align: left)[#set text(weight: "bold");
+  Dependent variable], table.cell(align: right)[log(Y)],
+  table.cell(align: left)[#set text(weight: "bold");
+  Type], table.cell(align: right)[OLS linear regression],
 )
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); F(1,8)], table.cell(align: right)[203.26],
-  table.cell(align: left)[#set text(weight: "bold"); R²], table.cell(align: right)[0.96],
-  table.cell(align: left)[#set text(weight: "bold"); Adj. R²], table.cell(align: right)[0.96],
+  table.cell(align: left)[#set text(weight: "bold");
+  F(1,8)], table.cell(align: right)[203.26],
+  table.cell(align: left)[#set text(weight: "bold");
+  R²], table.cell(align: right)[0.96],
+  table.cell(align: left)[#set text(weight: "bold");
+  Adj. R²], table.cell(align: right)[0.96],
 )
 #table(
   columns: 5,
   align: (left,right,right,right,right,),
   table.header(table.cell(align: left)[], table.cell(align: right)[Est.], table.cell(align: right)[S.E.], table.cell(align: right)[t val.], table.cell(align: right)[p],),
   table.hline(),
-  table.cell(align: left)[#set text(weight: "bold"); \(Intercept)], table.cell(align: right)[5.56], table.cell(align: right)[0.25], table.cell(align: right)[22.66], table.cell(align: right)[0.00],
-  table.cell(align: left)[#set text(weight: "bold"); log(x)], table.cell(align: right)[-1.70], table.cell(align: right)[0.12], table.cell(align: right)[-14.26], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  \(Intercept)], table.cell(align: right)[5.56], table.cell(align: right)[0.25], table.cell(align: right)[22.66], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  log(x)], table.cell(align: right)[-1.70], table.cell(align: right)[0.12], table.cell(align: right)[-14.26], table.cell(align: right)[0.00],
   table.hline(),
   table.footer([#super[] Standard errors: OLS], [], [], [], [],),
 )
@@ -9993,24 +10008,32 @@ In the modified power model, a constant is added to $x$.
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); Observations], table.cell(align: right)[10],
-  table.cell(align: left)[#set text(weight: "bold"); Dependent variable], table.cell(align: right)[log(Y)],
-  table.cell(align: left)[#set text(weight: "bold"); Type], table.cell(align: right)[OLS linear regression],
+  table.cell(align: left)[#set text(weight: "bold");
+  Observations], table.cell(align: right)[10],
+  table.cell(align: left)[#set text(weight: "bold");
+  Dependent variable], table.cell(align: right)[log(Y)],
+  table.cell(align: left)[#set text(weight: "bold");
+  Type], table.cell(align: right)[OLS linear regression],
 )
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); F(1,8)], table.cell(align: right)[302.16],
-  table.cell(align: left)[#set text(weight: "bold"); R²], table.cell(align: right)[0.97],
-  table.cell(align: left)[#set text(weight: "bold"); Adj. R²], table.cell(align: right)[0.97],
+  table.cell(align: left)[#set text(weight: "bold");
+  F(1,8)], table.cell(align: right)[302.16],
+  table.cell(align: left)[#set text(weight: "bold");
+  R²], table.cell(align: right)[0.97],
+  table.cell(align: left)[#set text(weight: "bold");
+  Adj. R²], table.cell(align: right)[0.97],
 )
 #table(
   columns: 5,
   align: (left,right,right,right,right,),
   table.header(table.cell(align: left)[], table.cell(align: right)[Est.], table.cell(align: right)[S.E.], table.cell(align: right)[t val.], table.cell(align: right)[p],),
   table.hline(),
-  table.cell(align: left)[#set text(weight: "bold"); \(Intercept)], table.cell(align: right)[6.10], table.cell(align: right)[0.23], table.cell(align: right)[26.73], table.cell(align: right)[0.00],
-  table.cell(align: left)[#set text(weight: "bold"); log(x + 0.4)], table.cell(align: right)[-1.88], table.cell(align: right)[0.11], table.cell(align: right)[-17.38], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  \(Intercept)], table.cell(align: right)[6.10], table.cell(align: right)[0.23], table.cell(align: right)[26.73], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  log(x + 0.4)], table.cell(align: right)[-1.88], table.cell(align: right)[0.11], table.cell(align: right)[-17.38], table.cell(align: right)[0.00],
   table.hline(),
   table.footer([#super[] Standard errors: OLS], [], [], [], [],),
 )
@@ -11049,15 +11072,15 @@ The tests based on the x- or y-coordinate alone do not clearly reject complete s
 <distance-based>
 ===== Ripley's K
 <ripleys-k>
-A spatial point process is a set of irregularly distributed locations in a region, assumed to be generated by a stochastic mechanism. Ripley's K-function, $K \( r \)$, describes the process at all distances at once. Assuming a constant intensity of points, $K \( r \)$ is the expected number of further points within distance $r$ of an arbitrary point, divided by the intensity. For diseased trees in a plantation, it answers the question: how many other diseased trees do we expect within distance $r$ of a diseased tree chosen at random?
+A spatial point process is a set of irregularly distributed locations in a region, assumed to be generated by a stochastic mechanism. Ripley's K-function, $K\(r\)$, describes the process at all distances at once. Assuming a constant intensity of points, $K\(r\)$ is the expected number of further points within distance $r$ of an arbitrary point, divided by the intensity. For diseased trees in a plantation, it answers the question: how many other diseased trees do we expect within distance $r$ of a diseased tree chosen at random?
 
 To interpret the estimated function:
 
-+ #strong[Random pattern]: $K \( r \)$ follows the theoretical curve for complete spatial randomness, $K \( r \) = pi r^2$.
++ #strong[Random pattern]: $K\(r\)$ follows the theoretical curve for complete spatial randomness, $K\(r\)= pi r^2$.
 
-+ #strong[Clustered pattern]: $K \( r \)$ lies above the theoretical curve, because points have more neighbors than expected by chance.
++ #strong[Clustered pattern]: $K\(r\)$ lies above the theoretical curve, because points have more neighbors than expected by chance.
 
-+ #strong[Regular pattern]: $K \( r \)$ lies below the theoretical curve, because points have fewer neighbors than expected by chance.
++ #strong[Regular pattern]: $K\(r\)$ lies below the theoretical curve, because points have fewer neighbors than expected by chance.
 
 Let's use the #NormalTok("Kest"); function of the spatstat package to obtain #emph[K(r)].
 
@@ -11169,15 +11192,15 @@ The O-ring statistic estimates the average density of points in a ring of radius
 
 The statistic is interpreted relative to the intensity of the pattern, which is the value expected under CSR:
 
-+ #strong[Random pattern]: $O \( r \)$ is flat and close to the intensity at all distances.
++ #strong[Random pattern]: $O\(r\)$ is flat and close to the intensity at all distances.
 
-+ #strong[Aggregation]: $O \( r \)$ is above the intensity at short distances and decreases toward it as $r$ increases, because points are surrounded by more neighbors than expected.
++ #strong[Aggregation]: $O\(r\)$ is above the intensity at short distances and decreases toward it as $r$ increases, because points are surrounded by more neighbors than expected.
 
-+ #strong[Regularity]: $O \( r \)$ is below the intensity at short distances and increases toward it as $r$ increases.
++ #strong[Regularity]: $O\(r\)$ is below the intensity at short distances and increases toward it as $r$ increases.
 
-As with $K \( r \)$, a simulation envelope under CSR is used for inference: if the observed statistic lies inside the envelope, the pattern is consistent with randomness, and if it lies outside, it is not.
+As with $K\(r\)$, a simulation envelope under CSR is used for inference: if the observed statistic lies inside the envelope, the pattern is consistent with randomness, and if it lies outside, it is not.
 
-In R, the O-ring statistic is $O \( r \) = lambda thin g \( r \)$, the intensity $lambda$ of the pattern multiplied by the pair correlation function $g \( r \)$. The #emph[onpoint] package provides a fast estimate of $g \( r \)$ with #NormalTok("pcf_fast()"); (older versions of the package had a function called #NormalTok("estimate_o_ring()");, which we define here as a small wrapper). We will use the point pattern objects #NormalTok("ppp_rand"); and #NormalTok("ppp_aggr"); created in the previous examples
+In R, the O-ring statistic is $O\(r\)= lambda thin g\(r\)$, the intensity $lambda$ of the pattern multiplied by the pair correlation function $g\(r\)$. The #emph[onpoint] package provides a fast estimate of $g\(r\)$ with #NormalTok("pcf_fast()"); (older versions of the package had a function called #NormalTok("estimate_o_ring()");, which we define here as a small wrapper). We will use the point pattern objects #NormalTok("ppp_rand"); and #NormalTok("ppp_aggr"); created in the previous examples
 
 #Skylighting(([#FunctionTok("library");#NormalTok("(onpoint)");],
 [],
@@ -11946,23 +11969,23 @@ The binary power law (BPL), introduced by #cite(<hughes1992>, form: "prose"), re
 
 The BPL relates two variances:
 
-- Observed Variance (V): $V = upright("var") \[ X \] = E \[ \( X - n p \)^2 \]$
+- Observed Variance (V): $V = upright("var")\[X\]= E\[\(X - n p\)^2\]$
 
-- Expected Binomial Variance (V#sub[bin]): $V_(b i n) = n p \( 1 - p \)$
+- Expected Binomial Variance (V#sub[bin]): $V_(b i n) = n p\(1 - p\)$
 
 For proportions:
 
-- Observed Variance (v): $v = upright("var") \[ x \] = E \[ \( x - p \)^2 \]$
+- Observed Variance (v): $v = upright("var")\[x\]= E\[\(x - p\)^2\]$
 
-- Expected Binomial Variance (v\_#sub[bin]): $v_(b i n) = frac(p \( 1 - p \), n)$
+- Expected Binomial Variance (v\_#sub[bin]): $v_(b i n) = frac(p\(1 - p\), n)$
 
 The binomial distribution assumes independent observations of $X$, often interpreted as a random spatial pattern. If $X$ follows a binomial distribution, then $beta = 1$ in the BPL equations. Deviations from this indicate spatial heterogeneity or overdispersion. The log-log transformation is often used in statistical analyses due to the linear relationship between the log-transformed variables. Interpretation is as follows: when $beta = 1$: Spatial heterogeneity is constant, indicating fixed overdispersion; when $beta > 1$: Overdispersion varies systematically with incidence, showing a change in spatial heterogeneity with disease incidence levels. In practice, researchers fit the log-log model to empirical data to estimate $beta$ and $A_p$. This involves ordinary least squares (OLS) regression:
 
-$ ln \( v_j \) = ln \( A_p \) + beta ln [frac(hat(p)_j \( 1 - hat(p)_j \), n_j)] + epsilon.alt_j $
+$ ln\(v_j\)= ln\(A_p\)+ beta ln [frac(hat(p)_j\(1 - hat(p)_j\), n_j)] + epsilon.alt_j $
 
 where: - $j$ refers to specific observations, - $hat(p)$ is the estimated proportion, - $epsilon.alt_j$ is the residual error.
 
-The intercept of the fitted model ($ln \( A_p \)$) provides the scale parameter, and the slope ($beta$) gives insight into the nature of spatial heterogeneity and overdispersion in the data.
+The intercept of the fitted model ($ln\(A_p\)$) provides the scale parameter, and the slope ($beta$) gives insight into the nature of spatial heterogeneity and overdispersion in the data.
 
 #part[Epidemics and yield]
 = Definitions and concepts
@@ -11982,7 +12005,7 @@ Secondary losses on the farm are indirect consequences of disease epidemics, suc
 In addition to these on-farm losses, plant diseases can have significant indirect impacts on society. These can include increased food prices due to reduced supply, loss of export markets due to trade restrictions, and environmental damage due to increased use of pesticides. Understanding the full spectrum of losses caused by plant diseases is critical for developing effective disease management strategies and policies.
 
 #figure([
-#box(image("imgs/loss_diagram.png", alt: "Typology of losses caused by plant diseases", width: 5.96875in))
+#box(image("imgs/loss_diagram.png", width: 5.96875in, alt: "Typology of losses caused by plant diseases"))
 ], caption: figure.caption(
 position: bottom, 
 [
@@ -12260,24 +12283,32 @@ Assuming a linear relationship between #NormalTok("yld"); and #NormalTok("inc");
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); Observations], table.cell(align: right)[13],
-  table.cell(align: left)[#set text(weight: "bold"); Dependent variable], table.cell(align: right)[yld],
-  table.cell(align: left)[#set text(weight: "bold"); Type], table.cell(align: right)[OLS linear regression],
+  table.cell(align: left)[#set text(weight: "bold");
+  Observations], table.cell(align: right)[13],
+  table.cell(align: left)[#set text(weight: "bold");
+  Dependent variable], table.cell(align: right)[yld],
+  table.cell(align: left)[#set text(weight: "bold");
+  Type], table.cell(align: right)[OLS linear regression],
 )
 #table(
   columns: 2,
   align: (left,right,),
-  table.cell(align: left)[#set text(weight: "bold"); F(1,11)], table.cell(align: right)[46.86],
-  table.cell(align: left)[#set text(weight: "bold"); R²], table.cell(align: right)[0.81],
-  table.cell(align: left)[#set text(weight: "bold"); Adj. R²], table.cell(align: right)[0.79],
+  table.cell(align: left)[#set text(weight: "bold");
+  F(1,11)], table.cell(align: right)[46.86],
+  table.cell(align: left)[#set text(weight: "bold");
+  R²], table.cell(align: right)[0.81],
+  table.cell(align: left)[#set text(weight: "bold");
+  Adj. R²], table.cell(align: right)[0.79],
 )
 #table(
   columns: 5,
   align: (left,right,right,right,right,),
   table.header(table.cell(align: left)[], table.cell(align: right)[Est.], table.cell(align: right)[S.E.], table.cell(align: right)[t val.], table.cell(align: right)[p],),
   table.hline(),
-  table.cell(align: left)[#set text(weight: "bold"); \(Intercept)], table.cell(align: right)[3329.14], table.cell(align: right)[86.84], table.cell(align: right)[38.33], table.cell(align: right)[0.00],
-  table.cell(align: left)[#set text(weight: "bold"); inc], table.cell(align: right)[-14.21], table.cell(align: right)[2.08], table.cell(align: right)[-6.85], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  \(Intercept)], table.cell(align: right)[3329.14], table.cell(align: right)[86.84], table.cell(align: right)[38.33], table.cell(align: right)[0.00],
+  table.cell(align: left)[#set text(weight: "bold");
+  inc], table.cell(align: right)[-14.21], table.cell(align: right)[2.08], table.cell(align: right)[-6.85], table.cell(align: right)[0.00],
   table.hline(),
   table.footer([#super[] Standard errors: OLS], [], [], [], [],),
 )
@@ -13285,13 +13316,13 @@ The function #NormalTok("simulate_FHB()"); requires a starting date and weather 
 
 Among the several simplifications, which were based on the simulated results of the original model, flowering dynamics was assumed to follow a normal distribution over 10 days, and is adjusted to ensure that the peak in the proportion of anthers is set to 0.8. An adjustment is made so that anthers are set to 0 after the 10th day.
 
-$\[ upright("antherproportions") = cases(delim: "{", frac(1, sigma sqrt(2 pi)) exp (- 1 / 2 (frac(x - mu, sigma))^2) & upright("for ") x = 1 \, dots.h \, 10, 0 & upright("for ") x = 11 \, dots.h \, 20) \]$ ,
+$\[upright("antherproportions") = cases(delim: "{", frac(1, sigma sqrt(2 pi)) exp (- 1 / 2 (frac(x - mu, sigma))^2) & upright("for ") x = 1\,dots.h\,10, 0 & upright("for ") x = 11\,dots.h\,20)\]$ ,
 
 where $mu$ = 6 and $sigma$ = 2.
 
 The probability of the infection of the flowers is calculated as in the paper. It is based on an equation that considers daily temperature (T) and gives the proportion of flowers getting infected on any given day when a #strong[condition for infection] is met.
 
-$I N F = 0.001029 times e x p \( 0.1957 times T \)$
+$I N F = 0.001029 times e x p\(0.1957 times T\)$
 
 There are three conditions for an infection event, similar to what is described in the article @delponte2005:
 
@@ -13654,7 +13685,7 @@ Let's enter the data manually. Where $t$ is the temperature and $y$ is the sever
 ]
 Fit the generalized beta-function @hau1990. The model can be written as:
 
-$ y = a * \( \( t - b \)^d \) * \( \( c - t \)^e \) $
+$ y = a *\(\(t - b\)^d\)*\(\(c - t\)^e\) $
 
 where $b$ and $c$ represent minimum and maximum temperatures, respectively, for the development of the disease, $a$, $d$ and $e$ are parameters to be estimated, $t$ is the temperature and $y$ is disease severity. We need the {minpack.lm} library to avoid parameterization issues.
 
@@ -13748,7 +13779,7 @@ supplement: "Figure",
 
 The model equation for re-scaled severity (0 to 1) as a function of temperature is given by:
 
-$Y = (a dot.op T_(e q)^b dot.op \( 1 - T_(e q) \))^c quad \; quad upright("if ") Y > 1 \, upright(" then ") Y = 1$
+$Y = (a dot.op T_(e q)^b dot.op \( 1 - T_(e q) \))^c quad\;quad upright("if ") Y > 1\,upright(" then ") Y = 1$
 
 where
 
@@ -13909,7 +13940,7 @@ Again, we enter the data manually. Here $x$ is wetness duration in hours and $y$
 ]
 The model can be written as:
 
-$y = c 1 + \( d 1 - c 1 \) * \( 1 - e x p \( - x \/ e 1 \) \)$
+$y = c 1 +\(d 1 - c 1\)*\(1 - e x p\(- x\/e 1\)\)$
 
 where $c$ is the lower limit (at $x = 0$), the parameter $d$ is the upper limit and the parameter $e$ (greater than 0) is determining the steepness of the increase as $x$.
 
@@ -13982,7 +14013,7 @@ In the studies by #cite(<ji2021>, form: "prose") and #cite(<ji2023a>, form: "pro
 
 The model is given by:
 
-$y = 1 - exp \( - \( a dot.op x \)^b \)$
+$y = 1 - exp\(-\(a dot.op x\)^b\)$
 
 where $y$ is the response variable, $x$ is the moisture duration, $a$ is the scale parameter influencing the rate of infection and $b$ is the shape parameter affecting the curve's shape and acceleration
 
@@ -14241,15 +14272,15 @@ The model utilizes a temperature response function, which is adjusted to the pat
 
 The function is given by
 
-$f \( T \) = (frac(T_(upright("max")) - T, T_(upright("max")) - T_(upright("opt")))) times (frac(T - T_(upright("min")), T_(upright("opt")) - T_(upright("min"))))^(frac(T_(upright("opt")) - T_(upright("min")), T_(upright("max")) - T_(upright("opt"))))$
+$f\(T\)= (frac(T_(upright("max")) - T, T_(upright("max")) - T_(upright("opt")))) times (frac(T - T_(upright("min")), T_(upright("opt")) - T_(upright("min"))))^(frac(T_(upright("opt")) - T_(upright("min")), T_(upright("max")) - T_(upright("opt"))))$
 
-where $T$ is the temperature, $T_(upright("min"))$ is the minimum temperature, $T_(upright("opt"))$ is the optimum temperature, and $T_(upright("max"))$ is the maximum temperature for infection. This is the beta function of #cite(<yin1995>, form: "prose") (their Eq. 8b with $beta = 1$), scaled so that $f \( T \) = 1$ at the optimum temperature. It is zero at $T_(upright("min"))$ and $T_(upright("max"))$ and reaches its maximum exactly at $T_(upright("opt"))$.
+where $T$ is the temperature, $T_(upright("min"))$ is the minimum temperature, $T_(upright("opt"))$ is the optimum temperature, and $T_(upright("max"))$ is the maximum temperature for infection. This is the beta function of #cite(<yin1995>, form: "prose") (their Eq. 8b with $beta = 1$), scaled so that $f\(T\)= 1$ at the optimum temperature. It is zero at $T_(upright("min"))$ and $T_(upright("max"))$ and reaches its maximum exactly at $T_(upright("opt"))$.
 
 The wetness duration requirement is given by
 
-$W \( T \) = frac(W_(upright("min")), f \( T \)) lt.eq W_(upright("max"))$
+$W\(T\)= frac(W_(upright("min")), f\(T\)) lt.eq W_(upright("max"))$
 
-where $W_(upright("min"))$ is the minimum wetness duration requirement, and $W_(upright("max"))$ is an optional upper limit on $W \( T \)$.
+where $W_(upright("min"))$ is the minimum wetness duration requirement, and $W_(upright("max"))$ is an optional upper limit on $W\(T\)$.
 
 Let's write the functions for estimating the required wetness duration at each temperature.
 
@@ -14433,7 +14464,7 @@ supplement: "Figure",
 
 We will fit the parabolic function proposed by #cite(<bernard2013>, form: "prose") which predicts a thermal response curve (developmental rate, R), which is the relationship between the inverse of latent period and temperature. We need to enter the values for optimum temperature (where latent period is shortest) and the minimum latent period. The model is given by:
 
-$R \( T \) = frac(k, upright("LP")_(upright("min")) + upright("a") times \( T - T_(upright("opt")) \)^2)$
+$R\(T\)= frac(k, upright("LP")_(upright("min")) + upright("a") times\(T - T_(upright("opt"))\)^2)$
 
 #block[
 #Skylighting(([#CommentTok("# Load necessary package");],
@@ -15082,9 +15113,9 @@ The weather variable (#NormalTok("RH2M");) is used as the predictor, and time po
 ]
 The scalar covariate is the epidemic status (0 or 1), while the functional response is a matrix with the values of the specified weather variable across time (one row per study, one column per day). The model fits smooth functions to represent the effects of time and the epidemic status on the weather variable using penalized splines. The function-on-scalar regression model is given by:
 
-$y_(i j) = beta_0 \( t_j \) + beta_1 \( t_j \) x_i + epsilon.alt_(i j)$
+$y_(i j) = beta_0\(t_j\)+ beta_1\(t_j\)x_i + epsilon.alt_(i j)$
 
-where: $y_(i j)$ is the value of the weather variable for study $i$ at time $j$\; $beta_0 \( t_j \)$ is the smooth function for the overall mean effect over time; $beta_1 \( t_j \)$ is the smooth function representing the effect of epidemic status over time; $x_i$ is the binary epidemic status (0 or 1); and $epsilon.alt i j$ is the error term.
+where: $y_(i j)$ is the value of the weather variable for study $i$ at time $j$\; $beta_0\(t_j\)$ is the smooth function for the overall mean effect over time; $beta_1\(t_j\)$ is the smooth function representing the effect of epidemic status over time; $x_i$ is the binary epidemic status (0 or 1); and $epsilon.alt i j$ is the error term.
 
 We can now fit the model using the #NormalTok("pffr()"); function of the {refund} package.
 
@@ -15723,11 +15754,11 @@ The logistic model uses the logistic function to transform a linear combination 
 
 The logistic regression model predicts the probability $P$ of the binary outcome $Y = 1 divides X$ (e.g., presence or absence of disease) given a set of predictor variables $X$. The model uses the logistic function to ensure the predicted probabilities lie between 0 and 1:
 
-$P \( Y = 1 divides X \) = frac(1, 1 + e^(- \( beta_0 + beta_1 X_1 + beta_2 X_2 + dots.h + beta_p X_p \)))$
+$P\(Y = 1 divides X\)= frac(1, 1 + e^(-\(beta_0 + beta_1 X_1 + beta_2 X_2 + dots.h + beta_p X_p\)))$
 
 Alternatively, the model can be expressed in terms of the log-odds (also known as the logit function):
 
-$log (frac(P \( Y = 1 divides X \), 1 - P \( Y = 1 divides X \))) = beta_0 + beta_1 X_1 + beta_2 X_2 + dots.h + beta_p X_p$
+$log (frac(P\(Y = 1 divides X\), 1 - P\(Y = 1 divides X\))) = beta_0 + beta_1 X_1 + beta_2 X_2 + dots.h + beta_p X_p$
 
 Compared to more complex machine learning models, logistic regression offers a high degree of interpretability, which is crucial in many scientific and practical applications. While models like neural networks, random forests, or support vector machines can achieve high predictive accuracy, they often function as "black boxes" where the relationship between predictors and the outcome is not easily understood @molnar2019. In contrast, logistic regression provides clear and direct interpretations of model parameters, allowing researchers and practitioners to understand how each predictor variable influences the probability of disease occurrence. This transparency makes logistic regression a preferred choice in contexts where explaining the underlying relationships is as important as prediction accuracy. The balance between interpretability and predictive performance justifies the choice of logistic regression in several contexts, especially when insights into the data are essential for decision-making, which is the case in plant disease prediction contexts.
 
