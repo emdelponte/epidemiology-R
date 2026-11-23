@@ -241,7 +241,7 @@ The syntax, perhaps particularly the way parameters are handled by the function 
 
 ```{r}
 #| echo: false
-plot.model.results <- function(data, type)
+plot_model_results <- function(data, type)
 {
   library(ggplot2)
   library(r4pde)
@@ -443,7 +443,7 @@ hlir.sol <- ode(y = hlir.init,
 hlir.sol.df <- data.frame(hlir.sol)
 
 # Plot results using our custom helper function
-plot.model.results(hlir.sol.df, type="HLIR")
+plot_model_results(hlir.sol.df, type="HLIR")
 ```
 
 ### Interpreting epidemic behaviour
@@ -733,7 +733,7 @@ hlirp.sol <- ode(y = hlirp.init,
 hlirp.sol.df <- data.frame(hlirp.sol)
 
 # Plot results using our custom helper function
-plot.model.results(hlirp.sol.df, type="HLIRP")
+plot_model_results(hlirp.sol.df, type="HLIRP")
 ```
 
 Compared with the previous simulation, primary inoculum removes the need for initial infected hosts, allowing the epidemic to start even when $L(0)=I(0)=R(0)=0$.
@@ -802,7 +802,7 @@ hlirp.with.growth.sol <- ode(y = hlirp.with.growth.init,
 hlirp.with.growth.sol.df <- data.frame(hlirp.with.growth.sol)
 
 # Plot results using our custom helper function
-plot.model.results(hlirp.with.growth.sol.df, type="HLIRP (with host growth)")
+plot_model_results(hlirp.with.growth.sol.df, type="HLIRP (with host growth)")
 ```
 
 Note the epidemic is much slower and has only just completed by $t = T_{max}$. This is because the epidemic only becomes self-sustaining when the amount of healthy host tissue is large enough that the effective reproduction number exceeds one. In this model, when infection is rare, a natural approximation to the instantaneous reproduction number is $\beta H(t)/\mu$. Early in the season $H(t)$ is low, so infection fails to increase even though host growth later creates enough healthy tissue for spread.
@@ -899,7 +899,7 @@ for(i in 1:n.yr)
   # Calculate how much inoculum was produced this season
   init.inoc <- find.inoc(hlirp.with.growth.sol.df, phi)
 }
-plot.model.results(multi.to.plot,"MULTI")
+plot_model_results(multi.to.plot,"MULTI")
 ```
 
 In the first year the small amount of inoculum leads to only a very small epidemic, although this does lead to a larger amount of inoculum at the start of year two. This then leads to a bigger epidemic, which produces an even larger amount of inoculum. After three years the system settles onto a repeated cycle, with the same amount of inoculum at the beginning of each year, and a correspondingly similar (and large) epidemic each year.
@@ -948,7 +948,7 @@ for(i in 1:n.yr)
   # Calculate how much inoculum was produced this season
   init.inoc <- find.inoc(hlirp.with.growth.sol.df, phi)
 }
-plot.model.results(multi.to.plot,"MULTI")
+plot_model_results(multi.to.plot,"MULTI")
 ```
 
 Over successive seasons the amount of inoculum becomes smaller, and the epidemic dies out. This is because the smaller value of $\phi$ means that either less inoculum is produced within the season from a given amount of infectious tissue *or* that the inoculum is less good at surviving between seasons (these two mechanisms are not distinguishable within the current formulation of the model, although a more complex model could, of course, allow them to be disentangled).
